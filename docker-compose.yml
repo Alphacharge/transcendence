@@ -44,26 +44,27 @@ services:
       - vol_sql:/var/lib/postgresql/data
 
 # #ADMINER
-  adminer:
-    container_name: adminer
-    image: adminer:latest
+  # adminer:
+  #   container_name: adminer
+  #   image: adminer:latest
+  #   env_file: .env
+  #   ports: 
+  #     - "8080:8080"
+  #   restart: always
+  #   networks:
+  #     - network
+  #   depends_on:
+  #     - postgresql
+
+# #PHPMYADMIN
+  phppgadmin:
+    container_name: phppgadmin
+    image: dpage/pgadmin4
     env_file: .env
     ports: 
-      - "8080:8080"
+      - "8080:80"
     restart: always
     networks:
       - network
     depends_on:
       - postgresql
-
-# #ANGULAR
-#   redis:
-#     container_name: redis
-#     build:
-#       context: ./requirements/redis
-#     env_file: .env
-#     ports:
-#       - "6379:6379"
-#     restart: always
-#     networks:
-#       - network
