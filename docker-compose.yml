@@ -11,9 +11,19 @@ volumes:
       device: ./backend
       o: bind
       type: none
+  vol_frontend:
+    driver_opts:
+      device: ./frontend
+      o: bind
+      type: none
   vol_sql:
     driver_opts:
       device: ./data/sql
+      o: bind
+      type: none
+  vol_pgadmin:
+    driver_opts:
+      device: ./data/pgadmin
       o: bind
       type: none
 
@@ -32,6 +42,21 @@ services:
       - vol_backend:/backend
     working_dir: /backend
 
+  vue:
+    container_name: vue
+    build:
+      context: ./frontend
+    # image: node:lts
+    # command: bash -c "npm install && nest new -p npm ."
+    restart: always
+    networks:
+      - network
+    volumes:
+      - vol_frontend:/frontend
+    working_dir: /frontend
+    depends_on:
+      - nestjs
+
 # #POSTGRESQL
   postgresql:
     container_name: postgresql
@@ -42,6 +67,21 @@ services:
       - network
     volumes:
       - vol_sql:/var/lib/postgresql/data
+
+# #PHPMYADMIN
+  phppgadmin:
+    container_name: phppgadmin
+    image: dpage/pgadmin4
+    env_file: .env
+    ports: 
+      - "5050:80"
+    restart: always
+    networks:
+      - network
+    volumes:
+      - vol_pgadmin:/var/lib/pgadmin
+    depends_on:
+      - postgresql
 
 # #ADMINER
   # adminer:
@@ -55,16 +95,3 @@ services:
   #     - network
   #   depends_on:
   #     - postgresql
-
-# #PHPMYADMIN
-  phppgadmin:
-    container_name: phppgadmin
-    image: dpage/pgadmin4
-    env_file: .env
-    ports: 
-      - "8080:80"
-    restart: always
-    networks:
-      - network
-    depends_on:
-      - postgresql
