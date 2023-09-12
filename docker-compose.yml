@@ -41,19 +41,21 @@ services:
     volumes:
       - vol_backend:/backend
     working_dir: /backend
+    depends_on:
+      - postgresql
 
   vue:
     container_name: vue
     build:
       context: ./frontend
-    # image: node:lts
-    # command: bash -c "npm install && nest new -p npm ."
+    ports: 
+      - "8080:8080"
     restart: always
     networks:
       - network
     volumes:
       - vol_frontend:/frontend
-    working_dir: /frontend
+    # working_dir: /frontend
     depends_on:
       - nestjs
 
