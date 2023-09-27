@@ -32,8 +32,8 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm install -g @nestjs/cli && nest new -p npm . && npm run start:dev"
-    ports: 
+    command: bash -c "npm install -g @nestjs/cli && npm run start:dev"
+    ports:
       - "3000:3000"
     restart: always
     networks:
@@ -48,7 +48,7 @@ services:
     container_name: vue
     build:
       context: ./frontend
-    ports: 
+    ports:
       - "8080:8080"
     restart: always
     networks:
@@ -75,7 +75,7 @@ services:
     container_name: phppgadmin
     image: dpage/pgadmin4
     env_file: .env
-    ports: 
+    ports:
       - "5050:80"
     restart: always
     networks:
@@ -90,7 +90,7 @@ services:
   #   container_name: adminer
   #   image: adminer:latest
   #   env_file: .env
-  #   ports: 
+  #   ports:
   #     - "8080:8080"
   #   restart: always
   #   networks:
