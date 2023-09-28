@@ -15,6 +15,8 @@ export const socket = io("http://localhost:3000", {
 });
 
 socket.on("connect", () => {
+	socket.emit('f5');
+	console.log("PRINT FRONTEND");
 	state.connected = true;
 });
 
@@ -37,13 +39,22 @@ socket.newMessage = function (message) {
 	socket.emit('newMessage', message);
 };
 
+socket.f5 = function() {
+	socket.emit('f5');
+}
+
 // send paddle position updates to server
-socket.sendPaddleLeftUp = function() {
+socket.sendLeftPaddleUp = function() {
 	console.log("Paddle Up");
-	socket.emit('paddleUp');
+	socket.emit('leftPaddleUp');
 };
 
-socket.sendPaddleLeftDown = function() {
+socket.sendLeftPaddleDown = function() {
 	console.log("Paddle Down");
-	socket.emit('paddleDown');
+	socket.emit('leftPaddleDown');
 };
+
+window.addEventListener("beforeunload", () => {
+	// Send a message to the server indicating a page refresh
+	socket.emit("pageRefresh");
+  });

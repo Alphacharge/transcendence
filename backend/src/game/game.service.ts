@@ -1,6 +1,6 @@
+// game.service.ts
 import { Injectable } from '@nestjs/common';
-import { GameServiceInterface } from './game.service.interface';
-import { GameGateway } from './gateway';
+import { EventEmitter } from 'stream';
 
 class Field {
 	width:number;
@@ -45,27 +45,34 @@ class Ball {
 		} while (angle < 0.1 * p || (angle > 0.9 * p && angle<1.1 * p) || angle > 1.9 * p || (angle > .7 * p / 2 && angle < 1.3 * p / 2) || (angle >.7 * 3/2*p&&angle < 1.3*3/2*p));
 		return  angle; }
 
-	}
-
+}
 
 @Injectable()
-export class GameService implements GameServiceInterface {
+export class GameService {
 
 	private ball: Ball;
 	private paddle: Paddle;
 	private field: Field;
 
-	constructor(private readonly gameGateway: GameGateway) {
+	private eventEmitter = new EventEmitter();
+
+	constructor() {
 		this.ball = new Ball();
 		this.paddle = new Paddle();
 		this.field = new Field();
+
+		// callback function as a wrapper for second argument
+		this.eventEmitter.on('leftPaddleUp', () => this.movePaddle(10));
+		this.eventEmitter.on('leftPaddleDown', () => this.movePaddle(-10));
+
+		const updateRate = 1000 / 1; // 60 updates per second
+		setInterval(() => {
+			this.animateBall();
+		}, updateRate);
 	}
 
-	movePaddleUp() {
-		// implement
-	}
-	movePaddleDown() {
-		// implement
+	movePaddle(y: number) {
+		this.paddle.y += y;
 	}
 
 	animateBall() {
@@ -105,6 +112,7 @@ export class GameService implements GameServiceInterface {
 		this.ball.y += this.ball.speedY;
 
 		const ballCoordinates = { x: this.ball.x, y:this.ball.y}
-		this.gameGateway.sendBallUpdate(ballCoordinates);
+		console.log("ball calculated");
+		this.eventEmitter.emit('ballPositionUpdate', ballCoordinates);
 	}
 }
