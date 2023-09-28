@@ -24,14 +24,16 @@ endif
 #Build changes or all if nothing is builded and run
 all:
 	@mkdir -p data $(DB_D) data/myadmin data/mysql data/pgadmin
-	@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
 ifeq ($(OS), Darwin)
-	bash -c "chmod 600 data/pgadmin/pgadmin4.db && chown -R ${USER}:2021_heilbronn data/pgadmin"
+	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db && chown -R ${USER}:2021_heilbronn data/pgadmin"
 else
-	bash -c "chmod 600 data/pgadmin/pgadmin4.db && sudo chown -R 5050:5050 data/pgadmin"
+	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db && sudo chown -R 5050:5050 data/pgadmin"
 endif
 	docker-compose -f $(SRC) $(ENV) up
 	@echo "$(GREEN)Build changes and/or new containers.$(WHITE)"
+
+postgre:
+	@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
 
 up: all
 

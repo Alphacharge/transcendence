@@ -42,7 +42,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm install -g @nestjs/cli @nestjs/swagger swagger-ui-express prisma class-validator class-transformer argon2 @prisma/client && sleep 10 && npm prisma migrate deploy && npm run start:dev" # nest new -p npm . &&
+    command: bash -c "npm install -g @nestjs/cli @nestjs/swagger swagger-ui-express prisma class-validator class-transformer argon2 @prisma/client && sleep 20 &&  if [ ! -d 'prisma' ]; then npx prisma init; fi && npx prisma migrate deploy && npm run start:dev" # nest new -p npm . &&
     ports: 
       - "3000:3000"
       - "9229:9229" #debugging port ?
