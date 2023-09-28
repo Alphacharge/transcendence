@@ -26,15 +26,26 @@ volumes:
       device: ./data/pgadmin
       o: bind
       type: none
+  vol_mysql:
+    driver_opts:
+      device: ./data/mysql
+      o: bind
+      type: none
+  vol_myadmin:
+    driver_opts:
+      device: ./data/myadmin
+      o: bind
+      type: none
 
 #NESTJS
 services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm install -g @nestjs/cli && nest new -p npm . && npm run start:dev"
+    command: bash -c "npm install -g @nestjs/cli @nestjs/swagger swagger-ui-express prisma class-validator class-transformer argon2 @prisma/client && sleep 10 && npm prisma migrate deploy && npm run start:dev" # nest new -p npm . &&
     ports: 
       - "3000:3000"
+      - "9229:9229" #debugging port ?
     restart: always
     networks:
       - network
@@ -55,22 +66,38 @@ services:
       - network
     volumes:
       - vol_frontend:/frontend
-    # working_dir: /frontend
     depends_on:
       - nestjs
 
-# #POSTGRESQL
+  swagger:
+    container_name: swagger
+    image: swaggerapi/swagger-ui
+    environment:
+      SWAGGER_JSON_URL: http://localhost:3000/api-docs-json
+      BASE_URL: /swagger
+      PORT: 8080
+    ports: 
+      - "9090:8080"
+    restart: always
+    networks:
+      - network
+    depends_on:
+      - nestjs
+
+#POSTGRESQL
   postgresql:
     container_name: postgresql
     image: postgres:latest
     env_file: .env
+    ports: 
+      - "5432:5432"
     restart: always
     networks:
       - network
     volumes:
       - vol_sql:/var/lib/postgresql/data
 
-# #PHPMYADMIN
+#PHPPGADMIN
   phppgadmin:
     container_name: phppgadmin
     image: dpage/pgadmin4
@@ -97,3 +124,34 @@ services:
   #     - network
   #   depends_on:
   #     - postgresql
+
+#   # #MYSQL
+#   mysql:
+#     container_name: mysql
+#     image: mariadb:latest
+#     environment:
+#       MARIADB_ROOT_PASSWORD: example
+#     ports: 
+#       - "3306:3306"
+#     restart: always
+#     volumes:
+#       - vol_mysql:/etc/mysql
+
+# # #PHPMYADMIN
+#   phpmyadmin:
+#     container_name: phpmyadmin
+#     image: phpmyadmin
+#     environment:
+#       MARIADB_ROOT_PASSWORD: example
+#       MYSQL_USER: root
+#       MYSQL_PASSWORD: example
+#       MYSQL_HOST: mysql
+#       PMA_HOST: mysql
+#       PMA_PORT: 3306
+#     ports: 
+#       - "7070:80"
+#     restart: always
+#     volumes:
+#       - vol_myadmin:/etc/phpmyadmin
+#     depends_on:
+#       - mysql
