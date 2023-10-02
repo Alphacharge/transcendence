@@ -36,7 +36,7 @@ class Ball {
 @WebSocketGateway()
 export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
-	server: Server;
+		server: Server;
 
 	private ball: Ball;
 	private paddle: Paddle;
@@ -52,8 +52,8 @@ export class GameGateway implements OnModuleInit {
 		this.paddle = new Paddle();
 		this.field = new Field();
 
-		this.eventEmitter.on('ballPositionUpdate', this.sendBallUpdate.bind(this));
-		}
+		this.eventEmitter.on("ballPositionUpdate", this.sendBallUpdate.bind(this));
+	}
 
 	gameInit() {
 		const speedFactor = 1;
@@ -66,19 +66,19 @@ export class GameGateway implements OnModuleInit {
 	}
 	randomAngle() {
 		let angle = 0;
-		let p = Math.PI;
+		const p = Math.PI;
 		// let angle = pi/2;
 		do {
 			angle = Math.random() * 2 * p;
 			// repeat until computed value ca. +-10% away from horizontal and +-30% vertical axes
-		  } while (angle < 0.1 * p || (angle > 0.9 * p && angle<1.1 * p) || angle > 1.9 * p || (angle > .7 * p / 2 && angle < 1.3 * p / 2) || (angle >.7 * 3/2*p&&angle < 1.3*3/2*p));
-		  return  angle;
+			} while (angle < 0.1 * p || (angle > 0.9 * p && angle<1.1 * p) || angle > 1.9 * p || (angle > .7 * p / 2 && angle < 1.3 * p / 2) || (angle >.7 * 3/2*p&&angle < 1.3*3/2*p));
+			return  angle;
 	}
 
 	onModuleInit() {
-		this.server.on('connection', (socket) => {
+		this.server.on("connection", (socket) => {
 			console.log(socket.id);
-			console.log('Connected');
+			console.log("Connected");
 
 			this.gameInit();
 
@@ -130,40 +130,40 @@ export class GameGateway implements OnModuleInit {
 		// Update the ball's position
 		this.ball.x += this.ball.speedX;
 		this.ball.y += this.ball.speedY;
-		const ballCoordinates = { x: this.ball.x, y:this.ball.y}
+		const ballCoordinates = { x: this.ball.x, y:this.ball.y};
 		// console.log("ball calculated");
-		this.eventEmitter.emit('ballPositionUpdate', ballCoordinates);
+		this.eventEmitter.emit("ballPositionUpdate", ballCoordinates);
 	}
 
 	// newMessage event
-	@SubscribeMessage('newMessage')
+	@SubscribeMessage("newMessage")
 	onNewMessage(@MessageBody() body: any) {
-		console.log('NewMessage:', body);
-		this.server.emit('onMessage', {
-			msg: 'New Message',
+		console.log("NewMessage:", body);
+		this.server.emit("onMessage", {
+			msg: "New Message",
 			content: body,
 		});
 	}
 
 	// listen for paddle updates
-	@SubscribeMessage('leftPaddleUp')
+	@SubscribeMessage("leftPaddleUp")
 	leftPaddleUp() {
 		this.paddle.y-=10;
-		this.server.emit('leftPaddleUp', this.paddle.y);
+		this.server.emit("leftPaddleUp", this.paddle.y);
 		// this.eventEmitter.emit('leftPaddleUp');
 	}
 
-	@SubscribeMessage('leftPaddleDown')
+	@SubscribeMessage("leftPaddleDown")
 	leftPaddleDown() {
 		this.paddle.y +=10;
-		this.server.emit('leftPaddleDown', this.paddle.y);
+		this.server.emit("leftPaddleDown", this.paddle.y);
 		// this.eventEmitter.emit('leftPaddleDown');
 	}
 
 	// ball coordinate transmission
 	sendBallUpdate(ballCoordinates: { x: number; y: number }) {
 		// console.log("Ball updated");
-		this.server.emit('ballUpdate', ballCoordinates);
+		this.server.emit("ballUpdate", ballCoordinates);
 	}
 }
 
