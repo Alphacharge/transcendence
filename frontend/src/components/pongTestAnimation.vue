@@ -20,28 +20,41 @@ data() {
 	bouncingBallY: 200,
 	paddleY: 150,
 	animationFrameId: null,
+	gameId: null, // send this to the backend for game identification
 	}
 },
 mounted() {
-	// Start the autonomous movement
-	// using requestAnimationFrame instead of setInterval
-	// this is looping endlessly
-	// Add event listeners for keydown events
+
+	// received game ID from server
+	socket.on("gameId", (id) => {
+		console.log("received Game ID from server");
+		this.gameId = id;
+	});
+
+	// received ball update from server
 	socket.on("ballUpdate", (ballCoordinates) => {
 		this.bouncingBallX = ballCoordinates.x;
 		this.bouncingBallY = ballCoordinates.y;
 	});
+
+	// received paddle movement from server
 	socket.on("leftPaddleUp", (pY) => {
 		this.paddleY = pY;
 	});
 	socket.on("leftPaddleDown", (pY) => {
 		this.paddleY = pY;
 	});
+
 	window.addEventListener("keydown", (event) => {
+		if (!this.gameId) {
+			console.error("No game ID found!");
+			return;
+		}
+
 		if (event.key === "w") {
-			socket.sendLeftPaddleUp();
+			socket.sendLeftPaddleUp(this.gameId);
 		} else if (event.key === "s") {
-			socket.sendLeftPaddleDown();
+			socket.sendLeftPaddleDown(this.gameId);
 		}
 	});
 },

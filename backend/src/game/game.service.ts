@@ -1,100 +1,61 @@
 // game.service.ts
-import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'stream';
-
-class Field {
-	width:number;
-	height:number;
-	constructor() {
-		this.width = 800;
-		this.height = 400;
-	}
-}
-
-class Paddle {
-	x:number;
-	y:number;
-	constructor() {
-		this.x = 40;
-		this.y = 180;
-	}
-}
-
-class Ball {
-	x: number;
-	y: number;
-	speedX: number;
-	speedY: number;
-
-	constructor() {
-		const speedFactor = 4;
-		const angle=this.randomAngle();
-	  this.x = 500; // Initial X position
-	  this.y = 250; // Initial Y position
-	  this.speedX = speedFactor * Math.cos(angle); // Initial X speed
-	  this.speedY = speedFactor * Math.sin(angle); // Initial Y speed
-	  // Add other properties and methods as needed
-	}
-	randomAngle() {
-		let angle = 0;
-		let p = Math.PI;
-		// let angle = pi/2;
-		do {
-			angle = Math.random() * 2 * p;
-			// repeat until computed value ca. +-10% away from horizontal and +-30% vertical axes
-		} while (angle < 0.1 * p || (angle > 0.9 * p && angle<1.1 * p) || angle > 1.9 * p || (angle > .7 * p / 2 && angle < 1.3 * p / 2) || (angle >.7 * 3/2*p&&angle < 1.3*3/2*p));
-		return  angle; }
-
-}
+import { GameState } from './GameState';
+import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GameService {
-
-	private ball: Ball;
-	private paddle: Paddle;
-	private field: Field;
-
-	private eventEmitter = new EventEmitter();
+	private	eventEmitter = new EventEmitter();
+	private	intervalId: NodeJS.Timeout | null = null; // should be moved into GameState
+	private	kickOff: boolean; // fix for only starting one game loop ever
 
 	constructor() {
-		this.ball = new Ball();
-		this.paddle = new Paddle();
-		this.field = new Field();
+		this.kickOff = false;
 
-		// callback function as a wrapper for second argument
-		this.eventEmitter.on('leftPaddleUp', () => this.movePaddle(10));
-		this.eventEmitter.on('leftPaddleDown', () => this.movePaddle(-10));
+		this.eventEmitter.on('newGame', (gameState: GameState) => {
+			console.log("received internal event");
+			this.startGame(gameState);
+		});
 
-		const updateRate = 1000 / 1; // 60 updates per second
-		setInterval(() => {
-			this.animateBall();
-		}, updateRate);
+		// NOT WORKING
+		// GameService needs to be injected somewhere
+		// but i don't know where and when
+		console.log("GameService initialized");
 	}
 
-	movePaddle(y: number) {
-		this.paddle.y += y;
+	startGame(gameState: GameState) {
+		const	updateRate = 1000 / 60; // 60 updates per second
+
+		console.log("starting game");
+		if(!this.kickOff) {
+
+			console.log("starting loop");
+
+			this.kickOff = true;
+			this.intervalId = setInterval(() => {
+				this.animateBall(gameState);
+			}, updateRate);
+		}
 	}
 
-	animateBall() {
-		const ballLeft = this.ball.x - 5;
-		const ballRight = this.ball.x + 5;
-		const ballTop = this.ball.y - 5;
-		const ballBottom = this.ball.y + 5;
+	animateBall(game: GameState) {
+		const ballLeft = game.ballX - 5;
+		const ballRight = game.ballX + 5;
+		const ballTop = game.ballY - 5;
+		const ballBottom = game.ballY + 5;
 
 		// Check for collision with square borders
-		if (ballLeft <= 5 || ballRight >= this.field.width + 10) {
-			console.log("Touched", ballLeft, ballRight, this.field.width);
-			this.ball.speedX = -this.ball.speedX; // Reverse X direction
+		if (ballLeft <= 5 || ballRight >= game.fieldX + 10) {
+			game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
 		}
-		if (ballTop <=1 || ballBottom >= this.field.height + 9) {
-			this.ball.speedY = -this.ball.speedY; // Reverse Y direction
+		if (ballTop <= 1 || ballBottom >= game.fieldY + 9) {
+			game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
 		}
-
 		// Calculate paddle boundaries
-		const paddleLeft = 100; // Adjust this value based on your paddle's initial position
+		const paddleLeft = 40; // Adjust this value based on your paddle's initial position
 		const paddleRight = paddleLeft + 10; // Paddle width
-		const paddleTop = this.paddle.y;
-		const paddleBottom = this.paddle.y + 100; // Paddle height
+		const paddleTop = game.leftPaddleY;
+		const paddleBottom = game.leftPaddleY + 100; // Paddle height
 
 		// Check for collision with the paddle
 		if (
@@ -103,16 +64,14 @@ export class GameService {
 			ballBottom > paddleTop &&
 			ballTop < paddleBottom - 5
 		) {
-			console.log(ballTop, paddleBottom);
-			this.ball.speedX = -this.ball.speedX;
+			game.ballSpeedX = -game.ballSpeedX;
 		}
 
 		// Update the ball's position
-		this.ball.x += this.ball.speedX;
-		this.ball.y += this.ball.speedY;
+		game.ballX += game.ballSpeedX;
+		game.ballY += game.ballSpeedY;
 
-		const ballCoordinates = { x: this.ball.x, y:this.ball.y}
-		console.log("ball calculated");
-		this.eventEmitter.emit('ballPositionUpdate', ballCoordinates);
+		console.log("calculated ball");
+		this.eventEmitter.emit('ballPositionUpdate', game.gameId);
 	}
 }

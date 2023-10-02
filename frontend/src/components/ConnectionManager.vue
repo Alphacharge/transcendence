@@ -5,7 +5,7 @@
 		<h1>Connection Manager Component</h1>
 		<button @click="connect()">Connect</button>
 		<button @click="disconnect()">Disconnect</button>
-		<button @click="newMessage()">Send Message</button>
+		<button @click="newGame()">Start Game</button>
 	</div>
 </template>
 
@@ -22,8 +22,8 @@ export default {
 		disconnect() {
 			socket.disconnect();
 		},
-		newMessage() {
-			socket.newMessage();
+		newGame() {
+			socket.newGame();
 		}
 	}
 }

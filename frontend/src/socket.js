@@ -33,10 +33,10 @@ socket.on("bar", (...args) => {
 });
 
 // define test event function
-socket.newMessage = function (message) {
+socket.newGame = function (message) {
 	console.log(socket);
 	message = "This is a test message!";
-	socket.emit('newMessage', message);
+	socket.emit('newGame', message);
 };
 
 socket.f5 = function() {
