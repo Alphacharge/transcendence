@@ -1,8 +1,10 @@
 <template>
-  <div class="container">
-    <div class="hinter-grund" ref="container"></div>
-    <div class="bouncing-ball" :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"></div>
-    <div class="paddle" :style="{ top: `${paddleY}px` }"></div>
+	<button @click="newGame()">Start Game</button>
+	<button @click="stopGame()">Stop Game</button>
+	<div class="container">
+		<div class="hinter-grund" ref="container"></div>
+		<div class="bouncing-ball" :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"></div>
+		<div class="paddle" :style="{ top: `${paddleY}px` }"></div>
   </div>
 </template>
 
@@ -27,8 +29,8 @@ mounted() {
 
 	// received game ID from server
 	socket.on("gameId", (id) => {
-		console.log("received Game ID from server");
 		this.gameId = id;
+		console.log("received Game ID from server", this.gameId);
 	});
 
 	// received ball update from server
@@ -38,19 +40,18 @@ mounted() {
 	});
 
 	// received paddle movement from server
-	socket.on("leftPaddleUp", (pY) => {
+	socket.on("leftPaddle", (pY) => {
 		this.paddleY = pY;
 	});
-	socket.on("leftPaddleDown", (pY) => {
-		this.paddleY = pY;
-	});
+	// socket.on("rightPaddle", (pY) => {
+		// insert right paddle
+	// });
 
 	window.addEventListener("keydown", (event) => {
 		if (!this.gameId) {
 			console.error("No game ID found!");
 			return;
 		}
-
 		if (event.key === "w") {
 			socket.sendLeftPaddleUp(this.gameId);
 		} else if (event.key === "s") {
@@ -68,8 +69,13 @@ beforeUnmounted() {
 window.removeEventListener("keydown", this.handleKeyDown);
 },
 
-unmounted() {
-	socket.f5();
+methods: {
+	newGame() {
+		socket.newGame();
+	},
+	stopGame() {
+		socket.stopGame(this.gameId);
+	}
 }
 };
 </script>

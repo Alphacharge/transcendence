@@ -16,16 +16,6 @@ volumes:
       device: ./frontend
       o: bind
       type: none
-  vol_sql:
-    driver_opts:
-      device: ./data/sql
-      o: bind
-      type: none
-  vol_pgadmin:
-    driver_opts:
-      device: ./data/pgadmin
-      o: bind
-      type: none
 
 #NESTJS
 services:
@@ -41,8 +31,6 @@ services:
     volumes:
       - vol_backend:/backend
     working_dir: /backend
-    depends_on:
-      - postgresql
 
   vue:
     container_name: vue
@@ -55,45 +43,5 @@ services:
       - network
     volumes:
       - vol_frontend:/frontend
-    # working_dir: /frontend
     depends_on:
       - nestjs
-
-# #POSTGRESQL
-  postgresql:
-    container_name: postgresql
-    image: postgres:latest
-    env_file: .env
-    restart: always
-    networks:
-      - network
-    volumes:
-      - vol_sql:/var/lib/postgresql/data
-
-# #PHPMYADMIN
-  phppgadmin:
-    container_name: phppgadmin
-    image: dpage/pgadmin4
-    env_file: .env
-    ports:
-      - "5050:80"
-    restart: always
-    networks:
-      - network
-    volumes:
-      - vol_pgadmin:/var/lib/pgadmin
-    depends_on:
-      - postgresql
-
-# #ADMINER
-  # adminer:
-  #   container_name: adminer
-  #   image: adminer:latest
-  #   env_file: .env
-  #   ports:
-  #     - "8080:8080"
-  #   restart: always
-  #   networks:
-  #     - network
-  #   depends_on:
-  #     - postgresql

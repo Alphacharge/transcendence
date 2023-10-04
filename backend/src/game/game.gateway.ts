@@ -1,5 +1,5 @@
 // game.gateway.ts
-import { EventEmitter } from "stream";
+import { sharedEventEmitter } from "./game.events";
 import { GameState } from "./GameState"
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
@@ -14,14 +14,14 @@ export class GameGateway implements OnModuleInit {
 
 	private	games: Map<string, GameState> = new Map(); // Map to store games
 
-	private eventEmitter = new EventEmitter();
-
 	constructor(private readonly gameService: GameService) {
-		this.eventEmitter.on('ballPositionUpdate', (gameId: string) => {
-			this.sendBallUpdate(gameId);
+		sharedEventEmitter.on('ballPositionUpdate', (gameId: string) => {
+			if (gameId)
+				this.sendBallUpdate(gameId);
 		});
 	}
 
+	/* New client connected. */
 	onModuleInit() {
 		this.server.on('connection', (socket) => {
 			console.log(socket.id);
@@ -29,32 +29,74 @@ export class GameGateway implements OnModuleInit {
 		});
 	}
 
-	// start a new game event from frontend
+	/* Client requests a new game. */
 	@SubscribeMessage('newGame')
-	onNewMessage(@ConnectedSocket() socket: Socket) {
+	newGame(@ConnectedSocket() socket: Socket) {
 		console.log(`Received 'newGame' message from socket ID ${socket.id}`);
 
 		this.startGame(socket);
 	}
 
-	startGame(socket: Socket) {
-		const	gameState = new GameState();
-		gameState.player1 = socket;
-		this.games.set(gameState.gameId, gameState);
+	/* Client requests to abort game. */
+	@SubscribeMessage('stopGame')
+	stopGame(@MessageBody() payload: { gameId: string }) {
+		const game = this.games.get(payload.gameId);
 
-		console.log("sending new game event");
-		// send event to GameService
-		this.eventEmitter.emit('newGame', gameState);
-		// send info to client
-		socket.emit('gameId', { gameId: gameState.gameId });
+		if (game)
+		{
+			// variable needed any more?
+			game.running = false;
+
+			// stop game loop
+			if (game.intervalId) {
+				clearInterval(game.intervalId);
+				game.intervalId = null;
+			}
+
+			// remove the game from map
+			// REMOVE this part if the game state is still needed
+			this.games.delete(payload.gameId);
+		}
+	}
+
+	startGame(socket: Socket) {
+		const	game = new GameState();
+
+		// check if this socket is already running a game
+		// REMOVE/adapt this check when users are implemented
+		for (const game of this.games.values()) {
+			if (game.player1.id == socket.id || game.player2.id == socket.id) {
+				console.error("Client already is in an active game.");
+				return;
+			}
+		}
+		game.player1 = socket;
+		
+		// add new game to games map
+		this.games.set(game.gameId, game);
+		// run game
+		this.gameService.startGame(game);
+
+		// send necessary info to client
+		socket.emit('gameId', { gameId: game.gameId });
+		this.sendPaddleUpdate(game.gameId);
 	}
 
 	// ball coordinate transmission
 	sendBallUpdate(gameId: string) {
-		const game = this.games[gameId];
+		const game = this.games.get(gameId);
 
-		console.log("sending ball update");
 		game.player1.emit('ballUpdate', game.ballCoordinates());
+		// add other players
+	}
+
+	// update for both paddles
+	sendPaddleUpdate(gameId: string) {
+		const	game = this.games.get(gameId);
+
+		game.player1.emit('leftPaddle', game.leftPaddleY);
+		game.player1.emit('rightPaddle', game.rightPaddleY);
+		// add other players
 	}
 
 	// listen for paddle updates
@@ -63,9 +105,9 @@ export class GameGateway implements OnModuleInit {
 		const game = this.games.get(payload.gameId);
 
 		if (game) {
-			console.log("updated paddle");
 			game.leftPaddleY -= 10;
-			game.player1.emit('leftPaddleUp', game.leftPaddleY);
+			game.player1.emit('leftPaddle', game.leftPaddleY);
+			// add other players
 		}
 	}
 
@@ -75,7 +117,8 @@ export class GameGateway implements OnModuleInit {
 
 		if (game) {
 			game.leftPaddleY += 10;
-			game.player1.emit('leftPaddleUp', game.leftPaddleY);
+			game.player1.emit('leftPaddle', game.leftPaddleY);
+			// add other players
 		}
 	}
 }

@@ -1,41 +1,28 @@
 // game.service.ts
-import { EventEmitter } from 'stream';
+import { clearInterval } from 'timers';
+import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GameService {
-	private	eventEmitter = new EventEmitter();
-	private	intervalId: NodeJS.Timeout | null = null; // should be moved into GameState
-	private	kickOff: boolean; // fix for only starting one game loop ever
+	constructor() {}
 
-	constructor() {
-		this.kickOff = false;
-
-		this.eventEmitter.on('newGame', (gameState: GameState) => {
-			console.log("received internal event");
-			this.startGame(gameState);
-		});
-
-		// NOT WORKING
-		// GameService needs to be injected somewhere
-		// but i don't know where and when
-		console.log("GameService initialized");
-	}
-
-	startGame(gameState: GameState) {
+	startGame(game: GameState) {
 		const	updateRate = 1000 / 60; // 60 updates per second
 
-		console.log("starting game");
-		if(!this.kickOff) {
+		console.log("Starting game", game.gameId);
 
-			console.log("starting loop");
-
-			this.kickOff = true;
-			this.intervalId = setInterval(() => {
-				this.animateBall(gameState);
-			}, updateRate);
-		}
+		game.intervalId = setInterval(() => {
+			if (game.running) {
+				this.animateBall(game);
+			}
+			else {
+				console.log("Stopping game", game.gameId);
+				clearInterval(game.intervalId);
+				game.intervalId = null;
+			}
+		}, updateRate);
 	}
 
 	animateBall(game: GameState) {
@@ -71,7 +58,6 @@ export class GameService {
 		game.ballX += game.ballSpeedX;
 		game.ballY += game.ballSpeedY;
 
-		console.log("calculated ball");
-		this.eventEmitter.emit('ballPositionUpdate', game.gameId);
+		sharedEventEmitter.emit('ballPositionUpdate', game.gameId);
 	}
 }

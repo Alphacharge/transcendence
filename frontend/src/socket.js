@@ -15,8 +15,6 @@ export const socket = io("http://localhost:3000", {
 });
 
 socket.on("connect", () => {
-	socket.emit('f5');
-	console.log("PRINT FRONTEND");
 	state.connected = true;
 });
 
@@ -24,37 +22,20 @@ socket.on("disconnect", () => {
 	state.connected = false;
 });
 
-socket.on("foo", (...args) => {
-	state.fooEvents.push(args);
-});
-
-socket.on("bar", (...args) => {
-	state.barEvents.push(args);
-});
-
-// define test event function
-socket.newGame = function (message) {
+socket.newGame = function () {
 	console.log(socket);
-	message = "This is a test message!";
-	socket.emit('newGame', message);
+	socket.emit('newGame');
 };
 
-socket.f5 = function() {
-	socket.emit('f5');
+socket.stopGame = function (gameId) {
+	socket.emit('stopGame', gameId);
 }
 
 // send paddle position updates to server
-socket.sendLeftPaddleUp = function() {
-	console.log("Paddle Up");
-	socket.emit('leftPaddleUp');
+socket.sendLeftPaddleUp = function(gameId) {
+	socket.emit('leftPaddleUp', gameId);
 };
 
-socket.sendLeftPaddleDown = function() {
-	console.log("Paddle Down");
-	socket.emit('leftPaddleDown');
+socket.sendLeftPaddleDown = function(gameId) {
+	socket.emit('leftPaddleDown', gameId);
 };
-
-window.addEventListener("beforeunload", () => {
-	// Send a message to the server indicating a page refresh
-	socket.emit("pageRefresh");
-  });
