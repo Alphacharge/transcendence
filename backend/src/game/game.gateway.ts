@@ -14,7 +14,7 @@ export class GameGateway implements OnModuleInit {
 
 	private	games: Map<string, GameState> = new Map(); // Map to store games
 
-	constructor(private readonly gameService: GameService) {
+	constructor(private readonly gameService: GameService, private gameState: GameState) {
 		sharedEventEmitter.on('ballPositionUpdate', (gameId: string) => {
 			if (gameId)
 				this.sendBallUpdate(gameId);
@@ -38,6 +38,8 @@ export class GameGateway implements OnModuleInit {
 	}
 
 	/* Client requests to abort game. */
+	/* [lsordo] seem to throw an exception after refreshing then stopping on the front end
+	in stopGame someWhere */
 	@SubscribeMessage('stopGame')
 	stopGame(@MessageBody() payload: { gameId: string }) {
 		const game = this.games.get(payload.gameId);
@@ -64,14 +66,29 @@ export class GameGateway implements OnModuleInit {
 
 		// check if this socket is already running a game
 		// REMOVE/adapt this check when users are implemented
+
+/* [lsordo DEBUG] inserted try catch clause on following snippet because:
+on the frontend refreshing with f5 then pressing button `Start Game`
+exception is thrown regarding null id value of player2, not being able
+to manage further I am commeting it all out - further investigation required
+ >>> COMMENT OUT START <<<<
+
 		for (const game of this.games.values()) {
-			if (game.player1.id == socket.id || game.player2.id == socket.id) {
-				console.error("Client already is in an active game.");
+			try {
+
+				if (game.player1.id == socket.id || game.player2.id == socket.id) {
+					console.error("Client already is in an active game.");
+					return;
+				}
+			} catch (error) {
+				throw new Error('Null ID exception after refresh- check player 2 id');
 				return;
 			}
 		}
+>>> COMMENT OUT END <<< */
+
 		game.player1 = socket;
-		
+
 		// add new game to games map
 		this.games.set(game.gameId, game);
 		// run game
@@ -104,7 +121,7 @@ export class GameGateway implements OnModuleInit {
 	leftPaddleUp(@MessageBody() payload: { gameId: string }) {
 		const game = this.games.get(payload.gameId);
 
-		if (game) {
+		if (game && game.leftPaddleY > 10) {
 			game.leftPaddleY -= 10;
 			game.player1.emit('leftPaddle', game.leftPaddleY);
 			// add other players
@@ -115,7 +132,7 @@ export class GameGateway implements OnModuleInit {
 	leftPaddleDown(@MessageBody() payload: { gameId: string }) {
 		const game = this.games.get(payload.gameId);
 
-		if (game) {
+		if (game && game.leftPaddleY + 100 + 10 <400) {
 			game.leftPaddleY += 10;
 			game.player1.emit('leftPaddle', game.leftPaddleY);
 			// add other players

@@ -6,8 +6,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GameService {
-	constructor() {}
-
+	constructor(private gameState: GameState) {}
+/* addedd gameState attribute to be sure to pick correct filed x and y sizes sealso below
+collision with square borders section [lsordo] */
 	startGame(game: GameState) {
 		const	updateRate = 1000 / 60; // 60 updates per second
 
@@ -32,10 +33,12 @@ export class GameService {
 		const ballBottom = game.ballY + 5;
 
 		// Check for collision with square borders
-		if (ballLeft <= 5 || ballRight >= game.fieldX + 10) {
+		/* changed game.field.. with this.gameStart.field... to be sure to pick correct
+		field sizes, see also constructor [losordo]*/
+		if (ballLeft <= 5 || ballRight >= this.gameState.fieldX - 10) {
 			game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
 		}
-		if (ballTop <= 1 || ballBottom >= game.fieldY + 9) {
+		if (ballTop <= 1 || ballBottom >= this.gameState.fieldY - 10) {
 			game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
 		}
 		// Calculate paddle boundaries
@@ -61,3 +64,4 @@ export class GameService {
 		sharedEventEmitter.emit('ballPositionUpdate', game.gameId);
 	}
 }
+

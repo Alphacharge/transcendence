@@ -35,6 +35,9 @@ mounted() {
 
 	// received ball update from server
 	socket.on("ballUpdate", (ballCoordinates) => {
+		if (ballCoordinates.y>390) {
+			console.log({'bottom collision': ballCoordinates.y});
+		}
 		this.bouncingBallX = ballCoordinates.x;
 		this.bouncingBallY = ballCoordinates.y;
 	});
@@ -54,7 +57,9 @@ mounted() {
 		}
 		if (event.key === "w") {
 			socket.sendLeftPaddleUp(this.gameId);
+			console.log(this.paddleY);
 		} else if (event.key === "s") {
+			console.log(this.paddleY);
 			socket.sendLeftPaddleDown(this.gameId);
 		}
 	});
@@ -71,6 +76,7 @@ window.removeEventListener("keydown", this.handleKeyDown);
 
 methods: {
 	newGame() {
+		console.error('logging new game event');
 		socket.newGame();
 	},
 	stopGame() {
@@ -93,7 +99,7 @@ methods: {
     height: 100%;
     background-color: grey;
     box-sizing: border-box;
-    border: 8px solid magenta
+    border: 10px solid magenta
   }
 
   .bouncing-ball {
