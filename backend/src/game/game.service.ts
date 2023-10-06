@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class GameService {
-	constructor(private gameState: GameState) {}
+
 /* addedd gameState attribute to be sure to pick correct filed x and y sizes sealso below
 collision with square borders section [lsordo] */
 	startGame(game: GameState) {
@@ -15,6 +15,9 @@ collision with square borders section [lsordo] */
 		console.log("Starting game", game.gameId);
 
 		game.intervalId = setInterval(() => {
+			// this logic is not needed right now because it is handled by stop game event
+			// but I leave it here for the game to be stopped internally
+			// REMOVE if not needed
 			if (game.running) {
 				this.animateBall(game);
 			}
@@ -35,10 +38,10 @@ collision with square borders section [lsordo] */
 		// Check for collision with square borders
 		/* changed game.field.. with this.gameStart.field... to be sure to pick correct
 		field sizes, see also constructor [losordo]*/
-		if (ballLeft <= 5 || ballRight >= this.gameState.fieldX - 10) {
+		if (ballLeft <= 5 || ballRight >= game.fieldX - 10) {
 			game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
 		}
-		if (ballTop <= 1 || ballBottom >= this.gameState.fieldY - 10) {
+		if (ballTop <= 1 || ballBottom >= game.fieldY - 10) {
 			game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
 		}
 		// Calculate paddle boundaries

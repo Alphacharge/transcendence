@@ -26,6 +26,7 @@ data() {
 	}
 },
 mounted() {
+	let	messageInterval = null;
 
 	// received game ID from server
 	socket.on("gameId", (id) => {
@@ -35,8 +36,8 @@ mounted() {
 
 	// received ball update from server
 	socket.on("ballUpdate", (ballCoordinates) => {
-		if (ballCoordinates.y>390) {
-			console.log({'bottom collision': ballCoordinates.y});
+		if (ballCoordinates.y > 390) {
+			console.log({ 'bottom collision': ballCoordinates.y });
 		}
 		this.bouncingBallX = ballCoordinates.x;
 		this.bouncingBallY = ballCoordinates.y;
@@ -50,17 +51,33 @@ mounted() {
 		// insert right paddle
 	// });
 
+	// send paddle movement messages
 	window.addEventListener("keydown", (event) => {
 		if (!this.gameId) {
 			console.error("No game ID found!");
 			return;
 		}
 		if (event.key === "w") {
-			socket.sendLeftPaddleUp(this.gameId);
 			console.log(this.paddleY);
+			if (!messageInterval) {
+				messageInterval = setInterval(() => {
+					socket.sendLeftPaddleUp(this.gameId);
+				}, 1000 / 30);
+			}
 		} else if (event.key === "s") {
 			console.log(this.paddleY);
-			socket.sendLeftPaddleDown(this.gameId);
+			if (!messageInterval) {
+				messageInterval = setInterval(() => {
+					socket.sendLeftPaddleDown(this.gameId);
+				}, 1000 / 30);
+			}
+		}
+	});
+	// stop sending paddle movement messages
+	window.addEventListener("keyup", (event) => {
+		if (event.key == "w" || event.key == "s") {
+			clearInterval(messageInterval);
+			messageInterval = null;
 		}
 	});
 },

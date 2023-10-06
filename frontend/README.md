@@ -1,4 +1,4 @@
-# src
+# frontend
 
 ## Project setup
 ```

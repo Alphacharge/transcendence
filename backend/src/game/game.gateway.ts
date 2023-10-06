@@ -14,7 +14,7 @@ export class GameGateway implements OnModuleInit {
 
 	private	games: Map<string, GameState> = new Map(); // Map to store games
 
-	constructor(private readonly gameService: GameService, private gameState: GameState) {
+	constructor(private readonly gameService: GameService) {
 		sharedEventEmitter.on('ballPositionUpdate', (gameId: string) => {
 			if (gameId)
 				this.sendBallUpdate(gameId);
@@ -38,8 +38,6 @@ export class GameGateway implements OnModuleInit {
 	}
 
 	/* Client requests to abort game. */
-	/* [lsordo] seem to throw an exception after refreshing then stopping on the front end
-	in stopGame someWhere */
 	@SubscribeMessage('stopGame')
 	stopGame(@MessageBody() payload: { gameId: string }) {
 		const game = this.games.get(payload.gameId);
@@ -53,6 +51,7 @@ export class GameGateway implements OnModuleInit {
 			if (game.intervalId) {
 				clearInterval(game.intervalId);
 				game.intervalId = null;
+				console.log("Stopping game", game.gameId);
 			}
 
 			// remove the game from map
@@ -62,38 +61,27 @@ export class GameGateway implements OnModuleInit {
 	}
 
 	startGame(socket: Socket) {
-		const	game = new GameState();
-
 		// check if this socket is already running a game
 		// REMOVE/adapt this check when users are implemented
-
-/* [lsordo DEBUG] inserted try catch clause on following snippet because:
-on the frontend refreshing with f5 then pressing button `Start Game`
-exception is thrown regarding null id value of player2, not being able
-to manage further I am commeting it all out - further investigation required
- >>> COMMENT OUT START <<<<
-
 		for (const game of this.games.values()) {
-			try {
-
-				if (game.player1.id == socket.id || game.player2.id == socket.id) {
+				if (game.player1 && game.player1.id == socket.id) {
 					console.error("Client already is in an active game.");
 					return;
 				}
-			} catch (error) {
-				throw new Error('Null ID exception after refresh- check player 2 id');
-				return;
-			}
+				if (game.player2 && game.player2.id == socket.id) {
+					console.error("Client already is in an active game.");
+					return;
+				}
 		}
->>> COMMENT OUT END <<< */
 
+		// create a new game
+		const	game = new GameState();
 		game.player1 = socket;
 
 		// add new game to games map
 		this.games.set(game.gameId, game);
 		// run game
 		this.gameService.startGame(game);
-
 		// send necessary info to client
 		socket.emit('gameId', { gameId: game.gameId });
 		this.sendPaddleUpdate(game.gameId);
@@ -101,7 +89,7 @@ to manage further I am commeting it all out - further investigation required
 
 	// ball coordinate transmission
 	sendBallUpdate(gameId: string) {
-		const game = this.games.get(gameId);
+		const	game = this.games.get(gameId);
 
 		game.player1.emit('ballUpdate', game.ballCoordinates());
 		// add other players
