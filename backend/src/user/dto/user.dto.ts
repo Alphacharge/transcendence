@@ -1,17 +1,18 @@
-import { IsNumber, IsOptional, IsString } from "class-validator"
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator"
+import { Socket } from "socket.io";
 
 export class UserDto {
-	constructor(id: number) {
-		this.id = id;
-	}
+	// constructor(id: number) {
+	// 	this.id = id;
+	// 	this.inGame = false;
+	// 	this.socket = null;
+	// }
+
 	@IsNumber()
 	id: number;
 
-	@IsString()
-	@IsOptional()
-	side?: string;
+	@IsBoolean()
+	inGame: boolean;
 
-	@IsString()
-	@IsOptional()
-	name?: string;
+	socket: Socket | null;
 }

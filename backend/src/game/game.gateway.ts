@@ -45,7 +45,9 @@ export class GameGateway implements OnModuleInit {
 		if (game)
 		{
 			// variable needed any more?
-			game.running = false;
+			// rbetz 7.10. needed to stop after game and redirect user to homescreen?
+			if (game.user1)
+				game.user1.inGame = false;
 
 			// stop game loop
 			if (game.intervalId) {
@@ -64,19 +66,19 @@ export class GameGateway implements OnModuleInit {
 		// check if this socket is already running a game
 		// REMOVE/adapt this check when users are implemented
 		for (const game of this.games.values()) {
-				if (game.player1 && game.player1.id == socket.id) {
+				if (game.user1.socket && game.user1.socket.id == socket.id) {
 					console.error("Client already is in an active game.");
 					return;
 				}
-				if (game.player2 && game.player2.id == socket.id) {
+				if (game.user2.socket && game.user2.socket.id == socket.id) {
 					console.error("Client already is in an active game.");
 					return;
 				}
 		}
 
 		// create a new game
-		const	game = new GameState();
-		game.player1 = socket;
+		const game = new GameState();
+		game.user1.socket = socket;
 
 		// add new game to games map
 		this.games.set(game.gameId, game);
@@ -91,7 +93,7 @@ export class GameGateway implements OnModuleInit {
 	sendBallUpdate(gameId: string) {
 		const	game = this.games.get(gameId);
 
-		game.player1.emit('ballUpdate', game.ballCoordinates());
+		game.user1.socket.emit('ballUpdate', game.ballCoordinates());
 		// add other players
 	}
 
@@ -99,8 +101,8 @@ export class GameGateway implements OnModuleInit {
 	sendPaddleUpdate(gameId: string) {
 		const	game = this.games.get(gameId);
 
-		game.player1.emit('leftPaddle', game.leftPaddleY);
-		game.player1.emit('rightPaddle', game.rightPaddleY);
+		game.user1.socket.emit('leftPaddle', game.leftPaddleY);
+		game.user1.socket.emit('rightPaddle', game.rightPaddleY);
 		// add other players
 	}
 
@@ -111,7 +113,7 @@ export class GameGateway implements OnModuleInit {
 
 		if (game && game.leftPaddleY > 10) {
 			game.leftPaddleY -= 10;
-			game.player1.emit('leftPaddle', game.leftPaddleY);
+			game.user1.socket.emit('leftPaddle', game.leftPaddleY);
 			// add other players
 		}
 	}
@@ -122,7 +124,7 @@ export class GameGateway implements OnModuleInit {
 
 		if (game && game.leftPaddleY + 100 + 10 <400) {
 			game.leftPaddleY += 10;
-			game.player1.emit('leftPaddle', game.leftPaddleY);
+			game.user1.socket.emit('leftPaddle', game.leftPaddleY);
 			// add other players
 		}
 	}

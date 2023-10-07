@@ -18,7 +18,8 @@ collision with square borders section [lsordo] */
 			// this logic is not needed right now because it is handled by stop game event
 			// but I leave it here for the game to be stopped internally
 			// REMOVE if not needed
-			if (game.running) {
+			// += maybe here check if both players are ready (inGame)?
+			if (game.user1.inGame) {
 				this.animateBall(game);
 			}
 			else {

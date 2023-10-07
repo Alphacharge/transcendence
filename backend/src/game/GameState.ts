@@ -1,14 +1,14 @@
-// GameState.ts
-import { Socket } from "socket.io";
+import { Injectable } from "@nestjs/common";
+import { UserDto } from "../user/dto";
 
+@Injectable()
 export class GameState {
 
 	gameId: string;
-	running: boolean;
-	intervalId: NodeJS.Timeout | null = null;
+	intervalId: NodeJS.Timeout | null;
 
-	player1: Socket;
-	player2: Socket;
+	user1: UserDto;
+	user2: UserDto;
 	scorePlayer1: number;
 	scorePlayer2: number;
 
@@ -27,11 +27,15 @@ export class GameState {
 
 	constructor() {
 		this.gameId = this.generateID();
-		this.running = true;
 		this.intervalId = null;
 
-		this.player1 = null;
-		this.player2 = null;
+		this.user1 = new UserDto;
+		this.user1.inGame = true;
+		this.user1.socket = null;
+
+		this.user2 = new UserDto;
+		this.user2.inGame = true;
+		this.user2.socket = null;
 
 		this.gameInit();
 	}
