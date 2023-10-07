@@ -29,13 +29,9 @@ export class GameState {
 		this.gameId = this.generateID();
 		this.intervalId = null;
 
-		this.user1 = new UserDto;
-		this.user1.inGame = true;
-		this.user1.socket = null;
+		this.user1 = new UserDto();
 
-		this.user2 = new UserDto;
-		this.user2.inGame = true;
-		this.user2.socket = null;
+		this.user2 = new UserDto();
 
 		this.gameInit();
 	}

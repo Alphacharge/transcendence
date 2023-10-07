@@ -2,11 +2,11 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator"
 import { Socket } from "socket.io";
 
 export class UserDto {
-	// constructor(id: number) {
-	// 	this.id = id;
-	// 	this.inGame = false;
-	// 	this.socket = null;
-	// }
+	constructor() {
+		this.id = 0;
+		this.inGame = false;
+		this.socket = null;
+	}
 
 	@IsNumber()
 	id: number;
