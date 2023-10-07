@@ -22,7 +22,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm install -g @nestjs/cli && npm install && npm run start:dev"
+    command: bash -c "npm install -g npm@10.2.0 @nestjs/cli && npm install && nest start --watch"
     ports:
       - "3000:3000"
     restart: always
