@@ -1,10 +1,11 @@
 // game.gateway.ts
 import { sharedEventEmitter } from "./game.events";
-import { GameState } from "./GameState"
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 import { OnModuleInit} from "@nestjs/common";
 import { GameService } from "./game.service";
+import { UserDto } from "src/user/dto";
+import { GameState } from "./GameState";
 
 // can enter a port in the brackets
 @WebSocketGateway()
@@ -12,13 +13,18 @@ export class GameGateway implements OnModuleInit {
 	@WebSocketServer()
 	server: Server;
 
-	private	games: Map<string, GameState> = new Map(); // Map to store games
-
 	constructor(private readonly gameService: GameService) {
-		sharedEventEmitter.on('ballPositionUpdate', (gameId: string) => {
-			if (gameId)
-				this.sendBallUpdate(gameId);
+		sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
+			if (game)
+				this.sendBallUpdate(game);
 		});
+    // sharedEventEmitter.on('gameStarted', (gameId: string) => {
+    //   if (game)
+    //     this.sendGameId(game);
+    // });
+    sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
+      this.sendPaddleUpdate(game);
+    });
 	}
 
 	/* New client connected. */
@@ -26,6 +32,11 @@ export class GameGateway implements OnModuleInit {
 		this.server.on('connection', (socket) => {
 			console.log(socket.id);
 			console.log('Connected');
+
+      // save new user to users array in GameService
+		  const user = new UserDto();
+      user.socket = socket;
+      this.gameService.users.set(socket.id, user);
 		});
 	}
 
@@ -34,73 +45,42 @@ export class GameGateway implements OnModuleInit {
 	newGame(@ConnectedSocket() socket: Socket) {
 		console.log(`Received 'newGame' message from socket ID ${socket.id}`);
 
-		this.startGame(socket);
+    // possibly do this in gameservice
+    let user = this.gameService.users.get(socket.id);
+    if (!user) {
+      console.error("User not found.");
+      return;
+    }
+    if (user.inGame == true) {
+      console.error("Client already is in an active game.");
+      return;
+    }
+
+    // send answer to client
+		let game = this.gameService.startGame(user);
+    game.user1.socket.emit('gameId', { gameId: game.gameId });
+    this.sendPaddleUpdate(game);
 	}
 
 	/* Client requests to abort game. */
 	@SubscribeMessage('stopGame')
 	stopGame(@MessageBody() payload: { gameId: string }) {
-		const game = this.games.get(payload.gameId);
-
-		if (game)
-		{
-			// variable needed any more?
-			// rbetz 7.10. needed to stop after game and redirect user to homescreen?
-			if (game.user1)
-				game.user1.inGame = false;
-
-			// stop game loop
-			if (game.intervalId) {
-				clearInterval(game.intervalId);
-				game.intervalId = null;
-				console.log("Stopping game", game.gameId);
-			}
-
-			// remove the game from map
-			// REMOVE this part if the game state is still needed
-			this.games.delete(payload.gameId);
-		}
+    if (payload)
+      this.gameService.stopGame(payload.gameId);
 	}
 
-	startGame(socket: Socket) {
-		// check if this socket is already running a game
-		// REMOVE/adapt this check when users are implemented
-		for (const game of this.games.values()) {
-				if (game.user1.socket && game.user1.socket.id == socket.id) {
-					console.error("Client already is in an active game.");
-					return;
-				}
-				if (game.user2.socket && game.user2.socket.id == socket.id) {
-					console.error("Client already is in an active game.");
-					return;
-				}
-		}
-
-		// create a new game
-		const game = new GameState();
-		game.user1.socket = socket;
-
-		// add new game to games map
-		this.games.set(game.gameId, game);
-		// run game
-		this.gameService.startGame(game);
-		// send necessary info to client
-		socket.emit('gameId', { gameId: game.gameId });
-		this.sendPaddleUpdate(game.gameId);
-	}
+  sendGameId(game:GameState) {
+    game.user1.socket.emit('gameId', { gameId: game.gameId });
+  }
 
 	// ball coordinate transmission
-	sendBallUpdate(gameId: string) {
-		const	game = this.games.get(gameId);
-
+	sendBallUpdate(game: GameState) {
 		game.user1.socket.emit('ballUpdate', game.ballCoordinates());
 		// add other players
 	}
 
 	// update for both paddles
-	sendPaddleUpdate(gameId: string) {
-		const	game = this.games.get(gameId);
-
+	sendPaddleUpdate(game: GameState) {
 		game.user1.socket.emit('leftPaddle', game.leftPaddleY);
 		game.user1.socket.emit('rightPaddle', game.rightPaddleY);
 		// add other players
@@ -109,24 +89,20 @@ export class GameGateway implements OnModuleInit {
 	// listen for paddle updates
 	@SubscribeMessage('leftPaddleUp')
 	leftPaddleUp(@MessageBody() payload: { gameId: string }) {
-		const game = this.games.get(payload.gameId);
-
-		if (game && game.leftPaddleY > 10) {
-			game.leftPaddleY -= 10;
-			game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-			// add other players
-		}
+    if (payload) {
+      const game = this.gameService.leftPaddleUp(payload.gameId);
+      if (game)
+        game.user1.socket.emit('leftPaddle', game.leftPaddleY);
+    }
 	}
 
 	@SubscribeMessage('leftPaddleDown')
 	leftPaddleDown(@MessageBody() payload: { gameId: string }) {
-		const game = this.games.get(payload.gameId);
-
-		if (game && game.leftPaddleY + 100 + 10 <400) {
-			game.leftPaddleY += 10;
-			game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-			// add other players
-		}
+    if (payload) {
+      const game = this.gameService.leftPaddleDown(payload.gameId);
+      if (game)
+        game.user1.socket.emit('leftPaddle', game.leftPaddleY);
+    }
 	}
 }
 

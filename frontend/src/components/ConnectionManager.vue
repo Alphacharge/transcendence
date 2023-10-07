@@ -1,26 +1,26 @@
 <!-- ConnectionManager.vue -->
 
 <template>
-	<div>
-		<h1>Connection Manager Component</h1>
-		<button @click="connect()">Connect</button>
-		<button @click="disconnect()">Disconnect</button>
-	</div>
+  <div>
+    <h1>Connection Manager Component</h1>
+    <button @click="connect()">Connect</button>
+    <button @click="disconnect()">Disconnect</button>
+  </div>
 </template>
 
 <script>
 import { socket } from "@/socket";
 
 export default {
-	name: "ConnectionManager",
+  name: "ConnectionManager",
 
-	methods: {
-		connect() {
-			socket.connect();
-		},
-		disconnect() {
-			socket.disconnect();
-		},
-	}
-}
+  methods: {
+    connect() {
+      socket.connect();
+    },
+    disconnect() {
+      socket.disconnect();
+    },
+  },
+};
 </script>

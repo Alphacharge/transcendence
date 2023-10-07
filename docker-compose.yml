@@ -21,7 +21,7 @@ volumes:
 services:
   nestjs:
     container_name: nestjs
-    image: node:lts
+    image: node:latest
     command: bash -c "npm install -g npm@10.2.0 @nestjs/cli && npm install && nest start --watch"
     ports:
       - "3000:3000"

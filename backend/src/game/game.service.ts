@@ -3,32 +3,71 @@ import { clearInterval } from 'timers';
 import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
+import { UserDto } from 'src/user/dto';
 
 @Injectable()
 export class GameService {
+  // user array
+  // should probably be saved elsewhere, idk
+  users: Map<string, UserDto> = new Map();    // socket.id -> user
+  games: Map<string, GameState> = new Map();  // gamestate.gameid -> gamestate
 
 /* addedd gameState attribute to be sure to pick correct filed x and y sizes sealso below
 collision with square borders section [lsordo] */
-	startGame(game: GameState) {
-		const	updateRate = 1000 / 60; // 60 updates per second
+	startGame(user: UserDto) {
+    // create a new game
+    const game = new GameState();
+    const	updateRate = 1000 / 60; // 60 updates per second
 
-		console.log("Starting game", game.gameId);
+    game.user1 = user;
+    user.inGame = true;
 
-		game.intervalId = setInterval(() => {
-			// this logic is not needed right now because it is handled by stop game event
-			// but I leave it here for the game to be stopped internally
-			// REMOVE if not needed
-			// += maybe here check if both players are ready (inGame)?
-			if (game.user1.inGame) {
-				this.animateBall(game);
-			}
-			else {
-				console.log("Stopping game", game.gameId);
-				clearInterval(game.intervalId);
-				game.intervalId = null;
-			}
-		}, updateRate);
+		console.log("Starting new game", game.gameId);
+
+		// add new game to games map
+		this.games.set(game.gameId, game);
+
+		// start game loop
+		game.intervalId = setInterval(() => {this.animateBall(game);}, updateRate);
+
+    return (game);
 	}
+
+  stopGame(gameId: string) {
+    // search the right game
+    const game = this.games.get(gameId);
+    if (!game) {
+      console.error("Game not found.");
+      return;
+    }
+    console.log("Stopping game", game.gameId);
+    clearInterval(game.intervalId);
+    game.intervalId = null;
+
+    if (game.user1)
+      game.user1.inGame = false;
+    if (game.user2)
+      game.user2.inGame = false;
+
+    // save persistent game stuff to database here if you like
+    this.games.delete(gameId);
+  }
+
+  leftPaddleUp(gameId: string) {
+    const game = this.games.get(gameId);
+    if (game && game.leftPaddleY > 10) {
+      game.leftPaddleY -= 10;
+    }
+    return game;
+  }
+
+  leftPaddleDown(gameId: string) {
+    const game = this.games.get(gameId);
+    if (game && game.leftPaddleY + 100 + 10 < 400) {
+      game.leftPaddleY += 10;
+    }
+    return game;
+  }
 
 	animateBall(game: GameState) {
 		const ballLeft = game.ballX - 5;
@@ -65,7 +104,7 @@ collision with square borders section [lsordo] */
 		game.ballX += game.ballSpeedX;
 		game.ballY += game.ballSpeedY;
 
-		sharedEventEmitter.emit('ballPositionUpdate', game.gameId);
+		sharedEventEmitter.emit('ballPositionUpdate', game);
 	}
 }
 

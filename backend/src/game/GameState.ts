@@ -29,9 +29,8 @@ export class GameState {
 		this.gameId = this.generateID();
 		this.intervalId = null;
 
-		this.user1 = new UserDto();
-
-		this.user2 = new UserDto();
+    this.user1 = null;
+    this.user2 = null;
 
 		this.gameInit();
 	}
@@ -80,14 +79,6 @@ export class GameState {
 		ballCoordinates() {
 			return ({x: this.ballX, y: this.ballY});
 		}
-
-	/* Updates the paddle position. Player 1 left, Player 2 right.*/
-	updatePaddlePosition(player: number, newY: number) {
-		if (player === 1)
-			this.leftPaddleY = newY;
-		else if (player === 2)
-			this.rightPaddleY = newY;
-	}
 
 	/* Generates a random ID string. */
 	generateID(): string {

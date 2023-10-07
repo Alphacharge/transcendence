@@ -5,18 +5,18 @@
 </template>
 
 <script>
-import pongTestAnimation from './components/pongTestAnimation.vue';
-import ConnectionState from './components/ConnectionState.vue';
-import ConnectionManager from './components/ConnectionManager.vue';
+import pongTestAnimation from "./components/pongTestAnimation.vue";
+import ConnectionState from "./components/ConnectionState.vue";
+import ConnectionManager from "./components/ConnectionManager.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-	pongTestAnimation,
-	ConnectionState,
-	ConnectionManager
+    pongTestAnimation,
+    ConnectionState,
+    ConnectionManager,
   },
-}
+};
 </script>
 
 <style>
