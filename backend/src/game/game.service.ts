@@ -4,35 +4,57 @@ import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 import { UserDto } from 'src/user/dto';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
   users: Map<string, UserDto> = new Map(); // socket.id -> user
+  queue: UserDto[] = [];
   games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
 
-  /* addedd gameState attribute to be sure to pick correct filed x and y sizes sealso below
-collision with square borders section [lsordo] */
-  startGame(user: UserDto) {
-    // create a new game
+  /* A new user is added to the game queue */
+  addToQueue(socket: Socket) {
+    // find the matching user
+    const user = this.users.get(socket.id);
+
+    // check if user already is in queue
+    // REPLACE socket id with working user id
+    if (!user || this.queue.find(queuedUser => queuedUser.socket.id === user.socket.id)) return;
+
+    console.log(`Client ${socket.id} entered game queue`);
+    this.queue.push(user);
+    // check if a game is ready to be started
+    this.checkQueue();
+  }
+
+  checkQueue() {
+    while (this.queue.length >= 2) this.startGame();
+  }
+
+  startGame() {
     const game = new GameState();
-    const updateRate = 1000 / 60; // 60 updates per second
+    const updateRate = 1000 / 60;
 
-    game.user1 = user;
-    user.inGame = true;
+    game.user1 = this.queue.pop();
+    game.user2 = this.queue.pop();
 
-    console.log('Starting new game', game.gameId);
+    game.user1.inGame = true;
+    game.user2.inGame = true;
 
-    // add new game to games map
+    game.user1.gamesPlayed.push(game.gameId);
+    game.user2.gamesPlayed.push(game.gameId);
+
     this.games.set(game.gameId, game);
+    sharedEventEmitter.emit('prepareGame', game);
 
-    // start game loop
+    console.log('Starting multiplayer game', game.gameId);
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
 
-    return game;
+    sharedEventEmitter.emit('startGame', game);
   }
 
   stopGame(gameId: string) {
@@ -63,6 +85,10 @@ collision with square borders section [lsordo] */
 
   leftPaddleDown(gameId: string) {
     const game = this.games.get(gameId);
+    if (!game) {
+      console.error("game not found!");
+      return;
+    }
     if (game && game.leftPaddleY + 100 + 10 < 400) {
       game.leftPaddleY += 10;
     }

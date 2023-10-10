@@ -7,4 +7,4 @@ cd /backend/
 npm install
 
 # Start your NestJS application
-npm run start
+npm run start:dev

@@ -22,8 +22,11 @@ socket.on("disconnect", () => {
   state.connected = false;
 });
 
+socket.enterQueue = function () {
+  socket.emit("enterQueue");
+};
+
 socket.newGame = function () {
-  console.log(socket);
   socket.emit("newGame");
 };
 
