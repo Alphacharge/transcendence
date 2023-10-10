@@ -2,7 +2,7 @@
 FROM node:lts
 
 # Set the working directory to /backend/
-WORKDIR /frontend/
+WORKDIR /backend/
 
 # Copy the script into the container
 COPY entrypoint.sh /script/entrypoint.sh
