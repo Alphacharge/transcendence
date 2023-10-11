@@ -35,10 +35,10 @@ socket.stopGame = function (gameId) {
 };
 
 // send paddle position updates to server
-socket.sendLeftPaddleUp = function (gameId) {
-  socket.emit("leftPaddleUp", gameId);
+socket.sendPaddleUp = function (gameId, playerNumber) {
+  socket.emit("paddleUp", { gameId, playerNumber });
 };
 
-socket.sendLeftPaddleDown = function (gameId) {
-  socket.emit("leftPaddleDown", gameId);
+socket.sendPaddleDown = function (gameId, playerNumber) {
+  socket.emit("paddleDown", { gameId, playerNumber });
 };

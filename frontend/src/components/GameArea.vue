@@ -6,7 +6,7 @@
       :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
     ></div>
     <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
-    <div class="right-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
+    <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
   </div>
 </template>
 
@@ -24,16 +24,12 @@ export default {
       leftPaddleY: 150,
       rightPaddleY: 150,
       animationFrameId: null,
+      messageInterval: null,
     };
   },
   mounted() {
-    let messageInterval = null;
-
     // received ball update from server
     socket.on("ballUpdate", (ballCoordinates) => {
-      if (ballCoordinates.y > 390) {
-        console.log({ "bottom collision": ballCoordinates.y });
-      }
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
@@ -42,9 +38,9 @@ export default {
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
     });
-    // socket.on("rightPaddle", (pY) => {
-    // insert right paddle
-    // });
+    socket.on("rightPaddle", (pY) => {
+      this.rightPaddleY = pY;
+    });
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
@@ -53,35 +49,40 @@ export default {
         return;
       }
       if (event.key === "w") {
-        if (!messageInterval) {
-          messageInterval = setInterval(() => {
-            socket.sendLeftPaddleUp(this.gameId);
+        if (!this.messageInterval) {
+          console.log("sending paddle up with id", this.gameId);
+          this.messageInterval = setInterval(() => {
+            socket.sendPaddleUp(this.gameId, this.playerNumber);
           }, 1000 / 15);
         }
       } else if (event.key === "s") {
-        if (!messageInterval) {
-          messageInterval = setInterval(() => {
-            socket.sendLeftPaddleDown(this.gameId);
+        if (!this.messageInterval) {
+          this.messageInterval = setInterval(() => {
+            socket.sendPaddleDown(this.gameId, this.playerNumber);
           }, 1000 / 15);
         }
       }
     });
     // stop sending paddle movement messages
     window.addEventListener("keyup", (event) => {
-      if (event.key == "w" || event.key == "s") {
-        clearInterval(messageInterval);
-        messageInterval = null;
+      if (event.key === "w" || event.key === "s") {
+        clearInterval(this.messageInterval);
+        this.messageInterval = null;
       }
     });
   },
 
   beforeUnmounted() {
+    console.log("unmount called");
     // Clean up by canceling the animation frame
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
     // Remove the event listener for keydown events
-    window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("keydown");
+    window.removeEventListener("keyup");
+    clearInterval(this.messageInterval);
+    this.messageInterval = null;
   },
 
   methods: {

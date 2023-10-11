@@ -82,8 +82,8 @@ export class GameGateway implements OnModuleInit {
 
   /* Client requests to abort game. */
   @SubscribeMessage('stopGame')
-  stopGame(@MessageBody() payload: { gameId: string }) {
-    if (payload) this.gameService.stopGame(payload.gameId);
+  stopGame(@MessageBody() payload) {
+    if (payload) this.gameService.stopGame(payload);
   }
 
   /* Tell the client the game starts now. */
@@ -100,12 +100,16 @@ export class GameGateway implements OnModuleInit {
       return;
     }
     // tell the client the game id
+	console.log("sending game id", game.gameId);
     game.user1.socket.emit('gameId', { gameId: game.gameId });
     game.user2.socket.emit('gameId', { gameId: game.gameId });
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
+	this.sendPaddleUpdate(game);
+	this.sendBallUpdate(game);
+	this.sendScoreUpdate(game);
   }
 
   // ball coordinate transmission
@@ -128,25 +132,22 @@ export class GameGateway implements OnModuleInit {
   }
 
   // listen for paddle updates
-  @SubscribeMessage('leftPaddleUp')
-  leftPaddleUp(@MessageBody() payload) {
-    if (payload) {
-      const game = this.gameService.leftPaddleUp(payload);
-      if (game) {
-        game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-        game.user2.socket.emit('leftPaddle', game.leftPaddleY);
-      }
+  @SubscribeMessage('paddleUp')
+  leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
+	console.log("paddle up payload:",  gameId, playerNumber);
+    if (gameId) {
+      const game = this.gameService.paddleUp(gameId, playerNumber);
+      if (game) this.sendPaddleUpdate(game);
     }
   }
 
-  @SubscribeMessage('leftPaddleDown')
-  leftPaddleDown(@MessageBody() payload) {
-    if (payload) {
-      const game = this.gameService.leftPaddleDown(payload);
-      if (game){
-        game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-        game.user2.socket.emit('leftPaddle', game.leftPaddleY);
-      }
+  @SubscribeMessage('paddleDown')
+  PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
+	  console.log("paddle down payload:", gameId, playerNumber);
+    if (gameId) {
+      const game = this.gameService.paddleDown(gameId, playerNumber);
+      if (game) this.sendPaddleUpdate(game);
     }
   }
+
 }

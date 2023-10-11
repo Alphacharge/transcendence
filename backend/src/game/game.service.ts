@@ -22,6 +22,11 @@ export class GameService {
     // check if user already is in queue
     // REPLACE socket id with working user id
     if (!user || this.queue.find(queuedUser => queuedUser.socket.id === user.socket.id)) return;
+	// check if user already is in an active game
+	if (user.inGame) {
+		console.log("Client is already playing");
+		return;
+	}
 
     console.log(`Client ${socket.id} entered game queue`);
     this.queue.push(user);
@@ -61,7 +66,7 @@ export class GameService {
     // search the right game
     const game = this.games.get(gameId);
     if (!game) {
-      console.error('Game not found.');
+      console.error('StopGame: Game not found.');
       return;
     }
     console.log('Stopping game', game.gameId);
@@ -72,68 +77,57 @@ export class GameService {
     if (game.user2) game.user2.inGame = false;
 
     // save persistent game stuff to database here if you like
-    this.games.delete(gameId);
+    // this.games.delete(gameId);
   }
 
-  leftPaddleUp(gameId: string) {
+  paddleUp(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (game && game.leftPaddleY > 10) {
-      game.leftPaddleY -= 10;
+    if (game) {
+      game.movePaddleUp(playerNumber);
     }
     return game;
   }
 
-  leftPaddleDown(gameId: string) {
+  paddleDown(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (!game) {
-      console.error("game not found!");
-      return;
-    }
-    if (game && game.leftPaddleY + 100 + 10 < 400) {
-      game.leftPaddleY += 10;
+    if (game) {
+      game.movePaddleDown(playerNumber);
     }
     return game;
   }
 
   animateBall(game: GameState) {
-    const ballLeft = game.ballX - 5;
-    const ballRight = game.ballX + 5;
-    const ballTop = game.ballY - 5;
-    const ballBottom = game.ballY + 5;
-
     // Check for collision with square borders
-    /* changed game.field.. with this.gameStart.field... to be sure to pick correct
-		field sizes, see also constructor [losordo]*/
     // left boundary
-    if (ballLeft <= 5) {
+    if (game.ballX <= game.fieldLeft) {
       game.ballSpeedX = -game.ballSpeedX;
       game.scorePlayer2 += 1;
       sharedEventEmitter.emit('scoreUpdate', game);
     }
     // right boundary
-    if (ballRight >= game.fieldX - 10) {
+    if (game.ballX >= game.fieldRight) {
       game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
       game.scorePlayer1 += 1;
       sharedEventEmitter.emit('scoreUpdate', game);
     }
-    if (ballTop <= 1 || ballBottom >= game.fieldY - 10) {
+    if (game.ballY < game.fieldTop || game.ballY >= game.fieldBottom) {
       game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
     }
-    // Calculate paddle boundaries
-    const paddleLeft = 40; // Adjust this value based on your paddle's initial position
-    const paddleRight = paddleLeft + 10; // Paddle width
-    const paddleTop = game.leftPaddleY;
-    const paddleBottom = game.leftPaddleY + 100; // Paddle height
 
     // Check for collision with the paddle
-    if (
-      ballRight > paddleLeft - 5 &&
-      ballLeft < paddleRight - 5 &&
-      ballBottom > paddleTop &&
-      ballTop < paddleBottom - 5
-    ) {
-      game.ballSpeedX = -game.ballSpeedX;
-    }
+    if (game.ballInsideLeftPaddle()) {
+		if (game.ballX <= game.leftPaddleX || game.ballX >= game.leftPaddleX + 10) {
+			game.ballSpeedX = -game.ballSpeedX;
+		} else {
+			game.ballSpeedY = -game.ballSpeedY;
+		}
+    } else if (game.ballInsideRightPaddle()) {
+		if (game.ballX <= game.rightPaddleX || game.ballX >= game.rightPaddleX + 10) {
+			game.ballSpeedX = -game.ballSpeedX;
+		} else {
+			game.ballSpeedY = -game.ballSpeedY;
+		}
+	}
 
     // Update the ball's position
     game.ballX += game.ballSpeedX;

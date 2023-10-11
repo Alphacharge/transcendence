@@ -56,7 +56,6 @@ export default {
       socket.enterQueue();
     },
     newGame() {
-      console.error("logging new game event");
       socket.newGame();
     },
     stopGame() {
