@@ -42,7 +42,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm cache clean -f && npm install -g npm@10.1.0 @nestjs/cli @nestjs/swagger swagger-ui-express prisma class-validator class-transformer argon2 @prisma/client && if [ ! -f 'package.json' ]; then nest new -p npm .; fi && sleep 20 && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env &&  if [ ! -d 'prisma' ]; then npx prisma init; fi && npx prisma migrate deploy && npm run start:dev"
+    command: bash -c "npm cache clean -f && npm install && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env && npx prisma migrate deploy && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
@@ -58,7 +58,7 @@ services:
   vue:
     container_name: vue
     image: node:lts
-    command: sh -c "npm install -g http-server npm@10.1.0 @vue/cli@latest && if [ ! -d 'frontend' ]; then vue create frontend --default --registry=https://registry.npmjs.org --packageManager npm && npm install eslint --save-dev && npm ci; fi && cd /frontend && npm run serve"
+    command: sh -c "cd /frontend && npm install && npm run serve"
     ports:
       - "8080:8080"
     restart: always

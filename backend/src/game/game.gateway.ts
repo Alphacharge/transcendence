@@ -1,169 +1,153 @@
 // game.gateway.ts
-import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
-import { Server } from "socket.io";
-import { OnModuleInit} from "@nestjs/common";
-import { EventEmitter } from "stream";
-
-class Field {
-	width:number;
-	height:number;
-	constructor() {
-		this.width = 800;
-		this.height = 400;
-	}
-}
-
-class Paddle {
-	x:number;
-	y:number;
-	constructor() {
-		this.x = 40;
-		this.y = 180;
-	}
-}
-
-class Ball {
-	x: number;
-	y: number;
-	speedX: number;
-	speedY: number;
-
-	constructor() {
-	}
-}
+import { sharedEventEmitter } from './game.events';
+import {
+  ConnectedSocket,
+  MessageBody,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Server, Socket } from 'socket.io';
+import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
+import { GameService } from './game.service';
+import { UserDto } from 'src/user/dto';
+import { GameState } from './GameState';
 
 // can enter a port in the brackets
 @WebSocketGateway()
 export class GameGateway implements OnModuleInit {
-	@WebSocketServer()
-		server: Server;
+  @WebSocketServer()
+  server: Server;
 
-	private ball: Ball;
-	private paddle: Paddle;
-	private field: Field;
-	private intervalId: NodeJS.Timeout | null = null;
-	private kickOff: boolean;
+  constructor(private readonly gameService: GameService) {
+    sharedEventEmitter.on('prepareGame', (game: GameState) => {
+      if (game) this.sendGameId(game);
+    });
+    sharedEventEmitter.on('startGame', (game: GameState) => {
+      if (game) this.sendGameStart(game);
+    });
+    sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
+      if (game) this.sendBallUpdate(game);
+    });
+    sharedEventEmitter.on('scoreUpdate', (game: GameState) => {
+      if (game) this.sendScoreUpdate(game);
+    });
+    sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
+      this.sendPaddleUpdate(game);
+    });
+  }
 
-	private eventEmitter = new EventEmitter();
+  /* New client connected. */
+  onModuleInit() {
+    this.server.on('connection', (socket) => {
+      console.log('Client connected:', socket.id);
 
-	constructor() {
-		this.kickOff  = false;
-		this.ball = new Ball();
-		this.paddle = new Paddle();
-		this.field = new Field();
+      // save new user to users array in GameService
+      const user = new UserDto();
+      user.socket = socket;
+      this.gameService.users.set(socket.id, user);
+    });
+    this.server.on('close', () => {
+      console.log('Client disconnected');
+    });
+    this.server.on
+  }
 
-		this.eventEmitter.on("ballPositionUpdate", this.sendBallUpdate.bind(this));
-	}
+  handleDisconnect(socket: any) {
+    console.log("Client disconnected:", socket.id);
 
-	gameInit() {
-		const speedFactor = 1;
-		const angle=this.randomAngle();
-		this.ball.x = 400; // Initial X position
-		this.ball.y = 200; // Initial Y position
-		this.ball.speedX = speedFactor * Math.cos(angle); // Initial X speed
-		this.ball.speedY = speedFactor * Math.sin(angle); // Initial Y speed
-		// Add other properties and methods as needed
-	}
-	randomAngle() {
-		let angle = 0;
-		const p = Math.PI;
-		// let angle = pi/2;
-		do {
-			angle = Math.random() * 2 * p;
-			// repeat until computed value ca. +-10% away from horizontal and +-30% vertical axes
-			} while (angle < 0.1 * p || (angle > 0.9 * p && angle<1.1 * p) || angle > 1.9 * p || (angle > .7 * p / 2 && angle < 1.3 * p / 2) || (angle >.7 * 3/2*p&&angle < 1.3*3/2*p));
-			return  angle;
-	}
+    // get the right user
+    const user = this.gameService.users.get(socket.id);
+    if (user && user.inGame) {
+      // get the active game of the user
+      const activeGameId = user.gamesPlayed[user.gamesPlayed.length - 1];
+      // stop the game
+      if (activeGameId) this.gameService.stopGame(activeGameId);
+    }
+    // delete the socket id
+    user.socket = null;
+  }
 
-	onModuleInit() {
-		this.server.on("connection", (socket) => {
-			console.log(socket.id);
-			console.log("Connected");
+  @SubscribeMessage('enterQueue')
+  enterQueue(@ConnectedSocket() socket: Socket) {
+    this.gameService.addToQueue(socket);
+  }
 
-			this.gameInit();
+  /* Client requests a new game. */
+  @SubscribeMessage('newGame')
+  newGame(@ConnectedSocket() socket: Socket) {
+    console.log(`Received 'newGame' message from socket ID ${socket.id}`);
+    // not functional, used for debugging
+  }
 
-			const updateRate = 1000 / 60; // 60 updates per second
-			if(!this.kickOff) {
-				this.kickOff = true;
-				this.intervalId = setInterval(() => {
-					this.animateBall();
-				}, updateRate);
-			}
-		});
-	}
+  /* Client requests to abort game. */
+  @SubscribeMessage('stopGame')
+  stopGame(@MessageBody() payload) {
+    if (payload) this.gameService.stopGame(payload);
+  }
 
-	onModuleDestroy() {
-		if(this.intervalId) {
-			clearInterval(this.intervalId);
-		}
-	}
+  /* Tell the client the game starts now. */
+  sendGameStart(game: GameState) {
+    game.user1.socket.emit('start');
+    game.user2.socket.emit('start');
+  }
 
-	animateBall() {
-		const ballLeft = this.ball.x - 5;
-		const ballRight = this.ball.x + 5;
-		const ballTop = this.ball.y - 5;
-		const ballBottom = this.ball.y + 5;
+  /* Prepare the client for the game. */
+  sendGameId(game: GameState) {
+    // if any user left the game, abort
+    if (!game.user1 || !game.user2) {
+      console.error("Player left game.");
+      return;
+    }
+    // tell the client the game id
+	console.log("sending game id", game.gameId);
+    game.user1.socket.emit('gameId', { gameId: game.gameId });
+    game.user2.socket.emit('gameId', { gameId: game.gameId });
+    // tell the client the player number
+    game.user1.socket.emit('player1');
+    game.user2.socket.emit('player2');
+    // send game info here?
+	this.sendPaddleUpdate(game);
+	this.sendBallUpdate(game);
+	this.sendScoreUpdate(game);
+  }
 
-		// Check for collision with square borders
-		if (ballLeft <= 5 || ballRight >= this.field.width + 10) {
-			this.ball.speedX = -this.ball.speedX; // Reverse X direction
-		}
-		if (ballTop <=1 || ballBottom >= this.field.height + 9) {
-			this.ball.speedY = -this.ball.speedY; // Reverse Y direction
-		}
-		// Calculate paddle boundaries
-		const paddleLeft = 40; // Adjust this value based on your paddle's initial position
-		const paddleRight = paddleLeft + 10; // Paddle width
-		const paddleTop = this.paddle.y;
-		const paddleBottom = this.paddle.y + 100; // Paddle height
+  // ball coordinate transmission
+  sendBallUpdate(game: GameState) {
+    game.user1.socket.emit('ballUpdate', game.ballCoordinates());
+    game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+  }
 
-		// Check for collision with the paddle
-		if (
-			ballRight > paddleLeft -5 &&
-			ballLeft < paddleRight - 5 &&
-			ballBottom > paddleTop &&
-			ballTop < paddleBottom - 5
-		) {
-			this.ball.speedX = -this.ball.speedX;
-		}
+  sendScoreUpdate(game: GameState) {
+    if (game.user1) game.user1.socket.emit('scoreUpdate', game.getScore());
+    if (game.user2) game.user2.socket.emit('scoreUpdate', game.getScore());
+  }
 
-		// Update the ball's position
-		this.ball.x += this.ball.speedX;
-		this.ball.y += this.ball.speedY;
-		const ballCoordinates = { x: this.ball.x, y:this.ball.y};
-		// console.log("ball calculated");
-		this.eventEmitter.emit("ballPositionUpdate", ballCoordinates);
-	}
+  // update for both paddles
+  sendPaddleUpdate(game: GameState) {
+    game.user1.socket.emit('leftPaddle', game.leftPaddleY);
+    game.user1.socket.emit('rightPaddle', game.rightPaddleY);
+    game.user2.socket.emit('leftPaddle', game.leftPaddleY);
+    game.user2.socket.emit('rightPaddle', game.rightPaddleY);
+  }
 
-	// newMessage event
-	@SubscribeMessage("newMessage")
-	onNewMessage(@MessageBody() body: any) {
-		console.log("NewMessage:", body);
-		this.server.emit("onMessage", {
-			msg: "New Message",
-			content: body,
-		});
-	}
+  // listen for paddle updates
+  @SubscribeMessage('paddleUp')
+  leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
+	console.log("paddle up payload:",  gameId, playerNumber);
+    if (gameId) {
+      const game = this.gameService.paddleUp(gameId, playerNumber);
+      if (game) this.sendPaddleUpdate(game);
+    }
+  }
 
-	// listen for paddle updates
-	@SubscribeMessage("leftPaddleUp")
-	leftPaddleUp() {
-		this.paddle.y-=10;
-		this.server.emit("leftPaddleUp", this.paddle.y);
-		// this.eventEmitter.emit('leftPaddleUp');
-	}
+  @SubscribeMessage('paddleDown')
+  PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
+	  console.log("paddle down payload:", gameId, playerNumber);
+    if (gameId) {
+      const game = this.gameService.paddleDown(gameId, playerNumber);
+      if (game) this.sendPaddleUpdate(game);
+    }
+  }
 
-	@SubscribeMessage("leftPaddleDown")
-	leftPaddleDown() {
-		this.paddle.y +=10;
-		this.server.emit("leftPaddleDown", this.paddle.y);
-		// this.eventEmitter.emit('leftPaddleDown');
-	}
-
-	// ball coordinate transmission
-	sendBallUpdate(ballCoordinates: { x: number; y: number }) {
-		// console.log("Ball updated");
-		this.server.emit("ballUpdate", ballCoordinates);
-	}
 }
-

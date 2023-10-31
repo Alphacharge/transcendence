@@ -67,6 +67,8 @@ clean: stop
 	@echo "$(BLUE)Stopped all containers and clean images.$(WHITE)"
 
 fclean: clean
+	@rm -rf ./frontend/node_modules
+	@rm -rf ./backend/node_modules
 	-@docker system prune -a --volumes --force
 	@echo "$(BLUE)Hardcleaned docker.$(WHITE)"
 

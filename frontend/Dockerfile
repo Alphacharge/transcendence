@@ -1,22 +1,14 @@
+# Use an official Node.js LTS image as a base image
 FROM node:lts
 
-# install simple http server for serving static content
-# RUN npm install -g http-server
-
-# make the 'asrcpp' folder the current working directory
+# Set the working directory to /backend/
 WORKDIR /frontend/
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-# COPY package*.json ./
+# Copy the script into the container
+COPY entrypoint.sh /script/entrypoint.sh
 
-# install project dependencies
-RUN npm install -g @vue/cli
+# Make the script executable
+RUN chmod 777 /script/entrypoint.sh
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
-
-# build app for production with minification
-# RUN npm run build
-
-# CMD [ "http-server", "dist" ]
-CMD [ "npm", "run", "serve" ]
+# Set the script as the entry point
+ENTRYPOINT ["/script/entrypoint.sh"]

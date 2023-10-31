@@ -1,22 +1,16 @@
 <template>
-  <ConnectionState></ConnectionState>
-  <ConnectionManager></ConnectionManager>
-  <pongTestAnimation></pongTestAnimation>
+  <PongGame></PongGame>
 </template>
 
 <script>
-import pongTestAnimation from './components/pongTestAnimation.vue';
-import ConnectionState from './components/ConnectionState.vue';
-import ConnectionManager from './components/ConnectionManager.vue';
+import PongGame from "./components/PongGame.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-	pongTestAnimation,
-	ConnectionState,
-	ConnectionManager
+    PongGame,
   },
-}
+};
 </script>
 
 <style>

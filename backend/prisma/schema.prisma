@@ -9,3 +9,86 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Users {
+	id			Int			@id	@default(autoincrement())
+	createdAt	DateTime	@default(now())
+	updatedAt	DateTime	@updatedAt
+	email		String
+	hash		String
+	nick		String?
+
+	//Opposite Relations
+	messages	Messages[]
+	memberships	ChatMemberships[]
+	scores		Scores[]
+}
+
+model Chats {
+	id			Int			@id	@default(autoincrement())
+	createdAt	DateTime	@default(now())
+	updatedAt	DateTime	@updatedAt
+
+	//Opposite Relations
+	messages		Messages[]
+	memberships		ChatMemberships[]
+}
+
+model Messages {
+	id			Int			@id	@default(autoincrement())
+	createdAt	DateTime	@default(now())
+	chat_id		Int
+	user_id		Int
+	message		String
+
+	//Relations
+	chat		Chats		@relation(fields: [chat_id], references: [id])
+	user		Users		@relation(fields: [user_id], references: [id])
+}
+
+model ChatMemberships {
+	id			Int			@id	@default(autoincrement())
+	chat_id		Int
+	user_id		Int
+	role_id		Int
+
+	//Relations
+	role		Roles		@relation(fields: [role_id], references: [id])
+	chat		Chats		@relation(fields: [chat_id], references: [id])
+	user		Users		@relation(fields: [user_id], references: [id])
+}
+
+model Roles {
+	id				Int			@id	@default(autoincrement())
+	name			String		@unique
+	description		String?
+	parent_role_id	Int?
+
+	//Relations
+	parentRole		Roles?		@relation("ChildRoles", fields: [parent_role_id], references: [id])
+
+	//Opposite Relations
+	childRoles		Roles[]		@relation("ChildRoles")
+	memberships		ChatMemberships[]
+}
+
+model Games {
+	id				Int			@id	@default(autoincrement())
+	createdAt		DateTime	@default(now())
+	left_user_id	Int
+	right_user_id	Int
+
+	//Opposite Relations
+	scores		Scores[]
+}
+
+model Scores {
+	id			Int			@id	@default(autoincrement())
+	game_id		Int
+	user_id		Int
+	score		Int
+
+	//Relations
+	game		Games		@relation(fields: [game_id], references: [id])
+	user		Users		@relation(fields: [user_id], references: [id])
+}
