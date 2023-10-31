@@ -56,7 +56,7 @@ export class GameState {
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
 
-	this.ballRadius = 5;
+  this.ballRadius = 5;
     this.ballX = 400;
     this.ballY = 200;
     this.ballSpeedX = speedFactor * Math.cos(angle);
@@ -88,19 +88,16 @@ export class GameState {
 
   /* Generates a random starting angle which is not orthogonal to any boundary. */
   randomAngle() {
-    let angle = 0;
     let p = Math.PI;
-    // let angle = pi/2;
+    let angle;
     do {
       angle = Math.random() * 2 * p;
       // repeat until computed value ca. +-10% away from horizontal and +-30% vertical axes
     } while (
-      angle < 0.1 * p ||
-      (angle > 0.9 * p && angle < 1.1 * p) ||
-      angle > 1.9 * p ||
-      (angle > (0.7 * p) / 2 && angle < (1.3 * p) / 2) ||
-      (angle > ((0.7 * 3) / 2) * p && angle < ((1.3 * 3) / 2) * p)
+      (angle > 1.4 && angle < 1.8) ||
+      (angle > 4.5 && angle < 4.9)
     );
+    console.log("angle ", angle);
     return angle;
   }
 
