@@ -97,42 +97,20 @@ export class GameService {
   }
 
   animateBall(game: GameState) {
-    // Check for collision with square borders
-    // left boundary
-    if (game.ballX <= game.fieldLeft) {
-      game.ballSpeedX = -game.ballSpeedX;
-      game.scorePlayer2 += 1;
-      sharedEventEmitter.emit('scoreUpdate', game);
-    }
-    // right boundary
-    if (game.ballX >= game.fieldRight) {
-      game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
-      game.scorePlayer1 += 1;
-      sharedEventEmitter.emit('scoreUpdate', game);
-    }
-    if (game.ballY < game.fieldTop || game.ballY >= game.fieldBottom) {
-      game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
-    }
-
-    // Check for collision with the paddle
-    if (game.ballInsideLeftPaddle()) {
-		if (game.ballX <= game.leftPaddleX || game.ballX >= game.leftPaddleX + 10) {
-			game.ballSpeedX = -game.ballSpeedX;
-		} else {
-			game.ballSpeedY = -game.ballSpeedY;
-		}
-    } else if (game.ballInsideRightPaddle()) {
-		if (game.ballX <= game.rightPaddleX || game.ballX >= game.rightPaddleX + 10) {
-			game.ballSpeedX = -game.ballSpeedX;
-		} else {
-			game.ballSpeedY = -game.ballSpeedY;
-		}
-	}
-
+    //right wins?
+    game.leftBreakthrough();
+    // left wins?
+    game.rightBreakthrough();
+    // playfield collisions?
+    game.collisionField();
+    // paddle collisions?
+    game.collisionLeft();
+    game.collisionRight();
     // Update the ball's position
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
-
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
+
 }
+

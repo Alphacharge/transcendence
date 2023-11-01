@@ -11,7 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
 import { UserDto } from 'src/user/dto';
-import { GameState } from './GameState';
+import { GameState} from './GameState';
 
 // can enter a port in the brackets
 @WebSocketGateway()
@@ -125,10 +125,10 @@ export class GameGateway implements OnModuleInit {
 
   // update for both paddles
   sendPaddleUpdate(game: GameState) {
-    game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-    game.user1.socket.emit('rightPaddle', game.rightPaddleY);
-    game.user2.socket.emit('leftPaddle', game.leftPaddleY);
-    game.user2.socket.emit('rightPaddle', game.rightPaddleY);
+    game.user1.socket.emit('leftPaddle', game.leftPosition);
+    game.user1.socket.emit('rightPaddle', game.rightPosition);
+    game.user2.socket.emit('leftPaddle', game.leftPosition);
+    game.user2.socket.emit('rightPaddle', game.rightPosition);
   }
 
   // listen for paddle updates

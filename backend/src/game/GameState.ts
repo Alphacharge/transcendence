@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from '../user/dto';
+import { sharedEventEmitter } from './game.events';
 
 @Injectable()
 export class GameState {
@@ -11,32 +12,26 @@ export class GameState {
   scorePlayer1: number;
   scorePlayer2: number;
 
+  fieldWidth: number;
+  fieldHeight: number;
+
   ballRadius: number;
   ballX: number;
   ballY: number;
   ballSpeedX: number;
   ballSpeedY: number;
 
-  leftPaddleX: number;
-  leftPaddleY: number;
-  leftPaddleLeft: number;
-  leftPaddleRight: number;
-  leftPaddleTop: number;
-  leftPaddleBottom: number;
+  paddlesHeight: number;
 
-  rightPaddleX: number;
-  rightPaddleY: number;
-  rightPaddleLeft: number;
-  rightPaddleRight: number;
-  rightPaddleTop: number;
-  rightPaddleBottom: number;
+  leftPosition: number;
+  leftBorder: number;
+  leftImpact: number
 
-  fieldX: number;
-  fieldY: number;
-  fieldLeft: number;
-  fieldRight: number;
-  fieldTop: number;
-  fieldBottom: number;
+  rightPosition: number;
+  rightBorder: number;
+  rightImpact: number
+
+  speedFactor: number;
 
   constructor() {
     this.gameId = this.generateID();
@@ -44,67 +39,52 @@ export class GameState {
 
     this.user1 = null;
     this.user2 = null;
+    this.scorePlayer1 = 0;
+    this.scorePlayer2 = 0;
+
+    this.fieldWidth = 800;
+    this.fieldHeight = 400;
+
+    this.speedFactor = 5;
+
+    this.paddlesHeight = 1/4 * this.fieldHeight;
+    const paddlesWidth = 1/160 * this.fieldWidth;
+    const paddlesDistance = 1/20 * this.fieldWidth;
+    const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
+    this.ballRadius = paddlesWidth;
+
+    this.leftBorder = paddlesDistance;
+    this.leftPosition = paddlesStartPosition;
+    this.leftImpact = 0;
+
+    this.rightBorder = this.fieldWidth - paddlesDistance;
+    this.rightPosition = paddlesStartPosition;
+    this.rightImpact = 0;
 
     this.gameInit();
   }
 
-  /* Creates a new game with default values. */
   gameInit() {
-    const speedFactor = 3;
-    const angle = this.randomAngle();
-
-    this.scorePlayer1 = 0;
-    this.scorePlayer2 = 0;
-
-  this.ballRadius = 5;
-    this.ballX = 400;
-    this.ballY = 200;
-    this.ballSpeedX = speedFactor * Math.cos(angle);
-    this.ballSpeedY = speedFactor * Math.sin(angle);
-
-    this.leftPaddleX = 40;
-    this.leftPaddleY = 150;
-	// paddle collision boundaries for ball: bigger than actual paddle
-	this.leftPaddleLeft = this.leftPaddleX - this.ballRadius;
-	this.leftPaddleRight = this.leftPaddleX + 10 + this.ballRadius;
-	this.leftPaddleTop = this.leftPaddleY - this.ballRadius;
-	this.leftPaddleBottom = this.leftPaddleY + 100 + this.ballRadius;
-
-    this.rightPaddleX = 760;
-    this.rightPaddleY = 150;
-	this.rightPaddleLeft = this.rightPaddleX - this.ballRadius;
-	this.rightPaddleRight = this.rightPaddleX + 10 + this.ballRadius;
-	this.rightPaddleTop = this.rightPaddleY - this.ballRadius;
-	this.rightPaddleBottom = this.rightPaddleY + 100 + this.ballRadius;
-
-    this.fieldX = 800;
-    this.fieldY = 400;
-	// boundaries for the ball coordinates
-	this.fieldLeft = 5 + this.ballRadius;
-	this.fieldRight = this.fieldX - 15 - this.ballRadius;
-	this.fieldTop = 5 + this.ballRadius;
-	this.fieldBottom = this.fieldY - 15 - this.ballRadius;
+    const startAngle = this.randomAngle();
+    this.ballX = this.fieldWidth / 2;
+    this.ballY = this.fieldHeight / 2;
+    this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
+    this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
   }
 
-  /* Generates a random starting angle which is not orthogonal to any boundary. */
+
+  /* Generates a random starting startAngle which is not orthogonal to any boundary. */
   randomAngle() {
     let p = Math.PI;
-    let angle;
+    let startAngle: number;
     do {
-      angle = Math.random() * 2 * p;
-      // repeat until computed value ca. +-10% away from horizontal and +-30% vertical axes
+      startAngle = Math.random() * 2 * p;
+      // repeat until within acceptable startAngle range
     } while (
-      (angle > 1.4 && angle < 1.8) ||
-      (angle > 4.5 && angle < 4.9)
+      (startAngle > 1.4 && startAngle < 1.8) ||
+      (startAngle > 4.5 && startAngle < 4.9)
     );
-    console.log("angle ", angle);
-    return angle;
-  }
-
-  /* Updates the ball coordinates. */
-  updateBallPosition(newX: number, newY: number) {
-    this.ballX = newX;
-    this.ballY = newY;
+    return startAngle;
   }
 
   /* Returns object with x and y coordinate.*/
@@ -127,49 +107,99 @@ export class GameState {
 
   movePaddleUp(playerNumber: number) {
 	if (playerNumber == 1) {
-		if (this.leftPaddleY > 10) {
-			this.leftPaddleY -= 10;
-			this.leftPaddleTop = this.leftPaddleY - this.ballRadius;
-			this.leftPaddleBottom = this.leftPaddleY + 100 + this.ballRadius;
-		}
+		if (this.leftPosition > 0) {
+			this.leftPosition -= 10;
+    }
 	}
 	else if (playerNumber == 2) {
-		if (this.rightPaddleY > 10) {
-			this.rightPaddleY -= 10;
-			this.rightPaddleTop = this.rightPaddleY - this.ballRadius;
-			this.rightPaddleBottom = this.rightPaddleY + 100 + this.ballRadius;
+		if (this.rightPosition > 10) {
+			this.rightPosition -= 10;
 		}
 	}
   }
 
   movePaddleDown(playerNumber: number) {
 	if (playerNumber == 1) {
-		if (this.leftPaddleY + 100 < this.fieldY - 10) {
-			this.leftPaddleY += 10;
-			this.leftPaddleTop = this.leftPaddleY - this.ballRadius;
-			this.leftPaddleBottom = this.leftPaddleY + 100 + this.ballRadius;
+		if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+			this.leftPosition += 10;
 		}
 	}
 	else if (playerNumber == 2) {
-		if (this.rightPaddleY + 100 < this.fieldY - 10) {
-			this.rightPaddleY += 10;
-			this.rightPaddleTop = this.rightPaddleY - this.ballRadius;
-			this.rightPaddleBottom = this.rightPaddleY + 100 + this.ballRadius;
+		if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+			this.rightPosition += 10;
 		}
 	}
   }
 
-  ballInsideLeftPaddle() {
-	if (this.ballX > this.leftPaddleLeft &&
-		this.ballX < this.leftPaddleRight &&
-		this.ballY > this.leftPaddleTop &&
-		this.ballY < this.leftPaddleBottom) return true;
-	return false;
+  leftBreakthrough() {
+    if(this.ballX <= this.ballRadius) {
+      this.scorePlayer2 += 1;
+      sharedEventEmitter.emit('scoreUpdate', this);
+      this.gameInit();
+    }
   }
 
-  ballInsideRightPaddle() {
-	if (this.ballX > this.rightPaddleLeft && this.ballX < this.rightPaddleRight &&
-		this.ballY > this.rightPaddleTop && this.ballY < this.rightPaddleBottom) return true;
-	return false;
+  rightBreakthrough() {
+    if(this.ballX >= this.fieldWidth - this.ballRadius) {
+      this.scorePlayer1 += 1;
+      sharedEventEmitter.emit('scoreUpdate', this);
+      this.gameInit();
+    }
   }
+
+  collisionLeft() {
+    const collisionAreaX0 = this.leftBorder;
+    const collisionAreaX1 = this.leftBorder + 2 * this.ballRadius;
+    const collisionAreaY0 = Math.min(this.leftPosition, this.leftPosition - 2 * this.ballRadius);
+    const collisionAreaY1 = Math.min(this.leftPosition + this.paddlesHeight, this.fieldHeight - 2 * this.ballRadius);
+    if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
+      && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
+        const distance = Math.max(this.ballY - this.leftPosition,0);
+        const angle = this.impact(distance);
+        console.log('(X0,Y0,X1,Y1', collisionAreaX0, collisionAreaY0, collisionAreaX1, collisionAreaY1);
+        this.ballSpeedX = this.speedFactor * Math.cos(angle);
+        this.ballSpeedY = this.speedFactor * Math.sin(angle);
+    }
+  }
+
+  collisionRight() {
+    const collisionAreaX0 = this.rightBorder - 2 * this.ballRadius;
+    const collisionAreaX1 = this.rightBorder;
+    const collisionAreaY0 = Math.min(this.rightPosition, this.rightPosition - 2 * this.ballRadius);
+    const collisionAreaY1 = Math.min(this.rightPosition + this.paddlesHeight, this.fieldHeight - 2 * this.ballRadius);
+    if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
+      && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
+      const distance = Math.max(this.ballY - this.rightPosition,0);
+      const angle = this.impact(distance);
+      this.ballSpeedX = - this.speedFactor * Math.cos(angle);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+    }
+  }
+
+  collisionTop() {
+    if (this.ballY <= this.ballRadius) {
+      return true;
+    }
+    return false;
+  }
+
+  collisionBottom() {
+    if (this.ballY >= this.fieldHeight - this.ballRadius){
+      return true;
+    }
+    return false;
+  }
+
+  collisionField() {
+    if (this.collisionTop() || this.collisionBottom()) {
+      this.ballSpeedY = -this.ballSpeedY
+    }
+  }
+
+  impact(distance: number) {
+    const p = Math.PI;
+    const angle = p / (2 * this.paddlesHeight) * distance - p / 4;
+    return angle;
+  }
+
 }
