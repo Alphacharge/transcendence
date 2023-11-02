@@ -41,7 +41,7 @@ volumes:
 services:
   nestjs:
     container_name: nestjs
-    image: node:21-alpine3.17
+    image: node:lts
     command: bash -c "cd /backend && npm cache clean -f && npm install && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env && sleep 10 && npx prisma migrate deploy && npm run start:dev"
     ports:
       - "3000:3000"
