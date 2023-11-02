@@ -42,7 +42,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm install -g @nestjs/cli && nest new -p npm . && npm run start:dev"
+    command: bash -c "cd /backend && npm install && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
