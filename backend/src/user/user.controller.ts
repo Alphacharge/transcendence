@@ -6,8 +6,8 @@ import { UserDto } from "./dto";
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
-  getAllUsers() {
-    return this.userService.getAllUsers();
-  }
+//   @Get()
+//   getAllUsers() {
+//     return this.userService.getAllUsers();
+//   }
 }

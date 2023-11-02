@@ -1,5 +1,5 @@
 import { Socket } from "socket.io";
-import { v4 as uuidv4 } from 'uuid';
+// import { v4 as uuidv4 } from 'uuid';
 
 export class User {
   id: string;
@@ -10,7 +10,7 @@ export class User {
   inGame: boolean;
 
   constructor() {
-    this.id = uuidv4();
+    // this.id = uuidv4();
 
     this.inGame = false;
   }

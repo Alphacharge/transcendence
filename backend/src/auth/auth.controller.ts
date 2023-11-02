@@ -17,9 +17,9 @@ export class AuthController {
     return { accessToken };
   }
 
-  @Post('register')
-  async register(@Body() loginDTO: LoginDTO) {
-    const newUser = await this.userService.createUser(loginDTO);
-    return newUser;
-  }
+//   @Post('register')
+//   async register(@Body() loginDTO: LoginDTO) {
+//     const newUser = await this.userService.createUser(loginDTO);
+//     return newUser;
+//   }
 }
