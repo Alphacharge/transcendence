@@ -41,8 +41,8 @@ volumes:
 services:
   nestjs:
     container_name: nestjs
-    image: node:lts
-    command: bash -c "npm cache clean -f && npm install && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env && npx prisma migrate deploy && npm run start:dev"
+    image: node:21-alpine3.17
+    command: bash -c "cd /backend && npm cache clean -f && npm install && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env && sleep 10 && npx prisma migrate deploy && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
@@ -57,7 +57,7 @@ services:
 
   vue:
     container_name: vue
-    image: node:lts
+    image: node:21-alpine3.17
     command: sh -c "cd /frontend && npm install && npm run serve"
     ports:
       - "8080:8080"
@@ -87,7 +87,7 @@ services:
 #POSTGRESQL
   postgresql:
     container_name: postgresql
-    image: postgres:latest
+    image: postgres:16-alpine3.17
     env_file: .env
     ports:
       - "5432:5432"
@@ -112,47 +112,3 @@ services:
       - vol_pgadmin:/var/lib/pgadmin
     depends_on:
       - postgresql
-
-# #ADMINER
-  # adminer:
-  #   container_name: adminer
-  #   image: adminer:latest
-  #   env_file: .env
-  #   ports:
-  #     - "8080:8080"
-  #   restart: always
-  #   networks:
-  #     - network
-  #   depends_on:
-  #     - postgresql
-
-#   # #MYSQL
-#   mysql:
-#     container_name: mysql
-#     image: mariadb:latest
-#     environment:
-#       MARIADB_ROOT_PASSWORD: example
-#     ports:
-#       - "3306:3306"
-#     restart: always
-#     volumes:
-#       - vol_mysql:/etc/mysql
-
-# # #PHPMYADMIN
-#   phpmyadmin:
-#     container_name: phpmyadmin
-#     image: phpmyadmin
-#     environment:
-#       MARIADB_ROOT_PASSWORD: example
-#       MYSQL_USER: root
-#       MYSQL_PASSWORD: example
-#       MYSQL_HOST: mysql
-#       PMA_HOST: mysql
-#       PMA_PORT: 3306
-#     ports:
-#       - "7070:80"
-#     restart: always
-#     volumes:
-#       - vol_myadmin:/etc/phpmyadmin
-#     depends_on:
-#       - mysql
