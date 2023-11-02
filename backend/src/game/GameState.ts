@@ -84,7 +84,8 @@ export class GameState {
       (startAngle > 1.4 && startAngle < 1.8) ||
       (startAngle > 4.5 && startAngle < 4.9)
     );
-    return startAngle;
+    // return startAngle;
+    return 0.84 *p;
   }
 
   /* Returns object with x and y coordinate.*/
@@ -151,12 +152,11 @@ export class GameState {
     const collisionAreaX0 = this.leftBorder;
     const collisionAreaX1 = this.leftBorder + 2 * this.ballRadius;
     const collisionAreaY0 = Math.min(this.leftPosition, this.leftPosition - 2 * this.ballRadius);
-    const collisionAreaY1 = Math.min(this.leftPosition + this.paddlesHeight, this.fieldHeight - 2 * this.ballRadius);
+    const collisionAreaY1 = Math.min(this.leftPosition + this.paddlesHeight, this.fieldHeight);
     if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
       && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
         const distance = Math.max(this.ballY - this.leftPosition,0);
         const angle = this.impact(distance);
-        console.log('(X0,Y0,X1,Y1', collisionAreaX0, collisionAreaY0, collisionAreaX1, collisionAreaY1);
         this.ballSpeedX = this.speedFactor * Math.cos(angle);
         this.ballSpeedY = this.speedFactor * Math.sin(angle);
     }
@@ -166,7 +166,7 @@ export class GameState {
     const collisionAreaX0 = this.rightBorder - 2 * this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
     const collisionAreaY0 = Math.min(this.rightPosition, this.rightPosition - 2 * this.ballRadius);
-    const collisionAreaY1 = Math.min(this.rightPosition + this.paddlesHeight, this.fieldHeight - 2 * this.ballRadius);
+    const collisionAreaY1 = Math.min(this.rightPosition + this.paddlesHeight, this.fieldHeight);
     if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
       && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
       const distance = Math.max(this.ballY - this.rightPosition,0);
