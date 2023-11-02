@@ -84,8 +84,7 @@ export class GameState {
       (startAngle > 1.4 && startAngle < 1.8) ||
       (startAngle > 4.5 && startAngle < 4.9)
     );
-    // return startAngle;
-    return 0.84 *p;
+    return startAngle;
   }
 
   /* Returns object with x and y coordinate.*/
