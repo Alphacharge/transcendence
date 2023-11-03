@@ -1,0 +1,22 @@
+name: Build containers
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check Out Code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      run: docker --version
+
+    - name: Build Containers with Make
+      run: make
