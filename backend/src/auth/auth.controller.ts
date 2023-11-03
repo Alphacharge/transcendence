@@ -19,6 +19,7 @@ export class AuthController {
 
   @Post('register')
   async register(@Body() loginDTO: LoginDTO) {
+    console.log("Registration requested by", loginDTO.username);
     const newUser = await this.userService.createUser(loginDTO);
     return newUser;
   }

@@ -34,6 +34,21 @@ export class GameService {
     this.checkQueue();
   }
 
+  /* Remove a user from the game queue */
+  removeFromQueue(socket: Socket) {
+    // Find the user in the queue based on socket.id
+    const userToRemove = this.queue.find(queuedUser => queuedUser.socket.id === socket.id);
+
+    if (userToRemove) {
+      // Remove the user from the queue
+      const index = this.queue.indexOf(userToRemove);
+      if (index !== -1) {
+        this.queue.splice(index, 1);
+        console.log(`Client ${socket.id} removed from game queue`);
+      }
+    }
+  }
+
   checkQueue() {
     while (this.queue.length >= 2) this.startGame();
   }
@@ -82,7 +97,7 @@ export class GameService {
 
   paddleUp(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (game) {
+    if (game && game.isRunning()) {
       game.movePaddleUp(playerNumber);
     }
     return game;
@@ -90,49 +105,27 @@ export class GameService {
 
   paddleDown(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (game) {
+    if (game && game.isRunning()) {
       game.movePaddleDown(playerNumber);
     }
     return game;
   }
 
   animateBall(game: GameState) {
-    // Check for collision with square borders
-    // left boundary
-    if (game.ballX <= game.fieldLeft) {
-      game.ballSpeedX = -game.ballSpeedX;
-      game.scorePlayer2 += 1;
-      sharedEventEmitter.emit('scoreUpdate', game);
-    }
-    // right boundary
-    if (game.ballX >= game.fieldRight) {
-      game.ballSpeedX = -game.ballSpeedX; // Reverse X direction
-      game.scorePlayer1 += 1;
-      sharedEventEmitter.emit('scoreUpdate', game);
-    }
-    if (game.ballY < game.fieldTop || game.ballY >= game.fieldBottom) {
-      game.ballSpeedY = -game.ballSpeedY; // Reverse Y direction
-    }
-
-    // Check for collision with the paddle
-    if (game.ballInsideLeftPaddle()) {
-		if (game.ballX <= game.leftPaddleX || game.ballX >= game.leftPaddleX + 10) {
-			game.ballSpeedX = -game.ballSpeedX;
-		} else {
-			game.ballSpeedY = -game.ballSpeedY;
-		}
-    } else if (game.ballInsideRightPaddle()) {
-		if (game.ballX <= game.rightPaddleX || game.ballX >= game.rightPaddleX + 10) {
-			game.ballSpeedX = -game.ballSpeedX;
-		} else {
-			game.ballSpeedY = -game.ballSpeedY;
-		}
-	}
-
+    //right wins?
+    game.leftBreakthrough();
+    // left wins?
+    game.rightBreakthrough();
+    // playfield collisions?
+    game.collisionField();
+    // paddle collisions?
+    game.collisionLeft();
+    game.collisionRight();
     // Update the ball's position
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
-
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
+
 }
+

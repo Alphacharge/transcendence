@@ -11,7 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
 import { UserDto } from 'src/user/dto';
-import { GameState } from './GameState';
+import { GameState} from './GameState';
 
 // can enter a port in the brackets
 @WebSocketGateway()
@@ -50,7 +50,6 @@ export class GameGateway implements OnModuleInit {
     this.server.on('close', () => {
       console.log('Client disconnected');
     });
-    this.server.on
   }
 
   handleDisconnect(socket: any) {
@@ -73,11 +72,9 @@ export class GameGateway implements OnModuleInit {
     this.gameService.addToQueue(socket);
   }
 
-  /* Client requests a new game. */
-  @SubscribeMessage('newGame')
-  newGame(@ConnectedSocket() socket: Socket) {
-    console.log(`Received 'newGame' message from socket ID ${socket.id}`);
-    // not functional, used for debugging
+  @SubscribeMessage('leaveQueue')
+  leaveQueue(@ConnectedSocket() socket: Socket) {
+    this.gameService.removeFromQueue(socket);
   }
 
   /* Client requests to abort game. */
@@ -100,7 +97,6 @@ export class GameGateway implements OnModuleInit {
       return;
     }
     // tell the client the game id
-	console.log("sending game id", game.gameId);
     game.user1.socket.emit('gameId', { gameId: game.gameId });
     game.user2.socket.emit('gameId', { gameId: game.gameId });
     // tell the client the player number
@@ -125,16 +121,16 @@ export class GameGateway implements OnModuleInit {
 
   // update for both paddles
   sendPaddleUpdate(game: GameState) {
-    game.user1.socket.emit('leftPaddle', game.leftPaddleY);
-    game.user1.socket.emit('rightPaddle', game.rightPaddleY);
-    game.user2.socket.emit('leftPaddle', game.leftPaddleY);
-    game.user2.socket.emit('rightPaddle', game.rightPaddleY);
+    game.user1.socket.emit('leftPaddle', game.leftPosition);
+    game.user1.socket.emit('rightPaddle', game.rightPosition);
+    game.user2.socket.emit('leftPaddle', game.leftPosition);
+    game.user2.socket.emit('rightPaddle', game.rightPosition);
   }
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
   leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-	console.log("paddle up payload:",  gameId, playerNumber);
+
     if (gameId) {
       const game = this.gameService.paddleUp(gameId, playerNumber);
       if (game) this.sendPaddleUpdate(game);
@@ -143,7 +139,7 @@ export class GameGateway implements OnModuleInit {
 
   @SubscribeMessage('paddleDown')
   PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-	  console.log("paddle down payload:", gameId, playerNumber);
+
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, playerNumber);
       if (game) this.sendPaddleUpdate(game);

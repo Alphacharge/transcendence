@@ -20,7 +20,7 @@ check:
 
 #Stop all containers
 stop:
-	docker-compose -f $(SRC) down
+	-docker-compose -f $(SRC) down
 
 #force rebuilding
 build:
@@ -31,11 +31,11 @@ status:
 	docker ps
 
 clean: stop
-	docker stop $(docker ps -qa)
-	docker rm $(docker ps -qa)
-	docker rmi -f $(docker images -qa)
-	docker volume rm $(docker volume ls -q)
-	docker network rm $(docker network ls -q)
+	-docker stop $$(docker ps -qa)
+	-docker rm $$(docker ps -qa)
+	-docker rmi -f $$(docker images -qa)
+	-docker volume rm $$(docker volume ls -q)
+	-docker network rm $$(docker network ls -q)
 
 fclean: clean
 	rm -rf $(DB_D); true;
