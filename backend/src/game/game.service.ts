@@ -97,7 +97,7 @@ export class GameService {
 
   paddleUp(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (game) {
+    if (game && game.isRunning()) {
       game.movePaddleUp(playerNumber);
     }
     return game;
@@ -105,7 +105,7 @@ export class GameService {
 
   paddleDown(gameId: string, playerNumber: number) {
     const game = this.games.get(gameId);
-    if (game) {
+    if (game && game.isRunning()) {
       game.movePaddleDown(playerNumber);
     }
     return game;
