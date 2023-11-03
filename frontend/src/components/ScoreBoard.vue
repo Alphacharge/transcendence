@@ -1,5 +1,5 @@
 <template>
-  <div class="scoreboard">
+  <div>
     <div class="player-score">Player 1: {{ player1Score }}</div>
     <div class="player-score">Player 2: {{ player2Score }}</div>
   </div>

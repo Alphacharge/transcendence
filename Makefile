@@ -37,10 +37,10 @@ postgre:
 
 ip:
 ifeq ($(OS), Darwin)
-	IP=$(shell bash -c "ifconfig | grep inet | awk '{print $2}'")
-	sed -i "s/^HOST_IP=.*/HOST_IP=$(IP)/'' .env
+	IP="$(shell ifconfig | grep 'inet ' | awk '{print $$2}')"
+	sed -i -e "s/^HOST_IP=.*/HOST_IP=$(IP)/" .env
 else
-	sed -i 's/^HOST_IP=.*/HOST_IP=127.0.0.1/' .env
+	sed -i -e 's/^HOST_IP=.*/HOST_IP=127.0.0.1/' .env
 endif
 
 up: all
@@ -53,7 +53,7 @@ check:
 
 #Stop all containers
 stop:
-	docker-compose -f $(SRC) down
+	-docker-compose -f $(SRC) down
 
 #force rebuilding
 build:
@@ -64,11 +64,11 @@ status:
 	docker ps
 
 clean: stop
-	docker stop $(docker ps -qa)
-	docker rm $(docker ps -qa)
-	docker rmi -f $(docker images -qa)
-	docker volume rm $(docker volume ls -q)
-	docker network rm $(docker network ls -q)
+	-docker stop $$(docker ps -qa)
+	-docker rm $$(docker ps -qa)
+	-docker rmi -f $$(docker images -qa)
+	-docker volume rm $$(docker volume ls -q)
+	-docker network rm $$(docker network ls -q)
 
 fclean: clean
 	@rm -rf ./frontend/node_modules

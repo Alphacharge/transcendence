@@ -34,6 +34,21 @@ export class GameService {
     this.checkQueue();
   }
 
+  /* Remove a user from the game queue */
+  removeFromQueue(socket: Socket) {
+    // Find the user in the queue based on socket.id
+    const userToRemove = this.queue.find(queuedUser => queuedUser.socket.id === socket.id);
+
+    if (userToRemove) {
+      // Remove the user from the queue
+      const index = this.queue.indexOf(userToRemove);
+      if (index !== -1) {
+        this.queue.splice(index, 1);
+        console.log(`Client ${socket.id} removed from game queue`);
+      }
+    }
+  }
+
   checkQueue() {
     while (this.queue.length >= 2) this.startGame();
   }

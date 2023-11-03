@@ -201,4 +201,7 @@ export class GameState {
     return angle;
   }
 
+  isRunning(): boolean {
+    return this.intervalId !== null;
+  }
 }

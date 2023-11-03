@@ -1,15 +1,13 @@
 import ScoreBoard from './ScoreBoard.vue';
 <template>
   <div>
-    <h4>Multiplayer Logic</h4>
-    <button @click="enterQueue()">Queue for a game</button>
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
+    <button @click="enterQueue()">Enter Queue</button>
+    <button @click="leaveQueue()">Leave Queue</button>
+    <button @click="stopGame()">Abort Game</button>
   </div>
   <div>
-    <h4>Broken right now:</h4>
-    <button @click="newGame()">Start Game</button>
-    <button @click="stopGame()">Stop Game</button>
   </div>
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
@@ -55,8 +53,8 @@ export default {
     enterQueue() {
       socket.enterQueue();
     },
-    newGame() {
-      socket.newGame();
+    leaveQueue() {
+      socket.leaveQueue();
     },
     stopGame() {
       socket.stopGame(this.gameId);

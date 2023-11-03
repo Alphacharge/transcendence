@@ -73,11 +73,9 @@ export class GameGateway implements OnModuleInit {
     this.gameService.addToQueue(socket);
   }
 
-  /* Client requests a new game. */
-  @SubscribeMessage('newGame')
-  newGame(@ConnectedSocket() socket: Socket) {
-    console.log(`Received 'newGame' message from socket ID ${socket.id}`);
-    // not functional, used for debugging
+  @SubscribeMessage('leaveQueue')
+  leaveQueue(@ConnectedSocket() socket: Socket) {
+    this.gameService.removeFromQueue(socket);
   }
 
   /* Client requests to abort game. */
