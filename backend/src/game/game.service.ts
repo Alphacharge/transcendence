@@ -107,12 +107,9 @@ export class GameService {
     game.collisionLeft();
     game.collisionRight();
     // Update the ball's position
+    game.playerVictory();
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
-    if (game.scorePlayer1 == 11 || game.scorePlayer2 == 11) {
-      console.log(game.scorePlayer1 == 11 ? 'Player 1 wins' : 'Player 2 wins');
-      this.stopGame;
-    }
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
 
