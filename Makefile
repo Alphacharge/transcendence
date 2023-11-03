@@ -6,7 +6,7 @@ SRC		:=	$(SRC_D)$(SRC_F)
 ENV		:=	--env-file $(SRC_D).env
 DB_D	:=	./data/sql
 OS		:=	$(shell uname)
-
+IP		:=	$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
 
 ###			###			COLORS			###			###
 RED		=	\033[1;31m
@@ -37,8 +37,7 @@ postgre:
 
 ip:
 ifeq ($(OS), Darwin)
-	IP="$(shell ifconfig | grep 'inet ' | awk '{print $$2}')"
-	sed -i -e "s/^HOST_IP=.*/HOST_IP=$(IP)/" .env
+	sed -i '' 's/^HOST_IP=.*/HOST_IP=$(IP)/' .env
 else
 	sed -i -e 's/^HOST_IP=.*/HOST_IP=127.0.0.1/' .env
 endif
