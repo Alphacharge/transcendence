@@ -201,5 +201,4 @@ export class GameState {
     const angle = p / (2 * this.paddlesHeight) * distance - p / 4;
     return angle;
   }
-
 }
