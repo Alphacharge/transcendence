@@ -41,30 +41,26 @@ down: stop
 
 #Check compose yaml file
 check:
-	@echo "$(YELL)Check yaml file for config errors.$(WHITE)"
-	@docker-compose -f $(SRC) config -q
+	docker-compose -f $(SRC) config -q
 
 #Stop all containers
 stop:
-	@echo "$(RED)Stopping all containers.$(WHITE)"
-	@docker-compose -f $(SRC) down
+	docker-compose -f $(SRC) down
 
 #force rebuilding
 build:
-	@echo "$(BLUE)Rebuild all containers.$(WHITE)"
-	@docker-compose -f $(SRC) $(ENV) build
+	docker-compose -f $(SRC) $(ENV) build
 	$(MAKE) all
 
 status:
-	@docker ps
+	docker ps
 
 clean: stop
-	-@docker stop $(docker ps -qa) 2>/dev/null; true;
-	-@docker rm $(docker ps -qa) 2>/dev/null; true;
-	-@docker rmi -f $(docker images -qa) 2>/dev/null; true;
-	-@docker volume rm $(docker volume ls -q) 2>/dev/null; true;
-	-@docker network rm $(docker network ls -q) 2>/dev/null; true;
-	@echo "$(BLUE)Stopped all containers and clean images.$(WHITE)"
+	docker stop $(docker ps -qa)
+	docker rm $(docker ps -qa)
+	docker rmi -f $(docker images -qa)
+	docker volume rm $(docker volume ls -q)
+	docker network rm $(docker network ls -q)
 
 fclean: clean
 	@rm -rf ./frontend/node_modules

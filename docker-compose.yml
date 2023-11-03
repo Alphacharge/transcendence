@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.7'
 
 networks:
   network:
@@ -42,7 +42,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "npm cache clean -f && npm install && echo 'DATABASE_URL=\"postgresql://trAnscEndEncE:OURDATABASE1PAs2@postgresql:5432/transcendence?schema=public\"' > .env && npx prisma migrate deploy && npm run start:dev"
+    command: bash -c "cd /backend && npm install && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
@@ -51,17 +51,13 @@ services:
       - network
     volumes:
       - vol_backend:/backend
-    working_dir: /backend
-    depends_on:
-      - postgresql
 
   vue:
     container_name: vue
-    image: node:lts
-    command: sh -c "cd /frontend && npm install && npm run serve"
+    build:
+      context: ./frontend
     ports:
       - "8080:8080"
-    restart: always
     networks:
       - network
     volumes:
@@ -84,24 +80,21 @@ services:
     depends_on:
       - nestjs
 
-#POSTGRESQL
+# #POSTGRESQL
   postgresql:
     container_name: postgresql
     image: postgres:latest
     env_file: .env
-    ports:
-      - "5432:5432"
     restart: always
     networks:
       - network
     volumes:
       - vol_sql:/var/lib/postgresql/data
 
-#PHPPGADMIN
+# #PHPMYADMIN
   phppgadmin:
     container_name: phppgadmin
     image: dpage/pgadmin4
-    command: bash -c "chmod 600 /var/lib/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 /var/lib/pgadmin"
     env_file: .env
     ports:
       - "5050:80"
@@ -125,34 +118,3 @@ services:
   #     - network
   #   depends_on:
   #     - postgresql
-
-#   # #MYSQL
-#   mysql:
-#     container_name: mysql
-#     image: mariadb:latest
-#     environment:
-#       MARIADB_ROOT_PASSWORD: example
-#     ports:
-#       - "3306:3306"
-#     restart: always
-#     volumes:
-#       - vol_mysql:/etc/mysql
-
-# # #PHPMYADMIN
-#   phpmyadmin:
-#     container_name: phpmyadmin
-#     image: phpmyadmin
-#     environment:
-#       MARIADB_ROOT_PASSWORD: example
-#       MYSQL_USER: root
-#       MYSQL_PASSWORD: example
-#       MYSQL_HOST: mysql
-#       PMA_HOST: mysql
-#       PMA_PORT: 3306
-#     ports:
-#       - "7070:80"
-#     restart: always
-#     volumes:
-#       - vol_myadmin:/etc/phpmyadmin
-#     depends_on:
-#       - mysql
