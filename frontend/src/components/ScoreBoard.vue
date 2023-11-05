@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { socket } from "../socket";
+import { socket } from "@/assets/utils/socket";
 export default {
   props: {
     player1Score: Number,

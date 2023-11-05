@@ -12,7 +12,7 @@
 
 <script>
 // import the socket object
-import { socket } from "../socket";
+import { socket } from "@/assets/utils/socket";
 
 export default {
   props: ["gameId", "playerNumber"],
