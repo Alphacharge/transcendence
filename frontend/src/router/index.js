@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
 import PongView from "@/views/PongView.vue";
+import LoginFieldsView from "@/views/LoginFieldsView.vue";
+import IpPanelView from "@/views/IpPanelView.vue";
 
 const routes = [
   {
@@ -18,6 +20,16 @@ const routes = [
     path: "/pong",
     name: "pong",
     component: PongView,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginFieldsView,
+  },
+  {
+    path: "/ip",
+    name: "ip",
+    component: IpPanelView,
   },
 ];
 
