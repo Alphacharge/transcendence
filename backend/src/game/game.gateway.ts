@@ -35,6 +35,9 @@ export class GameGateway implements OnModuleInit {
     sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
       this.sendPaddleUpdate(game);
     });
+    sharedEventEmitter.on('victory', (game: GameState) => {
+      this.announceVictory(game);
+    });
   }
 
   /* New client connected. */
@@ -50,7 +53,6 @@ export class GameGateway implements OnModuleInit {
     this.server.on('close', () => {
       console.log('Client disconnected');
     });
-    this.server.on
   }
 
   handleDisconnect(socket: any) {
@@ -98,7 +100,6 @@ export class GameGateway implements OnModuleInit {
       return;
     }
     // tell the client the game id
-	console.log("sending game id", game.gameId);
     game.user1.socket.emit('gameId', { gameId: game.gameId });
     game.user2.socket.emit('gameId', { gameId: game.gameId });
     // tell the client the player number
@@ -132,7 +133,7 @@ export class GameGateway implements OnModuleInit {
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
   leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-	console.log("paddle up payload:",  gameId, playerNumber);
+
     if (gameId) {
       const game = this.gameService.paddleUp(gameId, playerNumber);
       if (game) this.sendPaddleUpdate(game);
@@ -141,11 +142,15 @@ export class GameGateway implements OnModuleInit {
 
   @SubscribeMessage('paddleDown')
   PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-	  console.log("paddle down payload:", gameId, playerNumber);
+
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, playerNumber);
       if (game) this.sendPaddleUpdate(game);
     }
   }
 
+  announceVictory(game: GameState) {
+    game.user1.socket.emit('victory', game.winningPlayer);
+    game.user2.socket.emit('victory', game.winningPlayer);
+  }
 }

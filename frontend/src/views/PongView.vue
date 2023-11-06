@@ -14,9 +14,9 @@ import ScoreBoard from './ScoreBoard.vue';
 </template>
 
 <script>
-import GameArea from "./GameArea.vue";
-import ScoreBoard from "./ScoreBoard.vue";
-import { socket } from "../socket";
+import GameArea from "@/components/GameArea.vue";
+import ScoreBoard from "@/components/ScoreBoard.vue";
+import { socket } from "@/assets/utils/socket";
 
 export default {
   data() {
