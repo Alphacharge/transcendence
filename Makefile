@@ -37,9 +37,9 @@ postgre:
 
 ip:
 ifeq ($(OS), Darwin)
-	sed -i '' 's/^HOST_IP=.*/HOST_IP=$(IP)/' .env
+	sed -i '' 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=$(IP)/' ./frontend/.env
 else
-	sed -i -e 's/^HOST_IP=.*/HOST_IP=127.0.0.1/' .env
+	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend.env
 endif
 
 up: all
@@ -63,16 +63,16 @@ status:
 	docker ps
 
 clean: stop
-	-docker stop $$(docker ps -qa)
-	-docker rm $$(docker ps -qa)
-	-docker rmi -f $$(docker images -qa)
-	-docker volume rm $$(docker volume ls -q)
-	-docker network rm $$(docker network ls -q)
+	@-docker stop $$(docker ps -qa)
+	@-docker rm $$(docker ps -qa)
+	@-docker rmi -f $$(docker images -qa)
+	@-docker volume rm $$(docker volume ls -q)
+	@-docker network rm $$(docker network ls -q)
 
 fclean: clean
 	@rm -rf ./frontend/node_modules
 	@rm -rf ./backend/node_modules
-	-@docker system prune -a --volumes --force
+	@-@docker system prune -a --volumes --force
 	@echo "$(BLUE)Hardcleaned docker.$(WHITE)"
 
 sclean: fclean
