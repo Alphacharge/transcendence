@@ -4,6 +4,8 @@ import AboutView from "@/views/AboutView.vue";
 import PongView from "@/views/PongView.vue";
 import LoginFieldsView from "@/views/LoginFieldsView.vue";
 import IpPanelView from "@/views/IpPanelView.vue";
+import LoginView from "@/views/LoginView.vue";
+import SignupView from "@/views/SignupView.vue";
 
 const routes = [
   {
@@ -22,14 +24,24 @@ const routes = [
     component: PongView,
   },
   {
-    path: "/login",
-    name: "login",
+    path: "/login-fields",
+    name: "login-fields",
     component: LoginFieldsView,
   },
   {
     path: "/ip",
     name: "ip",
     component: IpPanelView,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: LoginView,
+  },
+  {
+    path: "/signup",
+    name: "signup",
+    component: SignupView,
   },
 ];
 
