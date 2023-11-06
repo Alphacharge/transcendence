@@ -3,6 +3,8 @@
     <h2 v-if="announceVisible" class="announce-winner">
       {{ winningPlayer }} Wins!
     </h2>
+  </div>
+  <div>
     <div class="player-score">Player 1: {{ player1Score }}</div>
     <div class="player-score">Player 2: {{ player2Score }}</div>
   </div>

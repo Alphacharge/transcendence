@@ -1,6 +1,5 @@
 <template>
-  <h1>Connection State Component</h1>
-  <p>State: {{ connected }}</p>
+  <p>Connection State: {{ connected }}</p>
 </template>
 
 <script>

@@ -6,7 +6,7 @@ SRC		:=	$(SRC_D)$(SRC_F)
 ENV		:=	--env-file $(SRC_D).env
 DB_D	:=	./data/sql
 OS		:=	$(shell uname)
-
+IP		:=	$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
 
 ###			###			COLORS			###			###
 RED		=	\033[1;31m
@@ -22,7 +22,7 @@ endif
 
 ###			###			RULES			###			###
 #Build changes or all if nothing is builded and run
-all:
+all: ip
 	@mkdir -p backend frontend data $(DB_D) data/myadmin data/mysql data/pgadmin
 ifeq ($(OS), Darwin)
 	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || chown -R ${USER}:2021_heilbronn data/pgadmin"
@@ -35,6 +35,13 @@ endif
 postgre:
 	@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
 
+ip:
+ifeq ($(OS), Darwin)
+	sed -i '' 's/^HOST_IP=.*/HOST_IP=$(IP)/' .env
+else
+	sed -i -e 's/^HOST_IP=.*/HOST_IP=127.0.0.1/' .env
+endif
+
 up: all
 
 down: stop
@@ -45,7 +52,7 @@ check:
 
 #Stop all containers
 stop:
-	docker-compose -f $(SRC) down
+	-docker-compose -f $(SRC) down
 
 #force rebuilding
 build:
@@ -56,11 +63,11 @@ status:
 	docker ps
 
 clean: stop
-	docker stop $(docker ps -qa)
-	docker rm $(docker ps -qa)
-	docker rmi -f $(docker images -qa)
-	docker volume rm $(docker volume ls -q)
-	docker network rm $(docker network ls -q)
+	-docker stop $$(docker ps -qa)
+	-docker rm $$(docker ps -qa)
+	-docker rmi -f $$(docker images -qa)
+	-docker volume rm $$(docker volume ls -q)
+	-docker network rm $$(docker network ls -q)
 
 fclean: clean
 	@rm -rf ./frontend/node_modules
@@ -78,4 +85,4 @@ else
 endif
 
 #stop all containers, force rebuild and start it
-re: stop build all
+re: stop fclean all

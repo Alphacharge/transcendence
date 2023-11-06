@@ -217,4 +217,7 @@ export class GameState {
       sharedEventEmitter.emit('victory', this);
     }
   }
+  isRunning(): boolean {
+    return this.intervalId !== null;
+  }
 }

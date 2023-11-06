@@ -2,7 +2,6 @@
 
 <template>
   <div>
-    <h1>Connection Manager Component</h1>
     <button @click="connect()">Connect</button>
     <button @click="disconnect()">Disconnect</button>
   </div>
