@@ -7,8 +7,6 @@ import ScoreBoard from './ScoreBoard.vue';
     <button @click="leaveQueue()">Leave Queue</button>
     <button @click="stopGame()">Abort Game</button>
   </div>
-  <div>
-  </div>
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
