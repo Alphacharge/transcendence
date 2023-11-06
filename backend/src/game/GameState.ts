@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { UserDto } from '../user/dto';
 import { sharedEventEmitter } from './game.events';
+import { GameService } from './game.service';
 
 @Injectable()
 export class GameState {
@@ -11,6 +12,8 @@ export class GameState {
   user2: UserDto;
   scorePlayer1: number;
   scorePlayer2: number;
+  winningPlayer: String;
+  winningScore: number;
 
   fieldWidth: number;
   fieldHeight: number;
@@ -41,6 +44,7 @@ export class GameState {
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
+    this.winningScore=11;
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
@@ -201,6 +205,18 @@ export class GameState {
     return angle;
   }
 
+  playerVictory () {
+    if (this.scorePlayer1 == this.winningScore || this.scorePlayer2 == this.winningScore) {
+      clearInterval(this.intervalId);
+      this.intervalId = null
+      this.gameInit();
+      if (this.scorePlayer1 ==  this.winningScore)
+        this.winningPlayer = "Player 1";
+      else
+        this.winningPlayer = "Player 2";
+      sharedEventEmitter.emit('victory', this);
+    }
+  }
   isRunning(): boolean {
     return this.intervalId !== null;
   }

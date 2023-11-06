@@ -122,6 +122,7 @@ export class GameService {
     game.collisionLeft();
     game.collisionRight();
     // Update the ball's position
+    game.playerVictory();
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
     sharedEventEmitter.emit('ballPositionUpdate', game);
