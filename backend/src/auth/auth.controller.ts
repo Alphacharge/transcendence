@@ -1,26 +1,32 @@
-// auth.controller.ts
-import { Controller, Post, Body } from '@nestjs/common';
-import { LoginDTO } from './login.dto';
-import { UserService } from 'src/user/user.service';
+import { Body, Controller, HttpCode, HttpStatus, Post, Get } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { AuthDto } from './dto';
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private userService: UserService) {}
+  constructor(private authService: AuthService) {}
 
-  @Post('login')
-  async login(@Body() loginDTO: LoginDTO) {
-    console.log("Login requested by", loginDTO.username);
+	@Post('signup')
+	signup(@Body() dto: AuthDto) {
+	  console.log({
+		  dto,
+		});
+		// return this.authService.signup(dto);
+		return 'signup registered';
+	}
 
-    const accessToken = 'your_access_token_here';
-
-    // Return a response
-    return { accessToken };
+	@HttpCode(HttpStatus.OK)
+	@Post('login')
+	signin(@Body() dto: AuthDto) {
+		console.log("registered login attempt");
+		// return this.authService.signin(dto);
+		return 'login registered';
   }
 
-  @Post('register')
-  async register(@Body() loginDTO: LoginDTO) {
-    console.log("Registration requested by", loginDTO.username);
-    const newUser = await this.userService.createUser(loginDTO);
-    return newUser;
-  }
+    // debugging request
+	@Get('test')
+	testConnection() {
+		console.log("received test request");
+	  return 'Backend is up and running';
+	}
 }

@@ -35,6 +35,9 @@ export class GameGateway implements OnModuleInit {
     sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
       this.sendPaddleUpdate(game);
     });
+    sharedEventEmitter.on('victory', (game: GameState) => {
+      this.announceVictory(game);
+    });
   }
 
   /* New client connected. */
@@ -146,4 +149,8 @@ export class GameGateway implements OnModuleInit {
     }
   }
 
+  announceVictory(game: GameState) {
+    game.user1.socket.emit('victory', game.winningPlayer);
+    game.user2.socket.emit('victory', game.winningPlayer);
+  }
 }

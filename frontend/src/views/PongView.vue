@@ -7,15 +7,14 @@ import ScoreBoard from './ScoreBoard.vue';
     <button @click="leaveQueue()">Leave Queue</button>
     <button @click="stopGame()">Abort Game</button>
   </div>
-  <div></div>
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
 
 <script>
-import GameArea from "./GameArea.vue";
-import ScoreBoard from "./ScoreBoard.vue";
-import { socket } from "../socket";
+import GameArea from "@/components/GameArea.vue";
+import ScoreBoard from "@/components/ScoreBoard.vue";
+import { socket } from "@/assets/utils/socket";
 
 export default {
   data() {
