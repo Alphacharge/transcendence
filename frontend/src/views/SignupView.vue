@@ -2,4 +2,75 @@
   <div>
     <h1>This is the Sign-Up frontend</h1>
   </div>
+  <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
+    <div class="mb-3">
+      <label for="InputEmail" class="form-label">Email address</label>
+      <input
+        v-model="inputEmail"
+        type="email"
+        class="form-control"
+        id="InputEmail"
+        aria-describedby="email"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="InputPassword" class="form-label">Password</label>
+      <input
+        v-model="password"
+        type="password"
+        class="form-control"
+        id="InputPassword"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="InputPasswordrep" class="form-label">Repeat Password</label>
+      <input type="password" class="form-control" id="InputPasswordrep" />
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 </template>
+
+<script>
+import router from "@/router";
+
+export default {
+  data() {
+    return {
+      inputEmail: "",
+      password: "",
+    };
+  },
+  methods: {
+    async sendPostRequest() {
+      try {
+        const response = await fetch(
+          `http://${process.env.VUE_APP_BACKEND_IP}:3000/auth/signup`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: this.inputEmail,
+              password: this.password,
+            }),
+          },
+        );
+
+        const responseData = await response.json();
+        if (response.ok) {
+          localStorage.setItem("accessToken", responseData.accessToken);
+
+          router.push("home");
+        } else {
+          alert("Login failed!");
+          router.push("/signup");
+        }
+      } catch (error) {
+        alert("Login failed!");
+        router.push("/signup");
+      }
+    },
+  },
+};
+</script>
