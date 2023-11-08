@@ -8,7 +8,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
+import { OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
 import { UserDto } from 'src/user/dto';
 import { GameState} from './GameState';
