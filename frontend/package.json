@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "format": "prettier --write 'src/**/*.+(js|vue)'"
+    "format": "eslint --fix 'src/**/*.+(js|vue)' && prettier --write 'src/**/*.+(js|vue)'"
   },
   "dependencies": {
     "core-js": "^3.8.3",
