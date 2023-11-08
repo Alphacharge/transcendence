@@ -2,3 +2,7 @@
 ./backend/node_modules
 ./frontend/node_modules
 ./data
+./backend/backend.cert
+./backend/backend.key
+./frontend/frontend.cert
+./frontend/frontend.key

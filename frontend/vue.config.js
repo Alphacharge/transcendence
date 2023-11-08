@@ -7,7 +7,7 @@ module.exports = defineConfig({
 		proxy: {
 			// rerouting to avoid cross-scripting errors
 			'/api': {
-				target: 'http://' + process.env.VUE_APP_BACKEND_IP + ':3000',
+				target: 'https://' + process.env.VUE_APP_BACKEND_IP + ':3000',
 				secure: false,
 				changeOrigin: true,
 			},
