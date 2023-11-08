@@ -61,7 +61,7 @@ export default {
         if (response.ok) {
           localStorage.setItem("accessToken", responseData.accessToken);
 
-          router.push("home");
+          router.push("/");
         } else {
           alert("Login failed!");
           router.push("/signup");
