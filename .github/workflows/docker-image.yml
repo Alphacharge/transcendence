@@ -1,0 +1,35 @@
+name: PostgreSQL Container Build Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker
+      uses: docker/setup-action@v2
+
+    - name: Build PostgreSQL container
+      run: docker-compose -f docker-compose.yml build postgresql
+
+    - name: Start PostgreSQL container for testing
+      run: docker-compose -f docker-compose.yml up -d postgresql
+
+    - name: Wait for container to be ready (adjust sleep time as needed)
+      run: sleep 10
+
+    - name: Check PostgreSQL container status
+      run: docker ps | grep postgresql
+
+    - name: Stop PostgreSQL container
+      run: docker-compose -f docker-compose.yml down
