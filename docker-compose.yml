@@ -4,20 +4,7 @@ networks:
   network:
     driver: bridge
 
-# VOLUMES
-volumes:
-  vol_backend:
-    driver_opts:
-      device: ./backend
-      o: bind
-      type: none
-  vol_frontend:
-    driver_opts:
-      device: ./frontend
-      o: bind
-      type: none
-
-#NESTJS
+# NESTJS
 services:
   nestjs:
     container_name: nestjs
@@ -28,8 +15,9 @@ services:
     networks:
       - network
     volumes:
-      - vol_backend:/backend
+      - ./backend:/backend
 
+  # VUE
   vue:
     container_name: vue
     build:
@@ -39,6 +27,7 @@ services:
     networks:
       - network
     volumes:
-      - vol_frontend:/frontend
+      - ./frontend:/frontend
     depends_on:
       - nestjs
+
