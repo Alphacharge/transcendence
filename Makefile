@@ -92,4 +92,6 @@ else
 endif
 
 #stop all containers, force rebuild and start it
-re: stop fclean all sclean clean status build check down up ip postgre
+re: stop fclean all 
+
+.phony: sclean clean status build check down up ip postgre
