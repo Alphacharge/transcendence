@@ -1,38 +1,25 @@
 import { Controller, Post, Get, Delete, Body, Param, } from '@nestjs/common';
 import { TournamentService } from './tournament.service';
-import { CreatePlayerDto } from './dto/create-player.dto';
+import { CreateTournamentDto } from './dto/create-tournament.dto';
+import { Player } from './interfaces/tournament.interface'
 
 @Controller('tournament')
 export class TournamentController {
 
 	constructor(private tournamentService: TournamentService) {};
 
-	@Post()
-	async addToTrQueue(@Body() createPlayerDto: CreatePlayerDto) {
-		return this.tournamentService.addToTrQueue(createPlayerDto);
-	}
-
-	@Get('count')
-	async countAll() {
-		const queueSize = this.tournamentService.getQueueSize()
-		return `${queueSize} players in queue`;
+	@Post('add')
+	async create(@Body() createTournamentDto: CreateTournamentDto) {
+		this.tournamentService.create(createTournamentDto);
 	}
 
 	@Get('all')
-	async findall() {
+	async findAll(): Promise<Player[]> {
 		return this.tournamentService.findAll();
 	}
 
-	@Delete(':uniqueId')
-	async removeFromTrQueue(@Param('uniqueId') playerUniqueId: string) {
-	  const result = this.tournamentService.removePlayerByUniqueId(playerUniqueId);
-	  if (result) {
-		return `Player with unique ID ${playerUniqueId} removed from the tournament queue`;
-	  } else {
-		return `Player with unique ID ${playerUniqueId} not found in the queue`;
-	  }
+	@Delete(':playerUniqueId')
+	async remove(@Param('playerUniqueId') playerUniqueId: string) {
+		this.tournamentService.remove(playerUniqueId);
 	}
-
-	@Delete('destroy')
-	async destroyQueue() {}
 }

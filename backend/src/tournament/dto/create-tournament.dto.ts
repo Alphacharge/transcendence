@@ -1,4 +1,4 @@
-export class CreatePlayerDto {
+export class CreateTournamentDto {
 	playerName: string;
 	playerUniqueId: string;
 }

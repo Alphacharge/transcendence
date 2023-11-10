@@ -1,39 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { Player } from './interfaces/player.interface';
+import { Player } from './interfaces/tournament.interface';
 
 @Injectable()
 export class TournamentService {
+
 	private players: Player[] = [];
 
-	addToTrQueue(player: Player) {
-		const alreadyQueued = this.players.some(existingPlayer=> existingPlayer.playerUniqueId === player.playerUniqueId);
-		if (!alreadyQueued) {
-			console.log(player, alreadyQueued);
+	create(player: Player) {
+		const uniqueIds = this.players.map(innerObject => innerObject.playerUniqueId);
+		if (this.players.length < 4 && !uniqueIds.includes(player.playerUniqueId))
 			this.players.push(player);
-			return `Player ${player.playerName} added`;
-		}
-		return `Player ${player.playerName} already queued`;
+		console.log(this.players);
 	}
 
-	getQueueSize(): number {
-		return this.players.length;
-	}
-
-	findAll(): Player[] {
+	findAll() {
 		return this.players;
 	}
 
-	removePlayerByUniqueId(playerUniqueId: string): boolean {
-		const playerIndex = this.players.findIndex(player => player.playerUniqueId === playerUniqueId);
-		if (playerIndex !== -1) {
-		  this.players.splice(playerIndex, 1);
-		  return true;
-		} else {
-		  return false;
-		}
-	  }
-
-	destroyQueue() {
-		this.players = [];
+	remove(playerUniqueId: string) {
+		this.players = this.players.filter(innerObject=>innerObject.playerUniqueId !== playerUniqueId);
+		console.log(this.players);
 	}
 }
