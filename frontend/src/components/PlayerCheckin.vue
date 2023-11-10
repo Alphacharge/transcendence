@@ -28,7 +28,7 @@
 
       async addPlayer() {
       try {
-        const response = await fetch('http://localhost:3000/tournament/add', {
+        const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +56,7 @@
       async getNumberofPlayers() {
         try {
           // console.log(`ENV:${VUE_APP_BACKEND_IP}`);
-          const response = await fetch('http://localhost:3000/tournament/all')
+          const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`)
           if (!response.ok)
             throw new Error(`HTTP error! Status: ${response.status}`);
           const data = await response.json();

@@ -27,7 +27,9 @@ export class AuthService {
         },
       });
       // console.log(this.signToken(user.id, user.email));
-      return this.signToken(newUser.id, newUser.email);
+      const bToken = this.signToken(newUser.id, newUser.email);
+      // return this.signToken(newUser.id, newUser.email);
+      return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -54,7 +56,9 @@ export class AuthService {
     if (!pwMatches) {
       throw new ForbiddenException('Credentials incorrect');
     }
-    return this.signToken(newUser.id, newUser.email);
+    const bToken = this.signToken(newUser.id, newUser.email);
+    // return this.signToken(newUser.id, newUser.email);
+    return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
   }
 
   async signToken(
