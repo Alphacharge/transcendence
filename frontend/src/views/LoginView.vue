@@ -58,7 +58,7 @@ export default {
           localStorage.setItem("accessToken", responseData.access_token);
           router.push("/");
         } else {
-          alert("Login failed!");
+          alert("User or Password wrong!");
           router.push("/login");
         }
       } catch (error) {
