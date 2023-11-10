@@ -6,6 +6,9 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
+import { TournamentController } from './tournament/tournament.controller';
+import { TournamentService } from './tournament/tournament.service';
+import { TournamentModule } from './tournament/tournament.module';
 
 @Module({
   imports: [
@@ -15,9 +18,10 @@ import { ConfigModule } from '@nestjs/config';
 	GameModule,
 	UserModule,
 	AuthModule,
-	PrismaModule],
-  controllers: [AppController],
-  providers: [AppService],
+	PrismaModule,
+	TournamentModule],
+  controllers: [AppController, TournamentController],
+  providers: [AppService, TournamentService],
   
 })
 export class AppModule {}

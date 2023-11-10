@@ -59,15 +59,15 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          localStorage.setItem("accessToken", responseData.accessToken);
+          localStorage.setItem("accessToken", responseData.access_token);
 
-          router.push("home");
+          router.push("/");
         } else {
-          alert("Login failed!");
+          alert("User exists!");
           router.push("/signup");
         }
       } catch (error) {
-        alert("Login failed!");
+        alert("Signup failed!");
         router.push("/signup");
       }
     },
