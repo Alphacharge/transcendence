@@ -59,9 +59,9 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          localStorage.setItem("accessToken", responseData.accessToken);
+          localStorage.setItem("accessToken", responseData.access_token);
 
-          router.push("home");
+          router.push("/");
         } else {
           alert("Login failed!");
           router.push("/signup");
