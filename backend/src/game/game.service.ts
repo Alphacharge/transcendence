@@ -10,7 +10,7 @@ import { Socket } from 'socket.io';
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
-  users: Map<string, User> = new Map(); // socket.id -> user
+  users: Map<string, User> = new Map(); // user.id -> user
   games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
 
@@ -92,7 +92,7 @@ export class GameService {
       console.error('StopGame: Game not found.');
       return;
     }
-    
+
     console.log('Stopping game', game.gameId);
     clearInterval(game.intervalId);
     game.intervalId = null;
@@ -104,18 +104,20 @@ export class GameService {
     this.games.delete(game.gameId);  // this only deletes the reference
   }
 
-  paddleUp(gameId: string, playerNumber: number) {
+  paddleUp(gameId: string, player: User) {
     const game = this.games.get(gameId);
+
     if (game && game.isRunning()) {
-      game.movePaddleUp(playerNumber);
+      game.movePaddleUp(player);
     }
     return game;
   }
 
-  paddleDown(gameId: string, playerNumber: number) {
+  paddleDown(gameId: string, player: User) {
     const game = this.games.get(gameId);
+    
     if (game && game.isRunning()) {
-      game.movePaddleDown(playerNumber);
+      game.movePaddleDown(player);
     }
     return game;
   }

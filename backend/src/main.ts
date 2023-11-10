@@ -31,6 +31,7 @@ async function bootstrap() {
 		cert: fs.readFileSync('/backend/backend.cert'),
 	  },
   });
+
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
 	app.enableCors({
