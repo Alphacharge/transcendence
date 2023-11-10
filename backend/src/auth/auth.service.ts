@@ -27,7 +27,7 @@ export class AuthService {
         },
       });
       // console.log(this.signToken(user.id, user.email));
-      const bToken = this.signToken(newUser.id, newUser.email);
+      const bToken = await this.signToken(newUser.id, newUser.email);
       // return this.signToken(newUser.id, newUser.email);
       return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
     } catch (error) {
@@ -57,15 +57,16 @@ export class AuthService {
     if (!pwMatches) {
       throw new ForbiddenException('Credentials incorrect');
     }
-    const bToken = this.signToken(newUser.id, newUser.email);
+    const bToken = await this.signToken(newUser.id, newUser.email);
     // return this.signToken(newUser.id, newUser.email);
+
     return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
   }
 
   async signToken(
     userId: number,
     email: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<string> {
     const payload = {
       sub: userId,
       email,
@@ -78,8 +79,6 @@ export class AuthService {
       secret: secret,
     });
 
-    return {
-      access_token: token,
-    };
+    return token;
   }
 }
