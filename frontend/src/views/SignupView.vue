@@ -63,11 +63,11 @@ export default {
 
           router.push("/");
         } else {
-          alert("Login failed!");
+          alert("User exists!");
           router.push("/signup");
         }
       } catch (error) {
-        alert("Login failed!");
+        alert("Signup failed!");
         router.push("/signup");
       }
     },
