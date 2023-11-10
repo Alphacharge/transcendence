@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { Player } from './interfaces/tournament.interface';
+import { User } from '../auth/interfaces/user.interface';
 
 @Injectable()
 export class TournamentService {
 
-	private players: Player[] = [];
+	private players: User[] = [];
 
-	create(player: Player) {
-		const uniqueIds = this.players.map(innerObject => innerObject.playerUniqueId);
-		if (this.players.length < 4 && !uniqueIds.includes(player.playerUniqueId))
+	create(player: User) {
+		const uniqueIds = this.players.map(innerObject => innerObject.id);
+		if (this.players.length < 4 && !uniqueIds.includes(player.id))
 			this.players.push(player);
 		console.log(this.players);
 	}
@@ -17,8 +17,8 @@ export class TournamentService {
 		return this.players;
 	}
 
-	remove(playerUniqueId: string) {
-		this.players = this.players.filter(innerObject=>innerObject.playerUniqueId !== playerUniqueId);
+	remove(userId: number) {
+		this.players = this.players.filter(innerObject=>innerObject.id !== userId);
 		console.log(this.players);
 	}
 }

@@ -1,7 +1,6 @@
 import { Controller, Post, Get, Delete, Body, Param, } from '@nestjs/common';
 import { TournamentService } from './tournament.service';
-import { CreateTournamentDto } from './dto/create-tournament.dto';
-import { Player } from './interfaces/tournament.interface'
+import { AuthDto } from '../auth/dto/auth.dto';
 
 @Controller('tournament')
 export class TournamentController {
@@ -9,17 +8,17 @@ export class TournamentController {
 	constructor(private tournamentService: TournamentService) {};
 
 	@Post('add')
-	async create(@Body() createTournamentDto: CreateTournamentDto) {
-		this.tournamentService.create(createTournamentDto);
+	async create(@Body() player: AuthDto) {
+		this.tournamentService.create(player);
 	}
 
 	@Get('all')
-	async findAll(): Promise<Player[]> {
+	async findAll(): Promise<AuthDto[]> {
 		return this.tournamentService.findAll();
 	}
 
-	@Delete(':playerUniqueId')
-	async remove(@Param('playerUniqueId') playerUniqueId: string) {
-		this.tournamentService.remove(playerUniqueId);
+	@Delete(':userId')
+	async remove(@Param('userId') playerId: number) {
+		this.tournamentService.remove(playerId);
 	}
 }
