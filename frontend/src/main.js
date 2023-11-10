@@ -3,5 +3,19 @@
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router";
+import { createI18n } from "vue-i18n";
 
-createApp(App).use(router).mount("#app");
+// import language file
+import en from "./lang/en.js";
+import de from "./lang/de.js";
+
+// language plugin
+const i18n = new createI18n({
+  locale: "en", // default language
+  messages: {
+    en,
+    de,
+  },
+});
+
+createApp(App).use(router).use(i18n).mount("#app");
