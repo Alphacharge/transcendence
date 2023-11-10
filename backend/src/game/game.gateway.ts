@@ -10,7 +10,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
-import { UserDto } from 'src/user/dto';
+import { User } from 'src/user/User';
 import { GameState} from './GameState';
 
 // can enter a port in the brackets
@@ -45,8 +45,9 @@ export class GameGateway implements OnModuleInit {
     this.server.on('connection', (socket) => {
       console.log('Client connected:', socket.id);
 
+      // MISSING: TOKEN authentication
       // save new user to users array in GameService
-      const user = new UserDto();
+      const user = new User();
       user.socket = socket;
       this.gameService.users.set(socket.id, user);
     });
@@ -62,9 +63,9 @@ export class GameGateway implements OnModuleInit {
     const user = this.gameService.users.get(socket.id);
     if (user && user.inGame) {
       // get the active game of the user
-      const activeGameId = user.gamesPlayed[user.gamesPlayed.length - 1];
+      const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
       // stop the game
-      if (activeGameId) this.gameService.stopGame(activeGameId);
+      if (activeGame) this.gameService.stopGame(activeGame);
     }
     // delete the socket id
     user.socket = null;

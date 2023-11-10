@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from '../user/dto';
+import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
-import { GameService } from './game.service';
 
 @Injectable()
 export class GameState {
   gameId: string;
   intervalId: NodeJS.Timeout | null;
 
-  user1: UserDto;
-  user2: UserDto;
+  user1: User;
+  user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
   winningPlayer: String;
