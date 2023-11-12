@@ -69,6 +69,12 @@ build:
 status:
 	docker ps
 
+certs:
+	if [ ! -e ./backend/backend.cert ] || [ ! -e ./backend/backend.key ] || [ ! -e ./frontend/frontend.cert ] || [ ! -e ./frontend/frontend.key ]; then \
+		openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out ./backend/backend.cert -keyout ./backend/backend.key -subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/O=42Heilbronn/"; \
+		openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out ./frontend/frontend.cert -keyout ./frontend/frontend.key -subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/O=42Heilbronn/"; \
+	fi
+
 clean: stop
 	@-docker stop $$(docker ps -qa)
 	@-docker rm $$(docker ps -qa)
@@ -92,6 +98,6 @@ else
 endif
 
 #stop all containers, force rebuild and start it
-re: stop fclean all 
+re: stop fclean all
 
 .phony: sclean clean status build check down up ip postgre

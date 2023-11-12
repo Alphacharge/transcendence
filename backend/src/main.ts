@@ -37,6 +37,12 @@ async function bootstrap() {
 		origin: 'https://localhost:8080',
 	});
 
+  app.useWebSocketAdapter(new SocketIoAdapter(app));
+
+	app.enableCors({
+		origin: 'https://localhost:8080',
+	});
+
   await app.listen(3000);
 }
 

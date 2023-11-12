@@ -4,7 +4,6 @@
 cd /backend/
 
 npm install -g @nestjs/cli
-npm install -g prettier
 
 # Install project dependencies
 npm install

@@ -50,8 +50,9 @@ services:
     networks:
       - network
     volumes:
-      - vol_backend:/backend
+      - ./backend:/backend
 
+  # VUE
   vue:
     container_name: vue
     image: node:21-alpine3.17
@@ -61,7 +62,7 @@ services:
     networks:
       - network
     volumes:
-      - vol_frontend:/frontend
+      - ./frontend:/frontend
     depends_on:
       - nestjs
 

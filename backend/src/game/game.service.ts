@@ -3,16 +3,16 @@ import { clearInterval } from 'timers';
 import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
-import { UserDto } from 'src/user/dto';
+import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
 
 @Injectable()
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
-  users: Map<string, UserDto> = new Map(); // socket.id -> user
-  queue: UserDto[] = [];
+  users: Map<string, User> = new Map(); // user.id -> user
   games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
+  queue: User[] = [];
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -20,13 +20,12 @@ export class GameService {
     const user = this.users.get(socket.id);
 
     // check if user already is in queue
-    // REPLACE socket id with working user id
-    if (!user || this.queue.find(queuedUser => queuedUser.socket.id === user.socket.id)) return;
-	// check if user already is in an active game
-	if (user.inGame) {
-		console.log("Client is already playing");
-		return;
-	}
+    if (!user || this.queue.find(queuedUser => queuedUser.id === user.id)) return;
+  	// check if user already is in an active game
+  	if (user.inGame) {
+  		console.log("Client is already playing");
+  		return;
+	  }
 
     console.log(`Client ${socket.id} entered game queue`);
     this.queue.push(user);
@@ -36,8 +35,10 @@ export class GameService {
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
-    // Find the user in the queue based on socket.id
-    const userToRemove = this.queue.find(queuedUser => queuedUser.socket.id === socket.id);
+    // find the matching user
+    const user = this.users.get(socket.id);
+    // Find the user in the queue
+    const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
 
     if (userToRemove) {
       // Remove the user from the queue
@@ -63,8 +64,9 @@ export class GameService {
     game.user1.inGame = true;
     game.user2.inGame = true;
 
-    game.user1.gamesPlayed.push(game.gameId);
-    game.user2.gamesPlayed.push(game.gameId);
+    // REPLACE this with a database call
+    game.user1.gamesPlayed.push(game);  // this is a reference, not a new object
+    game.user2.gamesPlayed.push(game);
 
     this.games.set(game.gameId, game);
     sharedEventEmitter.emit('prepareGame', game);
@@ -77,13 +79,20 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  stopGame(gameId: string) {
-    // search the right game
-    const game = this.games.get(gameId);
+  // function overload
+  stopGame(gameState: GameState): void;
+  stopGame(gameId: string): void;
+  stopGame(arg: GameState | string): void {
+    let game: GameState;
+
+    if (typeof arg === 'string') game = this.games.get(arg);
+    else game = arg;
+
     if (!game) {
       console.error('StopGame: Game not found.');
       return;
     }
+
     console.log('Stopping game', game.gameId);
     clearInterval(game.intervalId);
     game.intervalId = null;
@@ -92,21 +101,23 @@ export class GameService {
     if (game.user2) game.user2.inGame = false;
 
     // save persistent game stuff to database here if you like
-    // this.games.delete(gameId);
+    this.games.delete(game.gameId);  // this only deletes the reference
   }
 
-  paddleUp(gameId: string, playerNumber: number) {
+  paddleUp(gameId: string, player: User) {
     const game = this.games.get(gameId);
+
     if (game && game.isRunning()) {
-      game.movePaddleUp(playerNumber);
+      game.movePaddleUp(player);
     }
     return game;
   }
 
-  paddleDown(gameId: string, playerNumber: number) {
+  paddleDown(gameId: string, player: User) {
     const game = this.games.get(gameId);
+    
     if (game && game.isRunning()) {
-      game.movePaddleDown(playerNumber);
+      game.movePaddleDown(player);
     }
     return game;
   }
