@@ -7,7 +7,6 @@ export class UserDto {
     this.id = 0;
     this.inGame = false;
     this.socket = null;
-    this.gamesPlayed = [];
   }
 
   @IsNumber()
@@ -18,6 +17,4 @@ export class UserDto {
 
   socket: Socket | null;
 
-  // PLACEHOLDER for database
-  gamesPlayed: string[];
 }
