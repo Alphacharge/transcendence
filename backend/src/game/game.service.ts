@@ -12,7 +12,7 @@ export class GameService {
   // should probably be saved elsewhere, idk
   users: Map<string, UserDto> = new Map(); // socket.id -> user
   queue: UserDto[] = [];
-  games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
+  games: Map<number, GameState> = new Map(); // gamestate.Game.id -> gamestate
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -63,13 +63,10 @@ export class GameService {
     game.user1.inGame = true;
     game.user2.inGame = true;
 
-    game.user1.gamesPlayed.push(game.gameId);
-    game.user2.gamesPlayed.push(game.gameId);
-
-    this.games.set(game.gameId, game);
+    this.games.set(game.Game.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('Starting multiplayer game', game.gameId);
+    console.log('Starting multiplayer game', game.Game.id);
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
@@ -77,14 +74,14 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  stopGame(gameId: string) {
+  stopGame(GameId: number) {
     // search the right game
-    const game = this.games.get(gameId);
+    const game = this.games.get(GameId);
     if (!game) {
       console.error('StopGame: Game not found.');
       return;
     }
-    console.log('Stopping game', game.gameId);
+    console.log('Stopping game', GameId);
     clearInterval(game.intervalId);
     game.intervalId = null;
 
@@ -92,19 +89,19 @@ export class GameService {
     if (game.user2) game.user2.inGame = false;
 
     // save persistent game stuff to database here if you like
-    // this.games.delete(gameId);
+    // this.games.delete(Game.id);
   }
 
-  paddleUp(gameId: string, playerNumber: number) {
-    const game = this.games.get(gameId);
+  paddleUp(GameId: number, playerNumber: number) {
+    const game = this.games.get(GameId);
     if (game && game.isRunning()) {
       game.movePaddleUp(playerNumber);
     }
     return game;
   }
 
-  paddleDown(gameId: string, playerNumber: number) {
-    const game = this.games.get(gameId);
+  paddleDown(GameId: number, playerNumber: number) {
+    const game = this.games.get(GameId);
     if (game && game.isRunning()) {
       game.movePaddleDown(playerNumber);
     }

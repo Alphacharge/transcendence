@@ -2,10 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { UserDto } from '../user/dto';
 import { sharedEventEmitter } from './game.events';
 import { GameService } from './game.service';
+import { Games, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameState {
-  gameId: string;
+	prisma: PrismaClient;
+	Game: Games;
   intervalId: NodeJS.Timeout | null;
 
   user1: UserDto;
@@ -37,7 +39,9 @@ export class GameState {
   speedFactor: number;
 
   constructor() {
-    this.gameId = this.generateID();
+	this.prisma = new PrismaClient();
+	this.Game = null;
+	this.initializeGame();
     this.intervalId = null;
 
     this.user1 = null;
@@ -66,6 +70,22 @@ export class GameState {
     this.rightImpact = 0;
 
     this.gameInit();
+  }
+
+  async initializeGame() {
+    // Assuming you're using Prisma to interact with a database
+    this.Game = await this.prisma.games.create({
+      data: {
+        left_user_id: 1,
+        right_user_id: 2,
+		left_user_score: 0,
+        right_user_score: 0,
+        createdAt: new Date(),
+      },
+    });
+	
+    // You can handle the result or perform other actions based on the Prisma query result
+    console.log('New game created:', this.Game);
   }
 
   gameInit() {
@@ -97,6 +117,7 @@ export class GameState {
   }
 
   getScore() {
+	this
     return { player1: this.scorePlayer1, player2: this.scorePlayer2 };
   }
 
