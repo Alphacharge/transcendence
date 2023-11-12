@@ -5,5 +5,5 @@
 ./frontend/node_modules
 ./data/*
 ./data/
-./certificate.cert
-./certificate.key
+certificate.cert
+certificate.key
