@@ -56,6 +56,7 @@ body {
     min-height: 100vh;
     background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
     overflow: auto;
+    z-index: -1;
 } 
 
 .stars {
@@ -65,6 +66,7 @@ body {
   width: 100%;
   height: 100%;
   transform: rotate(-45deg);
+  z-index: -1;
 }
 
 .star {
