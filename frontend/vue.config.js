@@ -3,16 +3,14 @@
 const { defineConfig } = require("@vue/cli-service");
 
 const fs = require('fs')
-
-const fs = require('fs')
 module.exports = defineConfig({
   transpileDependencies: true,
 
   devServer: {
     port: 8080,
     https: {
-      key: fs.readFileSync('/frontend/frontend.key'),
-      cert: fs.readFileSync('/frontend/frontend.cert'),
+      key: fs.readFileSync('/certificates/certificate.key'),
+      cert: fs.readFileSync('/certificates/certificate.cert'),
     },
     proxy: {
       '^/api': {

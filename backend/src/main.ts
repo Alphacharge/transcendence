@@ -12,8 +12,8 @@ class SocketIoAdapter extends IoAdapter {
 
     // Apply your httpsOptions to the HTTP server
     const httpsOptions = {
-      key: fs.readFileSync('/backend/backend.key'),
-      cert: fs.readFileSync('/backend/backend.cert'),
+      key: fs.readFileSync('/certificates/certificate.key'),
+      cert: fs.readFileSync('/certificates/certificate.cert'),
     };
     const httpsServer = require('https').createServer(httpsOptions, httpServer);
 
@@ -27,8 +27,8 @@ class SocketIoAdapter extends IoAdapter {
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule, {
     httpsOptions: {
-		key: fs.readFileSync('/backend/backend.key'),
-		cert: fs.readFileSync('/backend/backend.cert'),
+      key: fs.readFileSync('/certificates/certificate.key'),
+      cert: fs.readFileSync('/certificates/certificate.cert'),
 	  },
   });
   app.useWebSocketAdapter(new SocketIoAdapter(app));
@@ -38,10 +38,6 @@ async function bootstrap() {
 	});
 
   app.useWebSocketAdapter(new SocketIoAdapter(app));
-
-	app.enableCors({
-		origin: 'https://localhost:8080',
-	});
 
   await app.listen(3000);
 }

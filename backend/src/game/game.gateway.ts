@@ -16,8 +16,8 @@ import * as fs from 'fs';
 
 // can enter a port in the brackets
 @WebSocketGateway({ server: https.createServer({
-  key: fs.readFileSync('/backend/backend.key'),
-  cert: fs.readFileSync('/backend/backend.cert'),
+  key: fs.readFileSync('/certificates/certificate.key'),
+  cert: fs.readFileSync('/certificates/certificate.cert'),
 })})
 export class GameGateway {
   @WebSocketServer()
@@ -147,10 +147,6 @@ export class GameGateway {
     }
   }
 
-  announceVictory(game: GameState) {
-    game.user1.socket.emit('victory', game.winningPlayer);
-    game.user2.socket.emit('victory', game.winningPlayer);
-  }
   announceVictory(game: GameState) {
     game.user1.socket.emit('victory', game.winningPlayer);
     game.user2.socket.emit('victory', game.winningPlayer);
