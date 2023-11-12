@@ -45,7 +45,6 @@ export default {
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
       if (!this.gameId) {
-        console.error("No game ID found!");
         return;
       }
       if (event.key === "w") {

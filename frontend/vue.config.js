@@ -7,6 +7,7 @@ module.exports = defineConfig({
   transpileDependencies: true,
 
   devServer: {
+    host: process.env.VUE_APP_BACKEND_IP,
     port: 8080,
     https: {
       key: fs.readFileSync('/certificates/certificate.key'),
@@ -14,7 +15,7 @@ module.exports = defineConfig({
     },
     proxy: {
       '^/api': {
-        target: 'http://' + process.env.VUE_APP_BACKEND_IP + ':3000',
+        target: 'https://' + process.env.VUE_APP_BACKEND_IP + ':3000',
         secure: false,
         changeOrigin: true
       },

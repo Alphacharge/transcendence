@@ -44,7 +44,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `http://${process.env.VUE_APP_BACKEND_IP}:3000/auth/signup`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/signup`,
           {
             method: "POST",
             headers: {
