@@ -1,24 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../auth/interfaces/user.interface';
+import {PlayerDto} from './dto/player.dto';
 
 @Injectable()
 export class TournamentService {
 
-	private players: User[] = [];
+	private tokens: string[] = [];
 
-	create(player: User) {
-		const uniqueIds = this.players.map(innerObject => innerObject.id);
-		if (this.players.length < 4 && !uniqueIds.includes(player.id))
-			this.players.push(player);
-		console.log(this.players);
+	add(playerToken: PlayerDto) {
+		console.log('ADDING');
+		if (this.tokens.length < 4 && !this.tokens.includes(playerToken.playerToken))
+			this.tokens.push(playerToken.playerToken);
+		console.log(this.tokens);
+		return this.tokens.length;
 	}
 
 	findAll() {
-		return this.players;
+		return this.tokens.length;
 	}
 
-	remove(userId: number) {
-		this.players = this.players.filter(innerObject=>innerObject.id !== userId);
-		console.log(this.players);
+	remove(playerToken: string) {
+		console.log('REMOVING');
+		const index = this.tokens.findIndex(token=>{
+			return token==playerToken});
+		console.log("Token :", playerToken,"\nIndex of this token is:", index);
+		if (index !== -1) {
+			this.tokens.splice(index,1)
+			console.log("Token has been removed.");
+		}
+		console.log(this.tokens);
+		return this.tokens.length;
 	}
 }
