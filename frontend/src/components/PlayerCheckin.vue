@@ -2,7 +2,7 @@
   <div class="player-checkin">
     <h5>Places available in this tournament: {{ 4 - playersInTournament }}</h5>
     <p v-if="participateStatus">You are checked in this tournament</p>
-    <button @click.prevent="addPlayer" class="add-player">{{ btnMsg }}</button>
+    <button @click.prevent="checkIn" class="add-player">{{ btnMsg }}</button>
   </div>
 </template>
 <script>
@@ -15,10 +15,28 @@
       }
     },
     async mounted() {
-      this.playersInTournament = this.countPlayers();
-      this.participateStatus = this.checkMyStatus();
+      this.playersInTournament = await this.countPlayers();
+      this.participateStatus = await this.checkMyStatus();
+      if(this.participateStatus)
+        this.btnMsg = "Leave Tournament";
+      else
+        this.btnMsg = "Participate";
     },
     methods: {
+      async checkIn() {
+        this.participateStatus = await this.checkMyStatus;
+        if(!this.participateStatus)
+        {
+          await this.addPlayer();
+          this.btnMsg = "Leave Tournament";
+        }
+        else
+        {
+          await this.removePlayer();
+          this.btnMsg = "Participate";
+        }
+        this.playersInTournament = await this.countPlayers;
+      },
       retrieveToken() {
         const storedPlayerToken = localStorage.getItem('userData');
         console.log(storedPlayerToken);
@@ -29,9 +47,10 @@
         return storedPlayerToken;
       },
       async addPlayer() {
-        storedPlayerToken = this.retrieveToken();
-        if(this.participateStatus || storedPlayerToken === -1)
+        const storedPlayerToken = this.retrieveToken();
+        if(this.participateStatus || storedPlayerToken === -1) {
           return;
+        }
         try {
           const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`, {
             method: 'POST',
@@ -44,7 +63,6 @@
           });
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
-            return;
           }
           const data = await response.json();
           return data["response"];
@@ -54,7 +72,7 @@
         }
       },
       async removePlayer() {
-        storedPlayerToken = this.retrieveToken();
+        const storedPlayerToken = this.retrieveToken();
         if(!this.participateStatus || storedPlayerToken === -1)
           return;
         try {
@@ -66,7 +84,6 @@
             });
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
-              return;
             }
             const data = await response.json();
             return data["response"];
@@ -85,7 +102,6 @@
             });
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
-              return;
             }
             const data = await response.json();
             return data["response"];
@@ -94,12 +110,12 @@
           }
       },
       async checkMyStatus() {
-        storedPlayerToken = this.retrieveToken();
+        const storedPlayerToken = this.retrieveToken();
         if (storedPlayerToken === -1)
           return;
         try {
           const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/status`, {
-            method: 'GET',
+            method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
@@ -109,7 +125,7 @@
           });
           if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
-              return;}
+          }
           const data = await response.json();
           return data["response"];
         } catch (error) {

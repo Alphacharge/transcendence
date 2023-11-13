@@ -25,7 +25,7 @@ export class TournamentController {
 		return {response};
 	}
 
-	@Get('status')
+	@Post('status')
 	async getStatus(@Body() player: PlayerDto) {
 		const response = this.tournamentService.getStatus(player);
 		return {response};
