@@ -95,8 +95,8 @@ export class GameGateway implements OnModuleInit {
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.Game.id });
-    game.user2.socket.emit('gameId', { gameId: game.Game.id });
+    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
+    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
