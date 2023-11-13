@@ -18,7 +18,10 @@ services:
       - network
     volumes:
       - ./backend:/backend
+      - ./certificate.key/:/certificates/certificate.key
+      - ./certificate.cert/:/certificates/certificate.cert
 
+  # VUE
   vue:
     container_name: vue
     image: node:21-alpine3.17
@@ -29,6 +32,9 @@ services:
       - network
     volumes:
       - ./frontend:/frontend
+      - ./certificate.key/:/certificates/certificate.key
+      - ./certificate.cert/:/certificates/certificate.cert
+
     depends_on:
       - nestjs
 
@@ -36,7 +42,7 @@ services:
     container_name: swagger
     image: swaggerapi/swagger-ui
     environment:
-      SWAGGER_JSON_URL: http://localhost:3000/api-docs-json
+      SWAGGER_JSON_URL: https://localhost:3000/api-docs-json
       BASE_URL: /swagger
       PORT: 8080
     ports:

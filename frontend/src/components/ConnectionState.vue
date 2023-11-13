@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import { state } from "@/socket";
+import { state } from "@/assets/utils/socket";
 
 export default {
   name: "ConnectionState",

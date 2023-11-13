@@ -1,29 +1,29 @@
 //PGADMIN
-http://localhost:5050/
+https://localhost:5050/
 
 //Swagger
-http://localhost:9090/swagger/
-http://localhost:3000/api/docs
-http://localhost:9090
+https://localhost:9090/swagger/
+https://localhost:3000/api/docs
+https://localhost:9090
 
 //Frontend
-http://localhost:8080
+https://localhost:8080
 
 
 
 //PHPMYADMIN
-http://localhost:7070
+https://localhost:7070
 
 
 //Other Ports:
 
 //API-BACKEND
-http://localhost:3000
+https://localhost:3000
 
 //POSTGRESQL
-http://localhost:5432
+https://localhost:5432
 
 
 
 //MYSQL
-http://localhost:3306
+https://localhost:3306

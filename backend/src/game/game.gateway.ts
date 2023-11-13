@@ -8,14 +8,18 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
-import { UserDto } from 'src/user/dto';
+import { User } from 'src/user/User';
 import { GameState} from './GameState';
+import * as https from 'https';
+import * as fs from 'fs';
 
 // can enter a port in the brackets
-@WebSocketGateway()
-export class GameGateway implements OnModuleInit {
+@WebSocketGateway({ server: https.createServer({
+  key: fs.readFileSync('/certificates/certificate.key'),
+  cert: fs.readFileSync('/certificates/certificate.cert'),
+})})
+export class GameGateway {
   @WebSocketServer()
   server: Server;
 
@@ -40,19 +44,13 @@ export class GameGateway implements OnModuleInit {
     });
   }
 
-  /* New client connected. */
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log('Client connected:', socket.id);
+  handleConnection(socket: any) {
+    console.log("Client connected:", socket.id);
 
-      // save new user to users array in GameService
-      const user = new UserDto();
-      user.socket = socket;
-      this.gameService.users.set(socket.id, user);
-    });
-    this.server.on('close', () => {
-      console.log('Client disconnected');
-    });
+    // MISSING: TOKEN authentication, database pull and check if user is already connected
+    const user = new User();
+    user.socket = socket;
+    this.gameService.users.set(socket.id, user);
   }
 
   handleDisconnect(socket: any) {
@@ -137,9 +135,8 @@ export class GameGateway implements OnModuleInit {
 
   @SubscribeMessage('paddleDown')
   PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: number; playerNumber: number }) {
-
     if (gameId) {
-      const game = this.gameService.paddleDown(gameId, playerNumber);
+      const game = this.gameService.paddleDown(gameId, user);
       if (game) this.sendPaddleUpdate(game);
     }
   }

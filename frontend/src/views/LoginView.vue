@@ -41,7 +41,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `http://${process.env.VUE_APP_BACKEND_IP}:3000/auth/login`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/login`,
           {
             method: "POST",
             headers: {
@@ -53,10 +53,9 @@ export default {
             }),
           },
         );
-
         const responseData = await response.json();
         if (response.ok) {
-          localStorage.setItem("accessToken", responseData.access_token);
+          localStorage.setItem("userData", responseData["access_token"]);
           router.push("/");
         } else {
           alert("User or Password wrong!");

@@ -3,7 +3,7 @@ import { clearInterval } from 'timers';
 import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
-import { UserDto } from 'src/user/dto';
+import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
 import { Prisma, PrismaClient } from '@prisma/client';
 
@@ -23,13 +23,12 @@ export class GameService {
 
 	//user.id = 1 //
     // check if user already is in queue
-    // REPLACE socket id with working user id
-    if (!user || this.queue.find(queuedUser => queuedUser.socket.id === user.socket.id)) return;
-	// check if user already is in an active game
-	if (user.inGame) {
-		console.log("Client is already playing");
-		return;
-	}
+    if (!user || this.queue.find(queuedUser => queuedUser.id === user.id)) return;
+  	// check if user already is in an active game
+  	if (user.inGame) {
+  		console.log("Client is already playing");
+  		return;
+	  }
 
     console.log(`Client ${socket.id} entered game queue`);
     this.queue.push(user);
@@ -39,8 +38,10 @@ export class GameService {
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
-    // Find the user in the queue based on socket.id
-    const userToRemove = this.queue.find(queuedUser => queuedUser.socket.id === socket.id);
+    // find the matching user
+    const user = this.users.get(socket.id);
+    // Find the user in the queue
+    const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
 
     if (userToRemove) {
       // Remove the user from the queue
@@ -95,8 +96,9 @@ stopGame(GameId: number) {
       console.error("Game: Couldn't stop. Game not found.");
       return;
     }
-	
+
     console.log('Stopping game', GameId);
+  
     clearInterval(game.intervalId);
     game.intervalId = null;
 
@@ -104,21 +106,23 @@ stopGame(GameId: number) {
     if (game.user2) game.user2.inGame = false;
 
     // save persistent game stuff to database here if you like
+
     this.games.delete(game.GameData.id);
   }
 
   paddleUp(GameId: number, playerNumber: number) {
     const game = this.games.get(GameId);
     if (game && game.isRunning()) {
-      game.movePaddleUp(playerNumber);
+      game.movePaddleUp(player);
     }
     return game;
   }
 
   paddleDown(GameId: number, playerNumber: number) {
     const game = this.games.get(GameId);
+
     if (game && game.isRunning()) {
-      game.movePaddleDown(playerNumber);
+      game.movePaddleDown(player);
     }
     return game;
   }
