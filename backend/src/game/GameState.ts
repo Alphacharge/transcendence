@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { UserDto } from '../user/dto';
+import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
 import { GameService } from './game.service';
 
@@ -8,8 +8,8 @@ export class GameState {
   gameId: string;
   intervalId: NodeJS.Timeout | null;
 
-  user1: UserDto;
-  user2: UserDto;
+  user1: User;
+  user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
   winningPlayer: String;
@@ -109,26 +109,26 @@ export class GameState {
     return id;
   }
 
-  movePaddleUp(playerNumber: number) {
-	if (playerNumber == 1) {
+  movePaddleUp(player: User) {
+	if (player === this.user1) {
 		if (this.leftPosition > 0) {
 			this.leftPosition -= 10;
     }
 	}
-	else if (playerNumber == 2) {
+	else if (player === this.user2) {
 		if (this.rightPosition > 10) {
 			this.rightPosition -= 10;
 		}
 	}
   }
 
-  movePaddleDown(playerNumber: number) {
-	if (playerNumber == 1) {
+  movePaddleDown(player: User) {
+	if (player === this.user1) {
 		if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
 			this.leftPosition += 10;
 		}
 	}
-	else if (playerNumber == 2) {
+	else if (player === this.user2) {
 		if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
 			this.rightPosition += 10;
 		}
