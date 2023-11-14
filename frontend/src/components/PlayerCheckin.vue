@@ -19,6 +19,7 @@
         playersInTournament: 0,
         pollingInterval: 0,
       }
+      return storedPlayerToken;
     },
     async mounted() {
       this.playersInTournament = await this.countPlayers();
@@ -72,17 +73,18 @@
           return;
         }
         try {
-          const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`, {
+          const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`, {
             method: 'POST',
+
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
               playerToken: storedPlayerToken,
             }),
           });
           if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            throw new Error(`HTTPS error! Status: ${response.status}`);
           }
           const data = await response.json();
           return data["response"];
@@ -97,14 +99,14 @@
         if(!this.participateStatus || storedPlayerToken === -1)
           return;
         try {
-            const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/${storedPlayerToken}`, {
+            const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/${storedPlayerToken}`, {
               method: 'DELETE',
               headers: {
                 'Content-Type': 'application/json',
               },
             });
             if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+              throw new Error(`HTTPS error! Status: ${response.status}`);
             }
             const data = await response.json();
             return data["response"];
@@ -115,14 +117,14 @@
       },
       async countPlayers() {
         try {
-            const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/count`, {
+            const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/count`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
               },
             });
             if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+              throw new Error(`HTTPS error! Status: ${response.status}`);
             }
             const data = await response.json();
             return data["response"];
@@ -135,25 +137,31 @@
         if (storedPlayerToken === -1)
           return;
         try {
-          const response = await fetch(`http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/status`, {
+          const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/status`, {
             method: 'POST',
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 playerToken: storedPlayerToken,
               }),
           });
           if (!response.ok) {
-              throw new Error(`HTTP error! Status: ${response.status}`);
+              throw new Error(`HTTPS error! Status: ${response.status}`);
           }
           const data = await response.json();
           const res = data["response"];
           return res;
         } catch (error) {
             console.error('Error adding player:', error);
+
         }
-      },
+        const data = await response.json();
+        return data["response"];
+      } catch (error) {
+        console.error("Error adding player:", error);
+      }
     },
-  }
-  </script>
+  },
+};
+</script>

@@ -22,7 +22,7 @@
     />
 </template>
 <script>
-
+import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from '@/assets/utils/socket';
 import PlayerCheckin from '@/components/PlayerCheckin.vue';
   import Pong from '@/views/PongView.vue';
@@ -66,3 +66,4 @@ import PlayerCheckin from '@/components/PlayerCheckin.vue';
     },
   };
 </script>
+

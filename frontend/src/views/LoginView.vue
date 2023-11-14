@@ -22,6 +22,7 @@
         id="InputPassword"
       />
     </div>
+	<div>or <router-link to="/signup">Signup</router-link></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </template>
@@ -40,7 +41,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `http://${process.env.VUE_APP_BACKEND_IP}:3000/auth/login`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/login`,
           {
             method: "POST",
             headers: {
@@ -52,6 +53,7 @@ export default {
             }),
           },
         );
+
         const responseData = await response.json();
         if (response.ok) {
           if (localStorage.getItem("userdata")) localStorage.removeItem("userData");
