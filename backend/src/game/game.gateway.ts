@@ -61,12 +61,18 @@ import * as fs from 'fs';
     // get the right user
     const user = this.gameService.users.get(socket.id);
 
-	if (user && user.inGame) {
-		// get the active game of the user
-		const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-		// stop the game
-		if (activeGame) this.gameService.stopGame(activeGame);
-	  }
+	if (user) {
+		// remove user from any queues
+		// INSERT tournament queue
+		this.gameService.removeFromQueue(socket);
+
+		// abort any games the user was part of
+		if (user.inGame) {
+			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+			if (activeGame) this.gameService.stopGame(activeGame);
+		  }
+	}
+
     // delete the socket id
     user.socket = null;
   }

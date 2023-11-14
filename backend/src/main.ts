@@ -1,6 +1,7 @@
 // backend main.ts
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import * as fs from 'fs';
 
@@ -25,6 +26,7 @@ class SocketIoAdapter extends IoAdapter {
 }
 
 async function bootstrap() {
+	const config= new ConfigService();
 	const app = await NestFactory.create(AppModule, {
     httpsOptions: {
       key: fs.readFileSync('/certificates/certificate.key'),
@@ -34,7 +36,9 @@ async function bootstrap() {
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
 	app.enableCors({
-		origin: 'https://localhost:8080',
+		origin: [
+			`https://${process.env.BACKEND_IP}:8080`,
+			"https://localhost:8080"]
 	});
 
   app.useWebSocketAdapter(new SocketIoAdapter(app));
