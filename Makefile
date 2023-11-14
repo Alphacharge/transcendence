@@ -22,7 +22,7 @@ endif
 
 ###			###			RULES			###			###
 #Build changes or all if nothing is builded and run
-all: ip certs
+all: ip
 	@mkdir -p backend frontend data $(DB_D) data/myadmin data/mysql data/pgadmin
 ifeq ($(OS), Darwin)
 	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || chown -R ${USER}:2021_heilbronn data/pgadmin"
@@ -41,12 +41,6 @@ ifeq ($(OS), Darwin)
 else
 	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend/.env
 endif
-
-# create https certificates
-certs:
-	@if [ ! -e ./certificate.cert ] || [ ! -e ./certificate.key ] ; then \
-		openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out ./certificate.cert -keyout ./certificate.key -subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/O=42Heilbronn/"; \
-	fi
 
 up: all
 
@@ -92,5 +86,3 @@ endif
 
 #stop all containers, force rebuild and start it
 re: stop fclean all
-
-.phony: sclean clean status build check down up ip postgre

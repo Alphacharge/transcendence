@@ -1,17 +1,17 @@
 import { Socket } from "socket.io";
-import { GameState } from "src/game/GameState";
 import { v4 as uuidv4 } from 'uuid';
 
 export class User {
   id: string;
   socket: Socket | null;
+  username: string;
+  password: string;
 
   inGame: boolean;
-  gamesPlayed: GameState[]; // REPLACE this with database
 
   constructor() {
     this.id = uuidv4();
+
     this.inGame = false;
-    this.gamesPlayed = [];
   }
 }

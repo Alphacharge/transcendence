@@ -10,7 +10,7 @@ export const state = reactive({
 });
 
 // why does transports websocket prevent cors issues?
-export const socket = io("wss://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
+export const socket = io("http://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
   transports: ["websocket"],
 });
 
@@ -35,10 +35,10 @@ socket.stopGame = function (gameId) {
 };
 
 // send paddle position updates to server
-socket.sendPaddleUp = function (gameId) {
-  socket.emit("paddleUp", { gameId });
+socket.sendPaddleUp = function (gameId, playerNumber) {
+  socket.emit("paddleUp", { gameId, playerNumber });
 };
 
-socket.sendPaddleDown = function (gameId) {
-  socket.emit("paddleDown", { gameId });
+socket.sendPaddleDown = function (gameId, playerNumber) {
+  socket.emit("paddleDown", { gameId, playerNumber });
 };

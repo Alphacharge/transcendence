@@ -22,6 +22,6 @@ import { TournamentModule } from './tournament/tournament.module';
 	TournamentModule],
   controllers: [AppController, TournamentController],
   providers: [AppService, TournamentService],
-
+  
 })
 export class AppModule {}

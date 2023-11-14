@@ -45,19 +45,20 @@ export default {
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
       if (!this.gameId) {
+        console.error("No game ID found!");
         return;
       }
       if (event.key === "w") {
         if (!this.messageInterval) {
           console.log("sending paddle up with id", this.gameId);
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleUp(this.gameId);
+            socket.sendPaddleUp(this.gameId, this.playerNumber);
           }, 1000 / 15);
         }
       } else if (event.key === "s") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleDown(this.gameId);
+            socket.sendPaddleDown(this.gameId, this.playerNumber);
           }, 1000 / 15);
         }
       }

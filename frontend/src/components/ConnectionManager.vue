@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { socket } from "@/assets/utils/socket";
+import { socket } from "@/socket";
 
 export default {
   name: "ConnectionManager",

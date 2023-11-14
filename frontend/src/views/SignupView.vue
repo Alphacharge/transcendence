@@ -44,7 +44,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/signup`,
+          `http://${process.env.VUE_APP_BACKEND_IP}:3000/auth/signup`,
           {
             method: "POST",
             headers: {
@@ -56,9 +56,11 @@ export default {
             }),
           },
         );
+
         const responseData = await response.json();
         if (response.ok) {
-          localStorage.setItem("userData", responseData["access_token"]);
+          localStorage.setItem("accessToken", responseData.access_token);
+
           router.push("/");
         } else {
           alert("User exists!");
