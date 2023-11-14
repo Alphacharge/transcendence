@@ -133,7 +133,7 @@ import * as fs from 'fs';
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+  leftPaddleUp(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
     const user = this.gameService.users.get(socket.id);
     if (gameId && user) {
       const game = this.gameService.paddleUp(gameId, user);
@@ -142,7 +142,7 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+  PaddleDown(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
     const user = this.gameService.users.get(socket.id);
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, user);
