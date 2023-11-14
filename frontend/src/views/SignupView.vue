@@ -56,9 +56,11 @@ export default {
             }),
           },
         );
+
         const responseData = await response.json();
         if (response.ok) {
           localStorage.setItem("userData", responseData["access_token"]);
+
           router.push("/");
         } else {
           alert("User exists!");

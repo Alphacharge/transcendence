@@ -5,21 +5,25 @@ import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
   users: Map<string, User> = new Map(); // user.id -> user
-  games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
+  games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
+  prisma: PrismaClient;
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
     // find the matching user
     const user = this.users.get(socket.id);
 
+	//user.id = 1 //
     // check if user already is in queue
+    // REPLACE socket id with working user id
     if (!user || this.queue.find(queuedUser => queuedUser.id === user.id)) return;
   	// check if user already is in an active game
   	if (user.inGame) {
@@ -35,7 +39,6 @@ export class GameService {
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
-    // find the matching user
     const user = this.users.get(socket.id);
     // Find the user in the queue
     const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
@@ -45,33 +48,40 @@ export class GameService {
       const index = this.queue.indexOf(userToRemove);
       if (index !== -1) {
         this.queue.splice(index, 1);
-        console.log(`Client ${socket.id} removed from game queue`);
+        console.log(`Client: ${socket.id} removed from game queue`);
       }
     }
   }
 
   checkQueue() {
-    while (this.queue.length >= 2) this.startGame();
+	  if (this.queue.length >= 2){
+		console.log(this.queue.length);
+		this.startGame();
+	} 
   }
 
-  startGame() {
+async startGame() {
     const game = new GameState();
+	game.user1 = this.queue.pop();
+	game.user2 = this.queue.pop();
+	console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
+	await game.initializeGame(game.user1.id, game.user2.id);
+
+	if (!game.GameData) {
+		console.log('Game: Failed to create new Game!', this.queue.length);
+		return;
+	}
+
     const updateRate = 1000 / 60;
 
-    game.user1 = this.queue.pop();
-    game.user2 = this.queue.pop();
 
     game.user1.inGame = true;
     game.user2.inGame = true;
 
-    // REPLACE this with a database call
-    game.user1.gamesPlayed.push(game);  // this is a reference, not a new object
-    game.user2.gamesPlayed.push(game);
-
-    this.games.set(game.gameId, game);
+    this.games.set(game.GameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('Starting multiplayer game', game.gameId);
+    console.log('Game: Starting multiplayer game', game.GameData.id);
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
@@ -79,21 +89,19 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  // function overload
-  stopGame(gameState: GameState): void;
-  stopGame(gameId: string): void;
-  stopGame(arg: GameState | string): void {
-    let game: GameState;
-
-    if (typeof arg === 'string') game = this.games.get(arg);
-    else game = arg;
-
+ stopGame(gameState: GameState): void;
+	stopGame(gameId: number): void;
+	stopGame(arg: GameState | number): void {
+	  let game: GameState;
+  
+	  if (typeof arg === 'number') game = this.games.get(arg);
+	  else game = arg;
     if (!game) {
-      console.error('StopGame: Game not found.');
+      console.error("Game: Couldn't stop. Game not found.");
       return;
     }
-
-    console.log('Stopping game', game.gameId);
+	
+    console.log('Stopping game', game.GameData.id);
     clearInterval(game.intervalId);
     game.intervalId = null;
 
@@ -101,21 +109,19 @@ export class GameService {
     if (game.user2) game.user2.inGame = false;
 
     // save persistent game stuff to database here if you like
-    this.games.delete(game.gameId);  // this only deletes the reference
+    this.games.delete(game.GameData.id);
   }
 
-  paddleUp(gameId: string, player: User) {
-    const game = this.games.get(gameId);
-
+  paddleUp(GameId: number, player: User) {
+    const game = this.games.get(GameId);
     if (game && game.isRunning()) {
       game.movePaddleUp(player);
     }
     return game;
   }
 
-  paddleDown(gameId: string, player: User) {
-    const game = this.games.get(gameId);
-    
+  paddleDown(GameId: number, player: User) {
+    const game = this.games.get(GameId);
     if (game && game.isRunning()) {
       game.movePaddleDown(player);
     }

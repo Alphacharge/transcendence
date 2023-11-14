@@ -16,10 +16,10 @@ import * as fs from 'fs';
 
 // can enter a port in the brackets
 @WebSocketGateway({ server: https.createServer({
-  key: fs.readFileSync('/certificates/certificate.key'),
-  cert: fs.readFileSync('/certificates/certificate.cert'),
-})})
-export class GameGateway {
+	key: fs.readFileSync('/certificates/certificate.key'),
+	cert: fs.readFileSync('/certificates/certificate.cert'),
+  })})
+  export class GameGateway {
   @WebSocketServer()
   server: Server;
 
@@ -44,13 +44,15 @@ export class GameGateway {
     });
   }
 
+  /* New client connected. */
   handleConnection(socket: any) {
     console.log("Client connected:", socket.id);
 
-    // MISSING: TOKEN authentication, database pull and check if user is already connected
-    const user = new User();
-    user.socket = socket;
-    this.gameService.users.set(socket.id, user);
+      // save new user to users array in GameService
+	  const user = new User();
+	  user.socket = socket;
+	  this.gameService.users.set(socket.id, user);
+
   }
 
   handleDisconnect(socket: any) {
@@ -58,12 +60,19 @@ export class GameGateway {
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
-    if (user && user.inGame) {
-      // get the active game of the user
-      const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-      // stop the game
-      if (activeGame) this.gameService.stopGame(activeGame);
-    }
+
+	if (user) {
+		// remove user from any queues
+		// INSERT tournament queue
+		this.gameService.removeFromQueue(socket);
+
+		// abort any games the user was part of
+		if (user.inGame) {
+			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+			if (activeGame) this.gameService.stopGame(activeGame);
+		  }
+	}
+
     // delete the socket id
     user.socket = null;
   }
@@ -98,8 +107,8 @@ export class GameGateway {
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.gameId });
-    game.user2.socket.emit('gameId', { gameId: game.gameId });
+    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
+    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
@@ -130,7 +139,7 @@ export class GameGateway {
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+  leftPaddleUp(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
     const user = this.gameService.users.get(socket.id);
     if (gameId && user) {
       const game = this.gameService.paddleUp(gameId, user);
@@ -139,7 +148,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+  PaddleDown(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
     const user = this.gameService.users.get(socket.id);
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, user);
