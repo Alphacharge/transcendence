@@ -5,7 +5,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: 'http://localhost:8080',
+    origin: `http://${process.env.VUE_APP_BACKEND_IP}:8080/`,
   });
 
   await app.listen(3000);

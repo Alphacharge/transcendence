@@ -18,6 +18,11 @@ export class TournamentService {
 		return this.tokens.length;
 	}
 
+	findAll() {
+		console.log(`countAll called\n${this.tokens}\n${this.tokens.length}`);
+		return this.tokens;
+	}
+
 	remove(playerToken: string) {
 		const index = this.tokens.findIndex(token=>{
 			return token==playerToken});

@@ -19,6 +19,12 @@ export class TournamentController {
 		return {response};
 	}
 
+	@Get('all')
+	async findAll() {
+		const response= this.tournamentService.findAll();
+		return {response};
+	}
+
 	@Delete(':token')
 	async remove(@Param('token') player: string) {
 		const response = this.tournamentService.remove(player);
