@@ -9,17 +9,14 @@ export class TournamentService {
 	add(player: PlayerDto) {
 		if (this.tokens.length < 4 && !this.tokens.includes(player.playerToken))
 			this.tokens.push(player.playerToken);
-		console.log(`add called\n${this.tokens}\n${this.tokens.length}`);
 		return this.tokens.length;
 	}
 
 	countAll() {
-		console.log(`countAll called\n${this.tokens}\n${this.tokens.length}`);
 		return this.tokens.length;
 	}
 
 	findAll() {
-		console.log(`countAll called\n${this.tokens}\n${this.tokens.length}`);
 		return this.tokens;
 	}
 
@@ -29,7 +26,6 @@ export class TournamentService {
 			if (index !== -1) {
 				this.tokens.splice(index,1)
 			}
-		console.log(`remove called\n${this.tokens}\n${this.tokens.length}`);
 		return this.tokens.length;
 	}
 
@@ -39,7 +35,6 @@ export class TournamentService {
 			if (index !== -1) {
 				return true;
 			}
-		console.log(`getStatus called\n${this.tokens}\n${this.tokens.length}`);
 		return false;
 	}
 }

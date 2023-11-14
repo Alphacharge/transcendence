@@ -26,6 +26,10 @@ socket.enterQueue = function () {
   socket.emit("enterQueue");
 };
 
+socket.enterTournamentQueue = function () {
+  socket.emit("enterTournamentQueue");
+};
+
 socket.leaveQueue = function () {
   socket.emit("leaveQueue");
 };

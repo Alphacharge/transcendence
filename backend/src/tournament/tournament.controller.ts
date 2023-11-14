@@ -13,6 +13,12 @@ export class TournamentController {
 		return {response};
 	}
 
+	@Post('status')
+	async getStatus(@Body() player: PlayerDto) {
+		const response = this.tournamentService.getStatus(player);
+		return {response};
+	}
+
 	@Get('count')
 	async countAll() {
 		const response= this.tournamentService.countAll();
@@ -28,12 +34,6 @@ export class TournamentController {
 	@Delete(':token')
 	async remove(@Param('token') player: string) {
 		const response = this.tournamentService.remove(player);
-		return {response};
-	}
-
-	@Post('status')
-	async getStatus(@Body() player: PlayerDto) {
-		const response = this.tournamentService.getStatus(player);
 		return {response};
 	}
 }

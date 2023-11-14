@@ -12,6 +12,7 @@ export class GameService {
   // should probably be saved elsewhere, idk
   users: Map<string, UserDto> = new Map(); // socket.id -> user
   queue: UserDto[] = [];
+  queueTournamentGame: UserDto[] = [];
   games: Map<string, GameState> = new Map(); // gamestate.gameid -> gamestate
 
   /* A new user is added to the game queue */
@@ -32,6 +33,13 @@ export class GameService {
     this.queue.push(user);
     // check if a game is ready to be started
     this.checkQueue();
+  }
+
+  addToTournamentQueue(socket: Socket) {
+    const user = this.users.get(socket.id);
+    this.queueTournamentGame.push(user);
+    console.log(`Client ${socket.id} entered tournament queue`);
+    if(this.queueTournamentGame.length === 2) this.startGame;
   }
 
   /* Remove a user from the game queue */
