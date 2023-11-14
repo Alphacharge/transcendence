@@ -1,5 +1,4 @@
 <template>
-<body>
 <div class="stars">
     <div class="star"></div>
     <div class="star"></div>
@@ -41,22 +40,24 @@
     <div class="star"></div>
     <div class="star"></div>
 </div>
-</body>
 </template>
 <script>
 export default {
     }
 </script>
-<style>
+<style scoped>
 
 body {
     display: inline-flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    width: 100vw;
+    height: 100vh;
     background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
     overflow: auto;
     z-index: -1;
+
 } 
 
 .stars {
@@ -70,16 +71,16 @@ body {
 }
 
 .star {
-  --star-color: rgb(231, 216, 213);
+  --star-color: rgb(254, 204, 0);
   --star-tail-length: 6em;
   --star-tail-height: 2px;
   --star-width: calc(var(--star-tail-length) / 6);
   --fall-duration: 9s;
   --tail-fade-duration: var(--fall-duration);
-  position: absolute;
+  position:absolute;
   top: var(--top-offset);
   left: 0;
-  width: var(--star-tail-length);
+  width: 100vw;
   height: var(--star-tail-height);
   color: var(--star-color);
   background: linear-gradient(45deg, currentColor, transparent);
@@ -125,7 +126,7 @@ body {
 }
 .star:nth-child(6) {
   --star-tail-length: 7.16em;
-  --top-offset: 71.29vh;
+  --top-offset: -50px;
   --fall-duration: 9.174s;
   --fall-delay: 8.544s;
 }
@@ -167,9 +168,10 @@ body {
 }
 .star:nth-child(13) {
   --star-tail-length: 5.27em;
-  --top-offset: 61.63vh;
+  --top-offset: -50px;
   --fall-duration: 8.308s;
   --fall-delay: 2.403s;
+  left: 20%;
 }
 .star:nth-child(14) {
   --star-tail-length: 5.02em;
@@ -200,6 +202,7 @@ body {
   --top-offset: 18.35vh;
   --fall-duration: 7.319s;
   --fall-delay: 7.115s;
+  left: 20%;
 }
 .star:nth-child(19) {
   --star-tail-length: 7.04em;
@@ -257,9 +260,10 @@ body {
 }
 .star:nth-child(28) {
   --star-tail-length: 5.96em;
-  --top-offset: 29.08vh;
+  --top-offset: -50px;
   --fall-duration: 10.783s;
   --fall-delay: 4.505s;
+  left: 50%;
 }
 .star:nth-child(29) {
   --star-tail-length: 5.55em;
@@ -341,15 +345,17 @@ body {
 }
 .star:nth-child(42) {
   --star-tail-length: 6.07em;
-  --top-offset: 65.41vh;
+  --top-offset: -50px;
   --fall-duration: 7.68s;
   --fall-delay: 8.41s;
+  left: 20%;
 }
 .star:nth-child(43) {
   --star-tail-length: 6.15em;
   --top-offset: 12.35vh;
   --fall-duration: 6.739s;
   --fall-delay: 4.05s;
+  left: 30%;
 }
 .star:nth-child(44) {
   --star-tail-length: 7.41em;
@@ -365,9 +371,10 @@ body {
 }
 .star:nth-child(46) {
   --star-tail-length: 5.36em;
-  --top-offset: 54.35vh;
+  --top-offset: -50px;
   --fall-duration: 6.964s;
   --fall-delay: 9.463s;
+  left: -10%;
 }
 .star:nth-child(47) {
   --star-tail-length: 6.9em;
@@ -392,6 +399,7 @@ body {
   --top-offset: 31.14vh;
   --fall-duration: 11.371s;
   --fall-delay: 9.903s;
+  left: 15%;
 }
 .star::before, .star::after {
   position: absolute;

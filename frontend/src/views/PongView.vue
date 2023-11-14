@@ -3,9 +3,11 @@ import ScoreBoard from './ScoreBoard.vue';
   <div>
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
-    <button @click="enterQueue()">Enter Queue</button>
-    <button @click="leaveQueue()">Leave Queue</button>
-    <button @click="stopGame()">Abort Game</button>
+  </div>
+  <div class="btn-group">
+    <button @click="enterQueue()" class="btn btn-danger">Enter Queue</button>
+    <button @click="leaveQueue()" class="btn btn-warning">Leave Queue</button>
+    <button @click="stopGame()" class="btn btn-success">Abort Game</button>
   </div>
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>

@@ -1,6 +1,6 @@
 <template>
   <div class="player-checkin">
-    <h5>Players ready: {{ numberOfPlayers }}</h5>
+    <h2>Players ready: {{ numberOfPlayers }}</h2>
     <button @click="checkIn" class="press-checkin">{{ btnMsg }}</button>
   </div>
 </template>

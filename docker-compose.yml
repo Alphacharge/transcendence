@@ -7,31 +7,37 @@ networks:
 # VOLUMES
 volumes:
   vol_backend:
+    driver: local
     driver_opts:
       device: ./backend
       o: bind
       type: none
   vol_frontend:
+    driver: local
     driver_opts:
       device: ./frontend
       o: bind
       type: none
   vol_sql:
+    driver: local
     driver_opts:
       device: ./data/sql
       o: bind
       type: none
   vol_pgadmin:
+    driver: local
     driver_opts:
       device: ./data/pgadmin
       o: bind
       type: none
   vol_mysql:
+    driver: local
     driver_opts:
       device: ./data/mysql
       o: bind
       type: none
   vol_myadmin:
+    driver: local
     driver_opts:
       device: ./data/myadmin
       o: bind

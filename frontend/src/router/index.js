@@ -7,6 +7,7 @@ import IpPanelView from "@/views/IpPanelView.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
+import StatisticView from "@/views/StatisticView.vue";
 
 const routes = [
   {
@@ -38,6 +39,11 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginView,
+  },
+  {
+    path: "/statistic",
+    name: "statistic",
+    component: StatisticView,
   },
   {
     path: "/signup",

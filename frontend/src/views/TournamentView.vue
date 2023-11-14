@@ -3,7 +3,7 @@
   <title>Tournament</title>
 </head>
 <!--
-<div class="torunament-schema">
+<div class="tournament-schema">
   <div class="round r-of-4">
     <div class="bracket-game">
       <div class="player top win">
