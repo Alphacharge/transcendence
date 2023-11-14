@@ -58,7 +58,12 @@ export class GameGateway {
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
-
+    if (user && user.inGame) {
+      // get the active game of the user
+      const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+      // stop the game
+      if (activeGame) this.gameService.stopGame(activeGame);
+    }
     // delete the socket id
     user.socket = null;
   }
@@ -93,8 +98,8 @@ export class GameGateway {
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
-    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
+    game.user1.socket.emit('gameId', { gameId: game.gameId });
+    game.user2.socket.emit('gameId', { gameId: game.gameId });
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
@@ -125,16 +130,17 @@ export class GameGateway {
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: number; playerNumber: number }) {
-
-    if (gameId) {
-      const game = this.gameService.paddleUp(gameId, playerNumber);
+  leftPaddleUp(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+    const user = this.gameService.users.get(socket.id);
+    if (gameId && user) {
+      const game = this.gameService.paddleUp(gameId, user);
       if (game) this.sendPaddleUpdate(game);
     }
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: number; playerNumber: number }) {
+  PaddleDown(@MessageBody() { gameId }: { gameId: string }, @ConnectedSocket() socket: Socket) {
+    const user = this.gameService.users.get(socket.id);
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, user);
       if (game) this.sendPaddleUpdate(game);

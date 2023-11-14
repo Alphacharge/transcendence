@@ -4,6 +4,39 @@ networks:
   network:
     driver: bridge
 
+# VOLUMES
+volumes:
+  vol_backend:
+    driver_opts:
+      device: ./backend
+      o: bind
+      type: none
+  vol_frontend:
+    driver_opts:
+      device: ./frontend
+      o: bind
+      type: none
+  vol_sql:
+    driver_opts:
+      device: ./data/sql
+      o: bind
+      type: none
+  vol_pgadmin:
+    driver_opts:
+      device: ./data/pgadmin
+      o: bind
+      type: none
+  vol_mysql:
+    driver_opts:
+      device: ./data/mysql
+      o: bind
+      type: none
+  vol_myadmin:
+    driver_opts:
+      device: ./data/myadmin
+      o: bind
+      type: none
+
 #NESTJS
 services:
   nestjs:
@@ -34,7 +67,6 @@ services:
       - ./frontend:/frontend
       - ./certificate.key/:/certificates/certificate.key
       - ./certificate.cert/:/certificates/certificate.cert
-
     depends_on:
       - nestjs
 
@@ -62,7 +94,7 @@ services:
     networks:
       - network
     volumes:
-      - ./data/sql:/var/lib/postgresql/data
+      - vol_sql:/var/lib/postgresql/data
 
 # #PHPMYADMIN
   phppgadmin:
@@ -75,6 +107,6 @@ services:
     networks:
       - network
     volumes:
-      - ./data/pgadmin:/var/lib/pgadmin
+      - vol_pgadmin:/var/lib/pgadmin
     depends_on:
       - postgresql

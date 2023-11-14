@@ -22,7 +22,6 @@
         id="InputPassword"
       />
     </div>
-	<div>or <router-link to="/signup">Signup</router-link></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </template>
