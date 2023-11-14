@@ -13,21 +13,27 @@ export class TournamentController {
 		return {response};
 	}
 
+	@Post('status')
+	async getStatus(@Body() player: PlayerDto) {
+		const response = this.tournamentService.getStatus(player);
+		return {response};
+	}
+
 	@Get('count')
 	async countAll() {
 		const response= this.tournamentService.countAll();
 		return {response};
 	}
 
-	@Delete(':token')
-	async remove(@Param('token') player: string) {
-		const response = this.tournamentService.remove(player);
+	@Get('all')
+	async findAll() {
+		const response= this.tournamentService.findAll();
 		return {response};
 	}
 
-	@Get('status')
-	async getStatus(@Body() player: PlayerDto) {
-		const response = this.tournamentService.getStatus(player);
+	@Delete(':token')
+	async remove(@Param('token') player: string) {
+		const response = this.tournamentService.remove(player);
 		return {response};
 	}
 }

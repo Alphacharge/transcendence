@@ -10,3 +10,4 @@
   </nav>
   <router-view />
 </template>
+

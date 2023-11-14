@@ -16,21 +16,25 @@ export class TournamentService {
 		return this.tokens.length;
 	}
 
+	findAll() {
+		return this.tokens;
+	}
+
 	remove(playerToken: string) {
 		const index = this.tokens.findIndex(token=>{
 			return token==playerToken});
-		if (index !== -1) {
-			this.tokens.splice(index,1)
-		}
+			if (index !== -1) {
+				this.tokens.splice(index,1)
+			}
 		return this.tokens.length;
 	}
 
 	getStatus(player: PlayerDto) {
 		const index = this.tokens.findIndex(token=>{
 			return token==player.playerToken});
-		if (index !== -1) {
-			return true;
-		}
+			if (index !== -1) {
+				return true;
+			}
 		return false;
 	}
 }

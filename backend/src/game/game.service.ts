@@ -11,10 +11,13 @@ import { Prisma, PrismaClient } from '@prisma/client';
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
+
+  queueTournamentGame: User[] = [];
   users: Map<string, User> = new Map(); // user.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
   prisma: PrismaClient;
+
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -35,6 +38,13 @@ export class GameService {
     this.queue.push(user);
     // check if a game is ready to be started
     this.checkQueue();
+  }
+
+  addToTournamentQueue(socket: Socket) {
+    const user = this.users.get(socket.id);
+    this.queueTournamentGame.push(user);
+    console.log(`Client ${socket.id} entered tournament queue`);
+    if(this.queueTournamentGame.length === 2) this.startGame;
   }
 
   /* Remove a user from the game queue */

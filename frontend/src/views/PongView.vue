@@ -3,8 +3,8 @@ import ScoreBoard from './ScoreBoard.vue';
   <div>
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
-    <button @click="enterQueue()">{{ $t("enterQueue") }}</button>
-    <button @click="leaveQueue()">{{ $t("leaveQueue") }}</button>
+    <button v-if="enterQueueVisibile" @click="enterQueue()">Enter Queue</button>
+    <button @click="leaveQueue()">Leave Queue</button>
     <button @click="stopGame()">Abort Game</button>
   </div>
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
@@ -17,6 +17,12 @@ import ScoreBoard from "@/components/ScoreBoard.vue";
 import { socket } from "@/assets/utils/socket";
 
 export default {
+  props: {
+    enterQueueVisibile: {
+      type: Boolean,
+      default: true,
+    }
+  },
   data() {
     return {
       player1Score: 0,

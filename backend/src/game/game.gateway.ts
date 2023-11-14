@@ -82,6 +82,11 @@ import * as fs from 'fs';
     this.gameService.addToQueue(socket);
   }
 
+  @SubscribeMessage('enterTournamentQueue')
+  enterTournamentQueue(@ConnectedSocket() socket: Socket) {
+    this.gameService.addToTournamentQueue(socket);
+  }
+
   @SubscribeMessage('leaveQueue')
   leaveQueue(@ConnectedSocket() socket: Socket) {
     this.gameService.removeFromQueue(socket);

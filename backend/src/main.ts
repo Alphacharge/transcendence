@@ -32,6 +32,7 @@ async function bootstrap() {
       key: fs.readFileSync('/certificates/certificate.key'),
       cert: fs.readFileSync('/certificates/certificate.cert'),
 	  },
+
   });
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
