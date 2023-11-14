@@ -21,7 +21,7 @@ export default {
     enterQueueVisibile: {
       type: Boolean,
       default: true,
-    }
+    },
   },
   data() {
     return {
