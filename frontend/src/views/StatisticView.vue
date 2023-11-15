@@ -4,17 +4,21 @@
     <table class="table table-bordered transparent-table">
       <thead>
         <tr>
-          <th>USER</th>
-          <th @click="sortTable('field2')">MATCHES</th>
-          <th @click="sortTable('field3')">WINS</th>
-          <th @click="sortTable('field4')">LOSS</th>
-          <th @click="sortTable('field5')">TOURNAMENT-MATCHES</th>
-          <th @click="sortTable('field6')">TOURNAMENT-WINS</th>
+          <th>{{ $t("User") }}</th>
+          <th @click="sortTable('field2')">{{ $t("Matches") }}</th>
+          <th @click="sortTable('field3')">{{ $t("Wins") }}</th>
+          <th @click="sortTable('field4')">{{ $t("Losses") }}</th>
+          <th @click="sortTable('field5')">{{ $t("TournamentMatches") }}</th>
+          <th @click="sortTable('field6')">{{ $t("TournamentWins") }}</th>
         </tr>
       </thead>
       <tbody>
         <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-        <tr v-for="(data, index) in sortedStatistics" :key="index" :class="{ 'first-row': index === 0, 'other-rows': index > 0 }">
+        <tr
+          v-for="(data, index) in sortedStatistics"
+          :key="index"
+          :class="{ 'first-row': index === 0, 'other-rows': index > 0 }"
+        >
           <td>{{ data.field1 }}</td>
           <td>{{ data.field2 }}</td>
           <td>{{ data.field3 }}</td>
@@ -28,26 +32,35 @@
 </template>
 
 <script>
-import router from "@/router";
-
 export default {
   data() {
     return {
       // Statistikdaten können hier aus deinem Backend abgerufen werden
       statistics: [
-        { field1: 'Daten 1', field2: 'Daten 2', field3: 'Daten 3', field4: 'Daten 4', 
-          field5: 'Daten 5', field6: 'Daten 6', field7: 'Daten 7', field8: 'Daten 8',
-          field9: 'Daten 9', field10: 'Daten 10', field11: 'Daten 11', field12: 'Daten 12' },
+        {
+          field1: "Daten 1",
+          field2: "Daten 2",
+          field3: "Daten 3",
+          field4: "Daten 4",
+          field5: "Daten 5",
+          field6: "Daten 6",
+          field7: "Daten 7",
+          field8: "Daten 8",
+          field9: "Daten 9",
+          field10: "Daten 10",
+          field11: "Daten 11",
+          field12: "Daten 12",
+        },
         // Füge hier weitere Statistikdaten hinzu
       ],
-      sortKey: 'field3',
-      sortDirection: 'desc',
+      sortKey: "field3",
+      sortDirection: "desc",
     };
   },
   computed: {
     sortedStatistics() {
       return this.statistics.slice().sort((a, b) => {
-        const modifier = this.sortDirection === 'desc' ? -1 : 1;
+        const modifier = this.sortDirection === "desc" ? -1 : 1;
         return modifier * (a[this.sortKey] - b[this.sortKey]);
       });
     },
@@ -55,10 +68,10 @@ export default {
   methods: {
     sortTable(key) {
       if (key === this.sortKey) {
-        this.sortDirection = this.sortDirection === 'desc' ? 'asc' : 'desc';
+        this.sortDirection = this.sortDirection === "desc" ? "asc" : "desc";
       } else {
         this.sortKey = key;
-        this.sortDirection = 'desc';
+        this.sortDirection = "desc";
       }
     },
   },
@@ -72,7 +85,7 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.transparent-table td{
+.transparent-table td {
   background-color: rgba(17, 9, 69, 0.237);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
@@ -87,6 +100,12 @@ export default {
   color: #ffe600c8;
 }
 
+/* Add this style to capitalize text in the first row of table headers */
+.transparent-table thead tr:first-child th {
+  text-transform: uppercase;
+}
+
+
 @media screen and (max-width: 767px) {
   .transparent-table td,
   .transparent-table th {
@@ -97,7 +116,9 @@ export default {
 @media screen and (min-width: 768px) {
   .transparent-table td,
   .transparent-table th {
-    width: calc(100% / 6); /* Bei Bildschirmen mit einer Breite von 768px oder größer: gleichmäßige Breite aufteilen */
+    width: calc(
+      100% / 6
+    ); /* Bei Bildschirmen mit einer Breite von 768px oder größer: gleichmäßige Breite aufteilen */
   }
 }
 </style>
