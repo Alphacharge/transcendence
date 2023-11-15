@@ -26,11 +26,6 @@
           >
         </li>
         <li class="nav-item flex-grow-1">
-          <router-link to="/login-fields" class="nav-link"
-            >Login Fields</router-link
-          >
-        </li>
-        <li class="nav-item flex-grow-1">
           <router-link to="/ip" class="nav-link">IP-Panel</router-link>
         </li>
         <li class="nav-item flex-grow-1">

@@ -66,7 +66,7 @@ export default {
       }
     },
     async startTournament() {
-      this.tournamentStatus = this.tournamentStatus < 1;
+      this.tournamentStatus = this.tournamentStatus << 1;
       this.pongVisible = true;
       socket.enterTournamentQueue();
     },
