@@ -4,45 +4,6 @@ networks:
   network:
     driver: bridge
 
-# VOLUMES
-volumes:
-  vol_backend:
-    driver: local
-    driver_opts:
-      device: ./backend
-      o: bind
-      type: none
-  vol_frontend:
-    driver: local
-    driver_opts:
-      device: ./frontend
-      o: bind
-      type: none
-  vol_sql:
-    driver: local
-    driver_opts:
-      device: ./data/sql
-      o: bind
-      type: none
-  vol_pgadmin:
-    driver: local
-    driver_opts:
-      device: ./data/pgadmin
-      o: bind
-      type: none
-  vol_mysql:
-    driver: local
-    driver_opts:
-      device: ./data/mysql
-      o: bind
-      type: none
-  vol_myadmin:
-    driver: local
-    driver_opts:
-      device: ./data/myadmin
-      o: bind
-      type: none
-
 #NESTJS
 services:
   nestjs:
@@ -56,7 +17,9 @@ services:
     networks:
       - network
     volumes:
-      - vol_backend:/backend
+      - ./backend:/backend
+      - ./certificate.key/:/certificates/certificate.key
+      - ./certificate.cert/:/certificates/certificate.cert
 
   vue:
     container_name: vue
@@ -67,7 +30,9 @@ services:
     networks:
       - network
     volumes:
-      - vol_frontend:/frontend
+      - ./frontend:/frontend
+      - ./certificate.key/:/certificates/certificate.key
+      - ./certificate.cert/:/certificates/certificate.cert
     depends_on:
       - nestjs
 
@@ -75,7 +40,7 @@ services:
     container_name: swagger
     image: swaggerapi/swagger-ui
     environment:
-      SWAGGER_JSON_URL: http://localhost:3000/api-docs-json
+      SWAGGER_JSON_URL: https://localhost:3000/api-docs-json
       BASE_URL: /swagger
       PORT: 8080
     ports:
@@ -95,7 +60,7 @@ services:
     networks:
       - network
     volumes:
-      - vol_sql:/var/lib/postgresql/data
+      - ./data/sql:/var/lib/postgresql/data
 
 # #PHPMYADMIN
   phppgadmin:
@@ -108,6 +73,6 @@ services:
     networks:
       - network
     volumes:
-      - vol_pgadmin:/var/lib/pgadmin
+      - ./data/pgadmin:/var/lib/pgadmin
     depends_on:
       - postgresql
