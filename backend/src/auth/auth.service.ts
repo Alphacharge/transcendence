@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
@@ -55,30 +54,53 @@ export class AuthService {
     const pwMatches = await argon.verify(newUser.hash, user.password);
     //if password wrong throw exception
     if (!pwMatches) {
-      throw new ForbiddenException('Credentials incorrect');
+		throw new ForbiddenException('Credentials incorrect');
     }
     const bToken = await this.signToken(newUser.id, newUser.email);
     // return this.signToken(newUser.id, newUser.email);
-
+	
     return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
-  }
+}
 
-  async signToken(
-    userId: number,
+async signToken(
+	userId: number,
     email: string,
   ): Promise<string> {
-    const payload = {
-      sub: userId,
-      email,
-    };
-
-    const secret = this.config.get('JWT_SECRET');
-
-    const token = await this.jwt.signAsync(payload, {
-      expiresIn: '15m',
-      secret: secret,
-    });
-
+	  const payload = {
+		  sub: userId,
+		  email,
+		};
+		
+		const secret = this.config.get('JWT_SECRET');
+		
+		const token = await this.jwt.signAsync(payload, {
+			expiresIn: '15m',
+			secret: secret,
+		});
+		
     return token;
+  }
+
+  async validateToken(
+	userId: number,
+	token: string,
+  ){
+	const secret = this.config.get('JWT_SECRET');
+	try {
+		const decodedToken: any = await this.jwt.verifyAsync(token, { secret: secret });	
+		// Check if the stored userId matches the userId from the token
+		if (userId !== decodedToken.sub) {
+		  console.error("User Identity KO: userId mismatch");
+		  return false;
+		}
+	
+		// Now, you can use the decodedToken.sub (userId) and decodedToken.email if needed.
+	
+		console.log("User Identity OK.");
+		return true;
+	  } catch (error) {
+		console.error("User Identity KO: Token verification failed", error);
+		return false;
+	  }
   }
 }
