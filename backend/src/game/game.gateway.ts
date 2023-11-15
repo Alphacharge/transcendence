@@ -8,14 +8,18 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { ConsoleLogger, OnModuleInit } from '@nestjs/common';
 import { GameService } from './game.service';
-import { UserDto } from 'src/user/dto';
+import { User } from 'src/user/User';
 import { GameState} from './GameState';
+import * as https from 'https';
+import * as fs from 'fs';
 
 // can enter a port in the brackets
-@WebSocketGateway()
-export class GameGateway implements OnModuleInit {
+@WebSocketGateway({ server: https.createServer({
+	key: fs.readFileSync('/certificates/certificate.key'),
+	cert: fs.readFileSync('/certificates/certificate.cert'),
+  })})
+  export class GameGateway {
   @WebSocketServer()
   server: Server;
 
@@ -41,18 +45,14 @@ export class GameGateway implements OnModuleInit {
   }
 
   /* New client connected. */
-  onModuleInit() {
-    this.server.on('connection', (socket) => {
-      console.log('Client connected:', socket.id);
+  handleConnection(socket: any) {
+    console.log("Client connected:", socket.id);
 
       // save new user to users array in GameService
-      const user = new UserDto();
-      user.socket = socket;
-      this.gameService.users.set(socket.id, user);
-    });
-    this.server.on('close', () => {
-      console.log('Client disconnected');
-    });
+	  const user = new User();
+	  user.socket = socket;
+	  this.gameService.users.set(socket.id, user);
+
   }
 
   handleDisconnect(socket: any) {
@@ -60,12 +60,19 @@ export class GameGateway implements OnModuleInit {
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
-    if (user && user.inGame) {
-      // get the active game of the user
-      const activeGameId = user.gamesPlayed[user.gamesPlayed.length - 1];
-      // stop the game
-      if (activeGameId) this.gameService.stopGame(activeGameId);
-    }
+
+	if (user) {
+		// remove user from any queues
+		// INSERT tournament queue
+		this.gameService.removeFromQueue(socket);
+
+		// abort any games the user was part of
+		if (user.inGame) {
+			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+			if (activeGame) this.gameService.stopGame(activeGame);
+		  }
+	}
+
     // delete the socket id
     user.socket = null;
   }
@@ -73,6 +80,11 @@ export class GameGateway implements OnModuleInit {
   @SubscribeMessage('enterQueue')
   enterQueue(@ConnectedSocket() socket: Socket) {
     this.gameService.addToQueue(socket);
+  }
+
+  @SubscribeMessage('enterTournamentQueue')
+  enterTournamentQueue(@ConnectedSocket() socket: Socket) {
+    this.gameService.addToTournamentQueue(socket);
   }
 
   @SubscribeMessage('leaveQueue')
@@ -100,8 +112,8 @@ export class GameGateway implements OnModuleInit {
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.gameId });
-    game.user2.socket.emit('gameId', { gameId: game.gameId });
+    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
+    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
@@ -132,19 +144,19 @@ export class GameGateway implements OnModuleInit {
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-
-    if (gameId) {
-      const game = this.gameService.paddleUp(gameId, playerNumber);
+  leftPaddleUp(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+    const user = this.gameService.users.get(socket.id);
+    if (gameId && user) {
+      const game = this.gameService.paddleUp(gameId, user);
       if (game) this.sendPaddleUpdate(game);
     }
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId, playerNumber }: { gameId: string; playerNumber: number }) {
-
+  PaddleDown(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+    const user = this.gameService.users.get(socket.id);
     if (gameId) {
-      const game = this.gameService.paddleDown(gameId, playerNumber);
+      const game = this.gameService.paddleDown(gameId, user);
       if (game) this.sendPaddleUpdate(game);
     }
   }

@@ -5,7 +5,7 @@ import ScoreBoard from './ScoreBoard.vue';
     <p>I am player number: {{ playerNumber }}</p>
   </div>
   <div class="btn-group">
-    <button @click="enterQueue()" class="btn btn-danger">Enter Queue</button>
+    <button v-if="enterQueueVisibile" @click="enterQueue() class="btn btn-danger"">Enter Queue</button>
     <button @click="leaveQueue()" class="btn btn-warning">Leave Queue</button>
     <button @click="stopGame()" class="btn btn-success">Abort Game</button>
   </div>
@@ -19,6 +19,12 @@ import ScoreBoard from "@/components/ScoreBoard.vue";
 import { socket } from "@/assets/utils/socket";
 
 export default {
+  props: {
+    enterQueueVisibile: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       player1Score: 0,
