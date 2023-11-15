@@ -5,8 +5,8 @@
     </h2>
   </div>
   <div>
-    <div class="player-score">Player 1: {{ player1Score }}</div>
-    <div class="player-score">Player 2: {{ player2Score }}</div>
+    <div class="player-score"> <h5> Player 1 : {{ player1Score }}</h5></div>
+    <div class="player-score"><h5>Player 2 : {{ player2Score }}</h5></div>
   </div>
 </template>
 
