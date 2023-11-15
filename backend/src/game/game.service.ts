@@ -57,6 +57,7 @@ export class GameService {
     // Find the user in the queue
     const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
 
+
     if (userToRemove) {
       // Remove the user from the queue
       const index = this.queue.indexOf(userToRemove);
