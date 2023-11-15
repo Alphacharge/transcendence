@@ -7,7 +7,10 @@
       </button>
     </div>
     <div v-if="players.length < 4">
-      <PlayerCheckin @playerCountChanged="fetchPlayers" />
+      <PlayerCheckin
+        @playerCountChanged="fetchPlayers"
+        v-if="playerCheckinVisible"
+        />
     </div>
     <div v-else>
       <h3>Get Ready to Play...</h3>
@@ -39,6 +42,7 @@ export default {
       players: [],
       tournamentStatus: 0b000,
       pongVisible: false,
+      playerCheckinVisible: true,
     };
   },
   mounted() {
@@ -68,6 +72,7 @@ export default {
     async startTournament() {
       this.tournamentStatus = this.tournamentStatus << 1;
       this.pongVisible = true;
+      this.playerCheckinVisible = false;
       socket.enterTournamentQueue();
     },
   },

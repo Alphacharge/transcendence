@@ -17,6 +17,7 @@ export class GameService {
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
   prisma: PrismaClient;
+  tournamentGame: boolean;
 
 
   /* A new user is added to the game queue */
@@ -44,7 +45,10 @@ export class GameService {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
     console.log(`Client ${socket.id} entered tournament queue`);
-    if(this.queueTournamentGame.length === 2) this.startGame;
+    console.log(`tournament queue :${this.queueTournamentGame.length}`);
+    if(this.queueTournamentGame.length == 2) {
+      this.tournamentGame=true; //// added for readability
+      this.startGame(this.tournamentGame)};
   }
 
   /* Remove a user from the game queue */
@@ -65,52 +69,60 @@ export class GameService {
 
   checkQueue() {
 	  if (this.queue.length >= 2){
-		console.log(this.queue.length);
-		this.startGame();
-	} 
+      console.log(this.queue.length);
+      this.tournamentGame = false; // added for readability
+      this.startGame(this.tournamentGame);
+    }
   }
 
-async startGame() {
+  async startGame(thisTournamentGame: boolean) {
     const game = new GameState();
-	game.user1 = this.queue.pop();
-	game.user2 = this.queue.pop();
-	console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
-	await game.initializeGame(game.user1.id, game.user2.id);
+    game.tournamentGame = true;
+    if (!thisTournamentGame) {
+      game.user1 = this.queue.pop();
+      game.user2 = this.queue.pop();
+    }
+    else {
+      game.user1 = this.queueTournamentGame.pop();
+      game.user2 = this.queueTournamentGame.pop();
+    }
+    console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
+    await game.initializeGame(game.user1.id, game.user2.id);
 
-	if (!game.GameData) {
-		console.log('Game: Failed to create new Game!', this.queue.length);
-		return;
-	}
+    if (!game.GameData) {
+      console.log('Game: Failed to create new Game!', this.queue.length);
+      return;
+    }
 
-    const updateRate = 1000 / 60;
+      const updateRate = 1000 / 60;
 
 
-    game.user1.inGame = true;
-    game.user2.inGame = true;
+      game.user1.inGame = true;
+      game.user2.inGame = true;
 
-    this.games.set(game.GameData.id, game);
-    sharedEventEmitter.emit('prepareGame', game);
+      this.games.set(game.GameData.id, game);
+      sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('Game: Starting multiplayer game', game.GameData.id);
-    game.intervalId = setInterval(() => {
-      this.animateBall(game);
-    }, updateRate);
+      console.log('Game: Starting multiplayer game', game.GameData.id);
+      game.intervalId = setInterval(() => {
+        this.animateBall(game);
+      }, updateRate);
 
-    sharedEventEmitter.emit('startGame', game);
+      sharedEventEmitter.emit('startGame', game);
   }
 
  stopGame(gameState: GameState): void;
 	stopGame(gameId: number): void;
 	stopGame(arg: GameState | number): void {
 	  let game: GameState;
-  
+
 	  if (typeof arg === 'number') game = this.games.get(arg);
 	  else game = arg;
     if (!game) {
       console.error("Game: Couldn't stop. Game not found.");
       return;
     }
-	
+
     console.log('Stopping game', game.GameData.id);
     clearInterval(game.intervalId);
     game.intervalId = null;
