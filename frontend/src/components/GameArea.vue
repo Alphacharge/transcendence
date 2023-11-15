@@ -107,7 +107,7 @@ export default {
 .background {
   width: 100%;
   height: 100%;
-  background-color: rgba(128, 128, 128, 0);;
+  background-color: rgba(128, 128, 128, 0);
   box-sizing: border-box;
   border: 10px solid magenta;
 }

@@ -22,7 +22,8 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible" />
+  <Pong v-if="pongVisible"
+    :enterQueueVisibile="false"/>
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
@@ -47,7 +48,7 @@ export default {
     async fetchPlayers() {
       try {
         const response = await fetch(
-          `http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
           {
             method: "GET",
             headesr: {
@@ -56,7 +57,7 @@ export default {
           },
         );
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTPS error! Status: ${response.status}`);
         }
         const data = await response.json();
         this.players = await data["response"];
@@ -65,7 +66,7 @@ export default {
       }
     },
     async startTournament() {
-      this.tournamentStatus = this.tournamentStatus < 1;
+      this.tournamentStatus = this.tournamentStatus << 1;
       this.pongVisible = true;
       socket.enterTournamentQueue();
     },
