@@ -58,7 +58,8 @@ export default {
         if (response.ok) {
           if (localStorage.getItem("userdata"))
             localStorage.removeItem("userData");
-          localStorage.setItem("userData", responseData["access_token"]);
+          localStorage.setItem("access_token", responseData["access_token"]);
+          localStorage.setItem("userId", responseData["userId"]);
           router.push("/");
         } else {
           alert("User or Password wrong!");
