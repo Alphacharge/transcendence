@@ -22,8 +22,7 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible"
-    :enterQueueVisibile="false"/>
+  <Pong v-if="pongVisible" :enterQueueVisibile="false" />
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
