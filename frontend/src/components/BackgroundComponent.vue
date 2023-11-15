@@ -1,5 +1,5 @@
 <template>
-<div class="stars">
+  <div class="stars">
     <div class="star"></div>
     <div class="star"></div>
     <div class="star"></div>
@@ -39,26 +39,23 @@
     <div class="star"></div>
     <div class="star"></div>
     <div class="star"></div>
-</div>
+  </div>
 </template>
 <script>
-export default {
-    }
+export default {};
 </script>
 <style scoped>
-
 body {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100vw;
-    height: 100vh;
-    background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
-    overflow: auto;
-    z-index: -1;
-
-} 
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%);
+  overflow: auto;
+  z-index: -1;
+}
 
 .stars {
   position: fixed;
@@ -77,7 +74,7 @@ body {
   --star-width: calc(var(--star-tail-length) / 6);
   --fall-duration: 9s;
   --tail-fade-duration: var(--fall-duration);
-  position:absolute;
+  position: absolute;
   top: var(--top-offset);
   left: 0;
   width: 100vw;
@@ -87,7 +84,8 @@ body {
   border-radius: 50%;
   filter: drop-shadow(0 0 6px currentColor);
   transform: translate3d(104em, 0, 0);
-  animation: fall var(--fall-duration) var(--fall-delay) linear infinite, tail-fade var(--tail-fade-duration) var(--fall-delay) ease-out infinite;
+  animation: fall var(--fall-duration) var(--fall-delay) linear infinite,
+    tail-fade var(--tail-fade-duration) var(--fall-delay) ease-out infinite;
 }
 @media screen and (max-width: 750px) {
   .star {
@@ -401,7 +399,8 @@ body {
   --fall-delay: 9.903s;
   left: 15%;
 }
-.star::before, .star::after {
+.star::before,
+.star::after {
   position: absolute;
   content: "";
   top: 0;
@@ -425,11 +424,13 @@ body {
   }
 }
 @keyframes tail-fade {
-  0%, 50% {
+  0%,
+  50% {
     width: var(--star-tail-length);
     opacity: 1;
   }
-  70%, 80% {
+  70%,
+  80% {
     width: 0;
     opacity: 0.4;
   }

@@ -48,7 +48,7 @@ export default {
     async fetchPlayers() {
       try {
         const response = await fetch(
-          `http://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
           {
             method: "GET",
             headesr: {
@@ -57,7 +57,7 @@ export default {
           },
         );
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+          throw new Error(`HTTPS error! Status: ${response.status}`);
         }
         const data = await response.json();
         this.players = await data["response"];
