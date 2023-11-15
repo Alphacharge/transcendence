@@ -26,7 +26,7 @@
     </div>
   </div>
   <Pong v-if="pongVisible"
-    :enterQueueVisibile="false"/>
+    :pongButtonsVisible="pongButtonsVisible"/>
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
@@ -43,6 +43,7 @@ export default {
       tournamentStatus: 0b000,
       pongVisible: false,
       playerCheckinVisible: true,
+      pongButtonsVisible: false,
     };
   },
   mounted() {

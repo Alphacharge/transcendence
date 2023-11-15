@@ -78,12 +78,12 @@ export class GameService {
 
   async startGame(thisTournamentGame: boolean) {
     const game = new GameState();
-    game.tournamentGame = true;
     if (!thisTournamentGame) {
       game.user1 = this.queue.pop();
       game.user2 = this.queue.pop();
     }
     else {
+      game.tournamentGame = true;
       game.user1 = this.queueTournamentGame.pop();
       game.user2 = this.queueTournamentGame.pop();
     }
