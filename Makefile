@@ -38,10 +38,8 @@ postgre:
 ip:
 ifeq ($(OS), Darwin)
 	sed -i '' 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=$(IP)/' ./frontend/.env
-	sed -i '' 's/^BACKEND_IP=.*/BACKEND_IP=$(IP)/' ./backend/.env
 else
 	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend/.env
-	sed -i -e 's/^BACKEND_IP=.*/BACKEND_IP=127.0.0.1/' ./backend/.env
 endif
 
 # create https certificates
@@ -92,7 +90,11 @@ else
 	@echo $(CONFIRM_MESSAGE)
 endif
 
+dbclean: stop
+	rm -rf $(DB_D)
+	mkdir -p $(DB_D)
+
 #stop all containers, force rebuild and start it
 re: stop fclean all
 
-.phony: sclean clean status build check down up ip postgre
+.phony: sclean clean status build check down up ip postgre dbclean

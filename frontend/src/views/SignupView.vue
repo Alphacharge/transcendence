@@ -4,7 +4,9 @@
   </div>
   <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
     <div class="mb-3">
-      <label for="InputEmail" class="form-label"><h5>Email Address</h5></label>
+      <label for="InputEmail" class="form-label"
+        ><h5>{{ $t("EmailAddress") }}</h5></label
+      >
       <input
         v-model="inputEmail"
         type="email"
@@ -14,7 +16,9 @@
       />
     </div>
     <div class="mb-3">
-      <label for="InputPassword" class="form-label"><h5>Password</h5></label>
+      <label for="InputPassword" class="form-label"
+        ><h5>{{ $t("Password") }}</h5></label
+      >
       <input
         v-model="password"
         type="password"
@@ -23,10 +27,12 @@
       />
     </div>
     <div class="mb-3">
-      <label for="InputPasswordrep" class="form-label"><h5>Repeat Password</h5></label>
+      <label for="InputPasswordrep" class="form-label"
+        ><h5>{{ $t("RepeatPassword") }}</h5></label
+      >
       <input type="password" class="form-control" id="InputPasswordrep" />
     </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
   </form>
 </template>
 
