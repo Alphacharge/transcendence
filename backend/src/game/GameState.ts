@@ -38,13 +38,10 @@ export class GameState {
 
   speedFactor: number;
 
-  tournamentGame: boolean;
-
   constructor() {
-    this.prisma = new PrismaClient();
-    this.GameData = null;
+	this.prisma = new PrismaClient();
+	this.GameData = null;
     this.intervalId = null;
-    this.tournamentGame = false;
 
     this.user1 = null;
     this.user2 = null;
@@ -74,6 +71,8 @@ export class GameState {
     this.gameInit();
   }
 
+
+
   gameInit() {
     const startAngle = this.randomAngle();
     this.ballX = this.fieldWidth / 2;
@@ -81,6 +80,7 @@ export class GameState {
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
   }
+
 
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
   randomAngle() {
@@ -211,7 +211,7 @@ export class GameState {
     return angle;
   }
 
-  async playerVictory () {
+ async playerVictory () {
     if (this.scorePlayer1 == this.winningScore || this.scorePlayer2 == this.winningScore) {
 		await this.updateGameScore();
       clearInterval(this.intervalId);
@@ -229,7 +229,7 @@ export class GameState {
   }
 
 
-  async initializeGame(leftId: number, rightId: number) {
+async initializeGame(leftId: number, rightId: number) {
     // Assuming you're using Prisma to interact with a database
     this.GameData = await this.prisma.games.create({
       data: {
@@ -242,7 +242,7 @@ export class GameState {
         createdAt: new Date(),
       },
     });
-
+	
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
   }
