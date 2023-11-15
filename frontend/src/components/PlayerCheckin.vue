@@ -22,7 +22,6 @@
 		playersInTournament: 0,
 		pollingInterval: 0,
 	  };
-	  return storedPlayerToken;
 	},
 	async mounted() {
 	  this.playersInTournament = await this.countPlayers();
