@@ -49,7 +49,7 @@ export class GameService {
     if(this.queueTournamentGame.length == 2) {
       this.tournamentGame=true; //// added for readability
       this.startGame(this.tournamentGame)};
-  }
+    }
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
@@ -70,15 +70,15 @@ export class GameService {
 
   checkQueue() {
 	  if (this.queue.length >= 2){
-      console.log(this.queue.length);
-      this.tournamentGame = false; // added for readability
-      this.startGame(this.tournamentGame);
-    }
+		console.log(this.queue.length);
+    this.tournamentGame = false; // added for readability
+    this.startGame(this.tournamentGame);
+	}
   }
 
-  async startGame(thisTournamentGame: boolean) {
+async startGame(tournamentGame: boolean) {
     const game = new GameState();
-    if (!thisTournamentGame) {
+    if (!tournamentGame) {
       game.user1 = this.queue.pop();
       game.user2 = this.queue.pop();
     }
@@ -90,26 +90,26 @@ export class GameService {
     console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
     await game.initializeGame(game.user1.id, game.user2.id);
 
-    if (!game.GameData) {
-      console.log('Game: Failed to create new Game!', this.queue.length);
-      return;
-    }
+	if (!game.GameData) {
+		console.log('Game: Failed to create new Game!', this.queue.length);
+		return;
+	}
 
-      const updateRate = 1000 / 60;
+    const updateRate = 1000 / 60;
 
 
-      game.user1.inGame = true;
-      game.user2.inGame = true;
+    game.user1.inGame = true;
+    game.user2.inGame = true;
 
-      this.games.set(game.GameData.id, game);
-      sharedEventEmitter.emit('prepareGame', game);
+    this.games.set(game.GameData.id, game);
+    sharedEventEmitter.emit('prepareGame', game);
 
-      console.log('Game: Starting multiplayer game', game.GameData.id);
-      game.intervalId = setInterval(() => {
-        this.animateBall(game);
-      }, updateRate);
+    console.log('Game: Starting multiplayer game', game.GameData.id);
+    game.intervalId = setInterval(() => {
+      this.animateBall(game);
+    }, updateRate);
 
-      sharedEventEmitter.emit('startGame', game);
+    sharedEventEmitter.emit('startGame', game);
   }
 
  stopGame(gameState: GameState): void;

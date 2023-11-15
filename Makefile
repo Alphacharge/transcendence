@@ -6,8 +6,11 @@ SRC		:=	$(SRC_D)$(SRC_F)
 ENV		:=	--env-file $(SRC_D).env
 DB_D	:=	./data/sql
 OS		:=	$(shell uname)
-IP		:=	$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
-
+ifeq ($(USER), marius)
+	IP:=$(shell ifconfig | grep 'inet' | head -n5 | tail -n1 | cut -d' ' -f2)
+else
+	IP:=$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
+endif
 ###			###			COLORS			###			###
 RED		=	\033[1;31m
 GREEN	=	\033[1;32m
@@ -38,10 +41,8 @@ postgre:
 ip:
 ifeq ($(OS), Darwin)
 	sed -i '' 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=$(IP)/' ./frontend/.env
-	sed -i '' 's/^BACKEND_IP=.*/BACKEND_IP=$(IP)/' ./backend/.env
 else
 	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend/.env
-	sed -i -e 's/^BACKEND_IP=.*/BACKEND_IP=127.0.0.1/' ./backend/.env
 endif
 
 # create https certificates
@@ -92,7 +93,11 @@ else
 	@echo $(CONFIRM_MESSAGE)
 endif
 
+dbclean: stop
+	rm -rf $(DB_D)
+	mkdir -p $(DB_D)
+
 #stop all containers, force rebuild and start it
 re: stop fclean all
 
-.phony: sclean clean status build check down up ip postgre
+.phony: sclean clean status build check down up ip postgre dbclean

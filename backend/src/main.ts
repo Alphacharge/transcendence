@@ -40,9 +40,8 @@ async function bootstrap() {
 		origin: [
 			`https://${process.env.BACKEND_IP}:8080`,
 			"https://localhost:8080",
-    	`https://${process.env.BACKEND_IP}:3000`,
-			"https://localhost:3000"
-    ]
+			`https://${process.env.BACKEND_IP}:3000`,
+			"https://localhost:3000"]
 	});
 
   app.useWebSocketAdapter(new SocketIoAdapter(app));
