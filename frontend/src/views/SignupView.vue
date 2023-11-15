@@ -59,7 +59,8 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (localStorage.getItem("userdata")) localStorage.removeItem("userData");
+          if (localStorage.getItem("userdata"))
+            localStorage.removeItem("userData");
           localStorage.setItem("userData", responseData["access_token"]);
 
           router.push("/");

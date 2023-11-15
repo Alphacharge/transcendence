@@ -22,7 +22,7 @@
         id="InputPassword"
       />
     </div>
-	<div>or <router-link to="/signup">Signup</router-link></div>
+    <div>or <router-link to="/signup">Signup</router-link></div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </template>
@@ -56,7 +56,8 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (localStorage.getItem("userdata")) localStorage.removeItem("userData");
+          if (localStorage.getItem("userdata"))
+            localStorage.removeItem("userData");
           localStorage.setItem("userData", responseData["access_token"]);
           router.push("/");
         } else {
