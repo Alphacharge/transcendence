@@ -67,10 +67,10 @@ import * as fs from 'fs';
 		this.gameService.removeFromQueue(socket);
 
 		// abort any games the user was part of
-		if (user.inGame) {
-			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			if (activeGame) this.gameService.stopGame(activeGame);
-		  }
+		// if (user.inGame) {
+			// const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+			// if (activeGame) this.gameService.stopGame(activeGame);
+		//   }
 	}
 
     // delete the socket id

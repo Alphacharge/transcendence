@@ -7,11 +7,11 @@ export class User {
   socket: Socket | null;
 
   inGame: boolean;
-  gamesPlayed: GameState[]; // REPLACE this with database
+//   gamesPlayed: GameState[]; // REPLACE this with database
 
   constructor() {
     this.id = uuidv4();
     this.inGame = false;
-    this.gamesPlayed = [];
+    // this.gamesPlayed = [];
   }
 }
