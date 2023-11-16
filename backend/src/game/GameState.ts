@@ -215,7 +215,9 @@ export class GameState {
       clearInterval(this.intervalId);
       this.intervalId = null
       this.gameInit();
-      if (this.tournamentStatus) {this.tournamentStatus = this.tournamentStatus << 1;}
+      if (this.tournamentStatus) {
+        this.tournamentStatus = this.tournamentStatus << 1;
+        console.log(`Logging form player victory tournament status : ${this.tournamentStatus}`)}
       if (this.scorePlayer1 ==  this.winningScore)
       {
         this.winningPlayer = this.user1;

@@ -70,9 +70,15 @@ export default {
       }
     },
     async startTournament() {
-      this.tournamentStatus = this.tournamentStatus << 1;
-      this.pongVisible = true;
-      socket.enterTournamentQueue(this.tournamentStatus);
+      if (this.tournamentStatus < 4) {
+        this.tournamentStatus = this.tournamentStatus << 1;
+        this.pongVisible = true;
+        socket.enterTournamentQueue(this.tournamentStatus);
+      } else {
+        console.error(
+          `unexpected tournament status value : ${this.tournamentStatus}`,
+        );
+      }
     },
   },
 };

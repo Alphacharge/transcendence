@@ -42,7 +42,9 @@ export class GameService {
   addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
-    console.log(`Client ${socket.id} entered tournament queue, torunament status ${tournamentStatus}`);
+    console.log(`Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`);
+    console.log(`DEBUG tournament status : ${tournamentStatus}`);
+    if (tournamentStatus & 4) {console.log(`DEBUG tournament queue for round 2 ${this.queueTournamentGame.length}`);}
     if(this.queueTournamentGame.length >= 2) {
       this.startGame(tournamentStatus)};
     }
@@ -52,8 +54,6 @@ export class GameService {
     const user = this.users.get(socket.id);
     // Find the user in the queue
     const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
-
-
     if (userToRemove) {
       // Remove the user from the queue
       const index = this.queue.indexOf(userToRemove);
