@@ -30,7 +30,7 @@ export default {
   mounted() {
     socket.on("victory", (payload) => {
       this.announceVisible = true;
-      this.winningPlayer = payload.id;
+      this.winningPlayer = payload;
       console.log("Victory payload:", payload);
     });
   },
