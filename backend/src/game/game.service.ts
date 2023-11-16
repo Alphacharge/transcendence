@@ -104,7 +104,6 @@ export class GameService {
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
-
     sharedEventEmitter.emit('startGame', game);
   }
 

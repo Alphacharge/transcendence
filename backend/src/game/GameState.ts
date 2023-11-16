@@ -11,13 +11,12 @@ export class GameState {
   intervalId: NodeJS.Timeout | null;
 
   tournamentStatus: number;
-  winnerFirstRound: User;
 
   user1: User;
   user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
-  winningPlayer: String;
+  winningPlayer: User;
   winningScore: number;
 
   fieldWidth: number;
@@ -50,7 +49,7 @@ export class GameState {
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore=11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
@@ -74,8 +73,6 @@ export class GameState {
     this.gameInit();
   }
 
-
-
   gameInit() {
     const startAngle = this.randomAngle();
     this.ballX = this.fieldWidth / 2;
@@ -83,7 +80,6 @@ export class GameState {
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
   }
-
 
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
   randomAngle() {
@@ -222,21 +218,22 @@ export class GameState {
       if (this.tournamentStatus) {this.tournamentStatus = this.tournamentStatus << 1;}
       if (this.scorePlayer1 ==  this.winningScore)
       {
-        this.winningPlayer = "Player 1";
+        this.winningPlayer = this.user1;
       }
       else
       {
-        this.winningPlayer = "Player 2";
+        this.winningPlayer = this.user2;
       }
       sharedEventEmitter.emit('victory', this);
     }
   }
+
   isRunning(): boolean {
     return this.intervalId !== null;
   }
 
 
-async initializeGame(leftId: number, rightId: number) {
+async initializeGame(leftId: string, rightId: string) {
     // Assuming you're using Prisma to interact with a database
     this.GameData = await this.prisma.games.create({
       data: {
@@ -244,7 +241,7 @@ async initializeGame(leftId: number, rightId: number) {
         left_user_id: 1,
         // right_user_id: rightId,
         right_user_id: 2,
-    left_user_score: 0,
+        left_user_score: 0,
         right_user_score: 0,
         createdAt: new Date(),
       },
