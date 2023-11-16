@@ -16,8 +16,8 @@ import * as fs from 'fs';
 
 // can enter a port in the brackets
 @WebSocketGateway({ server: https.createServer({
-	key: fs.readFileSync('/certificates/certificate.key'),
-	cert: fs.readFileSync('/certificates/certificate.cert'),
+  key: fs.readFileSync('/certificates/certificate.key'),
+  cert: fs.readFileSync('/certificates/certificate.cert'),
   })})
   export class GameGateway {
   @WebSocketServer()
@@ -49,9 +49,9 @@ import * as fs from 'fs';
     console.log("Client connected:", socket.id);
 
       // save new user to users array in GameService
-	  const user = new User();
-	  user.socket = socket;
-	  this.gameService.users.set(socket.id, user);
+    const user = new User();
+    user.socket = socket;
+    this.gameService.users.set(socket.id, user);
 
   }
 
@@ -61,17 +61,17 @@ import * as fs from 'fs';
     // get the right user
     const user = this.gameService.users.get(socket.id);
 
-	if (user) {
-		// remove user from any queues
-		// INSERT tournament queue
-		this.gameService.removeFromQueue(socket);
+  if (user) {
+    // remove user from any queues
+    // INSERT tournament queue
+    this.gameService.removeFromQueue(socket);
 
-		// abort any games the user was part of
-		if (user.inGame) {
-			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			if (activeGame) this.gameService.stopGame(activeGame);
-		  }
-	}
+    // abort any games the user was part of
+    if (user.inGame) {
+      const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+      if (activeGame) this.gameService.stopGame(activeGame);
+      }
+  }
 
     // delete the socket id
     user.socket = null;
@@ -83,7 +83,7 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  enterTournamentQueue(@ConnectedSocket() socket: Socket, @MessageBody() tournamentStatus: Number) {
+  enterTournamentQueue(@ConnectedSocket() socket: Socket, @MessageBody() tournamentStatus: number) {
     this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 
@@ -118,9 +118,9 @@ import * as fs from 'fs';
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
-	this.sendPaddleUpdate(game);
-	this.sendBallUpdate(game);
-	this.sendScoreUpdate(game);
+    this.sendPaddleUpdate(game);
+    this.sendBallUpdate(game);
+    this.sendScoreUpdate(game);
   }
 
   // ball coordinate transmission

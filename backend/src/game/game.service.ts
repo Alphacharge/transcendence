@@ -11,13 +11,11 @@ import { Prisma, PrismaClient } from '@prisma/client';
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
-
   queueTournamentGame: User[] = [];
   users: Map<string, User> = new Map(); // user.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
   prisma: PrismaClient;
-  tournamentGame: boolean;
 
 
   /* A new user is added to the game queue */
@@ -25,15 +23,15 @@ export class GameService {
     // find the matching user
     const user = this.users.get(socket.id);
 
-	//user.id = 1 //
+  //user.id = 1 //
     // check if user already is in queue
     // REPLACE socket id with working user id
     if (!user || this.queue.find(queuedUser => queuedUser.id === user.id)) return;
-  	// check if user already is in an active game
-  	if (user.inGame) {
-  		console.log("Client is already playing");
-  		return;
-	  }
+    // check if user already is in an active game
+    if (user.inGame) {
+      console.log("Client is already playing");
+      return;
+    }
 
     console.log(`Client ${socket.id} entered game queue`);
     this.queue.push(user);
@@ -41,13 +39,12 @@ export class GameService {
     this.checkQueue();
   }
 
-  addToTournamentQueue(socket: Socket, tournamentStatus: Number) {
+  addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
     console.log(`Client ${socket.id} entered tournament queue, torunament status ${tournamentStatus}`);
     if(this.queueTournamentGame.length >= 2) {
-      this.tournamentGame=true; //// added for readability
-      this.startGame(this.tournamentGame)};
+      this.startGame(tournamentStatus)};
     }
 
   /* Remove a user from the game queue */
@@ -68,31 +65,31 @@ export class GameService {
   }
 
   checkQueue() {
-	  if (this.queue.length >= 2){
-		console.log(this.queue.length);
-    this.tournamentGame = false; // added for readability
-    this.startGame(this.tournamentGame);
-	}
+    if (this.queue.length >= 2){
+    console.log(this.queue.length);
+    const tournamentStatus = 0; // added for readability
+    this.startGame(tournamentStatus);
+  }
   }
 
-async startGame(tournamentGame: boolean) {
+  async startGame(tournamentStatus: number) {
     const game = new GameState();
-    if (!tournamentGame) {
+    game.tournamentStatus = tournamentStatus;
+    if (!game.tournamentStatus) {
       game.user1 = this.queue.pop();
       game.user2 = this.queue.pop();
     }
     else {
-      game.tournamentGame = true;
       game.user1 = this.queueTournamentGame.pop();
       game.user2 = this.queueTournamentGame.pop();
     }
     console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
     await game.initializeGame(game.user1.id, game.user2.id);
 
-	if (!game.GameData) {
-		console.log('Game: Failed to create new Game!', this.queue.length);
-		return;
-	}
+  if (!game.GameData) {
+    console.log('Game: Failed to create new Game!', this.queue.length);
+    return;
+  }
 
     const updateRate = 1000 / 60;
 
@@ -111,13 +108,13 @@ async startGame(tournamentGame: boolean) {
     sharedEventEmitter.emit('startGame', game);
   }
 
- stopGame(gameState: GameState): void;
-	stopGame(gameId: number): void;
-	stopGame(arg: GameState | number): void {
-	  let game: GameState;
+  stopGame(gameState: GameState): void;
+  stopGame(gameId: number): void;
+  stopGame(arg: GameState | number): void {
+    let game: GameState;
 
-	  if (typeof arg === 'number') game = this.games.get(arg);
-	  else game = arg;
+    if (typeof arg === 'number') game = this.games.get(arg);
+    else game = arg;
     if (!game) {
       console.error("Game: Couldn't stop. Game not found.");
       return;
