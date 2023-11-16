@@ -1,7 +1,7 @@
 <template>
   <div class="scoreboard">
     <h2 v-if="announceVisible" class="announce-winner">
-      {{ winningPlayer }} Wins!
+      Player {{ winningPlayer }} Wins!
     </h2>
   </div>
   <div>
@@ -30,7 +30,7 @@ export default {
   mounted() {
     socket.on("victory", (payload) => {
       this.announceVisible = true;
-      this.winningPlayer = payload;
+      this.winningPlayer = payload.id;
       console.log("Victory payload:", payload);
     });
   },

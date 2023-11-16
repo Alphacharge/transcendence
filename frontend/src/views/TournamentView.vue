@@ -22,21 +22,13 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible"
-    :pongButtonsVisible="pongButtonsVisible"/>
+  <Pong v-if="pongVisible" :pongButtonsVisible="pongButtonsVisible" />
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
 export default {
-  computed: {
-    checkQueue() {
-      if (this.players.length == 4) {
-        this.startTournament();
-      }
-    }
-  },
   components: {
     PlayerCheckin,
     Pong,
@@ -70,6 +62,9 @@ export default {
         }
         const data = await response.json();
         this.players = await data["response"];
+        if (this.players.length === 4) {
+          this.startTournament();
+        }
       } catch (error) {
         console.error("Error fetching players:", error);
       }
