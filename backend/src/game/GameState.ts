@@ -10,6 +10,8 @@ export class GameState {
 	GameData: Games;
   intervalId: NodeJS.Timeout | null;
 
+  tournamentGame: boolean;
+
   user1: User;
   user2: User;
   scorePlayer1: number;
@@ -242,7 +244,7 @@ async initializeGame(leftId: number, rightId: number) {
         createdAt: new Date(),
       },
     });
-	
+
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
   }

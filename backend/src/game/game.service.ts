@@ -17,6 +17,7 @@ export class GameService {
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   queue: User[] = [];
   prisma: PrismaClient;
+  tournamentGame: boolean;
 
 
   /* A new user is added to the game queue */
@@ -44,14 +45,18 @@ export class GameService {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
     console.log(`Client ${socket.id} entered tournament queue`);
-    if(this.queueTournamentGame.length === 2) this.startGame;
-  }
+    console.log(`tournament queue :${this.queueTournamentGame.length}`);
+    if(this.queueTournamentGame.length == 2) {
+      this.tournamentGame=true; //// added for readability
+      this.startGame(this.tournamentGame)};
+    }
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
     const user = this.users.get(socket.id);
     // Find the user in the queue
     const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
+
 
     if (userToRemove) {
       // Remove the user from the queue
@@ -66,16 +71,24 @@ export class GameService {
   checkQueue() {
 	  if (this.queue.length >= 2){
 		console.log(this.queue.length);
-		this.startGame();
-	} 
+    this.tournamentGame = false; // added for readability
+    this.startGame(this.tournamentGame);
+	}
   }
 
-async startGame() {
+async startGame(tournamentGame: boolean) {
     const game = new GameState();
-	game.user1 = this.queue.pop();
-	game.user2 = this.queue.pop();
-	console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
-	await game.initializeGame(game.user1.id, game.user2.id);
+    if (!tournamentGame) {
+      game.user1 = this.queue.pop();
+      game.user2 = this.queue.pop();
+    }
+    else {
+      game.tournamentGame = true;
+      game.user1 = this.queueTournamentGame.pop();
+      game.user2 = this.queueTournamentGame.pop();
+    }
+    console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
+    await game.initializeGame(game.user1.id, game.user2.id);
 
 	if (!game.GameData) {
 		console.log('Game: Failed to create new Game!', this.queue.length);
@@ -103,14 +116,14 @@ async startGame() {
 	stopGame(gameId: number): void;
 	stopGame(arg: GameState | number): void {
 	  let game: GameState;
-  
+
 	  if (typeof arg === 'number') game = this.games.get(arg);
 	  else game = arg;
     if (!game) {
       console.error("Game: Couldn't stop. Game not found.");
       return;
     }
-	
+
     console.log('Stopping game', game.GameData.id);
     clearInterval(game.intervalId);
     game.intervalId = null;

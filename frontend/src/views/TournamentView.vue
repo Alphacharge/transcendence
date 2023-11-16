@@ -22,7 +22,8 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible" :enterQueueVisibile="false" />
+  <Pong v-if="pongVisible"
+    :pongButtonsVisible="pongButtonsVisible"/>
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
@@ -38,6 +39,8 @@ export default {
       players: [],
       tournamentStatus: 0b000,
       pongVisible: false,
+      playerCheckinVisible: true,
+      pongButtonsVisible: false,
     };
   },
   mounted() {
