@@ -30,6 +30,13 @@ import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
 export default {
+  computed: {
+    checkQueue() {
+      if (this.players.length == 4) {
+        this.startTournament();
+      }
+    }
+  },
   components: {
     PlayerCheckin,
     Pong,
@@ -37,7 +44,7 @@ export default {
   data() {
     return {
       players: [],
-      tournamentStatus: 1, // status: 1 no tournament, 2 round 1, 4 round 2, 8 finished
+      tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
       pongVisible: false,
       playerCheckinVisible: true,
       pongButtonsVisible: false,
@@ -70,7 +77,6 @@ export default {
     async startTournament() {
       this.tournamentStatus = this.tournamentStatus << 1;
       this.pongVisible = true;
-      console.log('DEBUG', this.tournamentStatus);
       socket.enterTournamentQueue(this.tournamentStatus);
     },
   },

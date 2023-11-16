@@ -44,9 +44,8 @@ export class GameService {
   addToTournamentQueue(socket: Socket, tournamentStatus: Number) {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
-    console.log(`Client ${socket.id} entered tournament queue`);
-    console.log(`tournament queue :${this.queueTournamentGame.length} status: ${tournamentStatus}`);
-    if(this.queueTournamentGame.length == 2) {
+    console.log(`Client ${socket.id} entered tournament queue, torunament status ${tournamentStatus}`);
+    if(this.queueTournamentGame.length >= 2) {
       this.tournamentGame=true; //// added for readability
       this.startGame(this.tournamentGame)};
     }

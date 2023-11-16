@@ -84,7 +84,6 @@ import * as fs from 'fs';
 
   @SubscribeMessage('enterTournamentQueue')
   enterTournamentQueue(@ConnectedSocket() socket: Socket, @MessageBody() tournamentStatus: Number) {
-    console.log(`DEBUG tournamentStatus gateway ${tournamentStatus}`);
     this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 

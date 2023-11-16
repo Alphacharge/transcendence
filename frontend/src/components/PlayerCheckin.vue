@@ -43,8 +43,6 @@
 	methods: {
 	  async checkIn() {
 		this.participationStatus = await this.checkMyStatus();
-		console.log("Status", this.participateStatus);
-		console.log("Checkin");
 		if (!this.participateStatus) {
 		  await this.addPlayer();
 		  this.btnMsg = "Leave Tournament";
@@ -72,7 +70,6 @@
 		return userId;
 	  },
 	  async addPlayer() {
-		console.log("Add player");
 		const storedPlayerToken = this.retrieveToken();
 		const storedUserId = this.retrieveUserId();
 		if (this.participateStatus || storedPlayerToken  === -1 || !storedUserId) {
@@ -83,7 +80,7 @@
 			`https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`,
 			{
 			  method: "POST",
-  
+
 			  headers: {
 				"Content-Type": "application/json",
 			  },
@@ -97,15 +94,12 @@
 			throw new Error(`HTTPS error! Status: ${response.status}`);
 		  }
 		  const data = await response.json();
-		  console.log(data);
-  
 		  return data["response"];
 		} catch (error) {
 		  console.error("Error adding player:", error);
 		}
 	  },
 	  async removePlayer() {
-		console.log("Remove player");
 		const storedPlayerToken = this.retrieveToken();
 		if (!this.participateStatus || storedPlayerToken === -1) return;
 		try {
@@ -176,4 +170,3 @@
 	},
   };
   </script>
-  
