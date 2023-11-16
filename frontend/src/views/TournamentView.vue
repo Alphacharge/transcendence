@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       players: [],
-      tournamentStatus: 0b000,
+      tournamentStatus: 1, // status: 1 no tournament, 2 round 1, 4 round 2, 8 finished
       pongVisible: false,
       playerCheckinVisible: true,
       pongButtonsVisible: false,
@@ -70,7 +70,8 @@ export default {
     async startTournament() {
       this.tournamentStatus = this.tournamentStatus << 1;
       this.pongVisible = true;
-      socket.enterTournamentQueue();
+      console.log('DEBUG', this.tournamentStatus);
+      socket.enterTournamentQueue(this.tournamentStatus);
     },
   },
 };
