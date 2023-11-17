@@ -100,11 +100,11 @@ export default {
       }
     },
     async removePlayer() {
-      const storedPlayerToken = this.retrieveToken();
-      if (!this.participateStatus || storedPlayerToken === -1) return;
+      const storedPlayerId = this.retrieveUserId();
+      if (!this.participateStatus || storedPlayerId === -1) return;
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/${storedPlayerToken}`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/${storedPlayerId}`,
           {
             method: "DELETE",
             headers: {
