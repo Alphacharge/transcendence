@@ -162,12 +162,11 @@ import * as fs from 'fs';
   }
 
   announceVictory(game: GameState) {
-    console.log(`DEBUG winning player's id ${game.winningPlayer.id}`);
     game.user1.socket.emit('victory', game.winningPlayer.id.slice(0,8));
     game.user2.socket.emit('victory', game.winningPlayer.id.slice(0,8));
     /* if winning torunament's first round*/
-    if (game.tournamentStatus & 0b010) {
-      game.tournamentStatus = game.tournamentStatus << 1;
+    if (game.tournamentStatus & 0b110) {
+      // game.tournamentStatus = game.tournamentStatus << 1;
       this.gameService.addToTournamentQueue(game.winningPlayer.socket, game.tournamentStatus);
     }
   }
