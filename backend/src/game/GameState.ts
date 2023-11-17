@@ -40,13 +40,13 @@ export class GameState {
 
   speedFactor: number;
 
-  constructor() {
+  constructor(user1: User, user2: User) {
     this.prisma = new PrismaClient();
     this.GameData = null;
     this.intervalId = null;
 
-    this.user1 = null;
-    this.user2 = null;
+    this.user1 = user1;
+    this.user2 = user2;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
     this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
@@ -236,14 +236,14 @@ export class GameState {
   }
 
 
-async initializeGame(leftId: string, rightId: string) {
+async initializeGame(leftId: number, rightId: number) {
     // Assuming you're using Prisma to interact with a database
     this.GameData = await this.prisma.games.create({
       data: {
-        // left_user_id: leftId,
-        left_user_id: 1,
-        // right_user_id: rightId,
-        right_user_id: 2,
+        left_user_id: leftId,
+        // left_user_id: 1,
+        right_user_id: rightId,
+        // right_user_id: 2,
         left_user_score: 0,
         right_user_score: 0,
         createdAt: new Date(),

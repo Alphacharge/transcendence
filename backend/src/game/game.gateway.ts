@@ -162,9 +162,9 @@ import * as fs from 'fs';
   }
 
   announceVictory(game: GameState) {
-    console.log(`DEBUG winning player's id ${game.winningPlayer.id}`);
-    game.user1.socket.emit('victory', game.winningPlayer.id.slice(0,8));
-    game.user2.socket.emit('victory', game.winningPlayer.id.slice(0,8));
+    console.log(`DEBUG winning player's id ${game.winningPlayer.userData.id}`);
+    game.user1.socket.emit('victory', game.winningPlayer.userData.id);
+    game.user2.socket.emit('victory', game.winningPlayer.userData.id);
     /* if winning torunament's first round*/
     if (game.tournamentStatus & 0b010) {
       game.tournamentStatus = game.tournamentStatus << 1;

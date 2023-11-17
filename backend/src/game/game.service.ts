@@ -5,28 +5,35 @@ import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
-import { Prisma, PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameService {
   // user array
   // should probably be saved elsewhere, idk
   queueTournamentGame: User[] = [];
+  queue: User[] = [];
   users: Map<string, User> = new Map(); // user.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
-  queue: User[] = [];
   prisma: PrismaClient;
 
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
+	/*
+
+
+	add same logic as tournament add player, need a playerdto with token
+
+
+	*/
     // find the matching user
     const user = this.users.get(socket.id);
 
   //user.id = 1 //
     // check if user already is in queue
     // REPLACE socket id with working user id
-    if (!user || this.queue.find(queuedUser => queuedUser.id === user.id)) return;
+    if (!user || this.queue.find(queuedUser => queuedUser.userData.id === user.userData.id)) return;
     // check if user already is in an active game
     if (user.inGame) {
       console.log("Client is already playing");
@@ -53,7 +60,7 @@ export class GameService {
   removeFromQueue(socket: Socket) {
     const user = this.users.get(socket.id);
     // Find the user in the queue
-    const userToRemove = this.queue.find(queuedUser => queuedUser.id === user.id);
+    const userToRemove = this.queue.find(queuedUser => queuedUser.userData.id === user.userData.id);
     if (userToRemove) {
       // Remove the user from the queue
       const index = this.queue.indexOf(userToRemove);
@@ -73,18 +80,19 @@ export class GameService {
   }
 
   async startGame(tournamentStatus: number) {
-    const game = new GameState();
+	let user1: User;
+	let user2: User;
+	if (!tournamentStatus) {
+		user1 = this.queue.pop();
+		user2 = this.queue.pop();
+	} else {
+		user1 = this.queueTournamentGame.pop();
+		user2 = this.queueTournamentGame.pop();
+	}
+    const game = new GameState(user1, user2);
     game.tournamentStatus = tournamentStatus;
-    if (!game.tournamentStatus) {
-      game.user1 = this.queue.pop();
-      game.user2 = this.queue.pop();
-    }
-    else {
-      game.user1 = this.queueTournamentGame.pop();
-      game.user2 = this.queueTournamentGame.pop();
-    }
-    console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
-    await game.initializeGame(game.user1.id, game.user2.id);
+    console.log("user1: ", game.user1.userData.id, "user2: ", game.user2.userData.id);
+    await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
 
   if (!game.GameData) {
     console.log('Game: Failed to create new Game!', this.queue.length);
