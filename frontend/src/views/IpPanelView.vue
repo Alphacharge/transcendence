@@ -1,6 +1,22 @@
 <template>
   <div>
     <p>Your machine's IP address is: {{ ipAddress }}</p>
+    <p>
+      Your machine's IP address is:
+      <a :href="`https://${ipAddress}:3000`">https://{{ ipAddress }}:3000</a>
+    </p>
+    <p>
+      Your machine's IP address is:
+      <a href="https://localhost:3000">https://localhost:3000</a>
+    </p>
+    <p>
+      Your machine's IP address is:
+      <a :href="`https://${ipAddress}:8080`">https://{{ ipAddress }}:8080</a>
+    </p>
+    <p>
+      Your machine's IP address is:
+      <a href="https://localhost:8080">https://localhost:8080</a>
+    </p>
     <ConnectionState></ConnectionState>
     <ConnectionManager></ConnectionManager>
   </div>

@@ -1,6 +1,5 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthDto } from './dto';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
@@ -84,5 +83,39 @@ export class AuthService {
     });
 
     return token;
+  }
+
+  /* This function takes an object or a token directly and returns its validity. */
+  async validateToken(
+    tokenOrUserId: string | { userId: number; token: string },
+  ): Promise<boolean> {
+    const secret = this.config.get('JWT_SECRET');
+
+    try {
+      let decodedToken: any;
+
+      if (typeof tokenOrUserId === 'string') {
+        // token provided directly
+        decodedToken = await this.jwt.verifyAsync(tokenOrUserId, {
+          secret: secret,
+        });
+      } else {
+        // extract userId
+        const { userId, token } = tokenOrUserId;
+        decodedToken = await this.jwt.verifyAsync(token, { secret: secret });
+
+        // Check if the stored userId matches the userId from the token
+        if (userId !== decodedToken.sub) {
+          console.error('User Identity KO: userId mismatch');
+          return false;
+        }
+      }
+      // Now, you can use the decodedToken.sub (userId) and decodedToken.email if needed.
+      console.log('User Identity OK.');
+      return true;
+    } catch (error) {
+      console.error('User Identity KO: Token verification failed');
+      return false;
+    }
   }
 }

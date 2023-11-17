@@ -4,21 +4,7 @@ import ScoreBoard from './ScoreBoard.vue';
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
   </div>
-  <div class="btn-group">
-    <button
-      v-if="enterQueueVisibile"
-      @click="enterQueue()"
-      class="btn btn-danger"
-    >
-      {{ $t("EnterQueue") }}
-    </button>
-    <button @click="leaveQueue()" class="btn btn-warning">
-      {{ $t("LeaveQueue") }}
-    </button>
-    <button @click="stopGame()" class="btn btn-success">
-      {{ $t("AbortGame") }}
-    </button>
-  </div>
+  <PongButtons v-if="pongButtonsVisible" />
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
@@ -26,11 +12,12 @@ import ScoreBoard from './ScoreBoard.vue';
 <script>
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
+import PongButtons from "@/components/PongButtons.vue";
 import { socket } from "@/assets/utils/socket";
 
 export default {
   props: {
-    enterQueueVisibile: {
+    pongButtonsVisible: {
       type: Boolean,
       default: true,
     },
@@ -43,7 +30,7 @@ export default {
       playerNumber: 0,
     };
   },
-  components: { GameArea, ScoreBoard },
+  components: { GameArea, ScoreBoard, PongButtons },
   mounted() {
     // received new game ID from server
     socket.on("gameId", (payload) => {

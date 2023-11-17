@@ -9,9 +9,6 @@ import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameService {
-  // user array
-  // should probably be saved elsewhere, idk
-
   queueTournamentGame: User[] = [];
   users: Map<string, User> = new Map(); // user.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
@@ -23,13 +20,11 @@ export class GameService {
     // find the matching user
     const user = this.users.get(socket.id);
 
-    //user.id = 1 //
     // check if user already is in queue
-    // REPLACE socket id with working user id
     if (!user || this.queue.find((queuedUser) => queuedUser.id === user.id))
       return;
     // check if user already is in an active game
-    if (user.inGame) {
+    if (user.activeGame) {
       console.log('Client is already playing');
       return;
     }
@@ -40,11 +35,17 @@ export class GameService {
     this.checkQueue();
   }
 
-  addToTournamentQueue(socket: Socket) {
+  addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
+
     this.queueTournamentGame.push(user);
-    console.log(`Client ${socket.id} entered tournament queue`);
-    if (this.queueTournamentGame.length === 2) this.startGame;
+    console.log(
+      `Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
+    );
+
+    if (tournamentStatus < 8 && this.queueTournamentGame.length >= 2) {
+      this.startGame(tournamentStatus);
+    }
   }
 
   /* Remove a user from the game queue */
@@ -68,14 +69,22 @@ export class GameService {
   checkQueue() {
     if (this.queue.length >= 2) {
       console.log(this.queue.length);
-      this.startGame();
+
+      const tournamentStatus = 0; // added for readability
+      this.startGame(tournamentStatus);
     }
   }
 
-  async startGame() {
+  async startGame(tournamentStatus: number) {
     const game = new GameState();
-    game.user1 = this.queue.pop();
-    game.user2 = this.queue.pop();
+    game.tournamentStatus = tournamentStatus;
+    if (!game.tournamentStatus) {
+      game.user1 = this.queue.pop();
+      game.user2 = this.queue.pop();
+    } else {
+      game.user1 = this.queueTournamentGame.pop();
+      game.user2 = this.queueTournamentGame.pop();
+    }
     console.log('user1: ', game.user1.id, 'user2: ', game.user2.id);
     await game.initializeGame(game.user1.id, game.user2.id);
 
@@ -86,8 +95,8 @@ export class GameService {
 
     const updateRate = 1000 / 60;
 
-    game.user1.inGame = true;
-    game.user2.inGame = true;
+    game.user1.activeGame = game;
+    game.user2.activeGame = game;
 
     this.games.set(game.GameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
@@ -96,7 +105,6 @@ export class GameService {
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
-
     sharedEventEmitter.emit('startGame', game);
   }
 
@@ -116,8 +124,8 @@ export class GameService {
     clearInterval(game.intervalId);
     game.intervalId = null;
 
-    if (game.user1) game.user1.inGame = false;
-    if (game.user2) game.user2.inGame = false;
+    if (game.user1) game.user1.activeGame = null;
+    if (game.user2) game.user2.activeGame = null;
 
     // save persistent game stuff to database here if you like
     this.games.delete(game.GameData.id);

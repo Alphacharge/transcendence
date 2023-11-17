@@ -43,8 +43,6 @@ export default {
   methods: {
     async checkIn() {
       this.participationStatus = await this.checkMyStatus();
-      console.log("Status", this.participateStatus);
-      console.log("Checkin");
       if (!this.participateStatus) {
         await this.addPlayer();
         this.btnMsg = "Leave Tournament";
@@ -56,17 +54,25 @@ export default {
       this.playersInTournament = await this.countPlayers();
     },
     retrieveToken() {
-      const storedPlayerToken = localStorage.getItem("userData");
+      const storedPlayerToken = localStorage.getItem("access_token");
       if (!storedPlayerToken) {
         console.error("Player token not found in local storage");
         return -1;
       }
       return storedPlayerToken;
     },
+    retrieveUserId() {
+      const userId = localStorage.getItem("userId");
+      if (!userId) {
+        console.error("Player ID not found in local storage");
+        return -1;
+      }
+      return userId;
+    },
     async addPlayer() {
-      console.log("Add player");
       const storedPlayerToken = this.retrieveToken();
-      if (this.participateStatus || storedPlayerToken === -1) {
+      const storedUserId = this.retrieveUserId();
+      if (this.participateStatus || storedPlayerToken === -1 || !storedUserId) {
         return;
       }
       try {
@@ -80,6 +86,7 @@ export default {
             },
             body: JSON.stringify({
               playerToken: storedPlayerToken,
+              userId: storedUserId,
             }),
           },
         );
@@ -93,7 +100,6 @@ export default {
       }
     },
     async removePlayer() {
-      console.log("Remove player");
       const storedPlayerToken = this.retrieveToken();
       if (!this.participateStatus || storedPlayerToken === -1) return;
       try {

@@ -60,13 +60,18 @@ const router = createRouter({
 });
 
 // Global navigation guard to check for authentication
-router.beforeEach((to, from, next) => {
-  const isLoggedIn = checkLoggedIn();
+router.beforeEach(async (to, from, next) => {
+  try {
+    const isLoggedIn = await checkLoggedIn();
 
-  if (to.name !== 'login' && !isLoggedIn) {
-    next('/login');
-  } else {
-    next(); // Proceed to the requested route
+    if (to.name !== "login" && to.name !== "signup" && !isLoggedIn) {
+      next("/login");
+    } else {
+      next(); // Proceed to the requested route
+    }
+  } catch (error) {
+    console.error("Error checking authentication:", error);
+    next("/login");
   }
 });
 

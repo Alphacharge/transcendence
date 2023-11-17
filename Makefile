@@ -6,8 +6,11 @@ SRC		:=	$(SRC_D)$(SRC_F)
 ENV		:=	--env-file $(SRC_D).env
 DB_D	:=	./data/sql
 OS		:=	$(shell uname)
-IP		:=	$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
-
+ifeq ($(USER), marius)
+	IP:=$(shell ifconfig | grep 'inet' | head -n5 | tail -n1 | cut -d' ' -f2)
+else
+	IP:=$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
+endif
 ###			###			COLORS			###			###
 RED		=	\033[1;31m
 GREEN	=	\033[1;32m

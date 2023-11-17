@@ -65,10 +65,12 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (localStorage.getItem("userdata"))
-            localStorage.removeItem("userData");
-          localStorage.setItem("userData", responseData["access_token"]);
-
+          //maybe not needed anymore
+          if (localStorage.getItem("access_token"))
+            localStorage.removeItem("access_token");
+          if (localStorage.getItem("userId")) localStorage.removeItem("userId");
+          localStorage.setItem("access_token", responseData["access_token"]);
+          localStorage.setItem("userId", responseData["userId"]);
           router.push("/");
         } else {
           alert("User exists!");

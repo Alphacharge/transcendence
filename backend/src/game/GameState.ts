@@ -10,11 +10,13 @@ export class GameState {
   GameData: Games;
   intervalId: NodeJS.Timeout | null;
 
+  tournamentStatus: number;
+
   user1: User;
   user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
-  winningPlayer: String;
+  winningPlayer: User;
   winningScore: number;
 
   fieldWidth: number;
@@ -81,7 +83,7 @@ export class GameState {
 
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
   randomAngle() {
-    let p = Math.PI;
+    const p = Math.PI;
     let startAngle: number;
     do {
       startAngle = Math.random() * 2 * p;
@@ -123,7 +125,6 @@ export class GameState {
       }
     }
   }
-
   movePaddleDown(player: User) {
     if (player == this.user1) {
       if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
@@ -235,17 +236,25 @@ export class GameState {
       clearInterval(this.intervalId);
       this.intervalId = null;
       this.gameInit();
-      if (this.scorePlayer1 == this.winningScore)
-        this.winningPlayer = 'Player 1';
-      else this.winningPlayer = 'Player 2';
+      /* promote flag to second round if this has been a 1st round tournament game */
+      if (this.tournamentStatus && this.tournamentStatus & 2) {
+        this.tournamentStatus = this.tournamentStatus << 1;
+      }
+      if (this.scorePlayer1 == this.winningScore) {
+        this.winningPlayer = this.user1;
+      } else {
+        this.winningPlayer = this.user2;
+      }
       sharedEventEmitter.emit('victory', this);
     }
   }
+
   isRunning(): boolean {
     return this.intervalId !== null;
   }
 
-  async initializeGame(leftId: number, rightId: number) {
+  /* Creates user entry in the database. */
+  async initializeGame(leftId: string, rightId: string) {
     // Assuming you're using Prisma to interact with a database
     this.GameData = await this.prisma.games.create({
       data: {
@@ -261,6 +270,12 @@ export class GameState {
 
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
+    if (this.tournamentStatus & 2) {
+      console.log('Tournament, first round');
+    }
+    if (this.tournamentStatus & 4) {
+      console.log('Tournament, second round');
+    }
   }
 
   async updateGameScore() {

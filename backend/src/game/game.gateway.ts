@@ -68,9 +68,8 @@ export class GameGateway {
       this.gameService.removeFromQueue(socket);
 
       // abort any games the user was part of
-      if (user.inGame) {
-        const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-        if (activeGame) this.gameService.stopGame(activeGame);
+      if (user.activeGame) {
+        this.gameService.stopGame(user.activeGame);
       }
     }
 
@@ -84,8 +83,11 @@ export class GameGateway {
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  enterTournamentQueue(@ConnectedSocket() socket: Socket) {
-    this.gameService.addToTournamentQueue(socket);
+  enterTournamentQueue(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() tournamentStatus: number,
+  ) {
+    this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 
   @SubscribeMessage('leaveQueue')
@@ -119,6 +121,9 @@ export class GameGateway {
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
+    this.sendPaddleUpdate(game);
+    this.sendBallUpdate(game);
+    this.sendScoreUpdate(game);
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
     this.sendScoreUpdate(game);
@@ -169,7 +174,15 @@ export class GameGateway {
   }
 
   announceVictory(game: GameState) {
-    game.user1.socket.emit('victory', game.winningPlayer);
-    game.user2.socket.emit('victory', game.winningPlayer);
+    game.user1.socket.emit('victory', game.winningPlayer.id.slice(0, 8));
+    game.user2.socket.emit('victory', game.winningPlayer.id.slice(0, 8));
+    /* if winning torunament's first round*/
+    if (game.tournamentStatus & 0b110) {
+      // game.tournamentStatus = game.tournamentStatus << 1;
+      this.gameService.addToTournamentQueue(
+        game.winningPlayer.socket,
+        game.tournamentStatus,
+      );
+    }
   }
 }

@@ -26,8 +26,8 @@ socket.enterQueue = function () {
   socket.emit("enterQueue");
 };
 
-socket.enterTournamentQueue = function () {
-  socket.emit("enterTournamentQueue");
+socket.enterTournamentQueue = function (tournamentStatus) {
+  socket.emit("enterTournamentQueue", tournamentStatus);
 };
 
 socket.leaveQueue = function () {
