@@ -16,8 +16,8 @@ import * as fs from 'fs';
 
 // can enter a port in the brackets
 @WebSocketGateway({ server: https.createServer({
-	key: fs.readFileSync('/certificates/certificate.key'),
-	cert: fs.readFileSync('/certificates/certificate.cert'),
+  key: fs.readFileSync('/certificates/certificate.key'),
+  cert: fs.readFileSync('/certificates/certificate.cert'),
   })})
   export class GameGateway {
   @WebSocketServer()
@@ -49,9 +49,9 @@ import * as fs from 'fs';
     console.log("Client connected:", socket.id);
 
       // save new user to users array in GameService
-	  const user = new User();
-	  user.socket = socket;
-	  this.gameService.users.set(socket.id, user);
+    const user = new User();
+    user.socket = socket;
+    this.gameService.users.set(socket.id, user);
 
   }
 
@@ -61,16 +61,16 @@ import * as fs from 'fs';
     // get the right user
     const user = this.gameService.users.get(socket.id);
 
-	if (user) {
-		// remove user from any queues
-		// INSERT tournament queue
-		this.gameService.removeFromQueue(socket);
+  if (user) {
+    // remove user from any queues
+    // INSERT tournament queue
+    this.gameService.removeFromQueue(socket);
 
 		// abort any games the user was part of
-		if (user.inGame) {
-			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			if (activeGame) this.gameService.stopGame(activeGame);
-		  }
+		// if (user.inGame) {
+			// const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+			// if (activeGame) this.gameService.stopGame(activeGame);
+		//   }
 	}
 
     // delete the socket id
@@ -83,8 +83,8 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  enterTournamentQueue(@ConnectedSocket() socket: Socket) {
-    this.gameService.addToTournamentQueue(socket);
+  enterTournamentQueue(@ConnectedSocket() socket: Socket, @MessageBody() tournamentStatus: number) {
+    this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 
   @SubscribeMessage('leaveQueue')
@@ -118,9 +118,9 @@ import * as fs from 'fs';
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
-	this.sendPaddleUpdate(game);
-	this.sendBallUpdate(game);
-	this.sendScoreUpdate(game);
+    this.sendPaddleUpdate(game);
+    this.sendBallUpdate(game);
+    this.sendScoreUpdate(game);
   }
 
   // ball coordinate transmission
@@ -162,7 +162,13 @@ import * as fs from 'fs';
   }
 
   announceVictory(game: GameState) {
-    game.user1.socket.emit('victory', game.winningPlayer);
-    game.user2.socket.emit('victory', game.winningPlayer);
+    console.log(`DEBUG winning player's id ${game.winningPlayer.id}`);
+    game.user1.socket.emit('victory', game.winningPlayer.id.slice(0,8));
+    game.user2.socket.emit('victory', game.winningPlayer.id.slice(0,8));
+    /* if winning torunament's first round*/
+    if (game.tournamentStatus & 0b010) {
+      game.tournamentStatus = game.tournamentStatus << 1;
+      this.gameService.addToTournamentQueue(game.winningPlayer.socket, game.tournamentStatus);
+    }
   }
 }

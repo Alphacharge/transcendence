@@ -6,17 +6,17 @@ import { Games, PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameState {
-	prisma: PrismaClient;
-	GameData: Games;
+  prisma: PrismaClient;
+  GameData: Games;
   intervalId: NodeJS.Timeout | null;
 
-  tournamentGame: boolean;
+  tournamentStatus: number;
 
   user1: User;
   user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
-  winningPlayer: String;
+  winningPlayer: User;
   winningScore: number;
 
   fieldWidth: number;
@@ -41,15 +41,15 @@ export class GameState {
   speedFactor: number;
 
   constructor() {
-	this.prisma = new PrismaClient();
-	this.GameData = null;
+    this.prisma = new PrismaClient();
+    this.GameData = null;
     this.intervalId = null;
 
     this.user1 = null;
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=11;
+    this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
@@ -73,8 +73,6 @@ export class GameState {
     this.gameInit();
   }
 
-
-
   gameInit() {
     const startAngle = this.randomAngle();
     this.ballX = this.fieldWidth / 2;
@@ -83,10 +81,9 @@ export class GameState {
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
   }
 
-
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
   randomAngle() {
-    let p = Math.PI;
+    const p = Math.PI;
     let startAngle: number;
     do {
       startAngle = Math.random() * 2 * p;
@@ -118,29 +115,28 @@ export class GameState {
 //   }
 
   movePaddleUp(player: User) {
-	if (player == this.user1) {
-		if (this.leftPosition > 0) {
-			this.leftPosition -= 10;
+    if (player == this.user1) {
+      if (this.leftPosition > 0) {
+        this.leftPosition -= 10;
+      }
     }
-	}
-	else if (player == this.user2) {
-		if (this.rightPosition > 10) {
-			this.rightPosition -= 10;
-		}
-	}
+    else if (player == this.user2) {
+      if (this.rightPosition > 10) {
+        this.rightPosition -= 10;
+      }
+    }
   }
-
   movePaddleDown(player: User) {
-	if (player == this.user1) {
-		if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
-			this.leftPosition += 10;
-		}
-	}
-	else if (player == this.user2) {
-		if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
-			this.rightPosition += 10;
-		}
-	}
+    if (player == this.user1) {
+      if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+        this.leftPosition += 10;
+      }
+    }
+    else if (player == this.user2) {
+      if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+        this.rightPosition += 10;
+      }
+    }
   }
 
   leftBreakthrough() {
@@ -213,25 +209,34 @@ export class GameState {
     return angle;
   }
 
- async playerVictory () {
+  async playerVictory () {
     if (this.scorePlayer1 == this.winningScore || this.scorePlayer2 == this.winningScore) {
-		await this.updateGameScore();
+      await this.updateGameScore();
       clearInterval(this.intervalId);
       this.intervalId = null
       this.gameInit();
+      /* promote flag to second round if this has been a 1st round tournament game */
+      if (this.tournamentStatus && this.tournamentStatus & 2) {
+        this.tournamentStatus = this.tournamentStatus << 1;
+      }
       if (this.scorePlayer1 ==  this.winningScore)
-        this.winningPlayer = "Player 1";
+      {
+        this.winningPlayer = this.user1;
+      }
       else
-        this.winningPlayer = "Player 2";
+      {
+        this.winningPlayer = this.user2;
+      }
       sharedEventEmitter.emit('victory', this);
     }
   }
+
   isRunning(): boolean {
     return this.intervalId !== null;
   }
 
 
-async initializeGame(leftId: number, rightId: number) {
+async initializeGame(leftId: string, rightId: string) {
     // Assuming you're using Prisma to interact with a database
     this.GameData = await this.prisma.games.create({
       data: {
@@ -239,7 +244,7 @@ async initializeGame(leftId: number, rightId: number) {
         left_user_id: 1,
         // right_user_id: rightId,
         right_user_id: 2,
-		left_user_score: 0,
+        left_user_score: 0,
         right_user_score: 0,
         createdAt: new Date(),
       },
@@ -247,21 +252,27 @@ async initializeGame(leftId: number, rightId: number) {
 
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
+    if (this.tournamentStatus & 2) {
+      console.log('Tournament, first round');
+    }
+    if (this.tournamentStatus & 4) {
+      console.log('Tournament, second round');
+    }
   }
 
 async updateGameScore() {
-	try {
-	  const updatedGame = await this.prisma.games.update({
-		where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
-		data: {
-		  left_user_score: this.scorePlayer1,
-		  right_user_score: this.scorePlayer2,
-		  // Other fields you want to update
-		},
-	  });
-	  console.log('Updated game:', updatedGame);
-	} catch (error) {
-	  console.error('Error updating game:', error);
-	}
+  try {
+    const updatedGame = await this.prisma.games.update({
+    where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
+    data: {
+      left_user_score: this.scorePlayer1,
+      right_user_score: this.scorePlayer2,
+      // Other fields you want to update
+    },
+    });
+    console.log('Updated game:', updatedGame);
+  } catch (error) {
+    console.error('Error updating game:', error);
+  }
   }
 }

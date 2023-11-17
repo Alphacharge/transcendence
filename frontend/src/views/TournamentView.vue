@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Tournament Players</h2>
-    <div>
+    <div v-if="testButtonVisible">
       <button class="test-btn" @click.prevent="startTournament">
         Test Start
       </button>
@@ -22,8 +22,7 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible"
-    :pongButtonsVisible="pongButtonsVisible"/>
+  <Pong v-if="pongVisible" :pongButtonsVisible="pongButtonsVisible" />
 </template>
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
@@ -37,10 +36,11 @@ export default {
   data() {
     return {
       players: [],
-      tournamentStatus: 0b000,
+      tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
       pongVisible: false,
       playerCheckinVisible: true,
       pongButtonsVisible: false,
+      testButtonVisible: false,
     };
   },
   mounted() {
@@ -63,14 +63,23 @@ export default {
         }
         const data = await response.json();
         this.players = await data["response"];
+        if (this.players.length === 4) {
+          this.startTournament();
+        }
       } catch (error) {
         console.error("Error fetching players:", error);
       }
     },
     async startTournament() {
-      this.tournamentStatus = this.tournamentStatus << 1;
-      this.pongVisible = true;
-      socket.enterTournamentQueue();
+      if (this.tournamentStatus < 4) {
+        this.tournamentStatus = this.tournamentStatus << 1;
+        this.pongVisible = true;
+        socket.enterTournamentQueue(this.tournamentStatus);
+      } else {
+        console.error(
+          `unexpected tournament status value : ${this.tournamentStatus}`,
+        );
+      }
     },
   },
 };

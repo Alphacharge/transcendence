@@ -105,7 +105,6 @@ export default {
   text-transform: uppercase;
 }
 
-
 @media screen and (max-width: 767px) {
   .transparent-table td,
   .transparent-table th {

@@ -6,7 +6,6 @@
   </div>
 </template>
 <script>
-
 import { socket } from "@/assets/utils/socket";
 
 export default {

@@ -86,6 +86,9 @@ model Games {
 	// scores		Scores[]
 	l_user		Users		@relation("LeftUser", fields: [left_user_id], references: [id])
 	r_user		Users		@relation("RightUser", fields: [right_user_id], references: [id])
+	f_game		Tournaments[]		@relation("FirstGame")
+	s_game		Tournaments[]		@relation("SecondGame")
+	t_game		Tournaments[]		@relation("ThirdGame")
 }
 
 // model Scores {
@@ -97,3 +100,15 @@ model Games {
 // 	//Relations
 // 	game		Games		@relation(fields: [game_id], references: [id])
 // }
+
+model Tournaments {
+	id				Int			@id @default(autoincrement())
+	createdAt		DateTime	@default(now())
+	first_game_id	Int
+	second_game_id	Int
+	third_game_id	Int
+
+	f_game		Games		@relation("FirstGame", fields: [first_game_id], references: [id])
+	s_game		Games		@relation("SecondGame", fields: [second_game_id], references: [id])
+	t_game		Games		@relation("ThirdGame", fields: [third_game_id], references: [id])
+}
