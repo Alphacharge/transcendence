@@ -64,7 +64,12 @@ router.beforeEach(async (to, from, next) => {
   try {
     const isLoggedIn = await checkLoggedIn();
 
-    if (to.name !== "login" && to.name !== "signup" && !isLoggedIn) {
+    if (
+      to.name !== "login" &&
+      to.name !== "signup" &&
+      to.name !== "ip" &&
+      !isLoggedIn
+    ) {
       next("/login");
     } else {
       next(); // Proceed to the requested route

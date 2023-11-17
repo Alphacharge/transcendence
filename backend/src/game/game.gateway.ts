@@ -13,6 +13,7 @@ import { User } from 'src/user/User';
 import { GameState } from './GameState';
 import * as https from 'https';
 import * as fs from 'fs';
+import { AuthService } from 'src/auth/auth.service';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -25,7 +26,7 @@ export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly gameService: GameService) {
+  constructor(private readonly gameService: GameService, private readonly authService: AuthService) {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
       if (game) this.sendGameId(game);
     });
@@ -47,13 +48,22 @@ export class GameGateway {
   }
 
   /* New client connected. */
-  handleConnection(socket: any) {
+  async handleConnection(socket: any) {
     console.log('Client connected:', socket.id);
 
-    // save new user to users array in GameService
-    const user = new User();
-    user.socket = socket;
-    this.gameService.users.set(socket.id, user);
+    // ADD: user id will have to be checked too
+    // doesn't work right now though so i removed it
+    const isValid = await this.authService.validateToken(socket.handshake.query.token);
+    if (isValid) {
+      // save new user to users array in GameService
+      const user = new User();
+      user.socket = socket;
+      // ADD database call
+      this.gameService.users.set(socket.id, user);
+    } else {
+      console.log("Refusing WebSocket connection.");
+      socket.disconnect(true);
+    }
   }
 
   handleDisconnect(socket: any) {
@@ -73,8 +83,7 @@ export class GameGateway {
       }
     }
 
-    // delete the socket id
-    user.socket = null;
+    // remove user?
   }
 
   @SubscribeMessage('enterQueue')

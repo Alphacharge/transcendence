@@ -5,13 +5,16 @@ import { io } from "socket.io-client";
 
 export const state = reactive({
   connected: false,
-  fooEvents: [],
-  barEvents: [],
 });
 
 // why does transports websocket prevent cors issues?
 export const socket = io("wss://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
   transports: ["websocket"],
+  autoConnect: false,
+  query: {
+    userId: localStorage.getItem("userId"),
+    token: localStorage.getItem("access_token"),
+  },
 });
 
 socket.on("connect", () => {
@@ -46,3 +49,10 @@ socket.sendPaddleUp = function (gameId) {
 socket.sendPaddleDown = function (gameId) {
   socket.emit("paddleDown", { gameId });
 };
+
+export function getSocket() {
+  if (!socket) {
+    throw new Error("Socket not initialized");
+  }
+  return socket;
+}

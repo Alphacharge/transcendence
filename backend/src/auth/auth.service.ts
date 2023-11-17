@@ -62,6 +62,8 @@ export class AuthService {
     const bToken = await this.signToken(newUser.id, newUser.email);
     // return this.signToken(newUser.id, newUser.email);
 
+console.log("Logged in: User")
+
     return {
       access_token: bToken,
       userId: newUser.id,
