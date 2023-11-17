@@ -215,9 +215,10 @@ export class GameState {
       clearInterval(this.intervalId);
       this.intervalId = null
       this.gameInit();
-      if (this.tournamentStatus) {
+      /* promote flag to second round if this has been a 1st round tournament game */
+      if (this.tournamentStatus && this.tournamentStatus & 2) {
         this.tournamentStatus = this.tournamentStatus << 1;
-        console.log(`Logging form player victory tournament status : ${this.tournamentStatus}`)}
+      }
       if (this.scorePlayer1 ==  this.winningScore)
       {
         this.winningPlayer = this.user1;
@@ -251,6 +252,12 @@ async initializeGame(leftId: string, rightId: string) {
 
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
+    if (this.tournamentStatus & 2) {
+      console.log('Tournament, first round');
+    }
+    if (this.tournamentStatus & 4) {
+      console.log('Tournament, second round');
+    }
   }
 
 async updateGameScore() {

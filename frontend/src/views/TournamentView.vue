@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>Tournament Players</h2>
-    <div>
+    <div v-if="testButtonVisible">
       <button class="test-btn" @click.prevent="startTournament">
         Test Start
       </button>
@@ -40,6 +40,7 @@ export default {
       pongVisible: false,
       playerCheckinVisible: true,
       pongButtonsVisible: false,
+      testButtonVisible: false,
     };
   },
   mounted() {

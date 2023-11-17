@@ -43,8 +43,8 @@ export class GameService {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
     console.log(`Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`);
-    console.log(`DEBUG tournament status : ${tournamentStatus}`);
-    if (tournamentStatus & 4) {console.log(`DEBUG tournament queue for round 2 ${this.queueTournamentGame.length}`);}
+    if (tournamentStatus & 4)
+    {console.log(`DEBUG plaeyr ready for round 2 round 2 ${socket.id}`);}
     if(this.queueTournamentGame.length >= 2) {
       this.startGame(tournamentStatus)};
     }
