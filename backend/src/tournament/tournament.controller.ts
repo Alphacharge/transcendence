@@ -32,8 +32,8 @@ export class TournamentController {
 	}
 
 	@Delete(':token')
-	async remove(@Param('token') player: string) {
-		const response = this.tournamentService.remove(player);
+	async remove(@Param('token') playerId: number) {
+		const response = this.tournamentService.remove(playerId);
 		return {response};
 	}
 }
