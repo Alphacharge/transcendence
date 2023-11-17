@@ -98,9 +98,15 @@ async signToken(
 	
 		console.log("User Identity OK.");
 		return true;
-	  } catch (error) {
-		console.error("User Identity KO: Token verification failed", error);
+	} catch (error) {
+		if (error.name === 'TokenExpiredError') {
+		  console.error("User Identity KO: Token expired", error);
+		} else if (error.name === 'JsonWebTokenError') {
+		  console.error("User Identity KO: Invalid token", error);
+		} else {
+		  console.error("User Identity KO: Token verification failed", error);
+		}
 		return false;
-	  }
+	}
   }
 }
