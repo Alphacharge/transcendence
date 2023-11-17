@@ -5,7 +5,7 @@ import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from './interfaces/user.interface'
+import { User } from './interfaces/user.interface';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +29,11 @@ export class AuthService {
       // console.log(this.signToken(user.id, user.email));
       const bToken = await this.signToken(newUser.id, newUser.email);
       // return this.signToken(newUser.id, newUser.email);
-      return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
+      return {
+        access_token: bToken,
+        userId: newUser.id,
+        userEmail: newUser.email,
+      };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
@@ -37,7 +41,7 @@ export class AuthService {
         }
       }
     }
-  };
+  }
 
   async signin(user: User) {
     //find the user by email
@@ -49,7 +53,6 @@ export class AuthService {
     //if user does not exist throw exception
     if (!newUser) {
       throw new ForbiddenException('Credentials incorrect');
-
     }
     //compare password
     const pwMatches = await argon.verify(newUser.hash, user.password);
@@ -60,13 +63,14 @@ export class AuthService {
     const bToken = await this.signToken(newUser.id, newUser.email);
     // return this.signToken(newUser.id, newUser.email);
 
-    return {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
+    return {
+      access_token: bToken,
+      userId: newUser.id,
+      userEmail: newUser.email,
+    };
   }
 
-  async signToken(
-    userId: number,
-    email: string,
-  ): Promise<string> {
+  async signToken(userId: number, email: string): Promise<string> {
     const payload = {
       sub: userId,
       email,

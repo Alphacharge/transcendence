@@ -1,3 +1,3 @@
 export class PlayerDto {
-	playerToken: string
+  playerToken: string;
 }

@@ -10,16 +10,18 @@ import {
 import { Server, Socket } from 'socket.io';
 import { GameService } from './game.service';
 import { User } from 'src/user/User';
-import { GameState} from './GameState';
+import { GameState } from './GameState';
 import * as https from 'https';
 import * as fs from 'fs';
 
 // can enter a port in the brackets
-@WebSocketGateway({ server: https.createServer({
-	key: fs.readFileSync('/certificates/certificate.key'),
-	cert: fs.readFileSync('/certificates/certificate.cert'),
-  })})
-  export class GameGateway {
+@WebSocketGateway({
+  server: https.createServer({
+    key: fs.readFileSync('/certificates/certificate.key'),
+    cert: fs.readFileSync('/certificates/certificate.cert'),
+  }),
+})
+export class GameGateway {
   @WebSocketServer()
   server: Server;
 
@@ -46,32 +48,31 @@ import * as fs from 'fs';
 
   /* New client connected. */
   handleConnection(socket: any) {
-    console.log("Client connected:", socket.id);
+    console.log('Client connected:', socket.id);
 
-      // save new user to users array in GameService
-	  const user = new User();
-	  user.socket = socket;
-	  this.gameService.users.set(socket.id, user);
-
+    // save new user to users array in GameService
+    const user = new User();
+    user.socket = socket;
+    this.gameService.users.set(socket.id, user);
   }
 
   handleDisconnect(socket: any) {
-    console.log("Client disconnected:", socket.id);
+    console.log('Client disconnected:', socket.id);
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
 
-	if (user) {
-		// remove user from any queues
-		// INSERT tournament queue
-		this.gameService.removeFromQueue(socket);
+    if (user) {
+      // remove user from any queues
+      // INSERT tournament queue
+      this.gameService.removeFromQueue(socket);
 
-		// abort any games the user was part of
-		if (user.inGame) {
-			const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			if (activeGame) this.gameService.stopGame(activeGame);
-		  }
-	}
+      // abort any games the user was part of
+      if (user.inGame) {
+        const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+        if (activeGame) this.gameService.stopGame(activeGame);
+      }
+    }
 
     // delete the socket id
     user.socket = null;
@@ -108,7 +109,7 @@ import * as fs from 'fs';
   sendGameId(game: GameState) {
     // if any user left the game, abort
     if (!game.user1 || !game.user2) {
-      console.error("Player left game.");
+      console.error('Player left game.');
       return;
     }
     // tell the client the game id
@@ -118,9 +119,9 @@ import * as fs from 'fs';
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
-	this.sendPaddleUpdate(game);
-	this.sendBallUpdate(game);
-	this.sendScoreUpdate(game);
+    this.sendPaddleUpdate(game);
+    this.sendBallUpdate(game);
+    this.sendScoreUpdate(game);
   }
 
   // ball coordinate transmission
@@ -144,7 +145,10 @@ import * as fs from 'fs';
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+  leftPaddleUp(
+    @MessageBody() { gameId }: { gameId: number },
+    @ConnectedSocket() socket: Socket,
+  ) {
     const user = this.gameService.users.get(socket.id);
     if (gameId && user) {
       const game = this.gameService.paddleUp(gameId, user);
@@ -153,7 +157,10 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+  PaddleDown(
+    @MessageBody() { gameId }: { gameId: number },
+    @ConnectedSocket() socket: Socket,
+  ) {
     const user = this.gameService.users.get(socket.id);
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, user);

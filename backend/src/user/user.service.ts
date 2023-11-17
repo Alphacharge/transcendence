@@ -8,15 +8,15 @@ export class UserService {
   // 	const userDto = new UserDto(userId);
   // 	return userDto;
   // }
-//   async createUser(registrationData: LoginDTO) {
-//     const newUser = new User();
-//     newUser.username = registrationData.username;
-//     newUser.password = registrationData.password;
+  //   async createUser(registrationData: LoginDTO) {
+  //     const newUser = new User();
+  //     newUser.username = registrationData.username;
+  //     newUser.password = registrationData.password;
 
-//     this.users.set(newUser.id, newUser);
+  //     this.users.set(newUser.id, newUser);
 
-//     return(newUser);
-//   }
+  //     return(newUser);
+  //   }
   getUserById(userId: string) {
     return this.users.get(userId);
   }
