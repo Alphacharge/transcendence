@@ -7,7 +7,7 @@ import { Games, PrismaClient } from '@prisma/client';
 @Injectable()
 export class GameState {
   prisma: PrismaClient;
-  GameData: Games;
+  GameData: Games | undefined = undefined;
   intervalId: NodeJS.Timeout | null;
 
   tournamentStatus: number;
