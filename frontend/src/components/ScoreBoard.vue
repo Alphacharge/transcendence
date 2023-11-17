@@ -1,7 +1,7 @@
 <template>
   <div class="scoreboard">
     <h2 v-if="announceVisible" class="announce-winner">
-      {{ winningPlayer }} Wins!
+      Player {{ winningPlayer }} Wins!
     </h2>
   </div>
   <div>

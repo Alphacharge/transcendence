@@ -4,8 +4,7 @@ import ScoreBoard from './ScoreBoard.vue';
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
   </div>
-  <PongButtons
-    v-if="pongButtonsVisible"/>
+  <PongButtons v-if="pongButtonsVisible" />
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
