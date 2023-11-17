@@ -43,10 +43,9 @@ export class GameService {
     const user = this.users.get(socket.id);
     this.queueTournamentGame.push(user);
     console.log(`Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`);
-    if (tournamentStatus & 4)
-    {console.log(`DEBUG plaeyr ready for round 2 round 2 ${socket.id}`);}
-    if(this.queueTournamentGame.length >= 2) {
-      this.startGame(tournamentStatus)};
+    if(tournamentStatus < 8 && this.queueTournamentGame.length >= 2) {
+      this.startGame(tournamentStatus)
+    };
     }
 
   /* Remove a user from the game queue */
@@ -162,6 +161,5 @@ export class GameService {
     game.ballY += game.ballSpeedY;
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
-
 }
 
