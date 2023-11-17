@@ -106,7 +106,7 @@ model Tournaments {
 	createdAt		DateTime	@default(now())
 	first_game_id	Int
 	second_game_id	Int
-	third_game_id	Int			@default(-1)
+	third_game_id	Int
 
 	f_game		Games		@relation("FirstGame", fields: [first_game_id], references: [id])
 	s_game		Games		@relation("SecondGame", fields: [second_game_id], references: [id])
