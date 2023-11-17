@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TournamentService } from './tournament.service'
 import { TournamentController } from './tournament.controller'
-import { AuthService } from 'src/auth/auth.service';
-import { JwtService } from '@nestjs/jwt';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
+	imports: [AuthModule],
 	controllers: [TournamentController],
-	providers: [TournamentService, AuthService, JwtService],
+	providers: [TournamentService],
 })
 
 export class TournamentModule {}
