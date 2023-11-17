@@ -10,20 +10,26 @@ import {
 import { Server, Socket } from 'socket.io';
 import { GameService } from './game.service';
 import { User } from 'src/user/User';
-import { GameState} from './GameState';
+import { GameState } from './GameState';
 import * as https from 'https';
 import * as fs from 'fs';
+import { AuthService } from 'src/auth/auth.service';
 
 // can enter a port in the brackets
-@WebSocketGateway({ server: https.createServer({
-  key: fs.readFileSync('/certificates/certificate.key'),
-  cert: fs.readFileSync('/certificates/certificate.cert'),
-  })})
-  export class GameGateway {
+@WebSocketGateway({
+  server: https.createServer({
+    key: fs.readFileSync('/certificates/certificate.key'),
+    cert: fs.readFileSync('/certificates/certificate.cert'),
+  }),
+})
+export class GameGateway {
   @WebSocketServer()
   server: Server;
 
-  constructor(private readonly gameService: GameService) {
+  constructor(
+    private readonly gameService: GameService,
+    private readonly authService: AuthService,
+  ) {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
       if (game) this.sendGameId(game);
     });
@@ -45,36 +51,44 @@ import * as fs from 'fs';
   }
 
   /* New client connected. */
-  handleConnection(socket: any) {
-    console.log("Client connected:", socket.id);
+  async handleConnection(socket: any) {
+    console.log('Client connected:', socket.id);
 
+    // ADD: user id will have to be checked too
+    // doesn't work right now though so i removed it
+    const isValid = await this.authService.validateToken(
+      socket.handshake.query.token,
+    );
+    if (isValid) {
       // save new user to users array in GameService
-    const user = new User();
-    user.socket = socket;
-    this.gameService.users.set(socket.id, user);
-
+      const user = new User();
+      user.socket = socket;
+      user.findInDatabase(socket.handshake.query.userId);
+      this.gameService.users.set(socket.id, user);
+    } else {
+      console.log('Refusing WebSocket connection.');
+      socket.disconnect(true);
+    }
   }
 
   handleDisconnect(socket: any) {
-    console.log("Client disconnected:", socket.id);
+    console.log('Client disconnected:', socket.id);
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
 
-  if (user) {
-    // remove user from any queues
-    // INSERT tournament queue
-    this.gameService.removeFromQueue(socket);
+    if (user) {
+      // remove user from any queues
+      // INSERT tournament queue
+      this.gameService.removeFromQueue(socket);
 
-		// abort any games the user was part of
-		// if (user.inGame) {
-			// const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			// if (activeGame) this.gameService.stopGame(activeGame);
-		//   }
-	}
+      // abort any games the user was part of
+      if (user.activeGame) {
+        this.gameService.stopGame(user.activeGame);
+      }
+    }
 
-    // delete the socket id
-    user.socket = null;
+    // remove user?
   }
 
   @SubscribeMessage('enterQueue')
@@ -83,7 +97,10 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  enterTournamentQueue(@ConnectedSocket() socket: Socket, @MessageBody() tournamentStatus: number) {
+  enterTournamentQueue(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() tournamentStatus: number,
+  ) {
     this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 
@@ -108,7 +125,7 @@ import * as fs from 'fs';
   sendGameId(game: GameState) {
     // if any user left the game, abort
     if (!game.user1 || !game.user2) {
-      console.error("Player left game.");
+      console.error('Player left game.');
       return;
     }
     // tell the client the game id
@@ -118,6 +135,9 @@ import * as fs from 'fs';
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');
     // send game info here?
+    this.sendPaddleUpdate(game);
+    this.sendBallUpdate(game);
+    this.sendScoreUpdate(game);
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
     this.sendScoreUpdate(game);
@@ -144,7 +164,10 @@ import * as fs from 'fs';
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+  leftPaddleUp(
+    @MessageBody() { gameId }: { gameId: number },
+    @ConnectedSocket() socket: Socket,
+  ) {
     const user = this.gameService.users.get(socket.id);
     if (gameId && user) {
       const game = this.gameService.paddleUp(gameId, user);
@@ -153,7 +176,10 @@ import * as fs from 'fs';
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@MessageBody() { gameId }: { gameId: number }, @ConnectedSocket() socket: Socket) {
+  PaddleDown(
+    @MessageBody() { gameId }: { gameId: number },
+    @ConnectedSocket() socket: Socket,
+  ) {
     const user = this.gameService.users.get(socket.id);
     if (gameId) {
       const game = this.gameService.paddleDown(gameId, user);
@@ -166,9 +192,12 @@ import * as fs from 'fs';
     game.user1.socket.emit('victory', game.winningPlayer.userData.id);
     game.user2.socket.emit('victory', game.winningPlayer.userData.id);
     /* if winning torunament's first round*/
-    if (game.tournamentStatus & 0b010) {
-      game.tournamentStatus = game.tournamentStatus << 1;
-      this.gameService.addToTournamentQueue(game.winningPlayer.socket, game.tournamentStatus);
+    if (game.tournamentStatus & 0b110) {
+      // game.tournamentStatus = game.tournamentStatus << 1;
+      this.gameService.addToTournamentQueue(
+        game.winningPlayer.socket,
+        game.tournamentStatus,
+      );
     }
   }
 }

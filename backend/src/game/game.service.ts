@@ -9,18 +9,15 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class GameService {
-  // user array
-  // should probably be saved elsewhere, idk
   queueTournamentGame: User[] = [];
   queue: User[] = [];
   users: Map<string, User> = new Map(); // user.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   prisma: PrismaClient;
 
-
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
-	/*
+    /*
 
 
 	add same logic as tournament add player, need a playerdto with token
@@ -30,13 +27,18 @@ export class GameService {
     // find the matching user
     const user = this.users.get(socket.id);
 
-  //user.id = 1 //
     // check if user already is in queue
     // REPLACE socket id with working user id
-    if (!user || this.queue.find(queuedUser => queuedUser.userData.id === user.userData.id)) return;
+    if (
+      !user ||
+      this.queue.find(
+        (queuedUser) => queuedUser.userData.id === user.userData.id,
+      )
+    )
+      return;
     // check if user already is in an active game
-    if (user.inGame) {
-      console.log("Client is already playing");
+    if (user.activeGame) {
+      console.log('Client is already playing');
       return;
     }
 
@@ -48,19 +50,24 @@ export class GameService {
 
   addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
+
     this.queueTournamentGame.push(user);
-    console.log(`Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`);
-    if (tournamentStatus & 4)
-    {console.log(`DEBUG plaeyr ready for round 2 round 2 ${socket.id}`);}
-    if(this.queueTournamentGame.length >= 2) {
-      this.startGame(tournamentStatus)};
+    console.log(
+      `Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
+    );
+
+    if (tournamentStatus < 8 && this.queueTournamentGame.length >= 2) {
+      this.startGame(tournamentStatus);
     }
+  }
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
     const user = this.users.get(socket.id);
     // Find the user in the queue
-    const userToRemove = this.queue.find(queuedUser => queuedUser.userData.id === user.userData.id);
+    const userToRemove = this.queue.find(
+      (queuedUser) => queuedUser.userData.id === user.userData.id,
+    );
     if (userToRemove) {
       // Remove the user from the queue
       const index = this.queue.indexOf(userToRemove);
@@ -72,38 +79,43 @@ export class GameService {
   }
 
   checkQueue() {
-    if (this.queue.length >= 2){
-    console.log(this.queue.length);
-    const tournamentStatus = 0; // added for readability
-    this.startGame(tournamentStatus);
-  }
+    if (this.queue.length >= 2) {
+      console.log(this.queue.length);
+
+      const tournamentStatus = 0; // added for readability
+      this.startGame(tournamentStatus);
+    }
   }
 
   async startGame(tournamentStatus: number) {
-	let user1: User;
-	let user2: User;
-	if (!tournamentStatus) {
-		user1 = this.queue.pop();
-		user2 = this.queue.pop();
-	} else {
-		user1 = this.queueTournamentGame.pop();
-		user2 = this.queueTournamentGame.pop();
-	}
+    let user1: User;
+    let user2: User;
+    if (!tournamentStatus) {
+      user1 = this.queue.pop();
+      user2 = this.queue.pop();
+    } else {
+      user1 = this.queueTournamentGame.pop();
+      user2 = this.queueTournamentGame.pop();
+    }
     const game = new GameState(user1, user2);
     game.tournamentStatus = tournamentStatus;
-    console.log("user1: ", game.user1.userData.id, "user2: ", game.user2.userData.id);
+    console.log(
+      'user1: ',
+      game.user1.userData.id,
+      'user2: ',
+      game.user2.userData.id,
+    );
     await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
 
-  if (!game.GameData) {
-    console.log('Game: Failed to create new Game!', this.queue.length);
-    return;
-  }
+    if (!game.GameData) {
+      console.log('Game: Failed to create new Game!', this.queue.length);
+      return;
+    }
 
     const updateRate = 1000 / 60;
 
-
-    game.user1.inGame = true;
-    game.user2.inGame = true;
+    game.user1.activeGame = game;
+    game.user2.activeGame = game;
 
     this.games.set(game.GameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
@@ -131,8 +143,8 @@ export class GameService {
     clearInterval(game.intervalId);
     game.intervalId = null;
 
-    if (game.user1) game.user1.inGame = false;
-    if (game.user2) game.user2.inGame = false;
+    if (game.user1) game.user1.activeGame = null;
+    if (game.user2) game.user2.activeGame = null;
 
     // save persistent game stuff to database here if you like
     this.games.delete(game.GameData.id);
@@ -170,6 +182,4 @@ export class GameService {
     game.ballY += game.ballSpeedY;
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
-
 }
-

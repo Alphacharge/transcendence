@@ -1,4 +1,3 @@
-import ScoreBoard from './ScoreBoard.vue';
 <template>
   <div>
     <p>Game ID: {{ gameId }}</p>
@@ -22,34 +21,45 @@ export default {
       default: true,
     },
   },
+
   data() {
     return {
       player1Score: 0,
       player2Score: 0,
       gameId: null,
       playerNumber: 0,
+      activeSocket: false,
     };
   },
+
   components: { GameArea, ScoreBoard, PongButtons },
   mounted() {
-    // received new game ID from server
-    socket.on("gameId", (payload) => {
-      this.gameId = payload.gameId;
-      this.player1Score = 0;
-      this.player2Score = 0;
-    });
-    // received info if we are left or right
-    // better name?
-    socket.on("player1", () => {
-      this.playerNumber = 1;
-    });
-    socket.on("player2", () => {
-      this.playerNumber = 2;
-    });
-    // received score update from server
-    socket.on("scoreUpdate", (playerScores) => {
-      this.player1Score = playerScores.player1;
-      this.player2Score = playerScores.player2;
+    socket.connect();
+
+    socket.on("connect", () => {
+      // received new game ID from server
+      socket.on("gameId", (payload) => {
+        this.gameId = payload.gameId;
+        this.player1Score = 0;
+        this.player2Score = 0;
+      });
+      // received info if we are left or right
+      // better name?
+      socket.on("player1", () => {
+        this.playerNumber = 1;
+      });
+      socket.on("player2", () => {
+        this.playerNumber = 2;
+      });
+      // received score update from server
+      socket.on("scoreUpdate", (playerScores) => {
+        this.player1Score = playerScores.player1;
+        this.player2Score = playerScores.player2;
+      });
+
+      socket.on("disconnect", () => {
+        this.activeSocket = false;
+      });
     });
   },
   methods: {

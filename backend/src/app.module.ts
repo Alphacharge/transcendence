@@ -12,16 +12,16 @@ import { TournamentModule } from './tournament/tournament.module';
 
 @Module({
   imports: [
-	ConfigModule.forRoot({
-		isGlobal: true,
-  	}),
-	GameModule,
-	UserModule,
-	AuthModule,
-	PrismaModule,
-	TournamentModule],
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    GameModule,
+    UserModule,
+    AuthModule,
+    PrismaModule,
+    TournamentModule,
+  ],
   controllers: [AppController, TournamentController],
   providers: [AppService, TournamentService],
-
 })
 export class AppModule {}

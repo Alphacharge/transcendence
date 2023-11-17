@@ -26,23 +26,23 @@ class SocketIoAdapter extends IoAdapter {
 }
 
 async function bootstrap() {
-	const config= new ConfigService();
-	const app = await NestFactory.create(AppModule, {
+  const config = new ConfigService();
+  const app = await NestFactory.create(AppModule, {
     httpsOptions: {
       key: fs.readFileSync('/certificates/certificate.key'),
       cert: fs.readFileSync('/certificates/certificate.cert'),
-	  },
-
+    },
   });
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
-	app.enableCors({
-		origin: [
-			`https://${process.env.BACKEND_IP}:8080`,
-			"https://localhost:8080",
-			`https://${process.env.BACKEND_IP}:3000`,
-			"https://localhost:3000"]
-	});
+  app.enableCors({
+    origin: [
+      `https://${process.env.BACKEND_IP}:8080`,
+      'https://localhost:8080',
+      `https://${process.env.BACKEND_IP}:3000`,
+      'https://localhost:3000',
+    ],
+  });
 
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
