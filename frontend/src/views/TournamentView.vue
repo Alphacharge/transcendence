@@ -74,7 +74,7 @@ export default {
       if (this.tournamentStatus < 4) {
         this.tournamentStatus = this.tournamentStatus << 1;
         this.pongVisible = true;
-        socket.enterTournamentQueue(this.tournamentStatus);
+        socket.enterTournamentQueue(this.tournamentStatus, Number(localStorage.getItem("userId")), localStorage.getItem("access_token"));
       } else {
         console.error(
           `unexpected tournament status value : ${this.tournamentStatus}`,
