@@ -97,11 +97,21 @@ export class GameGateway {
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  enterTournamentQueue(
+  async enterTournamentQueue(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() tournamentStatus: number,
+    @MessageBody() tournamentStatus: number, userId: number, token: string
   ) {
-    this.gameService.addToTournamentQueue(socket, tournamentStatus);
+    const isValid = await this.authService.validateToken({userId, token});
+    if (isValid) {
+      // save new user to users array in GameService
+      const user = new User();
+      user.socket = socket;
+      user.findInDatabase(userId);
+      this.gameService.users.set(socket.id, user);
+    } else {
+      console.log('Refusing WebSocket connection.');
+      socket.disconnect(true);
+    }
   }
 
   @SubscribeMessage('leaveQueue')
