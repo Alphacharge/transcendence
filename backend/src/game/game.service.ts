@@ -82,6 +82,7 @@ export class GameService {
       game.user1 = this.queueTournamentGame.pop();
       game.user2 = this.queueTournamentGame.pop();
     }
+    await game.countDown();
     console.log("user1: ", game.user1.id, "user2: ", game.user2.id);
     await game.initializeGame(game.user1.id, game.user2.id);
 

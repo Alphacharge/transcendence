@@ -9,6 +9,8 @@ export class GameState {
   prisma: PrismaClient;
   GameData: Games;
   intervalId: NodeJS.Timeout | null;
+  intervalCountId: NodeJS.Timeout | null;
+
 
   tournamentStatus: number;
 
@@ -39,6 +41,8 @@ export class GameState {
   rightImpact: number
 
   speedFactor: number;
+
+  currentCount: number;
 
   constructor() {
     this.prisma = new PrismaClient();
@@ -236,43 +240,60 @@ export class GameState {
   }
 
 
-async initializeGame(leftId: string, rightId: string) {
-    // Assuming you're using Prisma to interact with a database
-    this.GameData = await this.prisma.games.create({
+  async initializeGame(leftId: string, rightId: string) {
+      // Assuming you're using Prisma to interact with a database
+      this.GameData = await this.prisma.games.create({
+        data: {
+          // left_user_id: leftId,
+          left_user_id: 1,
+          // right_user_id: rightId,
+          right_user_id: 2,
+          left_user_score: 0,
+          right_user_score: 0,
+          createdAt: new Date(),
+        },
+      });
+
+      // You can handle the result or perform other actions based on the Prisma query result
+      console.log('New game created:', this.GameData);
+      if (this.tournamentStatus & 2) {
+        console.log('Tournament, first round');
+      }
+      if (this.tournamentStatus & 4) {
+        console.log('Tournament, second round');
+      }
+    }
+
+  async updateGameScore() {
+    try {
+      const updatedGame = await this.prisma.games.update({
+      where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
       data: {
-        // left_user_id: leftId,
-        left_user_id: 1,
-        // right_user_id: rightId,
-        right_user_id: 2,
-        left_user_score: 0,
-        right_user_score: 0,
-        createdAt: new Date(),
+        left_user_score: this.scorePlayer1,
+        right_user_score: this.scorePlayer2,
+        // Other fields you want to update
       },
-    });
-
-    // You can handle the result or perform other actions based on the Prisma query result
-    console.log('New game created:', this.GameData);
-    if (this.tournamentStatus & 2) {
-      console.log('Tournament, first round');
+      });
+      console.log('Updated game:', updatedGame);
+    } catch (error) {
+      console.error('Error updating game:', error);
     }
-    if (this.tournamentStatus & 4) {
-      console.log('Tournament, second round');
     }
-  }
 
-async updateGameScore() {
-  try {
-    const updatedGame = await this.prisma.games.update({
-    where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
-    data: {
-      left_user_score: this.scorePlayer1,
-      right_user_score: this.scorePlayer2,
-      // Other fields you want to update
-    },
-    });
-    console.log('Updated game:', updatedGame);
-  } catch (error) {
-    console.error('Error updating game:', error);
-  }
-  }
+  countDown(): Promise<void> {
+    return new Promise((resolve) => {
+      this.currentCount = 3;
+      this.intervalCountId = setInterval(
+        ()=>{
+          sharedEventEmitter.emit('countDown', this);
+          if (this.currentCount > 0) {
+            this.currentCount--;
+          } else {
+            clearInterval(this.intervalCountId);
+            this.intervalCountId = null;
+            resolve();
+          }
+        }, 1000);
+      });
+    };
 }

@@ -28,6 +28,7 @@
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
+import CountDown from "@/components/CountDown.vue"
 export default {
   components: {
     PlayerCheckin,
@@ -71,6 +72,7 @@ export default {
       }
     },
     async startTournament() {
+      this.countDownVisible = true;
       if (this.tournamentStatus < 4) {
         this.tournamentStatus = this.tournamentStatus << 1;
         this.pongVisible = true;

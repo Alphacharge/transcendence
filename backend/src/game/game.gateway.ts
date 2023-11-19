@@ -42,6 +42,9 @@ import * as fs from 'fs';
     sharedEventEmitter.on('victory', (game: GameState) => {
       this.announceVictory(game);
     });
+    sharedEventEmitter.on('countDown', (game: GameState) => {
+      this.matchStart(game);
+    });
   }
 
   /* New client connected. */
@@ -68,8 +71,8 @@ import * as fs from 'fs';
 
 		// abort any games the user was part of
 		// if (user.inGame) {
-			// const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
-			// if (activeGame) this.gameService.stopGame(activeGame);
+		// 	const activeGame = user.gamesPlayed[user.gamesPlayed.length - 1];
+		// 	if (activeGame) this.gameService.stopGame(activeGame);
 		//   }
 	}
 
@@ -112,11 +115,11 @@ import * as fs from 'fs';
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
-    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
-    // tell the client the player number
-    game.user1.socket.emit('player1');
-    game.user2.socket.emit('player2');
+      game.user1.socket.emit('gameId', { gameId: game.GameData.id });
+      game.user2.socket.emit('gameId', { gameId: game.GameData.id });
+      // tell the client the player number
+      game.user1.socket.emit('player1');
+      game.user2.socket.emit('player2');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -125,8 +128,8 @@ import * as fs from 'fs';
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
-    game.user1.socket.emit('ballUpdate', game.ballCoordinates());
-    game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+      game.user1.socket.emit('ballUpdate', game.ballCoordinates());
+      game.user2.socket.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
@@ -168,6 +171,18 @@ import * as fs from 'fs';
     if (game.tournamentStatus & 0b110) {
       // game.tournamentStatus = game.tournamentStatus << 1;
       this.gameService.addToTournamentQueue(game.winningPlayer.socket, game.tournamentStatus);
+    }
+  }
+
+  matchStart(game: GameState) {
+    if(game.user1 && game.user1.socket) {
+      console.log("DEBUG gateway countdown");
+      game.user1.socket.emit('countDown', game.currentCount)
+    }
+
+    if(game.user2 && game.user2.socket) {
+      console.log("DEBUG gateway countdown");
+      game.user2.socket.emit('countDown', game.currentCount)
     }
   }
 }
