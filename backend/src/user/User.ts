@@ -17,6 +17,7 @@ export class User {
   }
 
   async findInDatabase(userId: number) {
+    console.log("Search User with ID: ", userId);
     this.userData = await this.prisma.users.findUnique({
       where: { id: Number(userId) },
     });
