@@ -196,8 +196,9 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.leftPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration) * (1 + this.ballAcceleration);
       this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+        this.ballAcceleration += this.ballAcceleration * (1 + this.ballAcceleration);
         this.ballAcceleration += this.ballAcceleration;
     }
   }
