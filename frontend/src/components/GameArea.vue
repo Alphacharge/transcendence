@@ -52,13 +52,13 @@ export default {
           console.log("sending paddle up with id", this.gameId);
           this.messageInterval = setInterval(() => {
             socket.sendPaddleUp(this.gameId);
-          }, 1000 / 15);
+          }, 10);
         }
       } else if (event.key === "s") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
             socket.sendPaddleDown(this.gameId);
-          }, 1000 / 15);
+          }, 10);
         }
       }
     });
@@ -97,6 +97,7 @@ export default {
 </script>
 
 <style>
+/* Achtung: the field geometry is calculated in the backed, while we set absolute values in the styling, this will now work and needs to be fixed */
 .container {
   position: relative;
   width: 800px;
@@ -134,7 +135,7 @@ export default {
   width: 10px;
   height: 100px;
   background-color: rebeccapurple;
-  left: 760px;
+  left: 750px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>

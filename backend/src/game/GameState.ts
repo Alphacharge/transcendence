@@ -61,8 +61,8 @@ export class GameState {
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
-    this.speedFactor = 5;
-    this.paddlesSpeed = 40;
+    this.speedFactor = 1;
+    this.paddlesSpeed = 20;
 
     this.paddlesHeight = 1/4 * this.fieldHeight;
     const paddlesWidth = 1/160 * this.fieldWidth;
