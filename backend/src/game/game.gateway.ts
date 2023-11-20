@@ -212,10 +212,10 @@ export class GameGateway {
       console.log("GAME.GATEWAY: MATCHSTART, starting countdown for userid: ", game.user1.userData.id);
       game.user1.socket.emit('countDown', game.currentCount)
     }
-
     if(game.user2 && game.user2.socket) {
       console.log("GAME.GATEWAY: MATCHSTART, starting countdown for userid: ", game.user2.userData.id);
       game.user2.socket.emit('countDown', game.currentCount)
     }
+    console.log(`Countdown: ${game.currentCount}`);
   }
 }
