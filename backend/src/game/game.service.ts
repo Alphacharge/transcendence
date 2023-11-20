@@ -135,7 +135,7 @@ export class GameService {
       return;
     }
 
-    const updateRate = 1000 / 60;
+    const updateRate = 5;
 
     game.user1.activeGame = game;
     game.user2.activeGame = game;
