@@ -32,6 +32,8 @@ export class GameState {
 
   paddlesHeight: number;
 
+  paddlesSpeed: number;
+
   leftPosition: number;
   leftBorder: number;
   leftImpact: number
@@ -53,12 +55,13 @@ export class GameState {
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore=11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
     this.speedFactor = 5;
+    this.paddlesSpeed = 40;
 
     this.paddlesHeight = 1/4 * this.fieldHeight;
     const paddlesWidth = 1/160 * this.fieldWidth;
@@ -120,25 +123,38 @@ export class GameState {
 
   movePaddleUp(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition > 0) {
-        this.leftPosition -= 10;
+      if (this.leftPosition > this.paddlesSpeed ) {
+        this.leftPosition -= this.paddlesSpeed;
+      }
+      else if (this.leftPosition <= this.paddlesSpeed && this.leftPosition > 0) {
+        this.leftPosition = 0;
       }
     }
     else if (player == this.user2) {
-      if (this.rightPosition > 10) {
-        this.rightPosition -= 10;
+      if (this.rightPosition > this.paddlesSpeed) {
+        this.rightPosition -= this.paddlesSpeed;
       }
+      else if (this.rightPosition <= this.paddlesSpeed && this.rightPosition > 0) {
+        this.rightPosition = 0;
+      }
+
     }
   }
   movePaddleDown(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
-        this.leftPosition += 10;
+      if (this.leftPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+        this.leftPosition += this.paddlesSpeed;
+      }
+      else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+        this.leftPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
     else if (player == this.user2) {
-      if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
-        this.rightPosition += 10;
+      if (this.rightPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+        this.rightPosition += this.paddlesSpeed;
+      }
+      else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+        this.rightPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
   }
