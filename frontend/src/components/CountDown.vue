@@ -5,23 +5,23 @@
   </div>
 </template>
 <script>
-  import { socket } from "@/assets/utils/socket";
-  export default {
-    data() {
-      return {
-        currentCount: 3,
-        countdownVisible: false,
-      }
-    },
-    mounted() {
-      this.countdownVisible = true;
-      socket.on("countDown", (payload)=>{
-        this.currentCount = payload;
-        console.log("countdown payload", payload);
-      })
-    },
-    beforeUnmount() {
-      this.countdownVisible = false;
-    }
-  }
+import { socket } from "@/assets/utils/socket";
+export default {
+  data() {
+    return {
+      currentCount: 3,
+      countdownVisible: false,
+    };
+  },
+  mounted() {
+    this.countdownVisible = true;
+    socket.on("countDown", (payload) => {
+      this.currentCount = payload;
+      console.log("countdown payload", payload);
+    });
+  },
+  beforeUnmount() {
+    this.countdownVisible = false;
+  },
+};
 </script>
