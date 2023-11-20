@@ -147,9 +147,6 @@ export class GameGateway {
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
     this.sendScoreUpdate(game);
-    this.sendPaddleUpdate(game);
-    this.sendBallUpdate(game);
-    this.sendScoreUpdate(game);
   }
 
   // ball coordinate transmission
