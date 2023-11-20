@@ -55,8 +55,7 @@ export class GameGateway {
 
   /* New client connected. */
   async handleConnection(socket: any) {
-    console.log('Client connected:', socket.id);
-    console.log(socket.handshake.query.token);
+    console.log('GAME.GATEWAY: HANDLECONNECTION, Client connected sid: ', socket.id);
     // ADD: user id will have to be checked too
     // doesn't work right now though so i removed it
     const isValid = await this.authService.validateToken(
@@ -69,13 +68,13 @@ export class GameGateway {
       user.findInDatabase(socket.handshake.query.userId);
       this.gameService.users.set(socket.id, user);
     } else {
-      console.log('Refusing WebSocket connection.');
+      console.log('GAME.GATEWAY: HANDLECONNECTION, Refusing WebSocket connection.');
       socket.disconnect(true);
     }
   }
 
   handleDisconnect(socket: any) {
-    console.log('Client disconnected:', socket.id);
+    console.log('GAME.GATEWAY: HANDLEDISCONNECT, Client disconnected sid:', socket.id);
 
     // get the right user
     const user = this.gameService.users.get(socket.id);
@@ -112,7 +111,7 @@ export class GameGateway {
       user.findInDatabase(userId);
       this.gameService.users.set(socket.id, user);
     } else {
-      console.log('Refusing WebSocket connection.');
+      console.log('GAME.GATEWAY: ENTERTOURNAMENTQUEUE ,Refusing WebSocket connection.');
       socket.disconnect(true);
     }
   }
@@ -138,7 +137,7 @@ export class GameGateway {
   sendGameId(game: GameState) {
     // if any user left the game, abort
     if (!game.user1 || !game.user2) {
-      console.error('Player left game.');
+      console.error('GAME.GATEWAY: SENDGAMEID, Player left game.');
       return;
     }
     // tell the client the game id
@@ -201,7 +200,7 @@ export class GameGateway {
   }
 
   announceVictory(game: GameState) {
-    console.log(`DEBUG winning player's id ${game.winningPlayer.userData.id}`);
+    console.log(`GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`);
     game.user1.socket.emit('victory', game.winningPlayer.userData.id);
     game.user2.socket.emit('victory', game.winningPlayer.userData.id);
     /* if winning torunament's first round*/
@@ -216,12 +215,12 @@ export class GameGateway {
 
   matchStart(game: GameState) {
     if(game.user1 && game.user1.socket) {
-      console.log("DEBUG gateway countdown");
+      console.log("GAME.GATEWAY: MATCHSTART, starting countdown for userid: ", game.user1.userData.id);
       game.user1.socket.emit('countDown', game.currentCount)
     }
 
     if(game.user2 && game.user2.socket) {
-      console.log("DEBUG gateway countdown");
+      console.log("GAME.GATEWAY: MATCHSTART, starting countdown for userid: ", game.user2.userData.id);
       game.user2.socket.emit('countDown', game.currentCount)
     }
   }

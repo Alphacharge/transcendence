@@ -17,18 +17,18 @@ export class User {
   }
 
   async findInDatabase(userId: number) {
-    console.log("Search User with ID: ", userId);
+    console.log("USER: FINDINDATABASE, Search User with ID: ", userId);
     this.userData = await this.prisma.users.findUnique({
       where: { id: Number(userId) },
     });
     if (this.userData) {
       delete this.userData.hash;
     } else {
-      console.error(`User with ID ${userId} not found.`);
+      console.error(`USER: FINDINDATABASE, User with ID ${userId} not found.`);
       return -1;
     }
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error('USER: FINDINDATABASE, Error fetching user data:', error);
     return -1;
   }
 }

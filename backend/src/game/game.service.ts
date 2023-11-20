@@ -38,11 +38,11 @@ export class GameService {
       return;
     // check if user already is in an active game
     if (user.activeGame) {
-      console.log('Client is already playing');
+      console.log('GAME.SERVICE: ADDTOQUEUE, Client is already playing');
       return;
     }
 
-    console.log(`Client ${socket.id} entered game queue`);
+    console.log(`GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`);
     this.queue.push(user);
     // check if a game is ready to be started
     this.checkQueue();
@@ -53,7 +53,7 @@ export class GameService {
 
     this.queueTournamentGame.push(user);
     console.log(
-      `Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
+      `GAME.SERVICE: ADDTOTOURNAMENTQUEUE, Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
     );
 
     if (tournamentStatus < 8 && this.queueTournamentGame.length >= 2) {
@@ -73,14 +73,14 @@ export class GameService {
       const index = this.queue.indexOf(userToRemove);
       if (index !== -1) {
         this.queue.splice(index, 1);
-        console.log(`Client: ${socket.id} removed from game queue`);
+        console.log(`GAME.SERVICE: REMOVEFROMQUEUE, Client: ${socket.id} removed from game queue`);
       }
     }
   }
 
   checkQueue() {
     if (this.queue.length >= 2) {
-      console.log(this.queue.length);
+      console.log('GAME.SERVICE: CHECKQUEUE, queuelength is', this.queue.length);
 
       const tournamentStatus = 0; // added for readability
       this.startGame(tournamentStatus);
@@ -100,7 +100,7 @@ export class GameService {
     const game = new GameState(user1, user2);
     game.tournamentStatus = tournamentStatus;
     console.log(
-      'user1: ',
+      'GAME.SERVICE: STARTGAME, user1: ',
       game.user1.userData.id,
       'user2: ',
       game.user2.userData.id,
@@ -109,7 +109,7 @@ export class GameService {
     await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
 
     if (!game.GameData) {
-      console.log('Game: Failed to create new Game!', this.queue.length);
+      console.log('GAME.SERVICE: STARTGAME, Failed to create new Game!', this.queue.length);
       return;
     }
 
@@ -121,7 +121,7 @@ export class GameService {
     this.games.set(game.GameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('Game: Starting multiplayer game', game.GameData.id);
+    console.log('GAME.SERVICE: STARTGAME, Starting multiplayer game', game.GameData.id);
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
@@ -136,11 +136,11 @@ export class GameService {
     if (typeof arg === 'number') game = this.games.get(arg);
     else game = arg;
     if (!game) {
-      console.error("Game: Couldn't stop. Game not found.");
+      console.error("GAME.SERVICE: STOPGAME, Couldn't stop. Game not found.");
       return;
     }
 
-    console.log('Stopping game', game.GameData.id);
+    console.log('GAME.SERVICE: STOPGAME, Stopping game', game.GameData.id);
     clearInterval(game.intervalId);
     game.intervalId = null;
 

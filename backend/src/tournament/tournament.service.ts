@@ -22,11 +22,11 @@ export class TournamentService {
           delete player.userData.hash;
           this.players.set(player.userId, player);
         } else {
-          console.error(`User with ID ${player.userId} not found.`);
+          console.error(`TOURNAMENT.SERVICE: ADD, User with ID ${player.userId} not found.`);
           return -1;
         }
       } catch (error) {
-        console.error('Error fetching user data:', error);
+        console.error('TOURNAMENT.SERVICE: ADD, Error fetching user data:', error);
         return -1;
       }
     }

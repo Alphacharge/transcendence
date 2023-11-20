@@ -272,12 +272,12 @@ export class GameState {
       });
 
     // You can handle the result or perform other actions based on the Prisma query result
-    console.log('New game created:', this.GameData);
+    console.log('GAME.STATE: INITIALIZEGAME, New game created:', this.GameData);
     if (this.tournamentStatus & 2) {
-      console.log('Tournament, first round');
+      console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
     }
     if (this.tournamentStatus & 4) {
-      console.log('Tournament, second round');
+      console.log('GAME.STATE: INITIALIZEGAME, Tournament second round');
     }
   }
 
@@ -291,9 +291,9 @@ export class GameState {
           // Other fields you want to update
         },
       });
-      console.log('Updated game:', updatedGame);
+      console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
     } catch (error) {
-      console.error('Error updating game:', error);
+      console.error('GAME.STATE: UPDATEGAMESCORE, Error updating game:', error);
     }
   }
   countDown(): Promise<void> {

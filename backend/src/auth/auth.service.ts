@@ -63,7 +63,7 @@ export class AuthService {
     const bToken = await this.signToken(newUser.id, newUser.email);
     // return this.signToken(newUser.id, newUser.email);
 
-    console.log('Logged in: User');
+    console.log('AUTH.SERVICE: SIGNIN, Logged in ', newUser.email);
 
     return {
       access_token: bToken,
@@ -109,14 +109,14 @@ export class AuthService {
 
         // Check if the stored userId matches the userId from the token
         if (userId !== decodedToken.sub) {
-          console.error('User Identity KO: userId mismatch');
+          console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: ', userId);
           return false;
         }
       }
-      console.log('User Identity OK.');
+      console.log('AUTH.SERVICE: VALIDATETOKEN, userId OK');
       return true;
     } catch (error) {
-      console.error('User Identity KO: Token verification failed', error);
+      console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: Token verification failed', error);
       return false;
     }
   }
