@@ -11,14 +11,17 @@ export const state = reactive({
 export const socket = io("wss://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
   transports: ["websocket"],
   autoConnect: false,
-  query: {
-    userId: localStorage.getItem("userId"),
-    token: localStorage.getItem("access_token"),
-  },
+  // query: {
+  //   userId: localStorage.getItem("userId"),
+  //   token: localStorage.getItem("access_token"),
+  // },
 });
 
 export function connectWebSocket() {
-  socket.query.token = localStorage.getItem("access_token");
+  socket.io.opts.query = {
+    token: localStorage.getItem("access_token"),
+    userId: localStorage.getItem("userId"),
+  }
   socket.connect();
 }
 
