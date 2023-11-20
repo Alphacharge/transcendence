@@ -29,6 +29,7 @@ export class GameState {
   ballY: number;
   ballSpeedX: number;
   ballSpeedY: number;
+  ballAcceleration: number;
 
   paddlesHeight: number;
 
@@ -82,6 +83,7 @@ export class GameState {
 
   gameInit() {
     const startAngle = this.randomAngle();
+    this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
@@ -184,8 +186,9 @@ export class GameState {
       && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
         const distance = Math.max(this.ballY - this.leftPosition,0);
         const angle = this.impact(distance);
-        this.ballSpeedX = this.speedFactor * Math.cos(angle);
-        this.ballSpeedY = this.speedFactor * Math.sin(angle);
+        this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+        this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+        this.ballAcceleration += this.ballAcceleration;
     }
   }
 
@@ -198,8 +201,9 @@ export class GameState {
       && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
       const distance = Math.max(this.ballY - this.rightPosition,0);
       const angle = this.impact(distance);
-      this.ballSpeedX = - this.speedFactor * Math.cos(angle);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      this.ballSpeedX = - this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballAcceleration *= this.ballAcceleration;
     }
   }
 

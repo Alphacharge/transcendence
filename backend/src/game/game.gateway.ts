@@ -176,13 +176,11 @@ import * as fs from 'fs';
 
   matchStart(game: GameState) {
     if(game.user1 && game.user1.socket) {
-      console.log("DEBUG gateway countdown");
       game.user1.socket.emit('countDown', game.currentCount)
     }
-
     if(game.user2 && game.user2.socket) {
-      console.log("DEBUG gateway countdown");
       game.user2.socket.emit('countDown', game.currentCount)
     }
+    console.log(`Countdown: ${game.currentCount}`);
   }
 }
