@@ -113,16 +113,6 @@ export class GameState {
     return { player1: this.scorePlayer1, player2: this.scorePlayer2 };
   }
 
-  /* Generates a random ID string. */
-  //Not used anymore
-  //   generateID(): string {
-  //     const timestamp = Date.now();
-  //     const randomValue = Math.floor(Math.random() * 1000);
-
-  //     const id = `${timestamp}-${randomValue}`;
-  //     return id;
-  //   }
-
   movePaddleUp(player: User) {
     if (player == this.user1) {
       if (this.leftPosition > this.paddlesSpeed ) {
