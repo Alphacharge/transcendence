@@ -28,7 +28,6 @@
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
-import CountDown from "@/components/CountDown.vue"
 export default {
   components: {
     PlayerCheckin,
