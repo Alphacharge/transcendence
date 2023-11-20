@@ -3,6 +3,7 @@
     <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
   </div>
+  <CountDown />
   <PongButtons v-if="pongButtonsVisible" />
   <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
@@ -12,7 +13,8 @@
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import PongButtons from "@/components/PongButtons.vue";
-import { socket } from "@/assets/utils/socket";
+import CountDown from "@/components/CountDown.vue";
+import { socket, connectWebSocket } from "@/assets/utils/socket";
 
 export default {
   props: {
@@ -31,10 +33,9 @@ export default {
       activeSocket: false,
     };
   },
-
-  components: { GameArea, ScoreBoard, PongButtons },
+  components: { GameArea, ScoreBoard, PongButtons, CountDown },
   mounted() {
-    socket.connect();
+    connectWebSocket();
 
     socket.on("connect", () => {
       // received new game ID from server

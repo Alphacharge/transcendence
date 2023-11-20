@@ -116,7 +116,7 @@ export class AuthService {
       console.log('User Identity OK.');
       return true;
     } catch (error) {
-      console.error('User Identity KO: Token verification failed');
+      console.error('User Identity KO: Token verification failed', error);
       return false;
     }
   }

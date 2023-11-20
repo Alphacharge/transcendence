@@ -48,12 +48,15 @@ export class GameGateway {
     sharedEventEmitter.on('victory', (game: GameState) => {
       this.announceVictory(game);
     });
+    sharedEventEmitter.on('countDown', (game: GameState) => {
+      this.matchStart(game);
+    });
   }
 
   /* New client connected. */
   async handleConnection(socket: any) {
     console.log('Client connected:', socket.id);
-
+    console.log(socket.handshake.query.token);
     // ADD: user id will have to be checked too
     // doesn't work right now though so i removed it
     const isValid = await this.authService.validateToken(
@@ -139,11 +142,11 @@ export class GameGateway {
       return;
     }
     // tell the client the game id
-    game.user1.socket.emit('gameId', { gameId: game.GameData.id });
-    game.user2.socket.emit('gameId', { gameId: game.GameData.id });
-    // tell the client the player number
-    game.user1.socket.emit('player1');
-    game.user2.socket.emit('player2');
+      game.user1.socket.emit('gameId', { gameId: game.GameData.id });
+      game.user2.socket.emit('gameId', { gameId: game.GameData.id });
+      // tell the client the player number
+      game.user1.socket.emit('player1');
+      game.user2.socket.emit('player2');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -155,8 +158,8 @@ export class GameGateway {
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
-    game.user1.socket.emit('ballUpdate', game.ballCoordinates());
-    game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+      game.user1.socket.emit('ballUpdate', game.ballCoordinates());
+      game.user2.socket.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
@@ -208,6 +211,18 @@ export class GameGateway {
         game.winningPlayer.socket,
         game.tournamentStatus,
       );
+    }
+  }
+
+  matchStart(game: GameState) {
+    if(game.user1 && game.user1.socket) {
+      console.log("DEBUG gateway countdown");
+      game.user1.socket.emit('countDown', game.currentCount)
+    }
+
+    if(game.user2 && game.user2.socket) {
+      console.log("DEBUG gateway countdown");
+      game.user2.socket.emit('countDown', game.currentCount)
     }
   }
 }

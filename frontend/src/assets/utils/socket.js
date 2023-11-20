@@ -17,6 +17,11 @@ export const socket = io("wss://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
   },
 });
 
+export function connectWebSocket() {
+  socket.query.token = localStorage.getItem("access_token");
+  socket.connect();
+}
+
 socket.on("connect", () => {
   state.connected = true;
 });

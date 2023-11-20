@@ -1,76 +1,75 @@
 /* global-styles.css */
 h1 {
-    color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
-    font-size: 30px;
-  }
+  color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
+  font-size: 30px;
+}
 
 h2 {
-    color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
-    font-size: 28px;
-  }
+  color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
+  font-size: 28px;
+}
 
 h3 {
-    color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
-    font-size: 26px;
-  }
+  color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
+  font-size: 26px;
+}
 h4 {
-    color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
-    font-size: 24px;
-  }
+  color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
+  font-size: 24px;
+}
 h5 {
-    color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
-    font-size: 22px;
-  }
+  color: rgb(217, 217, 229); /* Hier kannst du den gewünschten Stil anpassen */
+  font-size: 22px;
+}
 
 p {
-    color: #f6f6f4; /* Textfarbe */
-    font-size: 16px; /* Schriftgröße */
-    line-height: 1.5; /* Zeilenhöhe */
-    /* Weitere Stile hier hinzufügen */
-  }
+  color: #f6f6f4; /* Textfarbe */
+  font-size: 16px; /* Schriftgröße */
+  line-height: 1.5; /* Zeilenhöhe */
+  /* Weitere Stile hier hinzufügen */
+}
 
 /* Allgemeine Stile für die Button-Gruppe */
 .btn-group {
-    display: flex;
-  }
-  
-  /* Stile für jeden einzelnen Button */
-  .btn {
-    /* Gemeinsame Stile für alle Buttons */
-    padding: 10px 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  
-    /* Textstil */
-    color: #fff;
-    text-align: center;
-    text-decoration: none;
-  
-    /* Übergangseffekt */
-    transition: background-color 0.3s;
-  }
-  
-  /* Stile für den roten Button */
-  .btn-danger {
-    background-color: #33ba1e; /* Rote Hintergrundfarbe */
-  }
-  
-  /* Stile für den gelben Button */
-  .btn-warning {
-    background-color: #f0ad4e; /* Gelbe Hintergrundfarbe */
-  }
-  
-  /* Stile für den grünen Button */
-  .btn-success {
-    background-color: #d72421; /* Grüne Hintergrundfarbe */
-  }
-  
-  /* Übergangseffekt für alle Buttons */
-  .btn:hover {
-    background-color: #333; /* Ändere die Hintergrundfarbe bei Hover */
-  }
-  
-/* global.css oder styles.css oder eine andere benannte CSS-Datei */
+  display: flex;
+}
 
+/* Stile für jeden einzelnen Button */
+.btn {
+  /* Gemeinsame Stile für alle Buttons */
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+
+  /* Textstil */
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+
+  /* Übergangseffekt */
+  transition: background-color 0.3s;
+}
+
+/* Stile für den roten Button */
+.btn-danger {
+  background-color: #33ba1e; /* Rote Hintergrundfarbe */
+}
+
+/* Stile für den gelben Button */
+.btn-warning {
+  background-color: #f0ad4e; /* Gelbe Hintergrundfarbe */
+}
+
+/* Stile für den grünen Button */
+.btn-success {
+  background-color: #d72421; /* Grüne Hintergrundfarbe */
+}
+
+/* Übergangseffekt für alle Buttons */
+.btn:hover {
+  background-color: #333; /* Ändere die Hintergrundfarbe bei Hover */
+}
+
+/* global.css oder styles.css oder eine andere benannte CSS-Datei */

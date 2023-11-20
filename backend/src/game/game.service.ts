@@ -105,6 +105,7 @@ export class GameService {
       'user2: ',
       game.user2.userData.id,
     );
+    await game.countDown();
     await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
 
     if (!game.GameData) {

@@ -9,6 +9,8 @@ export class GameState {
   prisma: PrismaClient;
   GameData: Games | undefined = undefined;
   intervalId: NodeJS.Timeout | null;
+  intervalCountId: NodeJS.Timeout | null;
+
 
   tournamentStatus: number;
 
@@ -39,6 +41,8 @@ export class GameState {
   rightImpact: number;
 
   speedFactor: number;
+
+  currentCount: number;
 
   constructor(user1: User, user2: User) {
     this.prisma = new PrismaClient();
@@ -253,19 +257,19 @@ export class GameState {
     return this.intervalId !== null;
   }
 
-  async initializeGame(leftId: number, rightId: number) {
-    // Assuming you're using Prisma to interact with a database
-    this.GameData = await this.prisma.games.create({
-      data: {
-        left_user_id: leftId,
-        // left_user_id: 1,
-        right_user_id: rightId,
-        // right_user_id: 2,
-        left_user_score: 0,
-        right_user_score: 0,
-        createdAt: new Date(),
-      },
-    });
+    async initializeGame(leftId: number, rightId: number) {
+      // Assuming you're using Prisma to interact with a database
+      this.GameData = await this.prisma.games.create({
+        data: {
+          left_user_id: leftId,
+          // left_user_id: 1,
+          right_user_id: rightId,
+          // right_user_id: 2,
+          left_user_score: 0,
+          right_user_score: 0,
+          createdAt: new Date(),
+        },
+      });
 
     // You can handle the result or perform other actions based on the Prisma query result
     console.log('New game created:', this.GameData);
@@ -292,4 +296,20 @@ export class GameState {
       console.error('Error updating game:', error);
     }
   }
+  countDown(): Promise<void> {
+    return new Promise((resolve) => {
+      this.currentCount = 3;
+      this.intervalCountId = setInterval(
+        ()=>{
+          sharedEventEmitter.emit('countDown', this);
+          if (this.currentCount > 0) {
+            this.currentCount--;
+          } else {
+            clearInterval(this.intervalCountId);
+            this.intervalCountId = null;
+            resolve();
+          }
+        }, 1000);
+      });
+    };
 }
