@@ -275,9 +275,7 @@ export class GameState {
       this.GameData = await this.prisma.games.create({
         data: {
           left_user_id: leftId,
-          // left_user_id: 1,
           right_user_id: rightId,
-          // right_user_id: 2,
           left_user_score: 0,
           right_user_score: 0,
           createdAt: new Date(),
