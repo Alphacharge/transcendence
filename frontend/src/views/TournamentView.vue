@@ -24,6 +24,7 @@
   </div>
   <Pong v-if="pongVisible" :pongButtonsVisible="pongButtonsVisible" />
 </template>
+
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
@@ -37,7 +38,7 @@ export default {
     return {
       players: [],
       tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
-      pongVisible: false,
+      pongVisible: true,
       playerCheckinVisible: true,
       pongButtonsVisible: false,
       testButtonVisible: false,

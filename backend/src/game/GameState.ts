@@ -52,7 +52,7 @@ export class GameState {
     this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
-    this.fieldHeight = 400;
+    this.fieldHeight = this.fieldWidth / 2;
 
     this.speedFactor = 5;
 

@@ -18,11 +18,6 @@ export default {
   props: ["gameId", "playerNumber"],
   data() {
     return {
-      // abll and paddle starting positions
-      bouncingBallX: 400,
-      bouncingBallY: 200,
-      leftPaddleY: 150,
-      rightPaddleY: 150,
       animationFrameId: null,
       messageInterval: null,
     };
@@ -96,12 +91,22 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
-  position: relative;
-  width: 800px;
-  height: 400px;
+  position:absolute;
+  width: 80%;
+  height: 60vh;
   overflow: hidden;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+@media screen and (max-width: 800px) {
+  .container {
+    width: 100%;
+    height: 30%;
+  }
 }
 
 .background {
@@ -109,32 +114,39 @@ export default {
   height: 100%;
   background-color: rgba(128, 128, 128, 0);
   box-sizing: border-box;
-  border: 10px solid magenta;
+  border: 2px solid magenta;
 }
 
 .bouncing-ball {
-  position: absolute;
-  width: 10px;
-  height: 10px;
+  position:absolute;
+  width: 15px;
+  height: 15px;
   background-color: greenyellow;
   border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .left-paddle {
-  position: absolute;
-  width: 10px;
-  height: 100px;
+  position:absolute;
+  width: 1%;
+  height: 25%;
   background-color: blue;
-  left: 40px;
-  transition: top 0.1s; /* Add a transition for smoother movement */
+  left: 4%;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: top 0.1s;
 }
 
 .right-paddle {
-  position: absolute;
-  width: 10px;
-  height: 100px;
+  position:absolute;
+  width: 1%;
+  height: 25%;
   background-color: rebeccapurple;
-  left: 760px;
-  transition: top 0.1s; /* Add a transition for smoother movement */
+  right: 4%;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: top 0.1s;
 }
 </style>

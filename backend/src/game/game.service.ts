@@ -100,6 +100,7 @@ export class GameService {
     sharedEventEmitter.emit('prepareGame', game);
 
     console.log('Game: Starting multiplayer game', game.GameData.id);
+    //evtl hier Countdown einfügen
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
