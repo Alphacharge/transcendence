@@ -1,3 +1,3 @@
 export class PlayerArrayDto {
-	players: string[]
+  players: string[];
 }

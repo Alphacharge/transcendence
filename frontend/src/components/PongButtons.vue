@@ -17,7 +17,7 @@ export default {
       socket.leaveQueue();
     },
     stopGame() {
-      socket.stopGame(this.gameId);
+      socket.stopGame();
     },
   },
 };
