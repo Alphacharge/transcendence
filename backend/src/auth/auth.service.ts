@@ -116,7 +116,7 @@ export class AuthService {
       console.log('AUTH.SERVICE: VALIDATETOKEN, userId OK');
       return true;
     } catch (error) {
-      console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: Token verification failed', error);
+      // console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: Token verification failed', error);
       return false;
     }
   }

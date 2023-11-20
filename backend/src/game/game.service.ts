@@ -11,7 +11,7 @@ import { PrismaClient } from '@prisma/client';
 export class GameService {
   queueTournamentGame: User[] = [];
   queue: User[] = [];
-  users: Map<string, User> = new Map(); // user.id -> user
+  users: Map<string, User> = new Map(); //socket.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
   prisma: PrismaClient;
 
@@ -51,7 +51,12 @@ export class GameService {
   addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
 
+    if (!user) {
+      console.error(`ADDTOTOURNAMENTQUEUE: User ${socket.id} not found.`);
+      return;
+    }
     this.queueTournamentGame.push(user);
+
     console.log(
       `GAME.SERVICE: ADDTOTOURNAMENTQUEUE, Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
     );
@@ -78,6 +83,21 @@ export class GameService {
     }
   }
 
+  removeFromTournamentQueue(socket: Socket) {
+    const user = this.users.get(socket.id);
+
+    const userToRemove = this.queueTournamentGame.find(
+      (queuedUser) => queuedUser.userData.id === user.userData.id,
+    );
+    if (userToRemove) {
+      const index = this.queueTournamentGame.indexOf(userToRemove);
+      if (index !== -1) {
+        this.queueTournamentGame.splice(index, 1);
+        console.log(`removeFromTournamentQueue: ${socket.id} removed from tournament queue`);
+      }
+    }
+  }
+
   checkQueue() {
     if (this.queue.length >= 2) {
       console.log('GAME.SERVICE: CHECKQUEUE, queuelength is', this.queue.length);
@@ -90,6 +110,7 @@ export class GameService {
   async startGame(tournamentStatus: number) {
     let user1: User;
     let user2: User;
+
     if (!tournamentStatus) {
       user1 = this.queue.pop();
       user2 = this.queue.pop();
@@ -97,14 +118,15 @@ export class GameService {
       user1 = this.queueTournamentGame.pop();
       user2 = this.queueTournamentGame.pop();
     }
+
+    if (!user1 || !user2) {
+      console.log("startGame: User disconnected. Aborting game.");
+      return;
+    }
+
     const game = new GameState(user1, user2);
     game.tournamentStatus = tournamentStatus;
-    console.log(
-      'GAME.SERVICE: STARTGAME, user1: ',
-      game.user1.userData.id,
-      'user2: ',
-      game.user2.userData.id,
-    );
+
     await game.countDown();
     await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
 
@@ -128,13 +150,7 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  stopGame(gameState: GameState): void;
-  stopGame(gameId: number): void;
-  stopGame(arg: GameState | number): void {
-    let game: GameState;
-
-    if (typeof arg === 'number') game = this.games.get(arg);
-    else game = arg;
+  stopGame(game: GameState) {
     if (!game) {
       console.error("GAME.SERVICE: STOPGAME, Couldn't stop. Game not found.");
       return;

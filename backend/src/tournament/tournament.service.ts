@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { PlayerDto } from './dto/player.dto';
 import { AuthService } from '../auth/auth.service';
 import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+
 @Injectable()
 export class TournamentService {
-  constructor(private readonly authService: AuthService) {
+  constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {
     this.prisma = new PrismaClient();
   }
   players: Map<number, PlayerDto> = new Map();

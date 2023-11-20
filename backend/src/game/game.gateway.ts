@@ -14,6 +14,7 @@ import { GameState } from './GameState';
 import * as https from 'https';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -29,6 +30,7 @@ export class GameGateway {
   constructor(
     private readonly gameService: GameService,
     private readonly authService: AuthService,
+    private readonly prismaService: PrismaService
   ) {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
       if (game) this.sendGameId(game);
@@ -64,9 +66,11 @@ export class GameGateway {
     if (isValid) {
       // save new user to users array in GameService
       const user = new User();
-      user.socket = socket;
-      user.findInDatabase(socket.handshake.query.userId);
+
       this.gameService.users.set(socket.id, user);
+      user.socket = socket;
+      user.userData = await this.prismaService.getUser(socket.handshake.query.userId);
+      console.log("userdata:", user.userData.id);
     } else {
       console.log('GAME.GATEWAY: HANDLECONNECTION, Refusing WebSocket connection.');
       socket.disconnect(true);
@@ -81,8 +85,8 @@ export class GameGateway {
 
     if (user) {
       // remove user from any queues
-      // INSERT tournament queue
       this.gameService.removeFromQueue(socket);
+      this.gameService.removeFromTournamentQueue(socket);
 
       // abort any games the user was part of
       if (user.activeGame) {
@@ -99,32 +103,25 @@ export class GameGateway {
   }
 
   @SubscribeMessage('enterTournamentQueue')
-  async enterTournamentQueue(
+  enterTournamentQueue(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() tournamentStatus: number, userId: number, token: string
-  ) {
-    const isValid = await this.authService.validateToken({userId, token});
-    if (isValid) {
-      // save new user to users array in GameService
-      const user = new User();
-      user.socket = socket;
-      user.findInDatabase(userId);
-      this.gameService.users.set(socket.id, user);
-    } else {
-      console.log('GAME.GATEWAY: ENTERTOURNAMENTQUEUE ,Refusing WebSocket connection.');
-      socket.disconnect(true);
-    }
+    @MessageBody() tournamentStatus: number) {
+
+    this.gameService.addToTournamentQueue(socket, tournamentStatus);
   }
 
   @SubscribeMessage('leaveQueue')
   leaveQueue(@ConnectedSocket() socket: Socket) {
     this.gameService.removeFromQueue(socket);
+    this.gameService.removeFromTournamentQueue(socket);
   }
 
   /* Client requests to abort game. */
   @SubscribeMessage('stopGame')
-  stopGame(@MessageBody() payload) {
-    if (payload) this.gameService.stopGame(payload);
+  stopGame(@ConnectedSocket() socket: Socket) {
+    const user = this.gameService.users.get(socket.id);
+
+    if (user.activeGame) this.gameService.stopGame(user.activeGame);
   }
 
   /* Tell the client the game starts now. */
@@ -176,7 +173,7 @@ export class GameGateway {
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  leftPaddleUp(
+  PaddleUp(
     @MessageBody() { gameId }: { gameId: number },
     @ConnectedSocket() socket: Socket,
   ) {

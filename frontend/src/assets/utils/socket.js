@@ -11,10 +11,6 @@ export const state = reactive({
 export const socket = io("wss://" + process.env.VUE_APP_BACKEND_IP + ":3000", {
   transports: ["websocket"],
   autoConnect: false,
-  // query: {
-  //   userId: localStorage.getItem("userId"),
-  //   token: localStorage.getItem("access_token"),
-  // },
 });
 
 export function connectWebSocket() {
@@ -22,6 +18,7 @@ export function connectWebSocket() {
     token: localStorage.getItem("access_token"),
     userId: localStorage.getItem("userId"),
   }
+
   socket.connect();
 }
 
@@ -45,8 +42,8 @@ socket.leaveQueue = function () {
   socket.emit("leaveQueue");
 };
 
-socket.stopGame = function (gameId) {
-  socket.emit("stopGame", gameId);
+socket.stopGame = function () {
+  socket.emit("stopGame");
 };
 
 // send paddle position updates to server
