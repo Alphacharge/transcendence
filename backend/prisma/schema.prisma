@@ -11,105 +11,45 @@ datasource db {
 }
 
 model Users {
-	id			Int			@id	@default(autoincrement())
-	createdAt	DateTime	@default(now())
-	updatedAt	DateTime	@updatedAt
-	email		String		@unique
-	hash		String
-	nick		String?
-  avatar  Int?       @default(0)
+  id        Int       @id @default(autoincrement())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  email     String    @unique
+  hash      String
+  nick      String?
+  avatar    Int?      @default(0)
 
-	//Opposite Relations
-	// messages	Messages[]
-	// memberships	ChatMemberships[]
-	// scores		Scores[]
-	gamesL		Games[]		@relation("LeftUser")
-	gamesR		Games[]		@relation("RightUser")
+  //Opposite Relations
+  gamesL    Games[]   @relation("LeftUser")
+  gamesR    Games[]   @relation("RightUser")
 }
-
-// model Chats {
-// 	id			Int			@id	@default(autoincrement())
-// 	createdAt	DateTime	@default(now())
-// 	updatedAt	DateTime	@updatedAt
-
-// 	//Opposite Relations
-// 	messages		Messages[]
-// 	memberships		ChatMemberships[]
-// }
-
-// model Messages {
-// 	id			Int			@id	@default(autoincrement())
-// 	createdAt	DateTime	@default(now())
-// 	chat_id		Int
-// 	user_id		Int
-// 	message		String
-
-// 	//Relations
-// 	chat		Chats		@relation(fields: [chat_id], references: [id])
-// 	user		Users		@relation(fields: [user_id], references: [id])
-// }
-
-// model ChatMemberships {
-// 	id			Int			@id	@default(autoincrement())
-// 	chat_id		Int
-// 	user_id		Int
-// 	role_id		Int
-
-// 	//Relations
-// 	role		Roles		@relation(fields: [role_id], references: [id])
-// 	chat		Chats		@relation(fields: [chat_id], references: [id])
-// 	user		Users		@relation(fields: [user_id], references: [id])
-// }
-
-// model Roles {
-// 	id				Int			@id	@default(autoincrement())
-// 	name			String		@unique
-// 	description		String?
-// 	parent_role_id	Int?
-
-// 	//Relations
-// 	parentRole		Roles?		@relation("ChildRoles", fields: [parent_role_id], references: [id])
-
-// 	//Opposite Relations
-// 	childRoles		Roles[]		@relation("ChildRoles")
-// 	memberships		ChatMemberships[]
-// }
 
 model Games {
-	id				Int			@id	@default(autoincrement())
-	createdAt		DateTime	@default(now())
-	left_user_id	Int
-	right_user_id	Int
-	left_user_score		Int?
-	right_user_score	Int?
+  id                Int       @id @default(autoincrement())
+  createdAt         DateTime  @default(now())
+  left_user_id      Int
+  right_user_id     Int
+  left_user_score   Int?
+  right_user_score  Int?
+  tournament_id     Int       @default(0)
 
-	//Opposite Relations
-	// scores		Scores[]
-	l_user		Users		@relation("LeftUser", fields: [left_user_id], references: [id])
-	r_user		Users		@relation("RightUser", fields: [right_user_id], references: [id])
-	f_game		Tournaments[]		@relation("FirstGame")
-	s_game		Tournaments[]		@relation("SecondGame")
-	t_game		Tournaments[]		@relation("ThirdGame")
+  //Opposite Relations
+  l_user      Users         @relation("LeftUser", fields: [left_user_id], references: [id])
+  r_user      Users         @relation("RightUser", fields: [right_user_id], references: [id])
+  f_game      Tournaments[] @relation("FirstGame")
+  s_game      Tournaments[] @relation("SecondGame")
+  t_game      Tournaments[] @relation("ThirdGame")
+  tournament  Tournaments   @relation("gameid", fields: [tournament_id], references: [id])
 }
-
-// model Scores {
-// 	id			Int			@id	@default(autoincrement())
-// 	game_id		Int
-// 	user_id		Int
-// 	score		Int
-
-// 	//Relations
-// 	game		Games		@relation(fields: [game_id], references: [id])
-// }
-
 model Tournaments {
-	id				  Int			@id @default(autoincrement())
-	createdAt		DateTime	@default(now())
-	first_game_id	Int
-	second_game_id	Int
-	third_game_id	Int
+  id              Int       @id @default(autoincrement())
+  createdAt       DateTime  @default(now())
+  first_game_id   Int
+  second_game_id  Int
+  third_game_id   Int
 
-	f_game		Games		@relation("FirstGame", fields: [first_game_id], references: [id])
-	s_game		Games		@relation("SecondGame", fields: [second_game_id], references: [id])
-	t_game		Games		@relation("ThirdGame", fields: [third_game_id], references: [id])
+  f_game      Games   @relation("FirstGame", fields: [first_game_id], references: [id])
+  s_game      Games   @relation("SecondGame", fields: [second_game_id], references: [id])
+  t_game      Games   @relation("ThirdGame", fields: [third_game_id], references: [id])
+  tournament  Games[] @relation("gameid")
 }
