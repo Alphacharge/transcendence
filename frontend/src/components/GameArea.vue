@@ -104,8 +104,12 @@ export default {
 
 @media screen and (max-width: 800px) {
   .container {
+    position:absolute;
     width: 100%;
-    height: 30%;
+    height: 50%; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 }
 

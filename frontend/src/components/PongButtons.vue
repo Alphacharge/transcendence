@@ -22,3 +22,11 @@ export default {
   },
 };
 </script>
+
+<style>
+
+.btn-group
+{
+  display:flex;
+}
+</style>
