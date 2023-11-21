@@ -1,23 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { PlayerDto } from './dto/player.dto';
 import { AuthService } from '../auth/auth.service';
-import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TournamentService {
-  constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {
-    this.prisma = new PrismaClient();
-  }
+  constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {}
   players: Map<number, PlayerDto> = new Map();
-  prisma: PrismaClient;
+  PrismaService: PrismaService;
 
   async add(player: PlayerDto) {
     const valid = await this.authService.validateToken(player.playerToken);
     if (!valid) return -1;
     if (this.players.size < 4 && !this.players.get(player.userId)) {
       try {
-        player.userData = await this.prisma.users.findUnique({
+        player.userData = await this.PrismaService.users.findUnique({
           where: { id: Number(player.userId) },
         });
         if (player.userData) {

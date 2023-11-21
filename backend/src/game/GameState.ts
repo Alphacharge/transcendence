@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
-import { GameService } from './game.service';
-import { Games, PrismaClient } from '@prisma/client';
-
+import { Games } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class GameState {
-  prisma: PrismaClient;
+  PrismaService: PrismaService;
   GameData: Games | undefined = undefined;
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
@@ -48,7 +47,7 @@ export class GameState {
   currentCount: number;
 
   constructor(user1: User, user2: User) {
-    this.prisma = new PrismaClient();
+    // this.prisma = new PrismaClient();
     this.GameData = null;
     this.intervalId = null;
 
@@ -249,7 +248,7 @@ export class GameState {
       this.scorePlayer1 == this.winningScore ||
       this.scorePlayer2 == this.winningScore
     ) {
-      await this.updateGameScore();
+      await this.PrismaService.updateGameScore(this.GameData.id, this.scorePlayer1, this.scorePlayer2);
       clearInterval(this.intervalId);
       this.intervalId = null;
       this.gameInit();
@@ -270,43 +269,6 @@ export class GameState {
     return this.intervalId !== null;
   }
 
-    async initializeGame(leftId: number, rightId: number) {
-      // Assuming you're using Prisma to interact with a database
-      this.GameData = await this.prisma.games.create({
-        data: {
-          left_user_id: leftId,
-          right_user_id: rightId,
-          left_user_score: 0,
-          right_user_score: 0,
-          createdAt: new Date(),
-        },
-      });
-
-    // You can handle the result or perform other actions based on the Prisma query result
-    console.log('GAME.STATE: INITIALIZEGAME, New game created:', this.GameData);
-    if (this.tournamentStatus & 2) {
-      console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
-    }
-    if (this.tournamentStatus & 4) {
-      console.log('GAME.STATE: INITIALIZEGAME, Tournament second round');
-    }
-  }
-
-  async updateGameScore() {
-    try {
-      const updatedGame = await this.prisma.games.update({
-        where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
-        data: {
-          left_user_score: this.scorePlayer1,
-          right_user_score: this.scorePlayer2,
-          // Other fields you want to update
-        },
-      });
-      console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
-    } catch (error) {
-      console.error('GAME.STATE: UPDATEGAMESCORE, Error updating game:', error);
-    }
-  }
   countDown(): Promise<void> {
     return new Promise((resolve) => {
       this.currentCount = 3;
