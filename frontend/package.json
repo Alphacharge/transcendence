@@ -9,6 +9,7 @@
     "format": "eslint --fix 'src/**/*.+(js|vue)' && prettier --write 'src/**/*.+(js|vue)'"
   },
   "dependencies": {
+    "chart.js": "^4.4.0",
     "core-js": "^3.8.3",
     "socket.io-client": "^4.7.2",
     "vue": "^3.2.13",
