@@ -15,8 +15,7 @@
       </div>
   </div>
   <CountDown />
-  <PongButtons v-if="pongButtonsVisible" />
-  <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
+  <!-- <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" /> -->
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
 
@@ -94,7 +93,7 @@ export default {
   top: 15%; /* Ändere diese Werte entsprechend deiner gewünschten Position */
   left: 50%;
   transform: translateX(-50%); /* Zentriert die Button-Gruppe horizontal */
-  width: 100%; /* 100% der Breite des Viewports */
+  width: 40%; /* 100% der Breite des Viewports */
 }
 
 .container {
@@ -107,7 +106,6 @@ export default {
 
 .score-board {
   display:flex;
-  justify-content: center !important;
   position: absolute;
   width: calc(100% + 50em);
   bottom: 12em;
@@ -116,11 +114,11 @@ export default {
 .left-score{
   flex: 1;
   position: absolute;
-   left: 8em;
+  left: 8em;
 } 
 .right-score{
   flex: 1;
   position: absolute;
-  right: 60em;
+  right: 58em;
 }
 </style>

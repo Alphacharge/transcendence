@@ -2,6 +2,7 @@
 
 import { createApp } from "vue";
 import App from "./App.vue";
+// import Chart from 'chart.js/auto';
 import router from "./router";
 import "./assets/styles/global-style.css";
 import { createI18n } from "vue-i18n";
