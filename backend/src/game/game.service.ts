@@ -5,7 +5,7 @@ import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GameService {
@@ -13,17 +13,10 @@ export class GameService {
   queue: User[] = [];
   users: Map<string, User> = new Map(); //socket.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
-  prisma: PrismaClient;
+  PrismaService: PrismaService;
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
-    /*
-
-
-	add same logic as tournament add player, need a playerdto with token
-
-
-	*/
     // find the matching user
     const user = this.users.get(socket.id);
 
@@ -126,15 +119,32 @@ export class GameService {
 
     const game = new GameState(user1, user2);
     game.tournamentStatus = tournamentStatus;
-
+    // if (tournamentStatus) {
+    //   const tournament: Tournaments = await this.prisma.tournaments.create({
+    //     data: {
+    //       first_game_id: game.GameData.id,
+    //     },
+    //   });
+    // }
     await game.countDown();
-    await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
+    game.GameData = await this.PrismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
 
     if (!game.GameData) {
       console.log('GAME.SERVICE: STARTGAME, Failed to create new Game!', this.queue.length);
       return;
     }
+    if (game.tournamentStatus){
 
+    
+      // You can handle the result or perform other actions based on the Prisma query result
+      console.log('GAME.STATE: INITIALIZEGAME, New game created:', game.GameData);
+      if (game.tournamentStatus & 2) {
+        console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
+      }
+      if (game.tournamentStatus & 4) {
+        console.log('GAME.STATE: INITIALIZEGAME, Tournament second round');
+      }
+    }
     const updateRate = 5;
 
     game.user1.activeGame = game;

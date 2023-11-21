@@ -10,7 +10,7 @@ import { type } from 'os';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
+    private PrismaService: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
@@ -20,7 +20,7 @@ export class AuthService {
       const hash = await argon.hash(user.password);
       //save the new user
 
-      const newUser = await this.prisma.users.create({
+      const newUser = await this.PrismaService.users.create({
         data: {
           email: user.email,
           hash,
@@ -45,7 +45,7 @@ export class AuthService {
 
   async signin(user: User) {
     //find the user by email
-    const newUser = await this.prisma.users.findUnique({
+    const newUser = await this.PrismaService.users.findUnique({
       where: {
         email: user.email,
       },
