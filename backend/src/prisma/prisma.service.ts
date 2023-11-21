@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Users } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -14,9 +14,24 @@ export class PrismaService extends PrismaClient {
     });
   }
 
-  // cleanDb() {
-	// return this.$transaction([
-	// 	this.user.deleteMany(),
-	// ]);
-  // }
+  async getUser(userId: number): Promise<Users | null> {
+    console.log("Search User with ID: ", userId);
+
+    try {
+      const userData = await this.users.findUnique({
+        where: { id: Number(userId) },
+      });
+
+      if (userData) {
+        delete userData.hash;
+        return userData;
+      } else {
+        console.error(`User with ID ${userId} not found.`);
+        return null;
+      }
+    } catch (error) {
+    console.error('Error fetching user data:', error);
+    return null;
+    }
+  }
 }

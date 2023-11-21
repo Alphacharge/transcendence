@@ -47,13 +47,13 @@ export default {
           console.log("sending paddle up with id", this.gameId);
           this.messageInterval = setInterval(() => {
             socket.sendPaddleUp(this.gameId);
-          }, 1000 / 15);
+          }, 10);
         }
       } else if (event.key === "s") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
             socket.sendPaddleDown(this.gameId);
-          }, 1000 / 15);
+          }, 10);
         }
       }
     });
@@ -148,9 +148,7 @@ export default {
   width: 1%;
   height: 25%;
   background-color: rebeccapurple;
-  right: 4%;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: top 0.1s;
+  left: 760px;
+  transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>

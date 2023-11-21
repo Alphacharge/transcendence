@@ -7,8 +7,10 @@ import { Games, PrismaClient } from '@prisma/client';
 @Injectable()
 export class GameState {
   prisma: PrismaClient;
-  GameData: Games;
+  GameData: Games | undefined = undefined;
   intervalId: NodeJS.Timeout | null;
+  intervalCountId: NodeJS.Timeout | null;
+
 
   tournamentStatus: number;
 
@@ -27,38 +29,44 @@ export class GameState {
   ballY: number;
   ballSpeedX: number;
   ballSpeedY: number;
+  ballAcceleration: number;
 
   paddlesHeight: number;
 
+  paddlesSpeed: number;
+
   leftPosition: number;
   leftBorder: number;
-  leftImpact: number
+  leftImpact: number;
 
   rightPosition: number;
   rightBorder: number;
-  rightImpact: number
+  rightImpact: number;
 
   speedFactor: number;
 
-  constructor() {
+  currentCount: number;
+
+  constructor(user1: User, user2: User) {
     this.prisma = new PrismaClient();
     this.GameData = null;
     this.intervalId = null;
 
-    this.user1 = null;
-    this.user2 = null;
+    this.user1 = user1;
+    this.user2 = user2;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=1; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore=11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = this.fieldWidth / 2;
 
-    this.speedFactor = 5;
+    this.speedFactor = 1;
+    this.paddlesSpeed = 20;
 
-    this.paddlesHeight = 1/4 * this.fieldHeight;
-    const paddlesWidth = 1/160 * this.fieldWidth;
-    const paddlesDistance = 1/20 * this.fieldWidth;
+    this.paddlesHeight = (1 / 4) * this.fieldHeight;
+    const paddlesWidth = (1 / 160) * this.fieldWidth;
+    const paddlesDistance = (1 / 20) * this.fieldWidth;
     const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
     this.ballRadius = paddlesWidth;
 
@@ -75,6 +83,7 @@ export class GameState {
 
   gameInit() {
     const startAngle = this.randomAngle();
+    this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
@@ -104,43 +113,46 @@ export class GameState {
     return { player1: this.scorePlayer1, player2: this.scorePlayer2 };
   }
 
-  /* Generates a random ID string. */
-  //Not used anymore
-//   generateID(): string {
-//     const timestamp = Date.now();
-//     const randomValue = Math.floor(Math.random() * 1000);
-
-//     const id = `${timestamp}-${randomValue}`;
-//     return id;
-//   }
-
   movePaddleUp(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition > 0) {
-        this.leftPosition -= 10;
+      if (this.leftPosition > this.paddlesSpeed ) {
+        this.leftPosition -= this.paddlesSpeed;
+      }
+      else if (this.leftPosition <= this.paddlesSpeed && this.leftPosition > 0) {
+        this.leftPosition = 0;
       }
     }
     else if (player == this.user2) {
-      if (this.rightPosition > 10) {
-        this.rightPosition -= 10;
+      if (this.rightPosition > this.paddlesSpeed) {
+        this.rightPosition -= this.paddlesSpeed;
       }
+      else if (this.rightPosition <= this.paddlesSpeed && this.rightPosition > 0) {
+        this.rightPosition = 0;
+      }
+
     }
   }
   movePaddleDown(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
-        this.leftPosition += 10;
+      if (this.leftPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+        this.leftPosition += this.paddlesSpeed;
+      }
+      else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+        this.leftPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
     else if (player == this.user2) {
-      if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
-        this.rightPosition += 10;
+      if (this.rightPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+        this.rightPosition += this.paddlesSpeed;
+      }
+      else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+        this.rightPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
   }
 
   leftBreakthrough() {
-    if(this.ballX <= this.ballRadius) {
+    if (this.ballX <= this.ballRadius) {
       this.scorePlayer2 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
@@ -148,7 +160,7 @@ export class GameState {
   }
 
   rightBreakthrough() {
-    if(this.ballX >= this.fieldWidth - this.ballRadius) {
+    if (this.ballX >= this.fieldWidth - this.ballRadius) {
       this.scorePlayer1 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
@@ -158,28 +170,51 @@ export class GameState {
   collisionLeft() {
     const collisionAreaX0 = this.leftBorder;
     const collisionAreaX1 = this.leftBorder + 2 * this.ballRadius;
-    const collisionAreaY0 = Math.min(this.leftPosition, this.leftPosition - 2 * this.ballRadius);
-    const collisionAreaY1 = Math.min(this.leftPosition + this.paddlesHeight, this.fieldHeight);
-    if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
-      && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
-        const distance = Math.max(this.ballY - this.leftPosition,0);
-        const angle = this.impact(distance);
-        this.ballSpeedX = this.speedFactor * Math.cos(angle);
-        this.ballSpeedY = this.speedFactor * Math.sin(angle);
+    const collisionAreaY0 = Math.min(
+      this.leftPosition,
+      this.leftPosition - 2 * this.ballRadius,
+    );
+    const collisionAreaY1 = Math.min(
+      this.leftPosition + this.paddlesHeight,
+      this.fieldHeight,
+    );
+    if (
+      this.ballX > collisionAreaX0 &&
+      this.ballX < collisionAreaX1 &&
+      this.ballY > collisionAreaY0 &&
+      this.ballY < collisionAreaY1
+    ) {
+      const distance = Math.max(this.ballY - this.leftPosition, 0);
+      const angle = this.impact(distance);
+      this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration) * (1 + this.ballAcceleration);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+        this.ballAcceleration += this.ballAcceleration * (1 + this.ballAcceleration);
+        this.ballAcceleration += this.ballAcceleration;
     }
   }
 
   collisionRight() {
     const collisionAreaX0 = this.rightBorder - 2 * this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
-    const collisionAreaY0 = Math.min(this.rightPosition, this.rightPosition - 2 * this.ballRadius);
-    const collisionAreaY1 = Math.min(this.rightPosition + this.paddlesHeight, this.fieldHeight);
-    if (this.ballX > collisionAreaX0 && this.ballX < collisionAreaX1
-      && this.ballY > collisionAreaY0 && this.ballY < collisionAreaY1) {
-      const distance = Math.max(this.ballY - this.rightPosition,0);
+    const collisionAreaY0 = Math.min(
+      this.rightPosition,
+      this.rightPosition - 2 * this.ballRadius,
+    );
+    const collisionAreaY1 = Math.min(
+      this.rightPosition + this.paddlesHeight,
+      this.fieldHeight,
+    );
+    if (
+      this.ballX > collisionAreaX0 &&
+      this.ballX < collisionAreaX1 &&
+      this.ballY > collisionAreaY0 &&
+      this.ballY < collisionAreaY1
+    ) {
+      const distance = Math.max(this.ballY - this.rightPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = - this.speedFactor * Math.cos(angle);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      this.ballSpeedX = - this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballAcceleration *= this.ballAcceleration;
     }
   }
 
@@ -191,7 +226,7 @@ export class GameState {
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - this.ballRadius){
+    if (this.ballY >= this.fieldHeight - this.ballRadius) {
       return true;
     }
     return false;
@@ -199,32 +234,32 @@ export class GameState {
 
   collisionField() {
     if (this.collisionTop() || this.collisionBottom()) {
-      this.ballSpeedY = -this.ballSpeedY
+      this.ballSpeedY = -this.ballSpeedY;
     }
   }
 
   impact(distance: number) {
     const p = Math.PI;
-    const angle = p / (2 * this.paddlesHeight) * distance - p / 4;
+    const angle = (p / (2 * this.paddlesHeight)) * distance - p / 4;
     return angle;
   }
 
-  async playerVictory () {
-    if (this.scorePlayer1 == this.winningScore || this.scorePlayer2 == this.winningScore) {
+  async playerVictory() {
+    if (
+      this.scorePlayer1 == this.winningScore ||
+      this.scorePlayer2 == this.winningScore
+    ) {
       await this.updateGameScore();
       clearInterval(this.intervalId);
-      this.intervalId = null
+      this.intervalId = null;
       this.gameInit();
       /* promote flag to second round if this has been a 1st round tournament game */
       if (this.tournamentStatus && this.tournamentStatus & 2) {
         this.tournamentStatus = this.tournamentStatus << 1;
       }
-      if (this.scorePlayer1 ==  this.winningScore)
-      {
+      if (this.scorePlayer1 == this.winningScore) {
         this.winningPlayer = this.user1;
-      }
-      else
-      {
+      } else {
         this.winningPlayer = this.user2;
       }
       sharedEventEmitter.emit('victory', this);
@@ -235,44 +270,57 @@ export class GameState {
     return this.intervalId !== null;
   }
 
-
-async initializeGame(leftId: string, rightId: string) {
-    // Assuming you're using Prisma to interact with a database
-    this.GameData = await this.prisma.games.create({
-      data: {
-        // left_user_id: leftId,
-        left_user_id: 1,
-        // right_user_id: rightId,
-        right_user_id: 2,
-        left_user_score: 0,
-        right_user_score: 0,
-        createdAt: new Date(),
-      },
-    });
+    async initializeGame(leftId: number, rightId: number) {
+      // Assuming you're using Prisma to interact with a database
+      this.GameData = await this.prisma.games.create({
+        data: {
+          left_user_id: leftId,
+          right_user_id: rightId,
+          left_user_score: 0,
+          right_user_score: 0,
+          createdAt: new Date(),
+        },
+      });
 
     // You can handle the result or perform other actions based on the Prisma query result
-    console.log('New game created:', this.GameData);
+    console.log('GAME.STATE: INITIALIZEGAME, New game created:', this.GameData);
     if (this.tournamentStatus & 2) {
-      console.log('Tournament, first round');
+      console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
     }
     if (this.tournamentStatus & 4) {
-      console.log('Tournament, second round');
+      console.log('GAME.STATE: INITIALIZEGAME, Tournament second round');
     }
   }
 
-async updateGameScore() {
-  try {
-    const updatedGame = await this.prisma.games.update({
-    where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
-    data: {
-      left_user_score: this.scorePlayer1,
-      right_user_score: this.scorePlayer2,
-      // Other fields you want to update
-    },
-    });
-    console.log('Updated game:', updatedGame);
-  } catch (error) {
-    console.error('Error updating game:', error);
+  async updateGameScore() {
+    try {
+      const updatedGame = await this.prisma.games.update({
+        where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
+        data: {
+          left_user_score: this.scorePlayer1,
+          right_user_score: this.scorePlayer2,
+          // Other fields you want to update
+        },
+      });
+      console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
+    } catch (error) {
+      console.error('GAME.STATE: UPDATEGAMESCORE, Error updating game:', error);
+    }
   }
-  }
+  countDown(): Promise<void> {
+    return new Promise((resolve) => {
+      this.currentCount = 3;
+      this.intervalCountId = setInterval(
+        ()=>{
+          sharedEventEmitter.emit('countDown', this);
+          if (this.currentCount > 0) {
+            this.currentCount--;
+          } else {
+            clearInterval(this.intervalCountId);
+            this.intervalCountId = null;
+            resolve();
+          }
+        }, 1000);
+      });
+    };
 }

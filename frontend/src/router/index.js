@@ -1,3 +1,5 @@
+//router/index.js
+
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
@@ -7,6 +9,7 @@ import LoginView from "@/views/LoginView.vue";
 import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
 import StatisticView from "@/views/StatisticView.vue";
+import { checkLoggedIn } from "@/services/authService";
 
 const routes = [
   {
@@ -54,6 +57,27 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// Global navigation guard to check for authentication
+router.beforeEach(async (to, from, next) => {
+  try {
+    const isLoggedIn = await checkLoggedIn();
+
+    if (
+      to.name !== "login" &&
+      to.name !== "signup" &&
+      to.name !== "ip" &&
+      !isLoggedIn
+    ) {
+      next("/login");
+    } else {
+      next(); // Proceed to the requested route
+    }
+  } catch (error) {
+    console.error("Error checking authentication:", error);
+    next("/login");
+  }
 });
 
 export default router;
