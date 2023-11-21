@@ -17,6 +17,7 @@ model Users {
 	email		String		@unique
 	hash		String
 	nick		String?
+  avatar  Int?       @default(0)
 
 	//Opposite Relations
 	// messages	Messages[]
@@ -102,7 +103,7 @@ model Games {
 // }
 
 model Tournaments {
-	id				Int			@id @default(autoincrement())
+	id				  Int			@id @default(autoincrement())
 	createdAt		DateTime	@default(now())
 	first_game_id	Int
 	second_game_id	Int
