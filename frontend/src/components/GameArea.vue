@@ -148,7 +148,7 @@ export default {
   width: 1%;
   height: 25%;
   background-color: rebeccapurple;
-  left: 760px;
+  left: 750px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>
