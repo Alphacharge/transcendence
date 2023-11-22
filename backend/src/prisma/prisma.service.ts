@@ -15,7 +15,7 @@ export class PrismaService extends PrismaClient {
   }
 
   async getUser(userId: number): Promise<Users | null> {
-    console.log("Search User with ID: ", userId);
+    console.log('Search User with ID: ', userId);
 
     try {
       const userData = await this.users.findUnique({
@@ -30,8 +30,8 @@ export class PrismaService extends PrismaClient {
         return null;
       }
     } catch (error) {
-    console.error('Error fetching user data:', error);
-    return null;
+      console.error('Error fetching user data:', error);
+      return null;
     }
   }
 
@@ -47,7 +47,7 @@ export class PrismaService extends PrismaClient {
       },
     });
     return GameData;
-}
+  }
 
   async updateGameScore(gameId: number, leftScore: number, rightScore: number) {
     try {
