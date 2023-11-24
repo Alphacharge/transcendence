@@ -137,6 +137,7 @@ export class GameService {
     // }
     await game.countDown();
     game.GameData = await this.prismaService.createNewGame(
+
       game.user1.userData.id,
       game.user2.userData.id,
     );

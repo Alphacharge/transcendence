@@ -17,7 +17,7 @@ export function connectWebSocket() {
   socket.io.opts.query = {
     token: localStorage.getItem("access_token"),
     userId: localStorage.getItem("userId"),
-  }
+  };
 
   socket.connect();
 }

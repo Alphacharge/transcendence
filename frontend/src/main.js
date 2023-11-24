@@ -9,6 +9,7 @@ import { createI18n } from "vue-i18n";
 // import language file
 import en from "./lang/en.js";
 import de from "./lang/de.js";
+import it from "./lang/it.js";
 
 // language plugin
 const i18n = new createI18n({
@@ -16,6 +17,7 @@ const i18n = new createI18n({
   messages: {
     en,
     de,
+    it,
   },
 });
 
