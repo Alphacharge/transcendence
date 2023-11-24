@@ -9,6 +9,7 @@ import LoginView from "@/views/LoginView.vue";
 import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
 import StatisticView from "@/views/StatisticView.vue";
+import ProfileView from "@/views/ProfileView.vue";
 import { checkLoggedIn } from "@/services/authService";
 
 const routes = [
@@ -31,6 +32,11 @@ const routes = [
     path: "/ip",
     name: "ip",
     component: IpPanelView,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileView,
   },
   {
     path: "/login",
