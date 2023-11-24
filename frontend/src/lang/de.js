@@ -3,6 +3,7 @@ export default {
   Game: "Spiel",
   Tournament: "Tournier",
   Statistics: "Statistik",
+  Profil: "Profil",
   LogIn: "Einloggen",
   SignUp: "Registrieren",
   About: "Über uns",
