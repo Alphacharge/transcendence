@@ -17,8 +17,6 @@ export default {
   Password: "Password",
   RepeatPassword: "repeat Password",
   Submit: "Submit",
-  /* signup commented out to eliminate error in coompilation phase, claims it's double in effects*/
-  // SignUp: "Sign up",
   or: "or",
 
   // STATISTICS

@@ -28,6 +28,7 @@
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
+
 export default {
   components: {
     PlayerCheckin,
@@ -75,7 +76,11 @@ export default {
       if (this.tournamentStatus < 4) {
         this.tournamentStatus = this.tournamentStatus << 1;
         this.pongVisible = true;
-        socket.enterTournamentQueue(this.tournamentStatus, Number(localStorage.getItem("userId")), localStorage.getItem("access_token"));
+        socket.enterTournamentQueue(
+          this.tournamentStatus,
+          Number(localStorage.getItem("userId")),
+          localStorage.getItem("access_token"),
+        );
       } else {
         console.error(
           `unexpected tournament status value : ${this.tournamentStatus}`,

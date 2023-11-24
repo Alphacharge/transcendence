@@ -10,7 +10,6 @@ export class GameState {
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
 
-
   tournamentStatus: number;
 
   user1: User;
@@ -55,7 +54,7 @@ export class GameState {
     this.user2 = user2;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=11; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
@@ -114,37 +113,42 @@ export class GameState {
 
   movePaddleUp(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition > this.paddlesSpeed ) {
+      if (this.leftPosition > this.paddlesSpeed) {
         this.leftPosition -= this.paddlesSpeed;
-      }
-      else if (this.leftPosition <= this.paddlesSpeed && this.leftPosition > 0) {
+      } else if (
+        this.leftPosition <= this.paddlesSpeed &&
+        this.leftPosition > 0
+      ) {
         this.leftPosition = 0;
       }
-    }
-    else if (player == this.user2) {
+    } else if (player == this.user2) {
       if (this.rightPosition > this.paddlesSpeed) {
         this.rightPosition -= this.paddlesSpeed;
-      }
-      else if (this.rightPosition <= this.paddlesSpeed && this.rightPosition > 0) {
+      } else if (
+        this.rightPosition <= this.paddlesSpeed &&
+        this.rightPosition > 0
+      ) {
         this.rightPosition = 0;
       }
-
     }
   }
   movePaddleDown(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+      if (
+        this.leftPosition + this.paddlesHeight + this.paddlesSpeed <
+        this.fieldHeight
+      ) {
         this.leftPosition += this.paddlesSpeed;
-      }
-      else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+      } else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
         this.leftPosition = this.fieldHeight - this.paddlesHeight;
       }
-    }
-    else if (player == this.user2) {
-      if (this.rightPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+    } else if (player == this.user2) {
+      if (
+        this.rightPosition + this.paddlesHeight + this.paddlesSpeed <
+        this.fieldHeight
+      ) {
         this.rightPosition += this.paddlesSpeed;
-      }
-      else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+      } else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
         this.rightPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
@@ -185,10 +189,16 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.leftPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration) * (1 + this.ballAcceleration);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
-        this.ballAcceleration += this.ballAcceleration * (1 + this.ballAcceleration);
-        this.ballAcceleration += this.ballAcceleration;
+      this.ballSpeedX =
+        this.speedFactor *
+        Math.cos(angle) *
+        (1 + this.ballAcceleration) *
+        (1 + this.ballAcceleration);
+      this.ballSpeedY =
+        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballAcceleration +=
+        this.ballAcceleration * (1 + this.ballAcceleration);
+      this.ballAcceleration += this.ballAcceleration;
     }
   }
 
@@ -211,8 +221,10 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.rightPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = - this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedX =
+        -this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedY =
+        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
       this.ballAcceleration *= this.ballAcceleration;
     }
   }
@@ -248,7 +260,11 @@ export class GameState {
       this.scorePlayer1 == this.winningScore ||
       this.scorePlayer2 == this.winningScore
     ) {
-      await this.PrismaService.updateGameScore(this.GameData.id, this.scorePlayer1, this.scorePlayer2);
+      await this.PrismaService.updateGameScore(
+        this.GameData.id,
+        this.scorePlayer1,
+        this.scorePlayer2,
+      );
       clearInterval(this.intervalId);
       this.intervalId = null;
       this.gameInit();
@@ -272,17 +288,16 @@ export class GameState {
   countDown(): Promise<void> {
     return new Promise((resolve) => {
       this.currentCount = 3;
-      this.intervalCountId = setInterval(
-        ()=>{
-          sharedEventEmitter.emit('countDown', this);
-          if (this.currentCount > 0) {
-            this.currentCount--;
-          } else {
-            clearInterval(this.intervalCountId);
-            this.intervalCountId = null;
-            resolve();
-          }
-        }, 1000);
-      });
-    };
+      this.intervalCountId = setInterval(() => {
+        sharedEventEmitter.emit('countDown', this);
+        if (this.currentCount > 0) {
+          this.currentCount--;
+        } else {
+          clearInterval(this.intervalCountId);
+          this.intervalCountId = null;
+          resolve();
+        }
+      }, 1000);
+    });
+  }
 }
