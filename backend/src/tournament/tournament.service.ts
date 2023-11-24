@@ -7,14 +7,13 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class TournamentService {
   constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {}
   players: Map<number, PlayerDto> = new Map();
-  PrismaService: PrismaService;
 
   async add(player: PlayerDto) {
     const valid = await this.authService.validateToken(player.playerToken);
     if (!valid) return -1;
     if (this.players.size < 4 && !this.players.get(player.userId)) {
       try {
-        player.userData = await this.PrismaService.users.findUnique({
+        player.userData = await this.prismaService.users.findUnique({
           where: { id: Number(player.userId) },
         });
         if (player.userData) {
