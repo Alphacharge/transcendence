@@ -9,6 +9,8 @@
   </div>
 </template>
 <script>
+import { connectWebSocket, socket } from "@/assets/utils/socket";
+
 export default {
   computed: {
     displayedPlayerCount() {
@@ -20,151 +22,43 @@ export default {
       btnMsg: "Participate",
       participateStatus: false,
       playersInTournament: 0,
-      pollingInterval: 0,
     };
   },
   async mounted() {
-    this.playersInTournament = await this.countPlayers();
-    this.participateStatus = await this.checkMyStatus();
+    socket.requestTournamentInfo();
+
     if (this.participateStatus) this.btnMsg = "Leave Tournament";
     else this.btnMsg = "Participate";
-    this.pollingInterval = setInterval(async () => {
-      this.playersInTournament = await this.countPlayers();
-    }, 5000);
+
+    socket.on("tournamentPlayerCount", (queueSize) => {
+      this.playersInTournament = queueSize;
+    });
+
+    socket.on("addedToTournamentQueue", () => {
+      this.participateStatus = true;
+      this.btnMsg = "Leave Tournament";
+    });
+
+    socket.on("removedFromTournamentQueue", () => {
+      this.participateStatus = false;
+      this.btnMsg = "Participate";
+    });
   },
-  beforeUnmount() {
-    clearInterval(this.pollingInterval);
-  },
+
   watch: {
     displayedPlayerCount(newValue) {
       this.$emit("playerCountChanged", newValue);
     },
   },
+
   methods: {
     async checkIn() {
-      this.participationStatus = await this.checkMyStatus();
-      if (!this.participateStatus) {
-        await this.addPlayer();
-        this.btnMsg = "Leave Tournament";
-      } else {
-        await this.removePlayer();
-        this.btnMsg = "Participate";
-      }
-      this.participateStatus = await this.checkMyStatus();
-      this.playersInTournament = await this.countPlayers();
-    },
-    retrieveToken() {
-      const storedPlayerToken = localStorage.getItem("access_token");
-      if (!storedPlayerToken) {
-        console.error("Player token not found in local storage");
-        return -1;
-      }
-      return storedPlayerToken;
-    },
-    retrieveUserId() {
-      const userId = localStorage.getItem("userId");
-      if (!userId) {
-        console.error("Player ID not found in local storage");
-        return -1;
-      }
-      return userId;
-    },
-    async addPlayer() {
-      const storedPlayerToken = this.retrieveToken();
-      const storedUserId = this.retrieveUserId();
-      if (this.participateStatus || storedPlayerToken === -1 || !storedUserId) {
-        return;
-      }
-      try {
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/add`,
-          {
-            method: "POST",
+      connectWebSocket();
 
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              playerToken: storedPlayerToken,
-              userId: storedUserId,
-            }),
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTPS error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data["response"];
-      } catch (error) {
-        console.error("Error adding player:", error);
-      }
-    },
-    async removePlayer() {
-      const storedPlayerId = this.retrieveUserId();
-      if (!this.participateStatus || storedPlayerId === -1) return;
-      try {
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/${storedPlayerId}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTPS error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data["response"];
-      } catch (error) {
-        console.error("Error deleting player:", error);
-      }
-    },
-    async countPlayers() {
-      try {
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/count`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTPS error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data["response"];
-      } catch (error) {
-        console.error("Error getting players in tournament:", error);
-      }
-    },
-    async checkMyStatus() {
-      const storedPlayerToken = this.retrieveToken();
-      if (storedPlayerToken === -1) return;
-      try {
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/status`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              playerToken: storedPlayerToken,
-            }),
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTPS error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        const res = data["response"];
-        return res;
-      } catch (error) {
-        console.error("Error adding player:", error);
+      if (!this.participateStatus) {
+        socket.enterTournamentQueue();
+      } else {
+        socket.leaveTournamentQueue();
       }
     },
   },

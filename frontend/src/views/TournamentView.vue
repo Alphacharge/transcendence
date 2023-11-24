@@ -22,11 +22,11 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <Pong v-if="pongVisible" :pongButtonsVisible="pongButtonsVisible" />
+  <pong></pong>
 </template>
+
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
-import { socket } from "@/assets/utils/socket";
 import Pong from "@/views/PongView.vue";
 export default {
   components: {
@@ -37,9 +37,9 @@ export default {
     return {
       players: [],
       tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
-      pongVisible: false,
+      // pongVisible: false,
+      pongVisible: true,
       playerCheckinVisible: true,
-      pongButtonsVisible: false,
       testButtonVisible: false,
     };
   },
@@ -48,39 +48,40 @@ export default {
   },
   methods: {
     async fetchPlayers() {
-      try {
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
-          {
-            method: "GET",
-            headesr: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (!response.ok) {
-          throw new Error(`HTTPS error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        this.players = await data["response"];
-        if (this.players.length === 4) {
-          this.startTournament();
-        }
-      } catch (error) {
-        console.error("Error fetching players:", error);
-      }
-    },
-    async startTournament() {
-      this.countDownVisible = true;
-      if (this.tournamentStatus < 4) {
-        this.tournamentStatus = this.tournamentStatus << 1;
-        this.pongVisible = true;
-        socket.enterTournamentQueue(this.tournamentStatus, Number(localStorage.getItem("userId")), localStorage.getItem("access_token"));
-      } else {
-        console.error(
-          `unexpected tournament status value : ${this.tournamentStatus}`,
-        );
-      }
+      // try {
+      // socket.getPlayerCount();
+      // const response = await fetch(
+      //   `https://${process.env.VUE_APP_BACKEND_IP}:3000/tournament/all`,
+      //   {
+      //     method: "GET",
+      //     headesr: {
+      //       "Content-Type": "application/json",
+      //     },
+      //   },
+      // );
+      // if (!response.ok) {
+      //   throw new Error(`HTTPS error! Status: ${response.status}`);
+      // }
+      // const data = await response.json();
+      // this.players = await data["response"];
+      // if (this.players.length === 4) {
+      //   this.startTournament();
+      // }
+      // } catch (error) {
+      //   console.error("Error fetching players:", error);
+      // }
+      // },
+      // async startTournament() {
+      //   this.countDownVisible = true;
+      // if (this.tournamentStatus < 4) {
+      //   this.tournamentStatus = this.tournamentStatus << 1;
+      //   this.pongVisible = true;
+      // socket.enterTournamentQueue(this.tournamentStatus);
+      // } else {
+      //   console.error(
+      //     `unexpected tournament status value : ${this.tournamentStatus}`,
+      //   );
+      // }
     },
   },
 };

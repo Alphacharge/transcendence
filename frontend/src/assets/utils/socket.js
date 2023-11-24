@@ -17,7 +17,7 @@ export function connectWebSocket() {
   socket.io.opts.query = {
     token: localStorage.getItem("access_token"),
     userId: localStorage.getItem("userId"),
-  }
+  };
 
   socket.connect();
 }
@@ -30,12 +30,20 @@ socket.on("disconnect", () => {
   state.connected = false;
 });
 
+socket.on("connect_error", () => {
+  connectWebSocket();
+});
+
 socket.enterQueue = function () {
   socket.emit("enterQueue");
 };
 
 socket.enterTournamentQueue = function (tournamentStatus) {
   socket.emit("enterTournamentQueue", tournamentStatus);
+};
+
+socket.leaveTournamentQueue = function () {
+  socket.emit("leaveTournamentQueue");
 };
 
 socket.leaveQueue = function () {
@@ -53,6 +61,10 @@ socket.sendPaddleUp = function (gameId) {
 
 socket.sendPaddleDown = function (gameId) {
   socket.emit("paddleDown", { gameId });
+};
+
+socket.requestTournamentInfo = function () {
+  socket.emit("requestTournamentInfo");
 };
 
 export function getSocket() {

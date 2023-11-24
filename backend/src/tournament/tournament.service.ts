@@ -6,7 +6,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TournamentService {
-  constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prismaService: PrismaService,
+  ) {
     this.prisma = new PrismaClient();
   }
   players: Map<number, PlayerDto> = new Map();
@@ -24,11 +27,16 @@ export class TournamentService {
           delete player.userData.hash;
           this.players.set(player.userId, player);
         } else {
-          console.error(`TOURNAMENT.SERVICE: ADD, User with ID ${player.userId} not found.`);
+          console.error(
+            `TOURNAMENT.SERVICE: ADD, User with ID ${player.userId} not found.`,
+          );
           return -1;
         }
       } catch (error) {
-        console.error('TOURNAMENT.SERVICE: ADD, Error fetching user data:', error);
+        console.error(
+          'TOURNAMENT.SERVICE: ADD, Error fetching user data:',
+          error,
+        );
         return -1;
       }
     }

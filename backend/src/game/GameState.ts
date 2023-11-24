@@ -1,18 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { TournamentState } from './TournamentState';
 import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
-import { GameService } from './game.service';
-import { Games, PrismaClient } from '@prisma/client';
+import { Games } from '@prisma/client';
 
-@Injectable()
 export class GameState {
-  prisma: PrismaClient;
-  GameData: Games | undefined = undefined;
+  gameData: Games | null;
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
 
-
-  tournamentStatus: number;
+  tournamentState: TournamentState | null;
 
   user1: User;
   user2: User;
@@ -47,16 +43,16 @@ export class GameState {
 
   currentCount: number;
 
-  constructor(user1: User, user2: User) {
-    this.prisma = new PrismaClient();
-    this.GameData = null;
+  constructor() {
+    this.gameData = null;
     this.intervalId = null;
+    this.tournamentState = null;
 
-    this.user1 = user1;
-    this.user2 = user2;
+    this.user1 = null;
+    this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore=11; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 1; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
@@ -115,37 +111,42 @@ export class GameState {
 
   movePaddleUp(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition > this.paddlesSpeed ) {
+      if (this.leftPosition > this.paddlesSpeed) {
         this.leftPosition -= this.paddlesSpeed;
-      }
-      else if (this.leftPosition <= this.paddlesSpeed && this.leftPosition > 0) {
+      } else if (
+        this.leftPosition <= this.paddlesSpeed &&
+        this.leftPosition > 0
+      ) {
         this.leftPosition = 0;
       }
-    }
-    else if (player == this.user2) {
+    } else if (player == this.user2) {
       if (this.rightPosition > this.paddlesSpeed) {
         this.rightPosition -= this.paddlesSpeed;
-      }
-      else if (this.rightPosition <= this.paddlesSpeed && this.rightPosition > 0) {
+      } else if (
+        this.rightPosition <= this.paddlesSpeed &&
+        this.rightPosition > 0
+      ) {
         this.rightPosition = 0;
       }
-
     }
   }
   movePaddleDown(player: User) {
     if (player == this.user1) {
-      if (this.leftPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+      if (
+        this.leftPosition + this.paddlesHeight + this.paddlesSpeed <
+        this.fieldHeight
+      ) {
         this.leftPosition += this.paddlesSpeed;
-      }
-      else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
+      } else if (this.leftPosition + this.paddlesHeight < this.fieldHeight) {
         this.leftPosition = this.fieldHeight - this.paddlesHeight;
       }
-    }
-    else if (player == this.user2) {
-      if (this.rightPosition + this.paddlesHeight + this.paddlesSpeed < this.fieldHeight) {
+    } else if (player == this.user2) {
+      if (
+        this.rightPosition + this.paddlesHeight + this.paddlesSpeed <
+        this.fieldHeight
+      ) {
         this.rightPosition += this.paddlesSpeed;
-      }
-      else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
+      } else if (this.rightPosition + this.paddlesHeight < this.fieldHeight) {
         this.rightPosition = this.fieldHeight - this.paddlesHeight;
       }
     }
@@ -186,10 +187,16 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.leftPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration) * (1 + this.ballAcceleration);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
-        this.ballAcceleration += this.ballAcceleration * (1 + this.ballAcceleration);
-        this.ballAcceleration += this.ballAcceleration;
+      this.ballSpeedX =
+        this.speedFactor *
+        Math.cos(angle) *
+        (1 + this.ballAcceleration) *
+        (1 + this.ballAcceleration);
+      this.ballSpeedY =
+        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballAcceleration +=
+        this.ballAcceleration * (1 + this.ballAcceleration);
+      this.ballAcceleration += this.ballAcceleration;
     }
   }
 
@@ -212,8 +219,10 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.rightPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX = - this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedX =
+        -this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
+      this.ballSpeedY =
+        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
       this.ballAcceleration *= this.ballAcceleration;
     }
   }
@@ -244,83 +253,64 @@ export class GameState {
     return angle;
   }
 
-  async playerVictory() {
+  hasEnded(): boolean {
     if (
-      this.scorePlayer1 == this.winningScore ||
-      this.scorePlayer2 == this.winningScore
+      this.scorePlayer1 >= this.winningScore ||
+      this.scorePlayer2 >= this.winningScore
     ) {
-      await this.updateGameScore();
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-      this.gameInit();
-      /* promote flag to second round if this has been a 1st round tournament game */
-      if (this.tournamentStatus && this.tournamentStatus & 2) {
-        this.tournamentStatus = this.tournamentStatus << 1;
-      }
-      if (this.scorePlayer1 == this.winningScore) {
-        this.winningPlayer = this.user1;
-      } else {
-        this.winningPlayer = this.user2;
-      }
-      sharedEventEmitter.emit('victory', this);
+      return true;
     }
+
+    if (this.intervalId == null) {
+      return true;
+    }
+    return false;
+  }
+
+  playerVictory() {
+    if (this.hasEnded() == false) {
+      return;
+    }
+
+    clearInterval(this.intervalId);
+    this.intervalId = null;
+    this.gameInit();
+
+    if (this.scorePlayer1 == this.winningScore) {
+      this.winningPlayer = this.user1;
+    } else {
+      this.winningPlayer = this.user2;
+    }
+
+    // update tournament information
+    if (this.tournamentState) {
+      if (this.tournamentState.round & 2) {
+        this.tournamentState.round << 1;
+      }
+      this.tournamentState.gamesPlayed++;
+      this.tournamentState.winners.push(this.winningPlayer);
+    }
+
+    sharedEventEmitter.emit('victory', this);
   }
 
   isRunning(): boolean {
     return this.intervalId !== null;
   }
 
-    async initializeGame(leftId: number, rightId: number) {
-      // Assuming you're using Prisma to interact with a database
-      this.GameData = await this.prisma.games.create({
-        data: {
-          left_user_id: leftId,
-          right_user_id: rightId,
-          left_user_score: 0,
-          right_user_score: 0,
-          createdAt: new Date(),
-        },
-      });
-
-    // You can handle the result or perform other actions based on the Prisma query result
-    console.log('GAME.STATE: INITIALIZEGAME, New game created:', this.GameData);
-    if (this.tournamentStatus & 2) {
-      console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
-    }
-    if (this.tournamentStatus & 4) {
-      console.log('GAME.STATE: INITIALIZEGAME, Tournament second round');
-    }
-  }
-
-  async updateGameScore() {
-    try {
-      const updatedGame = await this.prisma.games.update({
-        where: { id: this.GameData.id }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
-        data: {
-          left_user_score: this.scorePlayer1,
-          right_user_score: this.scorePlayer2,
-          // Other fields you want to update
-        },
-      });
-      console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
-    } catch (error) {
-      console.error('GAME.STATE: UPDATEGAMESCORE, Error updating game:', error);
-    }
-  }
   countDown(): Promise<void> {
     return new Promise((resolve) => {
       this.currentCount = 3;
-      this.intervalCountId = setInterval(
-        ()=>{
-          sharedEventEmitter.emit('countDown', this);
-          if (this.currentCount > 0) {
-            this.currentCount--;
-          } else {
-            clearInterval(this.intervalCountId);
-            this.intervalCountId = null;
-            resolve();
-          }
-        }, 1000);
-      });
-    };
+      this.intervalCountId = setInterval(() => {
+        sharedEventEmitter.emit('countDown', this);
+        if (this.currentCount > 0) {
+          this.currentCount--;
+        } else {
+          clearInterval(this.intervalCountId);
+          this.intervalCountId = null;
+          resolve();
+        }
+      }, 1000);
+    });
+  }
 }

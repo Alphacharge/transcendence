@@ -1,69 +1,83 @@
 // game.service.ts
-import { clearInterval } from 'timers';
 import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
 import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
-import { PrismaClient } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { TournamentState } from './TournamentState';
 
 @Injectable()
 export class GameService {
-  queueTournamentGame: User[] = [];
+  constructor(private readonly prismaService: PrismaService) {}
+  queueTournament: User[] = [];
   queue: User[] = [];
   users: Map<string, User> = new Map(); //socket.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
-  prisma: PrismaClient;
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
-    /*
-
-
-	add same logic as tournament add player, need a playerdto with token
-
-
-	*/
     // find the matching user
     const user = this.users.get(socket.id);
 
     // check if user already is in queue
-    // REPLACE socket id with working user id
     if (
       !user ||
       this.queue.find(
-        (queuedUser) => queuedUser.userData.id === user.userData.id,
+        (queuedUser) =>
+          queuedUser.userData &&
+          user.userData &&
+          queuedUser.userData.id === user.userData.id,
       )
     )
       return;
     // check if user already is in an active game
     if (user.activeGame) {
-      console.log('GAME.SERVICE: ADDTOQUEUE, Client is already playing');
       return;
     }
 
-    console.log(`GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`);
+    console.log(
+      `GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`,
+    );
     this.queue.push(user);
     // check if a game is ready to be started
-    this.checkQueue();
+    if (this.queue.length >= 2) {
+      const game = new GameState();
+      game.user1 = this.queue.pop();
+      game.user2 = this.queue.pop();
+      this.startGame(game);
+    }
   }
 
   addToTournamentQueue(socket: Socket, tournamentStatus: number) {
     const user = this.users.get(socket.id);
 
-    if (!user) {
-      console.error(`ADDTOTOURNAMENTQUEUE: User ${socket.id} not found.`);
+    if (!user || user.activeTournament) {
       return;
     }
-    this.queueTournamentGame.push(user);
+    // check if user already is in queue
+    if (
+      !user ||
+      this.queueTournament.find(
+        (queuedUser) =>
+          queuedUser.userData &&
+          user.userData &&
+          queuedUser.userData.id === user.userData.id,
+      )
+    )
+      return;
+
+    this.queueTournament.push(user);
 
     console.log(
       `GAME.SERVICE: ADDTOTOURNAMENTQUEUE, Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
     );
 
-    if (tournamentStatus < 8 && this.queueTournamentGame.length >= 2) {
-      this.startGame(tournamentStatus);
+    if (tournamentStatus < 8 && this.queueTournament.length >= 4) {
+      this.startTournament();
     }
+
+    sharedEventEmitter.emit('addedToTournamentQueue', user);
   }
 
   /* Remove a user from the game queue */
@@ -71,14 +85,16 @@ export class GameService {
     const user = this.users.get(socket.id);
     // Find the user in the queue
     const userToRemove = this.queue.find(
-      (queuedUser) => queuedUser.userData.id === user.userData.id,
+      (queuedUser) =>
+        queuedUser.userData &&
+        user.userData &&
+        queuedUser.userData.id === user.userData.id,
     );
     if (userToRemove) {
       // Remove the user from the queue
       const index = this.queue.indexOf(userToRemove);
       if (index !== -1) {
         this.queue.splice(index, 1);
-        console.log(`GAME.SERVICE: REMOVEFROMQUEUE, Client: ${socket.id} removed from game queue`);
       }
     }
   }
@@ -86,86 +102,93 @@ export class GameService {
   removeFromTournamentQueue(socket: Socket) {
     const user = this.users.get(socket.id);
 
-    const userToRemove = this.queueTournamentGame.find(
-      (queuedUser) => queuedUser.userData.id === user.userData.id,
+    const userToRemove = this.queueTournament.find(
+      (queuedUser) =>
+        queuedUser.userData &&
+        user.userData &&
+        queuedUser.userData.id === user.userData.id,
     );
     if (userToRemove) {
-      const index = this.queueTournamentGame.indexOf(userToRemove);
+      const index = this.queueTournament.indexOf(userToRemove);
       if (index !== -1) {
-        this.queueTournamentGame.splice(index, 1);
-        console.log(`removeFromTournamentQueue: ${socket.id} removed from tournament queue`);
+        this.queueTournament.splice(index, 1);
       }
     }
+
+    sharedEventEmitter.emit('removedFromTournamentQueue', user);
   }
 
-  checkQueue() {
-    if (this.queue.length >= 2) {
-      console.log('GAME.SERVICE: CHECKQUEUE, queuelength is', this.queue.length);
+  startTournament() {
+    const tournament = new TournamentState();
 
-      const tournamentStatus = 0; // added for readability
-      this.startGame(tournamentStatus);
-    }
-  }
+    tournament.players = this.queueTournament.splice(0, 4);
 
-  async startGame(tournamentStatus: number) {
-    let user1: User;
-    let user2: User;
-
-    if (!tournamentStatus) {
-      user1 = this.queue.pop();
-      user2 = this.queue.pop();
-    } else {
-      user1 = this.queueTournamentGame.pop();
-      user2 = this.queueTournamentGame.pop();
-    }
-
-    if (!user1 || !user2) {
-      console.log("startGame: User disconnected. Aborting game.");
+    if (tournament.players.length < 4) {
+      console.log('Not enough players for the tournament.');
       return;
     }
 
-    const game = new GameState(user1, user2);
-    game.tournamentStatus = tournamentStatus;
+    // RISKY
+    // could mix up winners and people who haven't played yet
+    tournament.winners = tournament.players.slice();
+    tournament.setUsers();
 
-    await game.countDown();
-    await game.initializeGame(game.user1.userData.id, game.user2.userData.id);
+    let game = tournament.nextGame();
+    while (game) {
+      this.startGame(game);
+      game = tournament.nextGame();
+    }
+  }
 
-    if (!game.GameData) {
-      console.log('GAME.SERVICE: STARTGAME, Failed to create new Game!', this.queue.length);
+  async startGame(game: GameState) {
+    if (!game) return;
+
+    if (game.user1.activeGame || game.user2.activeGame) {
+      console.log('startGame: User already in active game.');
       return;
     }
-
-    const updateRate = 5;
-
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
-    this.games.set(game.GameData.id, game);
+    await this.prismaService.createGame(game);
+    await game.countDown();
+
+    if (!game.gameData) {
+      console.log(
+        'GAME.SERVICE: STARTGAME, Failed to create new Game!',
+        this.queue.length,
+      );
+      return;
+    }
+
+    this.games.set(game.gameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('GAME.SERVICE: STARTGAME, Starting multiplayer game', game.GameData.id);
+    console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
+    const updateRate = 5;
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
     sharedEventEmitter.emit('startGame', game);
   }
 
-  stopGame(game: GameState) {
-    if (!game) {
-      console.error("GAME.SERVICE: STOPGAME, Couldn't stop. Game not found.");
-      return;
-    }
+  // UNUSED right now
+  // games will just keep running until ended when run
+  // stopGame(game: GameState) {
+  //   if (!game) {
+  //     return;
+  //   }
 
-    console.log('GAME.SERVICE: STOPGAME, Stopping game', game.GameData.id);
-    clearInterval(game.intervalId);
-    game.intervalId = null;
+  //   console.log('GAME.SERVICE: STOPGAME, Stopping game', game.gameData.id);
+  //   clearInterval(game.intervalId);
+  //   game.intervalId = null;
 
-    if (game.user1) game.user1.activeGame = null;
-    if (game.user2) game.user2.activeGame = null;
+  //   if (game.user1) game.user1.activeGame = null;
+  //   if (game.user2) game.user2.activeGame = null;
 
-    // save persistent game stuff to database here if you like
-    this.games.delete(game.GameData.id);
-  }
+  //   // save persistent game stuff to database here if you like
+  //   this.games.delete(game.gameData.id);
+  // }
 
   paddleUp(GameId: number, player: User) {
     const game = this.games.get(GameId);
@@ -183,7 +206,32 @@ export class GameService {
     return game;
   }
 
+  endGame(game: GameState) {
+    this.prismaService.updateGame(game);
+    game.playerVictory();
+
+    game.user1.activeGame = null;
+    game.user2.activeGame = null;
+
+    if (game.tournamentState) {
+      if (game.tournamentState.gamesNeeded == game.tournamentState.gamesPlayed) {
+        game.tournamentState.freeUsers();
+      }
+
+      this.startGame(game.tournamentState.nextGame());
+    }
+
+    this.games.delete(game.gameData.id);
+
+  }
+
   animateBall(game: GameState) {
+    //check if ending condition is met
+    if (game.hasEnded()) {
+      this.endGame(game);
+      return;
+    }
+
     //right wins?
     game.leftBreakthrough();
     // left wins?
@@ -194,7 +242,6 @@ export class GameService {
     game.collisionLeft();
     game.collisionRight();
     // Update the ball's position
-    game.playerVictory();
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
     sharedEventEmitter.emit('ballPositionUpdate', game);
