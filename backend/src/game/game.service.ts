@@ -117,7 +117,7 @@ export class GameService {
       return;
     }
 
-    const game = new GameState(user1, user2);
+    const game = new GameState(user1, user2, this.prismaService);
     game.tournamentStatus = tournamentStatus;
     // if (tournamentStatus) {
     //   const tournament: Tournaments = await this.prisma.tournaments.create({

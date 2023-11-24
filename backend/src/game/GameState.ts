@@ -5,7 +5,6 @@ import { Games } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class GameState {
-  PrismaService: PrismaService;
   GameData: Games | undefined = undefined;
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
@@ -46,7 +45,7 @@ export class GameState {
 
   currentCount: number;
 
-  constructor(user1: User, user2: User) {
+  constructor(user1: User, user2: User, private readonly prismaService: PrismaService) {
     // this.prisma = new PrismaClient();
     this.GameData = null;
     this.intervalId = null;
@@ -248,7 +247,7 @@ export class GameState {
       this.scorePlayer1 == this.winningScore ||
       this.scorePlayer2 == this.winningScore
     ) {
-      await this.PrismaService.updateGameScore(this.GameData.id, this.scorePlayer1, this.scorePlayer2);
+      await this.prismaService.updateGameScore(this.GameData.id, this.scorePlayer1, this.scorePlayer2);
       clearInterval(this.intervalId);
       this.intervalId = null;
       this.gameInit();
