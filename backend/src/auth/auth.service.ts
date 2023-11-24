@@ -109,7 +109,10 @@ export class AuthService {
 
         // Check if the stored userId matches the userId from the token
         if (userId !== decodedToken.sub) {
-          console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: ', userId);
+          console.error(
+            'AUTH.SERVICE: VALIDATETOKEN, User Identity KO: ',
+            userId,
+          );
           return false;
         }
       }
