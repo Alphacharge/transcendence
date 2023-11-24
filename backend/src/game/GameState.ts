@@ -263,7 +263,7 @@ export class GameState {
       this.scorePlayer1 == this.winningScore ||
       this.scorePlayer2 == this.winningScore
     ) {
-        await this.prismaService.updateGameScore(
+      await this.prismaService.updateGameScore(
         this.GameData.id,
         this.scorePlayer1,
         this.scorePlayer2,

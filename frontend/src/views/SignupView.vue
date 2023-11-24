@@ -30,9 +30,16 @@
       <label for="InputPasswordrep" class="form-label"
         ><h5>{{ $t("RepeatPassword") }}</h5></label
       >
-      <input type="password" class="form-control" id="InputPasswordrep" />
+      <input
+        v-model="rePassword"
+        type="password"
+        class="form-control"
+        id="InputPasswordrep"
+      />
     </div>
-    <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
+    <button type="submit" class="btn btn-primary" :disabled="isDisabled">
+      {{ $t("Submit") }}
+    </button>
   </form>
 </template>
 
@@ -44,7 +51,13 @@ export default {
     return {
       inputEmail: "",
       password: "",
+      rePassword: "",
     };
+  },
+  computed: {
+    isDisabled() {
+      return !(this.rePassword && this.password === this.rePassword);
+    },
   },
   methods: {
     async sendPostRequest() {
