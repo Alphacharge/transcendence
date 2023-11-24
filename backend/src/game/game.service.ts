@@ -9,11 +9,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GameService {
+  constructor(private readonly prismaService: PrismaService) {}
   queueTournamentGame: User[] = [];
   queue: User[] = [];
   users: Map<string, User> = new Map(); //socket.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
-  PrismaService: PrismaService;
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -126,7 +126,7 @@ export class GameService {
       return;
     }
 
-    const game = new GameState(user1, user2);
+    const game = new GameState(user1, user2, this.prismaService);
     game.tournamentStatus = tournamentStatus;
     // if (tournamentStatus) {
     //   const tournament: Tournaments = await this.prisma.tournaments.create({
@@ -136,7 +136,8 @@ export class GameService {
     //   });
     // }
     await game.countDown();
-    game.GameData = await this.PrismaService.createNewGame(
+    game.GameData = await this.prismaService.createNewGame(
+
       game.user1.userData.id,
       game.user2.userData.id,
     );

@@ -31,7 +31,7 @@ model Games {
   right_user_id     Int
   left_user_score   Int?
   right_user_score  Int?
-  tournament_id     Int       @default(0)
+  // tournament_id     Int       @default(0)
 
   //Opposite Relations
   l_user      Users         @relation("LeftUser", fields: [left_user_id], references: [id])
@@ -39,7 +39,7 @@ model Games {
   f_game      Tournaments[] @relation("FirstGame")
   s_game      Tournaments[] @relation("SecondGame")
   t_game      Tournaments[] @relation("ThirdGame")
-  tournament  Tournaments   @relation("gameid", fields: [tournament_id], references: [id])
+  // tournament  Tournaments   @relation("gameid", fields: [tournament_id], references: [id])
 }
 model Tournaments {
   id              Int       @id @default(autoincrement())
@@ -51,5 +51,5 @@ model Tournaments {
   f_game      Games   @relation("FirstGame", fields: [first_game_id], references: [id])
   s_game      Games   @relation("SecondGame", fields: [second_game_id], references: [id])
   t_game      Games   @relation("ThirdGame", fields: [third_game_id], references: [id])
-  tournament  Games[] @relation("gameid")
+  // tournament  Games[] @relation("gameid")
 }
