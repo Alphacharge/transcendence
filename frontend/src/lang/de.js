@@ -19,6 +19,7 @@ export default {
   RepeatPassword: "Passwort wiederholen",
   Submit: "Absenden",
   or: "oder",
+  intra: "melde dich über das Intranet an.",
 
   // STATISTICS
   User: "Nutzer",
