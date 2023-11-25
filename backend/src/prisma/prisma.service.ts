@@ -281,4 +281,55 @@ export class PrismaService extends PrismaClient {
     }
     return userStatistics;
   }
+
+  async getHistoryMatchesById(userId: number): Promise<any[] | null> {
+    try {
+      const allGames = await this.games.findMany({
+        where: {
+          OR: [
+            { left_user_id: userId },
+            { right_user_id: userId },
+          ],
+        },
+        orderBy: {
+          id: 'desc',
+        },
+        include: {
+          l_user: {
+            select: {
+              id: true,
+              nick: true,
+              avatar: true,
+            },
+          },
+          r_user: {
+            select: {
+              id: true,
+              nick: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+
+      return allGames.map((game) => ({
+        id: game.id,
+        left_user_score: game.left_user_score,
+        right_user_score: game.right_user_score,
+        leftUser: {
+          id: game.l_user.id,
+          nick: game.l_user.nick,
+          avatar: game.l_user.avatar,
+        },
+        rightUser: {
+          id: game.r_user.id,
+          nick: game.r_user.nick,
+          avatar: game.r_user.avatar,
+        },
+      }));
+    } catch (error) {
+      console.error('Error fetching match history:', error);
+      return null;
+    }
+  }
 }
