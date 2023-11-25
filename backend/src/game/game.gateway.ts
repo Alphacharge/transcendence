@@ -72,7 +72,7 @@ export class GameGateway {
 
       this.gameService.users.set(socket.id, user);
       user.socket = socket;
-      user.userData = await this.prismaService.getUser(
+      user.userData = await this.prismaService.getUserById(
         socket.handshake.query.userId,
       );
       console.log('userdata:', user.userData.id);
