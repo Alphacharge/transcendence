@@ -15,16 +15,16 @@
       <tbody>
         <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
         <tr
-          v-for="(data, index) in sortedStatistics"
+          v-for="(row, index) in userStatistics"
           :key="index"
           :class="{ 'first-row': index === 0, 'other-rows': index > 0 }"
         >
-          <td>{{ data.field1 }}</td>
-          <td>{{ data.field2 }}</td>
-          <td>{{ data.field3 }}</td>
-          <td>{{ data.field4 }}</td>
-          <td>{{ data.field5 }}</td>
-          <td>{{ data.field6 }}</td>
+          <td>{{ row.Nick }}</td>
+          <td>{{ row.Matches }}</td>
+          <td>{{ row.Wins }}</td>
+          <td>{{ row.Losses }}</td>
+          <td>{{ row.TournamentMatches }}</td>
+          <td>{{ row.TournamentWins }}</td>
         </tr>
       </tbody>
     </table>
@@ -36,26 +36,14 @@ export default {
   data() {
     return {
       // Statistikdaten können hier aus deinem Backend abgerufen werden
-      statistics: [
-        {
-          field1: "Daten 1",
-          field2: "Daten 2",
-          field3: "Daten 3",
-          field4: "Daten 4",
-          field5: "Daten 5",
-          field6: "Daten 6",
-          field7: "Daten 7",
-          field8: "Daten 8",
-          field9: "Daten 9",
-          field10: "Daten 10",
-          field11: "Daten 11",
-          field12: "Daten 12",
-        },
-        // Füge hier weitere Statistikdaten hinzu
-      ],
+      statistics: null,
       sortKey: "field3",
       sortDirection: "desc",
     };
+  },
+  mounted() {
+    // Make a call to your NestJS backend when the component is mounted
+    this.fetchStats();
   },
   computed: {
     sortedStatistics() {
@@ -73,6 +61,34 @@ export default {
         this.sortKey = key;
         this.sortDirection = "desc";
       }
+    },
+    async fetchStats() {
+      try {
+        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/stats/all`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          this.statistics = data;
+          // Handle the user history data as needed
+        } else {
+          console.error("Failed to fetch statistics");
+        }
+      } catch (error) {
+        console.error("Error fetching user history:", error);
+      }
+    },
+    getAvatarSrc(avatar) {
+      // Adjust the path as needed based on your avatar structure
+      return `avatar/${avatar}.png`;
     },
   },
 };
