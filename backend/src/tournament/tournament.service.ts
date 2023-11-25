@@ -16,9 +16,7 @@ export class TournamentService {
     if (!valid) return -1;
     if (this.players.size < 4 && !this.players.get(player.userId)) {
       try {
-        player.userData = await this.prismaService.users.findUnique({
-          where: { id: Number(player.userId) },
-        });
+        player.userData = await this.prismaService.getUserById(player.userId);
         if (player.userData) {
           delete player.userData.hash;
           this.players.set(player.userId, player);

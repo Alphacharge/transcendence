@@ -267,6 +267,7 @@ export class GameState {
         this.GameData.id,
         this.scorePlayer1,
         this.scorePlayer2,
+        this.winningPlayer.userData.id,
       );
       clearInterval(this.intervalId);
       this.intervalId = null;

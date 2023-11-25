@@ -20,8 +20,10 @@ model Users {
   avatar    Int?      @default(0)
 
   //Opposite Relations
-  gamesL    Games[]   @relation("LeftUser")
-  gamesR    Games[]   @relation("RightUser")
+  gamesL      Games[]       @relation("LeftUser")
+  gamesR      Games[]       @relation("RightUser")
+  winner      Games[]       @relation("Winner")
+  tourwinner  Tournaments[] @relation("TourWinner")
 }
 
 model Games {
@@ -31,11 +33,13 @@ model Games {
   right_user_id     Int
   left_user_score   Int?
   right_user_score  Int?
+  winner_id         Int       @default(-1)
   // tournament_id     Int       @default(0)
 
   //Opposite Relations
   l_user      Users         @relation("LeftUser", fields: [left_user_id], references: [id])
   r_user      Users         @relation("RightUser", fields: [right_user_id], references: [id])
+  winner      Users         @relation("Winner", fields: [winner_id], references: [id])
   f_game      Tournaments[] @relation("FirstGame")
   s_game      Tournaments[] @relation("SecondGame")
   t_game      Tournaments[] @relation("ThirdGame")
@@ -47,9 +51,10 @@ model Tournaments {
   first_game_id   Int
   second_game_id  Int
   third_game_id   Int
+  tourwinner_id   Int
 
   f_game      Games   @relation("FirstGame", fields: [first_game_id], references: [id])
   s_game      Games   @relation("SecondGame", fields: [second_game_id], references: [id])
   t_game      Games   @relation("ThirdGame", fields: [third_game_id], references: [id])
-  // tournament  Games[] @relation("gameid")
+  tourwinner  Users   @relation("TourWinner", fields: [tourwinner_id], references: [id])
 }

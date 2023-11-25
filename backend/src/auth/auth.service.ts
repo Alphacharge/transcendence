@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, GatewayTimeoutException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -10,7 +10,7 @@ import { type } from 'os';
 @Injectable()
 export class AuthService {
   constructor(
-    private PrismaService: PrismaService,
+    private prismaService: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
@@ -20,12 +20,9 @@ export class AuthService {
       const hash = await argon.hash(user.password);
       //save the new user
 
-      const newUser = await this.PrismaService.users.create({
-        data: {
-          email: user.email,
-          hash,
-        },
-      });
+      const newUser = await this.prismaService.createUserBySignUp(user.email, hash);
+      if (newUser == null)
+        throw new GatewayTimeoutException('Database unreachable');
       // console.log(this.signToken(user.id, user.email));
       const bToken = await this.signToken(newUser.id, newUser.email);
       // return this.signToken(newUser.id, newUser.email);
@@ -45,11 +42,7 @@ export class AuthService {
 
   async signin(user: User) {
     //find the user by email
-    const newUser = await this.PrismaService.users.findUnique({
-      where: {
-        email: user.email,
-      },
-    });
+    const newUser = await this.prismaService.getUserByEmail(user.email);
     //if user does not exist throw exception
     if (!newUser) {
       throw new ForbiddenException('Credentials incorrect');
