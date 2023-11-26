@@ -9,11 +9,13 @@
       >
       <input
         v-model="inputEmail"
+        @input="validateEmail"
         type="email"
         class="form-control"
         id="InputEmail"
         aria-describedby="email"
       />
+      <span v-if="!isValidEmail && email !== ''" style="color: red;">Please enter a valid email address</span>
     </div>
     <div class="mb-3">
       <label for="InputPassword" class="form-label"
@@ -52,14 +54,19 @@ export default {
       inputEmail: "",
       password: "",
       rePassword: "",
+      isValidEmail: true,
     };
   },
   computed: {
     isDisabled() {
-      return !(this.rePassword && this.password === this.rePassword);
+      return !(this.isValidEmail && this.rePassword && this.password === this.rePassword);
     },
   },
   methods: {
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      this.isValidEmail = emailRegex.test(this.inputEmail);
+    },
     async sendPostRequest() {
       try {
         const response = await fetch(
