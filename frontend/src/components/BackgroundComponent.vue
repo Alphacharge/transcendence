@@ -607,7 +607,6 @@ body {
   --top-offset: 131.14vh;
   --fall-duration: 13.371s;
   --fall-delay: 9.903s;
-  
 }
 .star::before,
 .star::after {

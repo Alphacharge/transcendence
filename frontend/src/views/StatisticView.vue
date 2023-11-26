@@ -14,17 +14,13 @@
       </thead>
       <tbody>
         <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-        <tr
-          v-for="(row, index) in userStatistics"
-          :key="index"
-          :class="{ 'first-row': index === 0, 'other-rows': index > 0 }"
-        >
-          <td>{{ row.Nick }}</td>
-          <td>{{ row.Matches }}</td>
-          <td>{{ row.Wins }}</td>
-          <td>{{ row.Losses }}</td>
-          <td>{{ row.TournamentMatches }}</td>
-          <td>{{ row.TournamentWins }}</td>
+        <tr v-for="row in statistics" :key="row.userId">
+          <td>{{ row.nick }}</td>
+          <td>{{ row.matches }}</td>
+          <td>{{ row.wins }}</td>
+          <td>{{ row.losses }}</td>
+          <td>{{ row.tournamentMatches }}</td>
+          <td>{{ row.tournamentWins }}</td>
         </tr>
       </tbody>
     </table>
