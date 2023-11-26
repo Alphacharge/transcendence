@@ -6,7 +6,7 @@
     <div class="mb-3">
       <label for="InputEmail" class="form-label"
         ><h5>{{ $t("EmailAddress") }}</h5></label
-      ><br/>
+      ><br />
       <span v-if="!isValidEmail && email !== ''" style="color: red"
         >Please enter a valid email address</span
       >
