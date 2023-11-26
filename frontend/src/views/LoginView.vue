@@ -28,6 +28,7 @@
     </div>
     <div>
       {{ $t("or") }} <router-link to="/signup">{{ $t("SignUp") }}</router-link>
+      {{ $t("or") }} <router-link to="/intra">{{ $t("intra") }}</router-link>
     </div>
     <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
   </form>
