@@ -110,7 +110,7 @@ export class GameState {
   }
 
   movePaddleUp(player: User) {
-    if (player == this.user1) {
+    if (player === this.user1) {
       if (this.leftPosition > this.paddlesSpeed) {
         this.leftPosition -= this.paddlesSpeed;
       } else if (
@@ -119,7 +119,7 @@ export class GameState {
       ) {
         this.leftPosition = 0;
       }
-    } else if (player == this.user2) {
+    } else if (player === this.user2) {
       if (this.rightPosition > this.paddlesSpeed) {
         this.rightPosition -= this.paddlesSpeed;
       } else if (

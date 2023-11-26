@@ -14,7 +14,7 @@ import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import PongButtons from "@/components/PongButtons.vue";
 import CountDown from "@/components/CountDown.vue";
-import { socket } from "@/assets/utils/socket";
+import { connectWebSocket, socket } from "@/assets/utils/socket";
 
 export default {
   data() {
@@ -28,6 +28,8 @@ export default {
   },
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
   mounted() {
+	connectWebSocket();
+
     socket.on("connect", () => {
       // received new game ID from server
       socket.on("gameId", (payload) => {

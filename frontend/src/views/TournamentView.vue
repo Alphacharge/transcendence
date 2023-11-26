@@ -28,6 +28,7 @@
 <script>
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import Pong from "@/views/PongView.vue";
+
 export default {
   components: {
     PlayerCheckin,

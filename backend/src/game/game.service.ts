@@ -150,7 +150,7 @@ export class GameService {
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
-    await this.prismaService.createGame(game);
+    game.gameData = await this.prismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
     await game.countDown();
 
     if (!game.gameData) {
@@ -172,24 +172,6 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  // UNUSED right now
-  // games will just keep running until ended when run
-  // stopGame(game: GameState) {
-  //   if (!game) {
-  //     return;
-  //   }
-
-  //   console.log('GAME.SERVICE: STOPGAME, Stopping game', game.gameData.id);
-  //   clearInterval(game.intervalId);
-  //   game.intervalId = null;
-
-  //   if (game.user1) game.user1.activeGame = null;
-  //   if (game.user2) game.user2.activeGame = null;
-
-  //   // save persistent game stuff to database here if you like
-  //   this.games.delete(game.gameData.id);
-  // }
-
   paddleUp(GameId: number, player: User) {
     const game = this.games.get(GameId);
     if (game && game.isRunning()) {
@@ -207,7 +189,7 @@ export class GameService {
   }
 
   endGame(game: GameState) {
-    this.prismaService.updateGame(game);
+    this.prismaService.updateGameScore(game.gameData.id, game.scorePlayer1, game.scorePlayer2, game.winningPlayer.userData.id);
     game.playerVictory();
 
     game.user1.activeGame = null;

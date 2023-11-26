@@ -79,10 +79,14 @@ export class GameGateway {
       const user = new User();
 
       user.socket = socket;
-      user.userData = await this.prismaService.getUser(
+      user.userData = await this.prismaService.getUserById(
         socket.handshake.query.userId,
       );
       this.gameService.users.set(socket.id, user);
+      user.socket = socket;
+      user.userData = await this.prismaService.getUserById(
+        socket.handshake.query.userId,
+      );
     } else {
       console.log('handleConnection: Refusing WebSocket connection.');
       socket.disconnect(true);

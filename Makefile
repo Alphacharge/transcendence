@@ -30,7 +30,7 @@ all: ip certs
 ifeq ($(OS), Darwin)
 	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || chown -R ${USER}:2021_heilbronn data/pgadmin"
 else
-	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
+	-@bash -c "sudo chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
 endif
 	docker-compose -f $(SRC) $(ENV) up
 	@echo "$(GREEN)Build changes and/or new containers.$(WHITE)"
@@ -41,8 +41,10 @@ postgre:
 ip:
 ifeq ($(OS), Darwin)
 	sed -i '' 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=$(IP)/' ./frontend/.env
+	sed -i '' 's/^BACKEND_IP=.*/BACKEND_IP=$(IP)/' ./backend/.env
 else
 	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend/.env
+	sed -i -e 's/^BACKEND_IP=.*/BACKEND_IP=127.0.0.1/' ./backend/.env
 endif
 
 # create https certificates
@@ -94,7 +96,7 @@ else
 endif
 
 dbclean: stop
-	rm -rf $(DB_D)
+	sudo rm -rf $(DB_D)
 	mkdir -p $(DB_D)
 
 #stop all containers, force rebuild and start it
