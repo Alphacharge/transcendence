@@ -15,7 +15,9 @@
         id="InputEmail"
         aria-describedby="email"
       />
-      <span v-if="!isValidEmail && email !== ''" style="color: red;">Please enter a valid email address</span>
+      <span v-if="!isValidEmail && email !== ''" style="color: red"
+        >Please enter a valid email address</span
+      >
     </div>
     <div class="mb-3">
       <label for="InputPassword" class="form-label"
@@ -59,7 +61,11 @@ export default {
   },
   computed: {
     isDisabled() {
-      return !(this.isValidEmail && this.rePassword && this.password === this.rePassword);
+      return !(
+        this.isValidEmail &&
+        this.rePassword &&
+        this.password === this.rePassword
+      );
     },
   },
   methods: {
