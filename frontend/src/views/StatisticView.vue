@@ -8,19 +8,21 @@
           <th @click="sortTable('field2')">{{ $t("Matches") }}</th>
           <th @click="sortTable('field3')">{{ $t("Wins") }}</th>
           <th @click="sortTable('field4')">{{ $t("Losses") }}</th>
-          <th @click="sortTable('field5')">{{ $t("TournamentMatches") }}</th>
-          <th @click="sortTable('field6')">{{ $t("TournamentWins") }}</th>
+          <th @click="sortTable('field5')">K/D</th>
+          <th @click="sortTable('field6')">{{ $t("TournamentMatches") }}</th>
+          <th @click="sortTable('field7')">{{ $t("TournamentWins") }}</th>
         </tr>
       </thead>
       <tbody>
         <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-        <tr v-for="row in statistics" :key="row.userId">
+        <tr v-for="row in sortedStatistics" :key="row.userId">
           <td>{{ row.nick }}</td>
           <td>{{ row.matches }}</td>
           <td>{{ row.wins }}</td>
           <td>{{ row.losses }}</td>
-          <td>{{ row.tournamentMatches }}</td>
-          <td>{{ row.tournamentWins }}</td>
+          <td>{{ row.wins - row.losses }}</td>
+          <td>{{ row.tourmatches }}</td>
+          <td>{{ row.tourwins }}</td>
         </tr>
       </tbody>
     </table>
@@ -43,6 +45,7 @@ export default {
   },
   computed: {
     sortedStatistics() {
+      if (!this.statistics) return [];
       return this.statistics.slice().sort((a, b) => {
         const modifier = this.sortDirection === "desc" ? -1 : 1;
         return modifier * (a[this.sortKey] - b[this.sortKey]);
