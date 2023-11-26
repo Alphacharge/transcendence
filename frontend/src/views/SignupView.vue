@@ -6,6 +6,9 @@
     <div class="mb-3">
       <label for="InputEmail" class="form-label"
         ><h5>{{ $t("EmailAddress") }}</h5></label
+      ><br/>
+      <span v-if="!isValidEmail && email !== ''" style="color: red"
+        >Please enter a valid email address</span
       >
       <input
         v-model="inputEmail"
@@ -15,9 +18,6 @@
         id="InputEmail"
         aria-describedby="email"
       />
-      <span v-if="!isValidEmail && email !== ''" style="color: red"
-        >Please enter a valid email address</span
-      >
     </div>
     <div class="mb-3">
       <label for="InputPassword" class="form-label"
