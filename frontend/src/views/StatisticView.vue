@@ -8,23 +8,21 @@
           <th @click="sortTable('field2')">{{ $t("Matches") }}</th>
           <th @click="sortTable('field3')">{{ $t("Wins") }}</th>
           <th @click="sortTable('field4')">{{ $t("Losses") }}</th>
-          <th @click="sortTable('field5')">{{ $t("TournamentMatches") }}</th>
-          <th @click="sortTable('field6')">{{ $t("TournamentWins") }}</th>
+          <th @click="sortTable('field5')">K/D</th>
+          <th @click="sortTable('field6')">{{ $t("TournamentMatches") }}</th>
+          <th @click="sortTable('field7')">{{ $t("TournamentWins") }}</th>
         </tr>
       </thead>
       <tbody>
         <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-        <tr
-          v-for="(data, index) in sortedStatistics"
-          :key="index"
-          :class="{ 'first-row': index === 0, 'other-rows': index > 0 }"
-        >
-          <td>{{ data.field1 }}</td>
-          <td>{{ data.field2 }}</td>
-          <td>{{ data.field3 }}</td>
-          <td>{{ data.field4 }}</td>
-          <td>{{ data.field5 }}</td>
-          <td>{{ data.field6 }}</td>
+        <tr v-for="row in sortedStatistics" :key="row.userId">
+          <td>{{ row.nick }}</td>
+          <td>{{ row.matches }}</td>
+          <td>{{ row.wins }}</td>
+          <td>{{ row.losses }}</td>
+          <td>{{ row.wins - row.losses }}</td>
+          <td>{{ row.tourmatches }}</td>
+          <td>{{ row.tourwins }}</td>
         </tr>
       </tbody>
     </table>
@@ -36,29 +34,18 @@ export default {
   data() {
     return {
       // Statistikdaten können hier aus deinem Backend abgerufen werden
-      statistics: [
-        {
-          field1: "Daten 1",
-          field2: "Daten 2",
-          field3: "Daten 3",
-          field4: "Daten 4",
-          field5: "Daten 5",
-          field6: "Daten 6",
-          field7: "Daten 7",
-          field8: "Daten 8",
-          field9: "Daten 9",
-          field10: "Daten 10",
-          field11: "Daten 11",
-          field12: "Daten 12",
-        },
-        // Füge hier weitere Statistikdaten hinzu
-      ],
+      statistics: null,
       sortKey: "field3",
       sortDirection: "desc",
     };
   },
+  mounted() {
+    // Make a call to your NestJS backend when the component is mounted
+    this.fetchStats();
+  },
   computed: {
     sortedStatistics() {
+      if (!this.statistics) return [];
       return this.statistics.slice().sort((a, b) => {
         const modifier = this.sortDirection === "desc" ? -1 : 1;
         return modifier * (a[this.sortKey] - b[this.sortKey]);
@@ -73,6 +60,34 @@ export default {
         this.sortKey = key;
         this.sortDirection = "desc";
       }
+    },
+    async fetchStats() {
+      try {
+        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/stats/all`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          this.statistics = data;
+          // Handle the user history data as needed
+        } else {
+          console.error("Failed to fetch statistics");
+        }
+      } catch (error) {
+        console.error("Error fetching user history:", error);
+      }
+    },
+    getAvatarSrc(avatar) {
+      // Adjust the path as needed based on your avatar structure
+      return `avatar/${avatar}.png`;
     },
   },
 };
