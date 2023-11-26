@@ -6,13 +6,20 @@ export class PrismaController {
   constructor(private readonly prismaService: PrismaService) {}
 
   @Post('user')
-  async getHistoryMatchesById(@Body() body: { userId: number }): Promise<any[] | null> {
+  async getHistoryMatches(@Body() body: { userId: number }): Promise<{ userHistory: any[] | null, userProfil: any | null }> {
     const { userId } = body;
-    return this.prismaService.getHistoryMatchesById(userId);
+    try {
+      const userHistory = await this.prismaService.getHistoryMatchesById(userId);
+      const userProfil = await this.prismaService.getUserById(userId);
+      return { userHistory, userProfil };
+    } catch (error) {
+      console.error('Error fetching user statistics:', error);
+      return { userHistory: null, userProfil: null };
+    }
   }
 
   @Post('all')
   async getUserStatistics(): Promise<any | null> {
-    return this.prismaService.getUserStatistics();
+    return await this.prismaService.getUserStatistics();
   }
 }
