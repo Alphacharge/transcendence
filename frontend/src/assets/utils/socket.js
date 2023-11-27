@@ -30,6 +30,10 @@ socket.on("disconnect", () => {
   state.connected = false;
 });
 
+socket.on("connect_error", () => {
+  connectWebSocket();
+});
+
 socket.enterQueue = function () {
   socket.emit("enterQueue");
 };
@@ -55,9 +59,6 @@ socket.sendPaddleDown = function (gameId) {
   socket.emit("paddleDown", { gameId });
 };
 
-export function getSocket() {
-  if (!socket) {
-    throw new Error("Socket not initialized");
-  }
-  return socket;
-}
+socket.requestTournamentInfo = function () {
+  socket.emit("requestTournamentInfo");
+};

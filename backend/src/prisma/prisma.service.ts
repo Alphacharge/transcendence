@@ -15,7 +15,10 @@ export class PrismaService extends PrismaClient {
   }
 
   //User
-  async createUserBySignUp(inEmail: string, inHash: string): Promise<Users | null>{
+  async createUserBySignUp(
+    inEmail: string,
+    inHash: string,
+  ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
@@ -59,8 +62,7 @@ export class PrismaService extends PrismaClient {
         where: { email: userEmail },
       });
 
-      if (userData) {
-        return userData;
+      return userData;
       } else {
         console.error(`User with email ${userEmail} not found.`);
         return null;
@@ -71,7 +73,9 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getAllUsersIdNiAv(): Promise<{id: number; nick: string; avatar: number}[] | null> {
+  async getAllUsersIdNiAv(): Promise<
+    { id: number; nick: string; avatar: number }[] | null
+  > {
     try {
       const allUsers = await this.users.findMany({
         select: {
@@ -96,6 +100,8 @@ export class PrismaService extends PrismaClient {
           right_user_id: rightId,
           left_user_score: 0,
           right_user_score: 0,
+          // CHECK why -1 isn't working
+          winner_id: 1,
           createdAt: new Date(),
         },
       });
@@ -106,7 +112,12 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async updateGameScore(gameId: number, leftScore: number, rightScore: number, winnerId: number) {
+  async updateGameScore(
+    gameId: number,
+    leftScore: number,
+    rightScore: number,
+    winnerId: number,
+  ) {
     try {
       const updatedGame = await this.games.update({
         where: { id: gameId }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
@@ -114,7 +125,6 @@ export class PrismaService extends PrismaClient {
           left_user_score: leftScore,
           right_user_score: rightScore,
           winner_id: winnerId,
-          // Other fields you want to update
         },
       });
       console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
@@ -192,7 +202,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
         },
       });
@@ -260,11 +270,13 @@ export class PrismaService extends PrismaClient {
     const allUsers = await this.getAllUsersIdNiAv();
     const userStatistics = [];
 
-    for (const user of allUsers){
+    for (const user of allUsers) {
       const matches: number = await this.getAmountOfMatchesById(user.id);
       const wins: number = await this.getGameWinsById(user.id);
       const losses: number = await this.getGameLossesById(user.id);
-      const tourmatches: number = await this.getAmountOfTournamentMatchesById(user.id);
+      const tourmatches: number = await this.getAmountOfTournamentMatchesById(
+        user.id,
+      );
       const tourwins: number = await this.getTournamentWinsById(user.id);
 
       userStatistics.push({
@@ -275,7 +287,7 @@ export class PrismaService extends PrismaClient {
         wins,
         losses,
         tourmatches,
-        tourwins
+        tourwins,
       });
     }
     return userStatistics;
@@ -285,10 +297,7 @@ export class PrismaService extends PrismaClient {
     try {
       const allGames = await this.games.findMany({
         where: {
-          OR: [
-            { left_user_id: Number(userId) },
-            { right_user_id: Number(userId) },
-          ],
+          OR: [{ left_user_id: userId }, { right_user_id: userId }],
         },
         orderBy: {
           id: 'desc',

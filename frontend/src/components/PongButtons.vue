@@ -1,14 +1,7 @@
 <template>
   <div class="btn-group">
-    <button @click="enterQueue()" class="btn btn-danger">
-      {{ $t("EnterQueue") }}
-    </button>
-    <button @click="leaveQueue()" class="btn btn-warning">
-      {{ $t("LeaveQueue") }}
-    </button>
-    <button @click="stopGame()" class="btn btn-success">
-      {{ $t("AbortGame") }}
-    </button>
+    <button @click="enterQueue()" class="btn btn-danger">Enter Queue</button>
+    <button @click="leaveQueue()" class="btn btn-warning">Leave Queue</button>
   </div>
 </template>
 <script>
@@ -21,9 +14,6 @@ export default {
     },
     leaveQueue() {
       socket.leaveQueue();
-    },
-    stopGame() {
-      socket.stopGame();
     },
   },
 };

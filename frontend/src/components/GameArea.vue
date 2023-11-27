@@ -1,4 +1,6 @@
 <template>
+  <CountDown></CountDown>
+  <ScoreBoard></ScoreBoard>
   <div class="container">
     <div class="background" ref="container"></div>
     <div
@@ -13,11 +15,13 @@
 <script>
 // import the socket object
 import { socket } from "@/assets/utils/socket";
+import ScoreBoard from "./ScoreBoard.vue";
+import CountDown from "./CountDown.vue";
 
 export default {
-  props: ["gameId", "playerNumber"],
   data() {
     return {
+      playerNumber: 0,
       // abll and paddle starting positions
       bouncingBallX: 400,
       bouncingBallY: 200,
@@ -33,7 +37,6 @@ export default {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
-
     // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
@@ -41,7 +44,6 @@ export default {
     socket.on("rightPaddle", (pY) => {
       this.rightPaddleY = pY;
     });
-
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
       if (!this.gameId) {
@@ -70,7 +72,6 @@ export default {
       }
     });
   },
-
   beforeUnmounted() {
     console.log("unmount called");
     // Clean up by canceling the animation frame
@@ -83,7 +84,6 @@ export default {
     clearInterval(this.messageInterval);
     this.messageInterval = null;
   },
-
   methods: {
     newGame() {
       console.error("logging new game event");
@@ -93,6 +93,7 @@ export default {
       socket.stopGame(this.gameId);
     },
   },
+  components: { ScoreBoard, CountDown },
 };
 </script>
 
