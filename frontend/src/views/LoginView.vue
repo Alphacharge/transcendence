@@ -40,7 +40,7 @@
       class="btn btn-primary"
       @click.prevent="authorize"
       >
-      {{ $t("Authorize with 42") }}
+      {{ $t("AuthorizeWithFortytwo") }}
     </button>
   </form>
 </template>
