@@ -48,10 +48,14 @@
       </tbody>
     </table>
   </div>
+  <FriendList />
 </template>
 
 <script>
+import FriendList from "@/components/FriendList.vue";
+
 export default {
+  components: { FriendList },
   data() {
     return {
       userProfil: null,
