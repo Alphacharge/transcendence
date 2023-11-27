@@ -9,7 +9,7 @@ export default {
   data() {
     return {
       currentLanguage: "EN", // Initial language, assuming English is default
-      languages: ["EN", "DE", "PLACEHOLDER"], // Array of available languages
+      languages: ["EN", "DE", "IT"], // Array of available languages
     };
   },
   methods: {
@@ -26,8 +26,8 @@ export default {
         case "DE":
           this.$i18n.locale = "de";
           break;
-        case "PLACEHOLDER":
-          this.$i18n.locale = "PLACEHOLDER"; // Adjust this to your third language code
+        case "IT":
+          this.$i18n.locale = "it";
           break;
         default:
           this.$i18n.locale = "en"; // Default to English if language code is unrecognized

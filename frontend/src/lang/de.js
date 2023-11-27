@@ -3,6 +3,7 @@ export default {
   Game: "Spiel",
   Tournament: "Tournier",
   Statistics: "Statistik",
+  Profil: "Profil",
   LogIn: "Einloggen",
   SignUp: "Registrieren",
   About: "Über uns",
@@ -18,6 +19,7 @@ export default {
   RepeatPassword: "Passwort wiederholen",
   Submit: "Absenden",
   or: "oder",
+  intra: "melde dich über das Intranet an.",
 
   // STATISTICS
   User: "Nutzer",

@@ -5,27 +5,32 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TournamentService {
-  constructor(private readonly authService: AuthService, private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly prismaService: PrismaService,
+  ) {}
   players: Map<number, PlayerDto> = new Map();
-  PrismaService: PrismaService;
 
   async add(player: PlayerDto) {
     const valid = await this.authService.validateToken(player.playerToken);
     if (!valid) return -1;
     if (this.players.size < 4 && !this.players.get(player.userId)) {
       try {
-        player.userData = await this.PrismaService.users.findUnique({
-          where: { id: Number(player.userId) },
-        });
+        player.userData = await this.prismaService.getUserById(player.userId);
         if (player.userData) {
           delete player.userData.hash;
           this.players.set(player.userId, player);
         } else {
-          console.error(`TOURNAMENT.SERVICE: ADD, User with ID ${player.userId} not found.`);
+          console.error(
+            `TOURNAMENT.SERVICE: ADD, User with ID ${player.userId} not found.`,
+          );
           return -1;
         }
       } catch (error) {
-        console.error('TOURNAMENT.SERVICE: ADD, Error fetching user data:', error);
+        console.error(
+          'TOURNAMENT.SERVICE: ADD, Error fetching user data:',
+          error,
+        );
         return -1;
       }
     }

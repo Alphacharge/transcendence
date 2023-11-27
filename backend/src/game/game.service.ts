@@ -9,11 +9,11 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class GameService {
+  constructor(private readonly prismaService: PrismaService) {}
   queueTournamentGame: User[] = [];
   queue: User[] = [];
   users: Map<string, User> = new Map(); //socket.id -> user
   games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
-  PrismaService: PrismaService;
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -35,7 +35,9 @@ export class GameService {
       return;
     }
 
-    console.log(`GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`);
+    console.log(
+      `GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`,
+    );
     this.queue.push(user);
     // check if a game is ready to be started
     this.checkQueue();
@@ -71,7 +73,9 @@ export class GameService {
       const index = this.queue.indexOf(userToRemove);
       if (index !== -1) {
         this.queue.splice(index, 1);
-        console.log(`GAME.SERVICE: REMOVEFROMQUEUE, Client: ${socket.id} removed from game queue`);
+        console.log(
+          `GAME.SERVICE: REMOVEFROMQUEUE, Client: ${socket.id} removed from game queue`,
+        );
       }
     }
   }
@@ -86,14 +90,19 @@ export class GameService {
       const index = this.queueTournamentGame.indexOf(userToRemove);
       if (index !== -1) {
         this.queueTournamentGame.splice(index, 1);
-        console.log(`removeFromTournamentQueue: ${socket.id} removed from tournament queue`);
+        console.log(
+          `removeFromTournamentQueue: ${socket.id} removed from tournament queue`,
+        );
       }
     }
   }
 
   checkQueue() {
     if (this.queue.length >= 2) {
-      console.log('GAME.SERVICE: CHECKQUEUE, queuelength is', this.queue.length);
+      console.log(
+        'GAME.SERVICE: CHECKQUEUE, queuelength is',
+        this.queue.length,
+      );
 
       const tournamentStatus = 0; // added for readability
       this.startGame(tournamentStatus);
@@ -113,11 +122,11 @@ export class GameService {
     }
 
     if (!user1 || !user2) {
-      console.log("startGame: User disconnected. Aborting game.");
+      console.log('startGame: User disconnected. Aborting game.');
       return;
     }
 
-    const game = new GameState(user1, user2);
+    const game = new GameState(user1, user2, this.prismaService);
     game.tournamentStatus = tournamentStatus;
     // if (tournamentStatus) {
     //   const tournament: Tournaments = await this.prisma.tournaments.create({
@@ -127,17 +136,24 @@ export class GameService {
     //   });
     // }
     await game.countDown();
-    game.GameData = await this.PrismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
+    game.GameData = await this.prismaService.createNewGame(
+      game.user1.userData.id,
+      game.user2.userData.id,
+    );
 
     if (!game.GameData) {
-      console.log('GAME.SERVICE: STARTGAME, Failed to create new Game!', this.queue.length);
+      console.log(
+        'GAME.SERVICE: STARTGAME, Failed to create new Game!',
+        this.queue.length,
+      );
       return;
     }
-    if (game.tournamentStatus){
-
-    
+    if (game.tournamentStatus) {
       // You can handle the result or perform other actions based on the Prisma query result
-      console.log('GAME.STATE: INITIALIZEGAME, New game created:', game.GameData);
+      console.log(
+        'GAME.STATE: INITIALIZEGAME, New game created:',
+        game.GameData,
+      );
       if (game.tournamentStatus & 2) {
         console.log('GAME.STATE: INITIALIZEGAME, Tournament first round');
       }
@@ -153,7 +169,10 @@ export class GameService {
     this.games.set(game.GameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
-    console.log('GAME.SERVICE: STARTGAME, Starting multiplayer game', game.GameData.id);
+    console.log(
+      'GAME.SERVICE: STARTGAME, Starting multiplayer game',
+      game.GameData.id,
+    );
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);

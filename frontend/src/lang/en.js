@@ -3,6 +3,7 @@ export default {
   Game: "Game",
   Tournament: "Tournament",
   Statistics: "Statistics",
+  Profil: "Profil",
   LogIn: "Log in",
   SignUp: "Sign up",
   About: "About",
@@ -17,9 +18,8 @@ export default {
   Password: "Password",
   RepeatPassword: "repeat Password",
   Submit: "Submit",
-  /* signup commented out to eliminate error in coompilation phase, claims it's double in effects*/
-  // SignUp: "Sign up",
   or: "or",
+  intra: "login with intra",
 
   // STATISTICS
   User: "User",

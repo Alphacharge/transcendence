@@ -8,7 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(
     config: ConfigService,
-    private PrismaService: PrismaService,
+    private prismaService: PrismaService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -17,12 +17,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: { sub: number; email: string }) {
-    const user = await this.PrismaService.users.findUnique({
-      where: {
-        id: payload.sub,
-      },
-    });
-    delete user.hash;
+    const user = await this.prismaService.getUserById(payload.sub);
+    if (user) {
+      delete user.hash;
+    }
     return user;
   }
 }

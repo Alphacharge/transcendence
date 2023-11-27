@@ -6,9 +6,13 @@
     <div class="mb-3">
       <label for="InputEmail" class="form-label"
         ><h5>{{ $t("EmailAddress") }}</h5></label
+      ><br />
+      <span v-if="!isValidEmail && email !== ''" style="color: red"
+        >Please enter a valid email address</span
       >
       <input
         v-model="inputEmail"
+        @input="validateEmail"
         type="email"
         class="form-control"
         id="InputEmail"
@@ -30,9 +34,16 @@
       <label for="InputPasswordrep" class="form-label"
         ><h5>{{ $t("RepeatPassword") }}</h5></label
       >
-      <input type="password" class="form-control" id="InputPasswordrep" />
+      <input
+        v-model="rePassword"
+        type="password"
+        class="form-control"
+        id="InputPasswordrep"
+      />
     </div>
-    <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
+    <button type="submit" class="btn btn-primary" :disabled="isDisabled">
+      {{ $t("Submit") }}
+    </button>
   </form>
 </template>
 
@@ -44,9 +55,24 @@ export default {
     return {
       inputEmail: "",
       password: "",
+      rePassword: "",
+      isValidEmail: true,
     };
   },
+  computed: {
+    isDisabled() {
+      return !(
+        this.isValidEmail &&
+        this.rePassword &&
+        this.password === this.rePassword
+      );
+    },
+  },
   methods: {
+    validateEmail() {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      this.isValidEmail = emailRegex.test(this.inputEmail);
+    },
     async sendPostRequest() {
       try {
         const response = await fetch(
