@@ -259,6 +259,12 @@ export class GameState {
   }
 
   async playerVictory() {
+    if (this.scorePlayer1 == this.winningScore) {
+      this.winningPlayer = this.user1;
+    } else {
+      this.winningPlayer = this.user2;
+    }
+    
     if (
       this.scorePlayer1 == this.winningScore ||
       this.scorePlayer2 == this.winningScore
@@ -275,11 +281,6 @@ export class GameState {
       /* promote flag to second round if this has been a 1st round tournament game */
       if (this.tournamentStatus && this.tournamentStatus & 2) {
         this.tournamentStatus = this.tournamentStatus << 1;
-      }
-      if (this.scorePlayer1 == this.winningScore) {
-        this.winningPlayer = this.user1;
-      } else {
-        this.winningPlayer = this.user2;
       }
       sharedEventEmitter.emit('victory', this);
     }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient, Users, Games, Tournaments } from '@prisma/client';
+import { PrismaClient, Users, Games, Friends, Tournaments } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -96,6 +96,7 @@ export class PrismaService extends PrismaClient {
           right_user_id: rightId,
           left_user_score: 0,
           right_user_score: 0,
+          winner_id: leftId,
           createdAt: new Date(),
         },
       });
