@@ -22,17 +22,18 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <pong></pong>
+  <GameArea></GameArea>
 </template>
 
 <script>
+import { connectWebSocket } from "@/assets/utils/socket";
+import GameArea from "@/components/GameArea.vue";
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
-import Pong from "@/views/PongView.vue";
 
 export default {
   components: {
     PlayerCheckin,
-    Pong,
+    GameArea,
   },
   data() {
     return {
@@ -45,6 +46,7 @@ export default {
     };
   },
   mounted() {
+    connectWebSocket();
     this.fetchPlayers();
   },
   methods: {

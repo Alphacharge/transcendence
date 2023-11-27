@@ -127,11 +127,14 @@ export class GameService {
       console.log('Not enough players for the tournament.');
       return;
     }
+    // players are now locked and can't leave any more
 
     // RISKY
     // could mix up winners and people who haven't played yet
     tournament.winners = tournament.players.slice();
     tournament.setUsers();
+
+    sharedEventEmitter.emit("tournamentStart", tournament);
 
     let game = tournament.nextGame();
     while (game) {
@@ -150,7 +153,6 @@ export class GameService {
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
-    console.log(game.user1.userData.id, game.user2.userData.id);
     game.gameData = await this.prismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
     await game.countDown();
 

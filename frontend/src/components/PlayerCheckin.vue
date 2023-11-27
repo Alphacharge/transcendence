@@ -45,6 +45,10 @@ export default {
       this.participateStatus = false;
       this.btnMsg = "Participate";
     });
+
+    socket.on("tournamentStart", () => {
+      // INSERT remove all parts of the interface you don't want to show during a tournament
+    });
   },
 
   watch: {

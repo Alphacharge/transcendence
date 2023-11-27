@@ -5,7 +5,7 @@
   </div>
   <CountDown />
   <PongButtons />
-  <ScoreBoard :player1Score="player1Score" :player2Score="player2Score" />
+  <ScoreBoard />
   <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
 </template>
 
@@ -17,16 +17,8 @@ import CountDown from "@/components/CountDown.vue";
 import { connectWebSocket, socket } from "@/assets/utils/socket";
 
 export default {
-  data() {
-    return {
-      player1Score: 0,
-      player2Score: 0,
-      gameId: null,
-      playerNumber: 0,
-      activeSocket: false,
-    };
-  },
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
+
   mounted() {
     connectWebSocket();
 
@@ -37,22 +29,13 @@ export default {
         this.player1Score = 0;
         this.player2Score = 0;
       });
+
       // received info if we are left or right
-      // better name?
       socket.on("player1", () => {
         this.playerNumber = 1;
       });
       socket.on("player2", () => {
         this.playerNumber = 2;
-      });
-      // received score update from server
-      socket.on("scoreUpdate", (playerScores) => {
-        this.player1Score = playerScores.player1;
-        this.player2Score = playerScores.player2;
-      });
-
-      socket.on("disconnect", () => {
-        this.activeSocket = false;
       });
     });
   },

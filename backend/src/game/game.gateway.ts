@@ -15,7 +15,7 @@ import * as https from 'https';
 import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { share } from 'rxjs';
+import { TournamentState } from './TournamentState';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -61,6 +61,9 @@ export class GameGateway {
     sharedEventEmitter.on('removedFromTournamentQueue', (user: User) => {
       this.removedFromTournamentQueue(user);
       this.sendTournamentQueueLength();
+    });
+    sharedEventEmitter.on('tournamentStart', (tournament: TournamentState) => {
+      this.tournamentStart(tournament);
     });
   }
 
@@ -210,14 +213,6 @@ export class GameGateway {
     );
     game.user1.socket.emit('victory', game.winningPlayer.userData.id);
     game.user2.socket.emit('victory', game.winningPlayer.userData.id);
-    /* if winning torunament's first round*/
-    if (game.tournamentState && game.tournamentState.round & 0b110) {
-      // game.tournamentStatus = game.tournamentStatus << 1;
-      this.gameService.addToTournamentQueue(
-        game.winningPlayer.socket,
-        game.tournamentState.round,
-      );
-    }
   }
 
   matchStart(game: GameState) {
@@ -231,12 +226,17 @@ export class GameGateway {
   }
 
   addedToTournamentQueue(user: User) {
-    console.log("emitting added to tournament q");
     user.socket.emit('addedToTournamentQueue');
   }
 
   removedFromTournamentQueue(user: User) {
-    console.log("emitting removed from tournament q");
     user.socket.emit('removedFromTournamentQueue');
+  }
+
+  tournamentStart(tournament: TournamentState) {
+    tournament.players[0].socket.emit("tournamentStart");
+    tournament.players[1].socket.emit("tournamentStart");
+    tournament.players[2].socket.emit("tournamentStart");
+    tournament.players[3].socket.emit("tournamentStart");
   }
 }

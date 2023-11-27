@@ -17,17 +17,20 @@
 <script>
 import { socket } from "@/assets/utils/socket";
 export default {
-  props: {
-    player1Score: Number,
-    player2Score: Number,
-  },
   data() {
     return {
       announceVisible: false,
+      player1Score: 0,
+      player2Score: 0,
       winningPlayer: "",
     };
   },
   mounted() {
+    socket.on("scoreUpdate", (playerScores) => {
+      this.player1Score = playerScores.player1;
+      this.player2Score = playerScores.player2;
+    });
+
     socket.on("victory", (payload) => {
       this.announceVisible = true;
       this.winningPlayer = payload;

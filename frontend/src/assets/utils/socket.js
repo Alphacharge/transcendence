@@ -62,10 +62,3 @@ socket.sendPaddleDown = function (gameId) {
 socket.requestTournamentInfo = function () {
   socket.emit("requestTournamentInfo");
 };
-
-export function getSocket() {
-  if (!socket) {
-    throw new Error("Socket not initialized");
-  }
-  return socket;
-}
