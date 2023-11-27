@@ -25,6 +25,7 @@ export default {
       winningPlayer: "",
     };
   },
+
   mounted() {
     socket.on("scoreUpdate", (playerScores) => {
       this.player1Score = playerScores.player1;
@@ -35,6 +36,14 @@ export default {
       this.announceVisible = true;
       this.winningPlayer = payload;
       console.log("Victory payload:", payload);
+    });
+
+    // received info if we are left or right
+    socket.on("player1", () => {
+      this.player1Score = 0;
+    });
+    socket.on("player2", () => {
+      this.player2Score = 0;
     });
   },
 };
