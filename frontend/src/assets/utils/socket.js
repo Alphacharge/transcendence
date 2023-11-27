@@ -51,12 +51,12 @@ socket.stopGame = function () {
 };
 
 // send paddle position updates to server
-socket.sendPaddleUp = function (gameId) {
-  socket.emit("paddleUp", { gameId });
+socket.sendPaddleUp = function () {
+  socket.emit("paddleUp");
 };
 
-socket.sendPaddleDown = function (gameId) {
-  socket.emit("paddleDown", { gameId });
+socket.sendPaddleDown = function () {
+  socket.emit("paddleDown");
 };
 
 socket.requestTournamentInfo = function () {

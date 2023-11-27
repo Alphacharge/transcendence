@@ -1,6 +1,4 @@
 <template>
-  <CountDown></CountDown>
-  <ScoreBoard></ScoreBoard>
   <div class="container">
     <div class="background" ref="container"></div>
     <div
@@ -46,20 +44,17 @@ export default {
     });
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (!this.gameId) {
-        return;
-      }
+
       if (event.key === "w") {
         if (!this.messageInterval) {
-          console.log("sending paddle up with id", this.gameId);
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleUp(this.gameId);
+            socket.sendPaddleUp();
           }, 10);
         }
       } else if (event.key === "s") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleDown(this.gameId);
+            socket.sendPaddleDown();
           }, 10);
         }
       }
@@ -88,9 +83,6 @@ export default {
     newGame() {
       console.error("logging new game event");
       socket.newGame();
-    },
-    stopGame() {
-      socket.stopGame(this.gameId);
     },
   },
   components: { ScoreBoard, CountDown },

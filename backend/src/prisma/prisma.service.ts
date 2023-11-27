@@ -61,8 +61,8 @@ export class PrismaService extends PrismaClient {
       const userData = await this.users.findUnique({
         where: { email: userEmail },
       });
-
-      return userData;
+      if (userData) {
+        return userData;
       } else {
         console.error(`User with email ${userEmail} not found.`);
         return null;
