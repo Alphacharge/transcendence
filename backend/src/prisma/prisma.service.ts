@@ -360,7 +360,7 @@ export class PrismaService extends PrismaClient {
     try {
       const allFriends = await this.friends.findMany({
         where: {
-          user_id: userId,
+          user_id: Number(userId),
         },
         select: {
           friend: {
@@ -384,8 +384,8 @@ export class PrismaService extends PrismaClient {
     try {
       const deletedFriend = await this.friends.deleteMany({
         where: {
-          user_id: userId,
-          friend_id: friendId,
+          user_id: Number(userId),
+          friend_id: Number(friendId),
         },
       });
       return true;
