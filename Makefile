@@ -74,29 +74,29 @@ status:
 	docker ps
 
 clean: stop
-	@-docker stop $$(docker ps -qa)
-	@-docker rm $$(docker ps -qa)
-	@-docker rmi -f $$(docker images -qa)
-	@-docker volume rm $$(docker volume ls -q)
-	@-docker network rm $$(docker network ls -q)
+	-docker stop $$(docker ps -qa)
+	-docker rm $$(docker ps -qa)
+	-docker rmi -f $$(docker images -qa)
+	-docker volume rm $$(docker volume ls -q)
+	-docker network rm $$(docker network ls -q)
 
 fclean: clean
-	@rm -rf ./frontend/node_modules
-	@rm -rf ./backend/node_modules
-	@-@docker system prune -a --volumes --force
+	rm -rf ./frontend/node_modules
+	rm -rf ./backend/node_modules
+	-@docker system prune -a --volumes --force
 	@echo "$(BLUE)Hardcleaned docker.$(WHITE)"
 
 sclean: fclean
 ifdef CONFIRM
 	@echo "$(YELL)Continuing with the operation...$(WHITE)"
-	-@sudo rm -rf $(DB_D) && mkdir -p $(DB_D); true;
+	-sudo rm -rf $(DB_D) && mkdir -p $(DB_D); true;
 	@echo "$(BLUE)Cleaned all data.$(WHITE)"
 else
 	@echo $(CONFIRM_MESSAGE)
 endif
 
 dbclean: stop
-	sudo rm -rf $(DB_D)
+	rm -rf $(DB_D)
 	mkdir -p $(DB_D)
 
 #stop all containers, force rebuild and start it

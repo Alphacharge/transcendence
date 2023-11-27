@@ -42,10 +42,6 @@ socket.enterTournamentQueue = function (tournamentStatus) {
   socket.emit("enterTournamentQueue", tournamentStatus);
 };
 
-socket.leaveTournamentQueue = function () {
-  socket.emit("leaveTournamentQueue");
-};
-
 socket.leaveQueue = function () {
   socket.emit("leaveQueue");
 };

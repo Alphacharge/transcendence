@@ -17,6 +17,7 @@ export default {
       return this.playersInTournament;
     },
   },
+
   data() {
     return {
       btnMsg: "Participate",
@@ -24,6 +25,7 @@ export default {
       playersInTournament: 0,
     };
   },
+
   async mounted() {
     socket.requestTournamentInfo();
 
@@ -58,7 +60,7 @@ export default {
       if (!this.participateStatus) {
         socket.enterTournamentQueue();
       } else {
-        socket.leaveTournamentQueue();
+        socket.leaveQueue();
       }
     },
   },

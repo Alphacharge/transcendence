@@ -150,6 +150,7 @@ export class GameService {
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
+    console.log(game.user1.userData.id, game.user2.userData.id);
     game.gameData = await this.prismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
     await game.countDown();
 
@@ -189,8 +190,8 @@ export class GameService {
   }
 
   endGame(game: GameState) {
-    this.prismaService.updateGameScore(game.gameData.id, game.scorePlayer1, game.scorePlayer2, game.winningPlayer.userData.id);
     game.playerVictory();
+    this.prismaService.updateGameScore(game.gameData.id, game.scorePlayer1, game.scorePlayer2, game.winningPlayer.userData.id);
 
     game.user1.activeGame = null;
     game.user2.activeGame = null;

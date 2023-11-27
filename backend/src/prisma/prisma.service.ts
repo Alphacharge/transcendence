@@ -96,8 +96,10 @@ export class PrismaService extends PrismaClient {
         data: {
           left_user_id: leftId,
           right_user_id: rightId,
-        //   left_user_score: 0,
-        //   right_user_score: 0,
+          left_user_score: 0,
+          right_user_score: 0,
+          // CHECK why -1 isn't working
+          winner_id: 1,
           createdAt: new Date(),
         },
       });

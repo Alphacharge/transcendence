@@ -28,7 +28,7 @@ export default {
   },
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
   mounted() {
-	connectWebSocket();
+    connectWebSocket();
 
     socket.on("connect", () => {
       // received new game ID from server

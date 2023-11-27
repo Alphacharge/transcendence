@@ -58,7 +58,7 @@ export class GameGateway {
       this.addedToTournamentQueue(user);
       this.sendTournamentQueueLength();
     });
-    sharedEventEmitter.on('addedToTournamentQueue', (user: User) => {
+    sharedEventEmitter.on('removedFromTournamentQueue', (user: User) => {
       this.removedFromTournamentQueue(user);
       this.sendTournamentQueueLength();
     });
@@ -78,15 +78,14 @@ export class GameGateway {
       // save new user to users array in GameService
       const user = new User();
 
-      user.socket = socket;
-      user.userData = await this.prismaService.getUserById(
-        socket.handshake.query.userId,
-      );
       this.gameService.users.set(socket.id, user);
       user.socket = socket;
       user.userData = await this.prismaService.getUserById(
         socket.handshake.query.userId,
       );
+      if (!user.userData) {
+        console.log("handleConnection: User not found in database.");
+      }
     } else {
       console.log('handleConnection: Refusing WebSocket connection.');
       socket.disconnect(true);
@@ -129,14 +128,6 @@ export class GameGateway {
   leaveQueue(@ConnectedSocket() socket: Socket) {
     this.gameService.removeFromQueue(socket);
     this.gameService.removeFromTournamentQueue(socket);
-  }
-
-  /* Client requests to abort game. */
-  // DELETE doesn't do anything anymore
-  @SubscribeMessage('stopGame')
-  stopGame(@ConnectedSocket() socket: Socket) {
-    // const user = this.gameService.users.get(socket.id);
-    // if (user.activeGame) this.gameService.stopGame(user.activeGame);
   }
 
   @SubscribeMessage('requestTournamentInfo')
@@ -240,10 +231,12 @@ export class GameGateway {
   }
 
   addedToTournamentQueue(user: User) {
+    console.log("emitting added to tournament q");
     user.socket.emit('addedToTournamentQueue');
   }
 
   removedFromTournamentQueue(user: User) {
+    console.log("emitting removed from tournament q");
     user.socket.emit('removedFromTournamentQueue');
   }
 }
