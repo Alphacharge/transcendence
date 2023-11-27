@@ -52,4 +52,10 @@ export class AuthController {
       res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  @Get('/42/callback')
+  async handleCallback(@Req() request:Request) {
+    const authorizationCode = request.query.code;
+    console.log(`DEBUG authorizationCode=${authorizationCode}`);
+  }
 }

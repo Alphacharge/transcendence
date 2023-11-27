@@ -88,7 +88,7 @@ export default {
     async authorize() {
       /*TODO: https sollte über .env gehen kriege es aber gerade nicht hin
       e.g. const authorizationUrl=`${process.env.AUTH_URL}*/
-      const authorizationUrl="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-00df0bcc6de43b6037219a0bdd40cc161fa358149677d5c0036fbe5174a2190b&redirect_uri=https%3A%2F%2F127.0.0.1%3A3000&response_type=code";
+      const authorizationUrl="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-00df0bcc6de43b6037219a0bdd40cc161fa358149677d5c0036fbe5174a2190b&redirect_uri=https%3A%2F%2F127.0.0.1%3A3000%2Fauth%2F42%2Fcallback&response_type=code";
       if (authorizationUrl) {
         window.location.href=authorizationUrl;
         // console.log(`DEBUG authorizationUrl=${authorizationUrl}`);
