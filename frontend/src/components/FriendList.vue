@@ -1,14 +1,15 @@
 <template>
-<div v-if="isMouseOver" class="friend-list">
-    <ul>
-      <li v-for="friend in friends" :key="friend.id">
-        <div class="image_friends">
-              <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
-        </div>
-        <div>{{ friend.nick }}</div>
-      </li>
-    </ul>
-  </div>
+<!-- v-if="showFriendList" -->
+    <div  class="friend-list">
+      <ul>
+        <li v-for="friend in friends" :key="friend.id">
+          <div class="image_friends">
+            <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
+          </div>
+          <div>{{ friend.nick }}</div>
+        </li>
+      </ul>
+    </div>
 </template>
 
 <script>
@@ -45,6 +46,7 @@ export default {
 
         if (response.ok) {
           const responseData = await response.json();
+          console.log(responseData)
           this.friends = responseData.friends;
           // Handle the user history data as needed
         } else {
@@ -71,11 +73,16 @@ export default {
 <style scoped>
 .friend-list {
   position: fixed;
-  top: 0;
+  width: 20%;
+  height: 100%;
+  top: 60px;
   right: 0;
   background-color: white;
   border: 1px solid #ccc;
   padding: 10px;
+}
+.friend-list ul {
+  list-style-type: none;
 }
 .image_friends {
   width: 48px;
