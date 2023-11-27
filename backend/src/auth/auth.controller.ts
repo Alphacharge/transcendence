@@ -56,11 +56,10 @@ export class AuthController {
   @Get('/42/callback')
   async handleCallback(@Req() request: Request) {
     const authorizationCode = request.query.code as string;
-    /* TODO use environment variables in following instead of actual values */
-    const clientId = 'u-s4t2ud-00df0bcc6de43b6037219a0bdd40cc161fa358149677d5c0036fbe5174a2190b';
-    const clientSecret = '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';
-    const redirectUri = 'https://127.0.0.1:3000/auth/42/callback';
-    const tokenEndpoint = 'https://api.intra.42.fr/oauth/token';
+    const clientId=`${process.env.FORTYTWO_APP_ID}`;
+    const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
+    const redirectUri = `${process.env.REDIRECT_URI}`;
+    const tokenEndpoint = `${process.env.AUTH_URL}`;
 
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
@@ -81,7 +80,7 @@ export class AuthController {
         const tokenData = await tokenResponse.json();
         accessToken = tokenData.access_token;
       } else {
-        console.error("DEBUG Problems with the tokenresponse");
+        console.error("AUTH.CONTROLLER: HANDLECALLBACK, Problems with the tokenresponse");
       }
       const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
         headers: {
@@ -90,13 +89,13 @@ export class AuthController {
       });
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
-        console.log(JSON.stringify(responseData, null, 2));
+        console.log(`AUTH.CONTROLLER: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`);
       } else {
-        console.error('DEBUG API Request failed', apiResponse.statusText);
+        console.error('AUTH.CONTROLLER: HANDLECALLBACK, API Request failed', apiResponse.statusText);
       }
     } catch (error) {
       // Handle fetch errors
-      console.error("Problems with the tokenresponse");
+      console.error("AUTH.CONTROLLER: HANDLECALLBACK, Problems with the tokenresponse");
     }
   }
 }
