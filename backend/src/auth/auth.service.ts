@@ -52,7 +52,7 @@ export class AuthService {
     const newUser = await this.prismaService.getUserByEmail(user.email);
     //if user does not exist throw exception
     if (!newUser) {
-      throw new ForbiddenException('Credentials incorrect');
+      throw new ForbiddenException('User not found');
     }
     //compare password
     const pwMatches = await argon.verify(newUser.hash, user.password);

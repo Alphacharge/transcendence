@@ -52,7 +52,7 @@ export class GameState {
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
-    this.winningScore = 1; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;

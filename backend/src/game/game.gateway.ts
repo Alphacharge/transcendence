@@ -151,6 +151,7 @@ export class GameGateway {
       console.error('GAME.GATEWAY: sendPrepareGame, Player left game.');
       return;
     }
+
     // tell the client the player number
     game.user1.socket.emit('player1');
     game.user2.socket.emit('player2');

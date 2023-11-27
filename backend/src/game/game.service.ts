@@ -172,6 +172,7 @@ export class GameService {
 
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
     const updateRate = 5;
+
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
