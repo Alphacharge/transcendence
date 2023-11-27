@@ -28,9 +28,20 @@
     </div>
     <div>
       {{ $t("or") }} <router-link to="/signup">{{ $t("SignUp") }}</router-link>
-      {{ $t("or") }} <router-link to="/intra">{{ $t("intra") }}</router-link>
     </div>
-    <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      >
+      {{ $t("Submit") }}
+    </button>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      @click.prevent="authorize"
+      >
+      {{ $t("Authorize with 42") }}
+    </button>
   </form>
 </template>
 
@@ -72,6 +83,17 @@ export default {
       } catch (error) {
         alert("Login failed!");
         router.push("/login");
+      }
+    },
+    async authorize() {
+      /*TODO: https sollte über .env gehen kriege es aber gerade nicht hin
+      e.g. const authorizationUrl=`${process.env.AUTH_URL}*/
+      const authorizationUrl="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-00df0bcc6de43b6037219a0bdd40cc161fa358149677d5c0036fbe5174a2190b&redirect_uri=https%3A%2F%2F127.0.0.1%3A3000&response_type=code";
+      if (authorizationUrl) {
+        window.location.href=authorizationUrl;
+        // console.log(`DEBUG authorizationUrl=${authorizationUrl}`);
+      } else {
+        console.error(`DEBUG process.env.AUTH_URL=${authorizationUrl}`);
       }
     },
   },
