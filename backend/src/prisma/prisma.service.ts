@@ -60,7 +60,6 @@ export class PrismaService extends PrismaClient {
       });
 
       if (userData) {
-        delete userData.hash;
         return userData;
       } else {
         console.error(`User with email ${userEmail} not found.`);
@@ -287,8 +286,8 @@ export class PrismaService extends PrismaClient {
       const allGames = await this.games.findMany({
         where: {
           OR: [
-            { left_user_id: userId },
-            { right_user_id: userId },
+            { left_user_id: Number(userId) },
+            { right_user_id: Number(userId) },
           ],
         },
         orderBy: {
