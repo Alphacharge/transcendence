@@ -1,12 +1,11 @@
 <template>
   <div>
-    <p>Game ID: {{ gameId }}</p>
     <p>I am player number: {{ playerNumber }}</p>
   </div>
   <CountDown />
   <PongButtons />
   <ScoreBoard />
-  <GameArea :gameId="gameId" :player-number="playerNumber"></GameArea>
+  <GameArea :player-number="playerNumber"></GameArea>
 </template>
 
 <script>
@@ -39,9 +38,6 @@ export default {
     },
     leaveQueue() {
       socket.leaveQueue();
-    },
-    stopGame() {
-      socket.stopGame(this.gameId);
     },
   },
 };
