@@ -69,19 +69,30 @@ export class AuthController {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
-          grant_type: authorizationCode,
+          grant_type: 'authorization_code',
           client_id: clientId,
           client_secret: clientSecret,
           code: authorizationCode,
           redirect_uri: redirectUri,
         }),
       });
+      let accessToken;
       if (tokenResponse.ok) {
         const tokenData = await tokenResponse.json();
-        const accessToken = tokenData.access_token;
-        console.log(`DEBUG accessToken=${accessToken}`)
+        accessToken = tokenData.access_token;
       } else {
         console.error("DEBUG Problems with the tokenresponse");
+      }
+      const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (apiResponse.ok) {
+        const responseData = await apiResponse.json();
+        console.log(JSON.stringify(responseData, null, 2));
+      } else {
+        console.error('DEBUG API Request failed', apiResponse.statusText);
       }
     } catch (error) {
       // Handle fetch errors
