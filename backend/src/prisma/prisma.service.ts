@@ -340,4 +340,59 @@ export class PrismaService extends PrismaClient {
       return null;
     }
   }
+
+  async addFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const newFriend = await this.friends.create({
+        data: {
+          user_id: userId,
+          friend_id: friendId,
+        },
+      });
+      if (newFriend)
+        return true;
+    } catch (error) {
+      console.error('Error creating new friend:', error);
+      return false;
+    }
+  }
+
+  async getFriendsById(userId: number): Promise<any[] | null> {
+    try {
+      const allFriends = await this.friends.findMany({
+        where: {
+          user_id: userId,
+        },
+        select: {
+          friend: {
+            select: {
+              id: true,
+              nick: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+      const friendsData = allFriends.map((friend) => friend.friend);
+      return friendsData;
+    } catch (error) {
+      console.error('Error fetching friends data:', error);
+      return null;
+    }
+  }
+
+  async deleteFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const deletedFriend = await this.friends.deleteMany({
+        where: {
+          user_id: userId,
+          friend_id: friendId,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting friend:', error);
+      return false;
+    }
+  }
 }
