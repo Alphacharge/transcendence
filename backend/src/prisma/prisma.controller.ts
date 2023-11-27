@@ -1,11 +1,11 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
-@Controller('stats')
+@Controller('data')
 export class PrismaController {
   constructor(private readonly prismaService: PrismaService) {}
 
-  @Post('user')
+  @Post('userstats')
   async getHistoryMatches(@Body() body: { userId: number }): Promise<{ userHistory: any[] | null, userProfil: any | null }> {
     const { userId } = body;
     try {
@@ -18,8 +18,20 @@ export class PrismaController {
     }
   }
 
-  @Post('all')
+  @Post('allstats')
   async getUserStatistics(): Promise<any | null> {
     return await this.prismaService.getUserStatistics();
+  }
+
+  @Post('friends')
+  async getFriendsById(@Body() body: { userId: number }): Promise<{ friends: any[] | null }> {
+    const { userId } = body;
+    try {
+      const friends = await this.prismaService.getFriendsById(userId);
+      return { friends };
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+      return { friends: null };
+    }
   }
 }
