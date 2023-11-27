@@ -22,23 +22,17 @@ export default {
   mounted() {
     connectWebSocket();
 
-    socket.on("connect", () => {
-      // received new game ID from server
-      socket.on("gameId", (payload) => {
-        this.gameId = payload.gameId;
-        this.player1Score = 0;
-        this.player2Score = 0;
-      });
-
-      // received info if we are left or right
-      socket.on("player1", () => {
-        this.playerNumber = 1;
-      });
-      socket.on("player2", () => {
-        this.playerNumber = 2;
-      });
+    // received info if we are left or right
+    socket.on("player1", () => {
+      this.playerNumber = 1;
+      this.player1Score = 0;
+    });
+    socket.on("player2", () => {
+      this.playerNumber = 2;
+      this.player2Score = 0;
     });
   },
+
   methods: {
     enterQueue() {
       socket.enterQueue();

@@ -12,13 +12,13 @@ export class GameService {
   constructor(private readonly prismaService: PrismaService) {}
   queueTournament: User[] = [];
   queue: User[] = [];
-  users: Map<string, User> = new Map(); //socket.id -> user
-  games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
+  websocketUsers: Map<string, User> = new Map(); //socket.id -> user
+  // games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
     // find the matching user
-    const user = this.users.get(socket.id);
+    const user = this.websocketUsers.get(socket.id);
 
     // check if user already is in queue
     if (
@@ -50,7 +50,7 @@ export class GameService {
   }
 
   addToTournamentQueue(socket: Socket, tournamentStatus: number) {
-    const user = this.users.get(socket.id);
+    const user = this.websocketUsers.get(socket.id);
 
     if (!user || user.activeTournament) {
       return;
@@ -82,7 +82,7 @@ export class GameService {
 
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
-    const user = this.users.get(socket.id);
+    const user = this.websocketUsers.get(socket.id);
     // Find the user in the queue
     const userToRemove = this.queue.find(
       (queuedUser) =>
@@ -100,7 +100,7 @@ export class GameService {
   }
 
   removeFromTournamentQueue(socket: Socket) {
-    const user = this.users.get(socket.id);
+    const user = this.websocketUsers.get(socket.id);
 
     const userToRemove = this.queueTournament.find(
       (queuedUser) =>
@@ -134,7 +134,7 @@ export class GameService {
     tournament.winners = tournament.players.slice();
     tournament.setUsers();
 
-    sharedEventEmitter.emit("tournamentStart", tournament);
+    sharedEventEmitter.emit('tournamentStart', tournament);
 
     let game = tournament.nextGame();
     while (game) {
@@ -153,7 +153,10 @@ export class GameService {
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
-    game.gameData = await this.prismaService.createNewGame(game.user1.userData.id, game.user2.userData.id);
+    game.gameData = await this.prismaService.createNewGame(
+      game.user1.userData.id,
+      game.user2.userData.id,
+    );
     await game.countDown();
 
     if (!game.gameData) {
@@ -164,7 +167,7 @@ export class GameService {
       return;
     }
 
-    this.games.set(game.gameData.id, game);
+    // this.games.set(game.gameData.id, game);
     sharedEventEmitter.emit('prepareGame', game);
 
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
@@ -175,16 +178,16 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  paddleUp(GameId: number, player: User) {
-    const game = this.games.get(GameId);
+  paddleUp(player: User) {
+    const game = player.activeGame;
     if (game && game.isRunning()) {
       game.movePaddleUp(player);
     }
     return game;
   }
 
-  paddleDown(GameId: number, player: User) {
-    const game = this.games.get(GameId);
+  paddleDown(player: User) {
+    const game = player.activeGame;
     if (game && game.isRunning()) {
       game.movePaddleDown(player);
     }
@@ -193,21 +196,27 @@ export class GameService {
 
   endGame(game: GameState) {
     game.playerVictory();
-    this.prismaService.updateGameScore(game.gameData.id, game.scorePlayer1, game.scorePlayer2, game.winningPlayer.userData.id);
+    this.prismaService.updateGameScore(
+      game.gameData.id,
+      game.scorePlayer1,
+      game.scorePlayer2,
+      game.winningPlayer.userData.id,
+    );
 
     game.user1.activeGame = null;
     game.user2.activeGame = null;
 
     if (game.tournamentState) {
-      if (game.tournamentState.gamesNeeded == game.tournamentState.gamesPlayed) {
+      if (
+        game.tournamentState.gamesNeeded == game.tournamentState.gamesPlayed
+      ) {
         game.tournamentState.freeUsers();
       }
 
       this.startGame(game.tournamentState.nextGame());
     }
 
-    this.games.delete(game.gameData.id);
-
+    // this.games.delete(game.gameData.id);
   }
 
   animateBall(game: GameState) {

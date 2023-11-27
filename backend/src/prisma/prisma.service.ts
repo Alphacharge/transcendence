@@ -16,7 +16,10 @@ export class PrismaService extends PrismaClient {
   }
 
   //User
-  async createUserBySignUp(inEmail: string, inHash: string): Promise<Users | null>{
+  async createUserBySignUp(
+    inEmail: string,
+    inHash: string,
+  ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
@@ -73,16 +76,18 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getAllUsersIdNiAv(): Promise<{id: number; nick: string; avatar: number}[] | null> {
+  async getAllUsersIdNiAv(): Promise<
+    { id: number; nick: string; avatar: number }[] | null
+  > {
     try {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
           nick: true,
-        //   avatar: true,
+          //   avatar: true,
         },
       });
-    //   return allUsers;
+      //   return allUsers;
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -110,14 +115,19 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async updateGameScore(gameId: number, leftScore: number, rightScore: number, winnerId: number) {
+  async updateGameScore(
+    gameId: number,
+    leftScore: number,
+    rightScore: number,
+    winnerId: number,
+  ) {
     try {
       const updatedGame = await this.games.update({
         where: { id: gameId }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
         data: {
-        //   left_user_score: leftScore,
-        //   right_user_score: rightScore,
-        //   winner_id: winnerId,
+          //   left_user_score: leftScore,
+          //   right_user_score: rightScore,
+          //   winner_id: winnerId,
           // Other fields you want to update
         },
       });
@@ -128,31 +138,31 @@ export class PrismaService extends PrismaClient {
   }
 
   //Tournament
-//   async createNewTournament(firstGameId: number, secondGameId: number, thirdGameId: number, tourWinnerId: number): Promise<Tournaments | null> {
-    // Assuming you're using Prisma to interact with a database
-    // try {
-    //   const TournamentData: Tournaments = await this.tournaments.create({
-    //     data: {
-    //       first_game_id: firstGameId,
-    //       second_game_id: secondGameId,
-    //       third_game_id: thirdGameId,
-    //       tourwinner_id: tourWinnerId,
-    //       createdAt: new Date(),
-    //     },
-    //   });
-    //   return TournamentData;
-//     } catch (error) {
-//       console.error('Error creating new tournament:', error);
-//       return null;
-//     }
-//   }
+  //   async createNewTournament(firstGameId: number, secondGameId: number, thirdGameId: number, tourWinnerId: number): Promise<Tournaments | null> {
+  // Assuming you're using Prisma to interact with a database
+  // try {
+  //   const TournamentData: Tournaments = await this.tournaments.create({
+  //     data: {
+  //       first_game_id: firstGameId,
+  //       second_game_id: secondGameId,
+  //       third_game_id: thirdGameId,
+  //       tourwinner_id: tourWinnerId,
+  //       createdAt: new Date(),
+  //     },
+  //   });
+  //   return TournamentData;
+  //     } catch (error) {
+  //       console.error('Error creating new tournament:', error);
+  //       return null;
+  //     }
+  //   }
 
   //Stats
   async getGameWinsById(userId: number): Promise<number> {
     try {
       const wins: number = await this.games.count({
         where: {
-        //   winner_id: userId,
+          //   winner_id: userId,
         },
       });
       return wins;
@@ -172,7 +182,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
           NOT: {
             // winner_id: userId,
@@ -196,7 +206,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
         },
       });
@@ -209,37 +219,37 @@ export class PrismaService extends PrismaClient {
 
   async getAmountOfTournamentMatchesById(userId: number): Promise<number> {
     try {
-    //   const tournamentCount: number = await this.tournaments.count({
-    //     where: {
-    //       OR: [
-    //         {
-    //           f_game: {
-    //             OR: [
-    //               { left_user_id: userId },
-    //               { right_user_id: userId },
-    //             ],
-    //           },
-    //         },
-    //         {
-    //           s_game: {
-    //             OR: [
-    //               { left_user_id: userId },
-    //               { right_user_id: userId },
-    //             ],
-    //           },
-    //         },
-    //         {
-    //           t_game: {
-    //             OR: [
-    //               { left_user_id: userId },
-    //               { right_user_id: userId },
-    //             ],
-    //           },
-    //         },
-    //       ],
-    //     },
-    //   });
-    //   return tournamentCount;
+      //   const tournamentCount: number = await this.tournaments.count({
+      //     where: {
+      //       OR: [
+      //         {
+      //           f_game: {
+      //             OR: [
+      //               { left_user_id: userId },
+      //               { right_user_id: userId },
+      //             ],
+      //           },
+      //         },
+      //         {
+      //           s_game: {
+      //             OR: [
+      //               { left_user_id: userId },
+      //               { right_user_id: userId },
+      //             ],
+      //           },
+      //         },
+      //         {
+      //           t_game: {
+      //             OR: [
+      //               { left_user_id: userId },
+      //               { right_user_id: userId },
+      //             ],
+      //           },
+      //         },
+      //       ],
+      //     },
+      //   });
+      //   return tournamentCount;
     } catch (error) {
       console.error('Error counting losses:', error);
       return 0;
@@ -248,12 +258,12 @@ export class PrismaService extends PrismaClient {
 
   async getTournamentWinsById(userId: number): Promise<number> {
     try {
-    //   const wins: number = await this.tournaments.count({
-        // where: {
-        //   tourwinner_id: userId,
-        // },
-    //   });
-    //   return wins;
+      //   const wins: number = await this.tournaments.count({
+      // where: {
+      //   tourwinner_id: userId,
+      // },
+      //   });
+      //   return wins;
     } catch (error) {
       console.error('Error counting wins:', error);
       return 0;
@@ -264,11 +274,13 @@ export class PrismaService extends PrismaClient {
     const allUsers = await this.getAllUsersIdNiAv();
     const userStatistics = [];
 
-    for (const user of allUsers){
+    for (const user of allUsers) {
       const matches: number = await this.getAmountOfMatchesById(user.id);
       const wins: number = await this.getGameWinsById(user.id);
       const losses: number = await this.getGameLossesById(user.id);
-      const tourmatches: number = await this.getAmountOfTournamentMatchesById(user.id);
+      const tourmatches: number = await this.getAmountOfTournamentMatchesById(
+        user.id,
+      );
       const tourwins: number = await this.getTournamentWinsById(user.id);
 
       userStatistics.push({
@@ -279,7 +291,7 @@ export class PrismaService extends PrismaClient {
         wins,
         losses,
         tourmatches,
-        tourwins
+        tourwins,
       });
     }
     return userStatistics;
@@ -289,29 +301,26 @@ export class PrismaService extends PrismaClient {
     try {
       const allGames = await this.games.findMany({
         where: {
-          OR: [
-            { left_user_id: userId },
-            { right_user_id: userId },
-          ],
+          OR: [{ left_user_id: userId }, { right_user_id: userId }],
         },
         orderBy: {
           id: 'desc',
         },
         include: {
-        //   l_user: {
-            // select: {
-            //   id: true,
-            //   nick: true,
-            //   avatar: true,
-            // },
-        //   },
-        //   r_user: {
-            // select: {
-            //   id: true,
-            //   nick: true,
-            //   avatar: true,
-            // },
-        //   },
+          //   l_user: {
+          // select: {
+          //   id: true,
+          //   nick: true,
+          //   avatar: true,
+          // },
+          //   },
+          //   r_user: {
+          // select: {
+          //   id: true,
+          //   nick: true,
+          //   avatar: true,
+          // },
+          //   },
         },
       });
 
@@ -320,14 +329,14 @@ export class PrismaService extends PrismaClient {
         // left_user_score: game.left_user_score,
         // right_user_score: game.right_user_score,
         leftUser: {
-        //   id: game.l_user.id,
-        //   nick: game.l_user.nick,
-        //   avatar: game.l_user.avatar,
+          //   id: game.l_user.id,
+          //   nick: game.l_user.nick,
+          //   avatar: game.l_user.avatar,
         },
         rightUser: {
-        //   id: game.r_user.id,
-        //   nick: game.r_user.nick,
-        //   avatar: game.r_user.avatar,
+          //   id: game.r_user.id,
+          //   nick: game.r_user.nick,
+          //   avatar: game.r_user.avatar,
         },
       }));
     } catch (error) {
