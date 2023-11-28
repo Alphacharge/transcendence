@@ -27,19 +27,19 @@ export class AuthService {
       //save the new user
 
       const newUser = await this.prismaService.createUserBySignUp(
-        user.email,
+        user.username,
         hash,
       );
       if (newUser == null)
         throw new GatewayTimeoutException('Database unreachable');
-      // console.log(this.signToken(user.id, user.email));
-      const bToken = await this.signToken(newUser.id, newUser.email);
-      // return this.signToken(newUser.id, newUser.email);
+      // console.log(this.signToken(user.id, user.username));
+      const bToken = await this.signToken(newUser.id, newUser.username);
+      // return this.signToken(newUser.id, newUser.username);
       this.activeUser.push(newUser.id);
       return {
         access_token: bToken,
         userId: newUser.id,
-        userEmail: newUser.email,
+        userName: newUser.username,
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -51,8 +51,8 @@ export class AuthService {
   }
 
   async signin(user: User) {
-    //find the user by email
-    const newUser = await this.prismaService.getUserByEmail(user.email);
+    //find the user by username
+    const newUser = await this.prismaService.getUserByName(user.username);
     //if user does not exist throw exception
     if (!newUser) {
       throw new ForbiddenException('User not found');
@@ -63,24 +63,24 @@ export class AuthService {
     if (!pwMatches) {
       throw new ForbiddenException('Credentials incorrect');
     }
-    const bToken = await this.signToken(newUser.id, newUser.email);
-    // return this.signToken(newUser.id, newUser.email);
+    const bToken = await this.signToken(newUser.id, newUser.username);
+    // return this.signToken(newUser.id, newUser.username);
 
-    console.log('AUTH.SERVICE: SIGNIN, Logged in ', newUser.email);
+    console.log('AUTH.SERVICE: SIGNIN, Logged in ', newUser.username);
     console.log(newUser.id);
     this.activeUser.push(newUser.id);
     console.log(this.activeUser);
     return {
       access_token: bToken,
       userId: newUser.id,
-      userEmail: newUser.email,
+      userName: newUser.username,
     };
   }
 
-  async signToken(userId: number, email: string): Promise<string> {
+  async signToken(userId: number, username: string): Promise<string> {
     const payload = {
       sub: userId,
-      email,
+      username,
     };
 
     const secret = this.config.get('JWT_SECRET');
@@ -121,7 +121,7 @@ export class AuthService {
       // Renew the token and return it
       const renewedToken = await this.signToken(
         decodedToken.sub,
-        decodedToken.email,
+        decodedToken.username,
       );
 
       return { valid: true, renewedToken };

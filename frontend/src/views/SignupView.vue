@@ -4,19 +4,14 @@
   </div>
   <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
     <div class="mb-3">
-      <label for="InputEmail" class="form-label"
-        ><h5>{{ $t("EmailAddress") }}</h5></label
+      <label for="Username" class="form-label"
+        ><h5>{{ $t("Username") }}</h5></label
       ><br />
-      <span v-if="!isValidEmail && email !== ''" style="color: red"
-        >Please enter a valid email address</span
-      >
       <input
-        v-model="inputEmail"
-        @input="validateEmail"
-        type="email"
+        v-model="username"
+        type="text"
         class="form-control"
-        id="InputEmail"
-        aria-describedby="email"
+        id="Username"
       />
     </div>
     <div class="mb-3">
@@ -53,26 +48,20 @@ import router from "@/router";
 export default {
   data() {
     return {
-      inputEmail: "",
+      username: "",
       password: "",
       rePassword: "",
-      isValidEmail: true,
     };
   },
   computed: {
     isDisabled() {
       return !(
-        this.isValidEmail &&
         this.rePassword &&
         this.password === this.rePassword
       );
     },
   },
   methods: {
-    validateEmail() {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      this.isValidEmail = emailRegex.test(this.inputEmail);
-    },
     async sendPostRequest() {
       try {
         const response = await fetch(
@@ -83,7 +72,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: this.inputEmail,
+              username: this.username,
               password: this.password,
             }),
           },

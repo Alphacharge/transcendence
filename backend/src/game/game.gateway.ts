@@ -145,7 +145,7 @@ export class GameGateway {
 
   sendTournamentQueue() {
     this.gameService.queueTournament.forEach(queuedUser => {
-      queuedUser.socket.emit('playerJoinedTournament', queuedUser.userData.email);
+      queuedUser.socket.emit('playerJoinedTournament', queuedUser.userData.username);
     });
   }
 
@@ -212,8 +212,8 @@ export class GameGateway {
     console.log(
       `GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`,
     );
-    game.user1.socket.emit('victory', game.winningPlayer.userData.email);
-    game.user2.socket.emit('victory', game.winningPlayer.userData.email);
+    game.user1.socket.emit('victory', game.winningPlayer.userData.username);
+    game.user2.socket.emit('victory', game.winningPlayer.userData.username);
   }
 
   matchStart(game: GameState) {
@@ -234,7 +234,7 @@ export class GameGateway {
   removedFromTournamentQueue(user: User) {
     user.socket.emit('removedFromTournamentQueue');
     this.gameService.queueTournament.forEach(queuedUser => {
-      queuedUser.socket.emit('playerLeftTournament', user.userData.email);
+      queuedUser.socket.emit('playerLeftTournament', user.userData.username);
     });
   }
 
