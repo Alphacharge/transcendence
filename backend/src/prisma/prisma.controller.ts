@@ -1,9 +1,10 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Controller('data')
 export class PrismaController {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService, readonly authService: AuthService) {}
 
   @Post('userstats')
   async getHistoryMatches(@Body() body: { userId: number }): Promise<{ userHistory: any[] | null, userProfil: any | null }> {
@@ -28,6 +29,13 @@ export class PrismaController {
     const { userId } = body;
     try {
       const friends = await this.prismaService.getFriendsById(userId);
+      friends.forEach(element => {
+        if (this.authService.activeUser.includes(element.id)){
+          element.status = 1;
+        }
+      });
+      console.log(this.authService.activeUser)
+      console.log(friends)
       return { friends };
     } catch (error) {
       console.error('Error fetching friends:', error);
