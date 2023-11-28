@@ -22,13 +22,13 @@ export class PrismaService extends PrismaClient {
 
   //User
   async createUserBySignUp(
-    inEmail: string,
+    inName: string,
     inHash: string,
   ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
-          email: inEmail,
+          username: inName,
           hash: inHash,
         },
       });
@@ -60,17 +60,17 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getUserByEmail(userEmail: string): Promise<Users | null> {
-    console.log('Search User with email: ', userEmail);
+  async getUserByName(userName: string): Promise<Users | null> {
+    console.log('Search User with username: ', userName);
 
     try {
       const userData = await this.users.findUnique({
-        where: { email: userEmail },
+        where: { username: userName },
       });
       if (userData) {
         return userData;
       } else {
-        console.error(`User with email ${userEmail} not found.`);
+        console.error(`User with username ${userName} not found.`);
         return null;
       }
     } catch (error) {
@@ -79,14 +79,14 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getAllUsersIdNiAv(): Promise<
-    { id: number; nick: string; avatar: number }[] | null
+  async getAllUsersIdNaAv(): Promise<
+    { id: number; username: string; avatar: number }[] | null
   > {
     try {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
-          nick: true,
+          username: true,
           avatar: true,
         },
       });
@@ -268,7 +268,7 @@ export class PrismaService extends PrismaClient {
   }
 
   async getUserStatistics() {
-    const allUsers = await this.getAllUsersIdNiAv();
+    const allUsers = await this.getAllUsersIdNaAv();
     const userStatistics = [];
 
     for (const user of allUsers) {
@@ -282,7 +282,7 @@ export class PrismaService extends PrismaClient {
 
       userStatistics.push({
         userId: user.id,
-        nick: user.nick,
+        username: user.username,
         avatar: user.avatar,
         matches,
         wins,
@@ -298,7 +298,7 @@ export class PrismaService extends PrismaClient {
     try {
       const allGames = await this.games.findMany({
         where: {
-          OR: [{ left_user_id: userId }, { right_user_id: userId }],
+          OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
         },
         orderBy: {
           id: 'desc',
@@ -307,14 +307,14 @@ export class PrismaService extends PrismaClient {
           l_user: {
             select: {
               id: true,
-              nick: true,
+              username: true,
               avatar: true,
             },
           },
           r_user: {
             select: {
               id: true,
-              nick: true,
+              username: true,
               avatar: true,
             },
           },
@@ -327,12 +327,12 @@ export class PrismaService extends PrismaClient {
         right_user_score: game.right_user_score,
         leftUser: {
           id: game.l_user.id,
-          nick: game.l_user.nick,
+          username: game.l_user.username,
           avatar: game.l_user.avatar,
         },
         rightUser: {
           id: game.r_user.id,
-          nick: game.r_user.nick,
+          username: game.r_user.username,
           avatar: game.r_user.avatar,
         },
       }));
@@ -367,7 +367,7 @@ export class PrismaService extends PrismaClient {
           friend: {
             select: {
               id: true,
-              nick: true,
+              username: true,
               avatar: true,
             },
           },

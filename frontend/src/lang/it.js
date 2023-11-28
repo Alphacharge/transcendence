@@ -14,7 +14,7 @@ export default {
   AbortGame: "Interrompi Gioco",
 
   // SIGNUP & LOGIN
-  EmailAddress: "Indirizzo Email",
+  Username: "Nome utente",
   Password: "Password",
   RepeatPassword: "Ripeti Password",
   Submit: "Invia",

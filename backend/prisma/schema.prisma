@@ -14,9 +14,8 @@ model Users {
   id        Int       @id @default(autoincrement())
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  email     String    @unique
+  username  String    @unique @default("")
   hash      String
-  nick      String?
   avatar    Int?      @default(0)
 
   //Opposite Relations

@@ -14,7 +14,7 @@ export default {
   AbortGame: "Spiel abbrechen",
 
   // SIGNUP & LOGIN
-  EmailAddress: "E-Mail",
+  Username: "Benutzername",
   Password: "Passwort",
   RepeatPassword: "Passwort wiederholen",
   Submit: "Absenden",
