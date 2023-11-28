@@ -60,7 +60,6 @@ export class AuthController {
     const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
     const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
     const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
-
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
         method: 'POST',
