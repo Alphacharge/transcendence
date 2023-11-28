@@ -8,6 +8,7 @@ export class GameState {
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
 
+  isLocalGame: boolean;
   tournamentState: TournamentState | null;
 
   user1: User;
@@ -46,6 +47,7 @@ export class GameState {
   constructor() {
     this.gameData = null;
     this.intervalId = null;
+    this.isLocalGame = false;
     this.tournamentState = null;
 
     this.user1 = null;
