@@ -3,10 +3,13 @@
   <div class="friend-list">
     <ul>
       <li>
-        <div>Add Friends </div>
+        <div>Add Friends</div>
         <div class="image_friends_add">
-          <img style="width:16px; height:auto;" :src="getPlusSrc()"
-          alt="addFriend" />
+          <img
+            style="width: 16px; height: auto"
+            :src="getPlusSrc()"
+            alt="addFriend"
+          />
         </div>
       </li>
     </ul>
@@ -24,8 +27,11 @@
           />
         </div>
         <div class="image_friends_remove">
-          <img style="width:16px; height:auto;" :src="getCrossSrc()"
-          alt="rmFriend" />
+          <img
+            style="width: 16px; height: auto"
+            :src="getCrossSrc()"
+            alt="rmFriend"
+          />
         </div>
       </li>
     </ul>
@@ -77,15 +83,15 @@ export default {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar}.png`;
     },
     getStatusSrc(status) {
-      if (status){
+      if (status) {
         return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/on.png`;
       }
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/off.png`;
     },
-    getCrossSrc(avatar) {
+    getCrossSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/cross.png`;
     },
-    getPlusSrc(avatar) {
+    getPlusSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/plus.png`;
     },
     handleMouseEnter() {
