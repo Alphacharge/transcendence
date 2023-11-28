@@ -83,7 +83,6 @@ export default {
       const scope = `${process.env.VUE_APP_SCOPE}`;
       const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const state = `${process.env.VUE_APP_STATE}`;
-
       const queryParams = new URLSearchParams({
         client_id: `${process.env.VUE_APP_FORTYTWO_APP_ID}`,
         redirect_uri: redirectUri,
