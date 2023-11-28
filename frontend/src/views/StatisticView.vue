@@ -1,32 +1,47 @@
 <template>
-  <div class="container">
-    <h2 class="centered">Statistics</h2>
+  <div>
+    <h2 class="centered">Records</h2>
+    <div class="container">
+      <div class="patch-wrapper">
+        <div class="patch-left">
+          <div class="sub-patch">patch1</div>
+          <div class="sub-patch">patch3</div>
+          <div class="sub-patch">patch5</div>
+        </div>
+        <div class="patch-right">
+          <div class="sub-patch">patch2</div>
+          <div class="sub-patch">patch4</div>
+          <div class="sub-patch">patch6</div>
+        </div>
+      </div>
+      <h2 class="centered">Statistics</h2>
       <table class="table table-bordered transparent-table">
-        <thead>
-          <tr>
-            <th>{{ $t("User") }}</th>
-            <th @click="sortTable('matches')"> {{ $t("Matches") }}</th>
-            <th @click="sortTable('wins')"> {{ $t("Wins") }}</th>
-            <th @click="sortTable('losses')"> {{ $t("Losses") }}</th>
-            <th @click="sortTable('kd')"> K/D</th>
-            <th @click="sortTable('tourmatches')"> {{ $t("TournamentMatches") }}</th>
-            <th @click="sortTable('tourwins')"> {{ $t("TournamentWins") }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-          <tr v-for="row in sortedStatistics" :key="row.userId">
-            <td>{{ row.nick }}</td>
-            <td>{{ row.matches }}</td>
-            <td>{{ row.wins }}</td>
-            <td>{{ row.losses }}</td>
-            <td>{{ row.wins - row.losses }}</td>
-            <td>{{ row.tourmatches }}</td>
-            <td>{{ row.tourwins }}</td>
-          </tr>
-        </tbody>
-      </table>
+         <thead>
+           <tr>
+             <th>{{ $t("User") }}</th>
+             <th @click="sortTable('matches')"> {{ $t("Matches") }}</th>
+             <th @click="sortTable('wins')"> {{ $t("Wins") }}</th>
+             <th @click="sortTable('losses')"> {{ $t("Losses") }}</th>
+             <th @click="sortTable('kd')"> K/D</th>
+             <th @click="sortTable('tourmatches')"> {{ $t("TournamentMatches") }}</th>
+             <th @click="sortTable('tourwins')"> {{ $t("TournamentWins") }}</th>
+           </tr>
+         </thead>
+         <tbody>
+           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
+           <tr v-for="row in sortedStatistics" :key="row.userId">
+             <td>{{ row.nick }}</td>
+             <td>{{ row.matches }}</td>
+             <td>{{ row.wins }}</td>
+             <td>{{ row.losses }}</td>
+             <td>{{ row.wins - row.losses }}</td>
+             <td>{{ row.tourmatches }}</td>
+             <td>{{ row.tourwins }}</td>
+           </tr>
+         </tbody>
+        </table>
     </div>
+  </div>
 </template>
 
 
@@ -96,9 +111,30 @@ export default {
 
 <style scoped>
 
+.patch-wrapper{
+  display: flex;
+  justify-content: space-between;
+  background: transparent;
+  flex-wrap: wrap;
+}
+.patch-left,
+.patch-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.sub-patch {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
 .container {
   width: 100%;
   height: 80%;
+}
+
+.centered{
+  text-align: center;
 }
 .transparent-table {
   background: transparent;
