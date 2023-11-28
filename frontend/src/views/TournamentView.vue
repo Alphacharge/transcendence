@@ -39,8 +39,8 @@ export default {
     PlayerCheckin,
     GameArea,
     ScoreBoard,
-    CountDown
-},
+    CountDown,
+  },
   data() {
     return {
       players: [],
@@ -60,7 +60,10 @@ export default {
     });
 
     socket.on("playerJoinedTournament", (username) => {
-      this.players.push(username);
+      console.log("player joined tournament queue", username);
+      if (!this.players.includes(username)) {
+        this.players.push(username);
+      }
     });
 
     socket.on("playerLeftTournament", (username) => {
