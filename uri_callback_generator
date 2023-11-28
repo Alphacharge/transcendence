@@ -1,9 +1,11 @@
 #!/bin/bash
 rm -f ./uris
-for i in {1..9}; do
-    for j in {1..9}; do
-        url="https://10.${i}.${j}:3000/auth/42/callback"
+for i in {11..13}; do
+    for j in {1..10}; do
+        for k in {1..30}; do
+        url="https://10.${i}.${j}.${k}:3000/auth/42/callback"
         echo "$url" >> uris
+        done
     done
 done
 
