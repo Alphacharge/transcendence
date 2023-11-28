@@ -7,6 +7,17 @@
           <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
         </div>
         <div>{{ friend.nick }}</div>
+        <div class="image_friends_status">
+          <img
+            style="width: 16px; height: auto"
+            :src="getStatusSrc(friend.status)"
+            alt="Status"
+          />
+        </div>
+        <div class="image_friends_remove">
+          <img style="width:16px; height:auto;" :src="getCrossSrc()"
+          alt="rmFriend" />
+        </div>
       </li>
     </ul>
   </div>
@@ -54,8 +65,16 @@ export default {
       }
     },
     getAvatarSrc(avatar) {
-      // Adjust the path as needed based on your avatar structure
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar}.png`;
+    },
+    getStatusSrc(status) {
+      if (status){
+        return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/on.png`;
+      }
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/off.png`;
+    },
+    getCrossSrc(avatar) {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/cross.png`;
     },
     handleMouseEnter() {
       this.isMouseOver = true;
