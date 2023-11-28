@@ -42,8 +42,6 @@ export class PrismaController {
           element.status = 1;
         }
       });
-      console.log(this.authService.activeUser);
-      console.log(friends);
       return { friends };
     } catch (error) {
       console.error('Error fetching friends:', error);
