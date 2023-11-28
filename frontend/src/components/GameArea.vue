@@ -1,9 +1,12 @@
 <template>
   <div class="container">
     <div class="background" ref="container"></div>
-    <div class="bouncing-ball"></div>
-    <div class="left-paddle"></div>
-    <div class="right-paddle"></div>
+    <div
+      class="bouncing-ball"
+      :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
+    ></div>
+    <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
+    <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
   </div>
 </template>
 
@@ -25,9 +28,6 @@ export default {
     };
   },
   mounted() {
-
-    this.containerWidth = this.$refs.container.offsetWidth;
-    this.containerHeight = this.$refs.container.offsetHeight;
     // received ball update from server
     socket.on("ballUpdate", (ballCoordinates) => {
       this.bouncingBallX = ballCoordinates.x;
@@ -89,50 +89,42 @@ export default {
 /* Achtung: the field geometry is calculated in the backed, while we set absolute values in the styling, this will now work and needs to be fixed */
 .container {
   position: relative;
-  width: 80vw;  /* 80% der Viewport-Breite */
-  height: 40vh; /* 40% der Viewport-Höhe */
-  /* max-width: 800px;
-  max-height: 400px; */
+  width: 800px;
+  height: 400px;
   overflow: hidden;
 }
-
 
 .background {
   width: 100%;
   height: 100%;
   background-color: rgba(128, 128, 128, 0);
   box-sizing: border-box;
-  border: 2px solid magenta;
+  border: 10px solid magenta;
 }
 
 .bouncing-ball {
-  position: relative;
+  position: absolute;
   width: 10px;
   height: 10px;
   background-color: greenyellow;
   border-radius: 50%;
-  left: 50%;
-  bottom: 50%;
-  transform: translate(50%, 50%);
 }
 
 .left-paddle {
-  position: relative;
+  position: absolute;
   width: 10px;
   height: 100px;
   background-color: blue;
-  left: 5%;
-  bottom: 65%;
+  left: 40px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 
 .right-paddle {
-  position: relative;
+  position: absolute;
   width: 10px;
   height: 100px;
   background-color: rebeccapurple;
-  left: 95%;
-  bottom: 85%;
+  left: 750px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>
