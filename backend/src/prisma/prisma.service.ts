@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient, Users, Games, Friends, Tournaments } from '@prisma/client';
+import {
+  PrismaClient,
+  Users,
+  Games,
+  Friends,
+  Tournaments,
+} from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -133,7 +139,12 @@ export class PrismaService extends PrismaClient {
   }
 
   //Tournament
-  async createNewTournament(firstGameId: number, secondGameId: number, thirdGameId: number, tourWinnerId: number): Promise<Tournaments | null> {
+  async createNewTournament(
+    firstGameId: number,
+    secondGameId: number,
+    thirdGameId: number,
+    tourWinnerId: number,
+  ): Promise<Tournaments | null> {
     // Assuming you're using Prisma to interact with a database
     try {
       const TournamentData: Tournaments = await this.tournaments.create({
@@ -177,7 +188,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
           NOT: {
             winner_id: userId,
@@ -219,26 +230,17 @@ export class PrismaService extends PrismaClient {
           OR: [
             {
               f_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               s_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               t_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
           ],
@@ -348,8 +350,7 @@ export class PrismaService extends PrismaClient {
           friend_id: friendId,
         },
       });
-      if (newFriend)
-        return true;
+      if (newFriend) return true;
     } catch (error) {
       console.error('Error creating new friend:', error);
       return false;

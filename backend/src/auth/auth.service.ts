@@ -18,7 +18,7 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
-  activeUser: number[] = []
+  activeUser: number[] = [];
 
   async signup(user: User) {
     try {
@@ -94,14 +94,16 @@ export class AuthService {
   }
 
   /* This function takes an object or a token directly and returns its validity. */
-  async validateToken(token: string): Promise<{ valid: boolean; renewedToken?: string }> {
+  async validateToken(
+    token: string,
+  ): Promise<{ valid: boolean; renewedToken?: string }> {
     const secret = this.config.get('JWT_SECRET');
-  
+
     try {
       const decodedToken: any = await this.jwt.verifyAsync(token, {
         secret: secret,
       });
-  
+
       // Check if the token is expired
       if (decodedToken.exp <= Math.floor(Date.now() / 1000)) {
         // Token is expired
@@ -114,11 +116,14 @@ export class AuthService {
 
         return { valid: false };
       }
-  
+
       // Token is valid and not expired
       // Renew the token and return it
-      const renewedToken = await this.signToken(decodedToken.sub, decodedToken.email);
-  
+      const renewedToken = await this.signToken(
+        decodedToken.sub,
+        decodedToken.email,
+      );
+
       return { valid: true, renewedToken };
     } catch (error) {
       // Handle token verification errors

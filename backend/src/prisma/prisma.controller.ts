@@ -4,13 +4,19 @@ import { AuthService } from 'src/auth/auth.service';
 
 @Controller('data')
 export class PrismaController {
-  constructor(private readonly prismaService: PrismaService, readonly authService: AuthService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    readonly authService: AuthService,
+  ) {}
 
   @Post('userstats')
-  async getHistoryMatches(@Body() body: { userId: number }): Promise<{ userHistory: any[] | null, userProfil: any | null }> {
+  async getHistoryMatches(
+    @Body() body: { userId: number },
+  ): Promise<{ userHistory: any[] | null; userProfil: any | null }> {
     const { userId } = body;
     try {
-      const userHistory = await this.prismaService.getHistoryMatchesById(userId);
+      const userHistory =
+        await this.prismaService.getHistoryMatchesById(userId);
       const userProfil = await this.prismaService.getUserById(userId);
       return { userHistory, userProfil };
     } catch (error) {
@@ -25,17 +31,19 @@ export class PrismaController {
   }
 
   @Post('friends')
-  async getFriendsById(@Body() body: { userId: number }): Promise<{ friends: any[] | null }> {
+  async getFriendsById(
+    @Body() body: { userId: number },
+  ): Promise<{ friends: any[] | null }> {
     const { userId } = body;
     try {
       const friends = await this.prismaService.getFriendsById(userId);
-      friends.forEach(element => {
-        if (this.authService.activeUser.includes(element.id)){
+      friends.forEach((element) => {
+        if (this.authService.activeUser.includes(element.id)) {
           element.status = 1;
         }
       });
-      console.log(this.authService.activeUser)
-      console.log(friends)
+      console.log(this.authService.activeUser);
+      console.log(friends);
       return { friends };
     } catch (error) {
       console.error('Error fetching friends:', error);
