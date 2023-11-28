@@ -10,6 +10,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
 import { type } from 'os';
+import { Request, Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -121,6 +122,59 @@ export class AuthService {
     } catch (error) {
       // console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: Token verification failed', error);
       return false;
+    }
+  }
+
+  async handleCallback(request: Request) {
+    const authorizationCode = request.query.code as string;
+    const clientId = `${process.env.FORTYTWO_APP_ID}`;
+    const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
+    const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
+    const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
+    try {
+      const tokenResponse = await fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          client_id: clientId,
+          client_secret: clientSecret,
+          code: authorizationCode,
+          redirect_uri: redirectUri,
+        }),
+      });
+      let accessToken;
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        accessToken = tokenData.access_token;
+      } else {
+        console.error(
+          'AUTH.SERVICE: HANDLECALLBACK, Problems with the tokenresponse',
+        );
+      }
+      const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (apiResponse.ok) {
+        const responseData = await apiResponse.json();
+        console.log(
+          `AUTH.SERVICE: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
+        );
+      } else {
+        console.error(
+          'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
+          apiResponse.statusText,
+        );
+      }
+    } catch (error) {
+      // Handle fetch errors
+      console.error(
+        `AUTH.SERVICE: HANDLECALLBACK, exception caught: ${error}`,
+      );
     }
   }
 }
