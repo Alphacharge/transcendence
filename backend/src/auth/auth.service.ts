@@ -18,6 +18,8 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
+  activeUser: number[] = [];
+
   async signup(user: User) {
     try {
       //generate the pw hash
@@ -33,6 +35,7 @@ export class AuthService {
       // console.log(this.signToken(user.id, user.email));
       const bToken = await this.signToken(newUser.id, newUser.email);
       // return this.signToken(newUser.id, newUser.email);
+      this.activeUser.push(newUser.id);
       return {
         access_token: bToken,
         userId: newUser.id,
@@ -64,7 +67,9 @@ export class AuthService {
     // return this.signToken(newUser.id, newUser.email);
 
     console.log('AUTH.SERVICE: SIGNIN, Logged in ', newUser.email);
-
+    console.log(newUser.id);
+    this.activeUser.push(newUser.id);
+    console.log(this.activeUser);
     return {
       access_token: bToken,
       userId: newUser.id,
@@ -90,36 +95,40 @@ export class AuthService {
 
   /* This function takes an object or a token directly and returns its validity. */
   async validateToken(
-    tokenOrUserId: string | { userId: number; token: string },
-  ) {
+    token: string,
+  ): Promise<{ valid: boolean; renewedToken?: string }> {
     const secret = this.config.get('JWT_SECRET');
 
     try {
-      let decodedToken: any;
+      const decodedToken: any = await this.jwt.verifyAsync(token, {
+        secret: secret,
+      });
 
-      // no user ID given
-      if (typeof tokenOrUserId === 'string') {
-        decodedToken = await this.jwt.verifyAsync(tokenOrUserId, {
-          secret: secret,
-        });
-        // user ID given
-      } else {
-        const { userId, token } = tokenOrUserId;
-        decodedToken = await this.jwt.verifyAsync(token, { secret: secret });
-
-        // Check if the stored userId matches the userId from the token
-        if (userId !== decodedToken.sub) {
-          console.error(
-            'AUTH.SERVICE: VALIDATETOKEN, User Identity KO: ',
-            userId,
-          );
-          return false;
+      // Check if the token is expired
+      if (decodedToken.exp <= Math.floor(Date.now() / 1000)) {
+        // Token is expired
+        // Remove the user ID from the activeUser array
+        const userId = decodedToken.sub;
+        const index = this.activeUser.indexOf(userId);
+        if (index !== -1) {
+          this.activeUser.splice(index, 1);
         }
+
+        return { valid: false };
       }
-      return true;
+
+      // Token is valid and not expired
+      // Renew the token and return it
+      const renewedToken = await this.signToken(
+        decodedToken.sub,
+        decodedToken.email,
+      );
+
+      return { valid: true, renewedToken };
     } catch (error) {
-      // console.error('AUTH.SERVICE: VALIDATETOKEN, User Identity KO: Token verification failed', error);
-      return false;
+      // Handle token verification errors
+      console.error('Error validating token:', error);
+      return { valid: false };
     }
   }
 }

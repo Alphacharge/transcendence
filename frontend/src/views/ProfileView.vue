@@ -48,10 +48,14 @@
       </tbody>
     </table>
   </div>
+  <FriendList />
 </template>
 
 <script>
+import FriendList from "@/components/FriendList.vue";
+
 export default {
+  components: { FriendList },
   data() {
     return {
       userProfil: null,
@@ -67,7 +71,7 @@ export default {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/stats/user`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/userstats`,
           {
             method: "POST",
             headers: {

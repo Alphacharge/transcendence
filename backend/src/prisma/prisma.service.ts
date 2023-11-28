@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient, Users, Games, Tournaments } from '@prisma/client';
+import {
+  PrismaClient,
+  Users,
+  Games,
+  Friends,
+  Tournaments,
+} from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -100,8 +106,7 @@ export class PrismaService extends PrismaClient {
           right_user_id: rightId,
           left_user_score: 0,
           right_user_score: 0,
-          // CHECK why -1 isn't working
-          winner_id: 1,
+          winner_id: leftId,
           createdAt: new Date(),
         },
       });
@@ -134,7 +139,12 @@ export class PrismaService extends PrismaClient {
   }
 
   //Tournament
-  async createNewTournament(firstGameId: number, secondGameId: number, thirdGameId: number, tourWinnerId: number): Promise<Tournaments | null> {
+  async createNewTournament(
+    firstGameId: number,
+    secondGameId: number,
+    thirdGameId: number,
+    tourWinnerId: number,
+  ): Promise<Tournaments | null> {
     // Assuming you're using Prisma to interact with a database
     try {
       const TournamentData: Tournaments = await this.tournaments.create({
@@ -178,7 +188,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
           NOT: {
             winner_id: userId,
@@ -220,26 +230,17 @@ export class PrismaService extends PrismaClient {
           OR: [
             {
               f_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               s_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               t_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
           ],
@@ -338,6 +339,63 @@ export class PrismaService extends PrismaClient {
     } catch (error) {
       console.error('Error fetching match history:', error);
       return null;
+    }
+  }
+
+  async addFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const newFriend = await this.friends.create({
+        data: {
+          user_id: userId,
+          friend_id: friendId,
+        },
+      });
+      if (newFriend) return true;
+    } catch (error) {
+      console.error('Error creating new friend:', error);
+      return false;
+    }
+  }
+
+  async getFriendsById(userId: number): Promise<any[] | null> {
+    try {
+      const allFriends = await this.friends.findMany({
+        where: {
+          user_id: Number(userId),
+        },
+        select: {
+          friend: {
+            select: {
+              id: true,
+              nick: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+      const friendsData = allFriends.map((friend) => ({
+        ...friend.friend,
+        status: 0,
+      }));
+      return friendsData;
+    } catch (error) {
+      console.error('Error fetching friends data:', error);
+      return null;
+    }
+  }
+
+  async deleteFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const deletedFriend = await this.friends.deleteMany({
+        where: {
+          user_id: Number(userId),
+          friend_id: Number(friendId),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting friend:', error);
+      return false;
     }
   }
 }

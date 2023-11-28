@@ -24,6 +24,8 @@ model Users {
   gamesR      Games[]       @relation("RightUser")
   winner      Games[]       @relation("Winner")
   tourwinner  Tournaments[] @relation("TourWinner")
+  user        Friends[]     @relation("User")
+  friend      Friends[]     @relation("Friend")
 }
 
 model Games {
@@ -57,4 +59,13 @@ model Tournaments {
   s_game      Games   @relation("SecondGame", fields: [second_game_id], references: [id])
   t_game      Games   @relation("ThirdGame", fields: [third_game_id], references: [id])
   tourwinner  Users   @relation("TourWinner", fields: [tourwinner_id], references: [id])
+}
+
+model Friends {
+  id          Int @id @default(autoincrement())
+  user_id     Int
+  friend_id   Int
+
+  user    Users @relation("User", fields: [user_id], references: [id])
+  friend  Users @relation("Friend", fields: [friend_id], references: [id])
 }
