@@ -58,7 +58,7 @@ export class AuthController {
     const authorizationCode = request.query.code as string;
     const clientId=`${process.env.FORTYTWO_APP_ID}`;
     const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
-    const redirectUri = `${process.env.REDIRECT_URI}`;
+    const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
     const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
 
     try {
