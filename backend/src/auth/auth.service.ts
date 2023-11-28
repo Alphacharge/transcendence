@@ -127,7 +127,8 @@ export class AuthService {
       return { valid: true, renewedToken };
     } catch (error) {
       // Handle token verification errors
-      console.error('Error validating token:', error);
+      // console.error('Error validating token:', error);
+      console.log('validateToken: JWT invalid or expired.');
       return { valid: false };
     }
   }

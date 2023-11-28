@@ -68,6 +68,7 @@ export class GameService {
       return;
 
     this.queueTournament.push(user);
+    sharedEventEmitter.emit('addedToTournamentQueue', user);
 
     console.log(
       `GAME.SERVICE: ADDTOTOURNAMENTQUEUE, Client ${socket.id} entered tournament queue, tournament status ${tournamentStatus}`,
@@ -76,8 +77,6 @@ export class GameService {
     if (tournamentStatus < 8 && this.queueTournament.length >= 4) {
       this.startTournament();
     }
-
-    sharedEventEmitter.emit('addedToTournamentQueue', user);
   }
 
   /* Remove a user from the game queue */

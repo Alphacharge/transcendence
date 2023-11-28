@@ -16,34 +16,35 @@
       </div>
       <h2 class="centered">Statistics</h2>
       <table class="table table-bordered transparent-table">
-         <thead>
-           <tr>
-             <th>{{ $t("User") }}</th>
-             <th @click="sortTable('matches')"> {{ $t("Matches") }}</th>
-             <th @click="sortTable('wins')"> {{ $t("Wins") }}</th>
-             <th @click="sortTable('losses')"> {{ $t("Losses") }}</th>
-             <th @click="sortTable('kd')"> K/D</th>
-             <th @click="sortTable('tourmatches')"> {{ $t("TournamentMatches") }}</th>
-             <th @click="sortTable('tourwins')"> {{ $t("TournamentWins") }}</th>
-           </tr>
-         </thead>
-         <tbody>
-           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-           <tr v-for="row in sortedStatistics" :key="row.userId">
-             <td>{{ row.nick }}</td>
-             <td>{{ row.matches }}</td>
-             <td>{{ row.wins }}</td>
-             <td>{{ row.losses }}</td>
-             <td>{{ row.wins - row.losses }}</td>
-             <td>{{ row.tourmatches }}</td>
-             <td>{{ row.tourwins }}</td>
-           </tr>
-         </tbody>
-        </table>
+        <thead>
+          <tr>
+            <th>{{ $t("User") }}</th>
+            <th @click="sortTable('matches')">{{ $t("Matches") }}</th>
+            <th @click="sortTable('wins')">{{ $t("Wins") }}</th>
+            <th @click="sortTable('losses')">{{ $t("Losses") }}</th>
+            <th @click="sortTable('kd')">K/D</th>
+            <th @click="sortTable('tourmatches')">
+              {{ $t("TournamentMatches") }}
+            </th>
+            <th @click="sortTable('tourwins')">{{ $t("TournamentWins") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
+          <tr v-for="row in sortedStatistics" :key="row.userId">
+            <td>{{ row.nick }}</td>
+            <td>{{ row.matches }}</td>
+            <td>{{ row.wins }}</td>
+            <td>{{ row.losses }}</td>
+            <td>{{ row.wins - row.losses }}</td>
+            <td>{{ row.tourmatches }}</td>
+            <td>{{ row.tourwins }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -110,8 +111,7 @@ export default {
 </script>
 
 <style scoped>
-
-.patch-wrapper{
+.patch-wrapper {
   display: flex;
   justify-content: space-between;
   background: transparent;
@@ -133,7 +133,7 @@ export default {
   height: 80%;
 }
 
-.centered{
+.centered {
   text-align: center;
 }
 .transparent-table {
@@ -156,7 +156,6 @@ export default {
   color: #ffe600c8;
 }
 
-
 /* Add this style to capitalize text in the first row of table headers */
 .transparent-table thead tr:first-child th {
   text-transform: uppercase;
@@ -165,7 +164,7 @@ export default {
 @media screen and (max-width: 800px) {
   .transparent-table td,
   .transparent-table th {
-    width: 100% / 6; 
+    width: 100% / 6;
   }
 }
 

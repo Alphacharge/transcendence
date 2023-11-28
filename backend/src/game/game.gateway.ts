@@ -16,6 +16,7 @@ import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
+import { queue } from 'rxjs';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -131,9 +132,9 @@ export class GameGateway {
   }
 
   @SubscribeMessage('requestTournamentInfo')
-  sendTournamentInfo() {
+  sendTournamentInfo(@ConnectedSocket() socket: Socket) {
     this.sendTournamentQueueLength();
-    this.sendTournamentQueue();
+    this.sendTournamentQueue(socket);
   }
 
   sendTournamentQueueLength() {
@@ -143,10 +144,21 @@ export class GameGateway {
     );
   }
 
-  sendTournamentQueue() {
-    this.gameService.queueTournament.forEach(queuedUser => {
-      queuedUser.socket.emit('playerJoinedTournament', queuedUser.userData.email);
-    });
+  sendTournamentQueue(socket: Socket) {
+    if (socket) {
+      this.gameService.queueTournament.forEach((queuedUser) => {
+        socket.emit('playerJoinedTournament', queuedUser.userData.email);
+      });
+    } else {
+      this.gameService.queueTournament.forEach((queuedUser) => {
+        this.gameService.queueTournament.forEach((queuedSocket) => {
+          queuedSocket.socket.emit(
+            'playerJoinedTournament',
+            queuedUser.userData.email,
+          );
+        });
+      });
+    }
   }
 
   /* Tell the client the game starts now. */
@@ -228,18 +240,18 @@ export class GameGateway {
 
   addedToTournamentQueue(user: User) {
     user.socket.emit('addedToTournamentQueue');
-    this.sendTournamentInfo();
+    this.sendTournamentInfo(null);
   }
 
   removedFromTournamentQueue(user: User) {
     user.socket.emit('removedFromTournamentQueue');
-    this.gameService.queueTournament.forEach(queuedUser => {
+    this.gameService.queueTournament.forEach((queuedUser) => {
       queuedUser.socket.emit('playerLeftTournament', user.userData.email);
     });
   }
 
   tournamentStart(tournament: TournamentState) {
-    tournament.players.forEach(user => {
+    tournament.players.forEach((user) => {
       user.socket.emit('tournamentStart');
     });
   }
