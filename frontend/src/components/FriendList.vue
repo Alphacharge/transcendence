@@ -2,6 +2,15 @@
   <!-- v-if="showFriendList" -->
   <div class="friend-list">
     <ul>
+      <li>
+        <div>Add Friends </div>
+        <div class="image_friends_add">
+          <img style="width:16px; height:auto;" :src="getPlusSrc()"
+          alt="addFriend" />
+        </div>
+      </li>
+    </ul>
+    <ul>
       <li v-for="friend in friends" :key="friend.id">
         <div class="image_friends">
           <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
@@ -75,6 +84,9 @@ export default {
     },
     getCrossSrc(avatar) {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/cross.png`;
+    },
+    getPlusSrc(avatar) {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/plus.png`;
     },
     handleMouseEnter() {
       this.isMouseOver = true;
