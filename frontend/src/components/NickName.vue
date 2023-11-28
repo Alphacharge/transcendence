@@ -1,5 +1,5 @@
 <template>
-  <div class="nickname">
+  <div class="username">
     <h2>{{ username }}</h2>
   </div>
 </template>
@@ -13,7 +13,7 @@ export default {
 </script>
 
 <style scoped>
-.nickname {
+.username {
   text-align: center;
 }
 </style>

@@ -32,7 +32,7 @@
         <tbody>
           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
           <tr v-for="row in sortedStatistics" :key="row.userId">
-            <td>{{ row.nick }}</td>
+            <td>{{ row.username }}</td>
             <td>{{ row.matches }}</td>
             <td>{{ row.wins }}</td>
             <td>{{ row.losses }}</td>

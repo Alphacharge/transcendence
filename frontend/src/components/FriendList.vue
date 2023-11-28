@@ -18,7 +18,7 @@
         <div class="image_friends">
           <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
         </div>
-        <div>{{ friend.nick }}</div>
+        <div>{{ friend.username }}</div>
         <div class="image_friends_status">
           <img
             style="width: 16px; height: auto"
