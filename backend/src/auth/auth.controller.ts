@@ -59,7 +59,7 @@ export class AuthController {
     const clientId=`${process.env.FORTYTWO_APP_ID}`;
     const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
     const redirectUri = `${process.env.REDIRECT_URI}`;
-    const tokenEndpoint = `${process.env.AUTH_URL}`;
+    const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
 
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
@@ -95,7 +95,7 @@ export class AuthController {
       }
     } catch (error) {
       // Handle fetch errors
-      console.error("AUTH.CONTROLLER: HANDLECALLBACK, Problems with the tokenresponse");
+      console.error(`AUTH.CONTROLLER: HANDLECALLBACK, exception caught: ${error}`);
     }
   }
 }
