@@ -245,7 +245,7 @@ export class GameGateway {
 
   removedFromTournamentQueue(user: User) {
     user.socket.emit('removedFromTournamentQueue');
-    this.gameService.queueTournament.forEach(queuedUser => {
+    this.gameService.queueTournament.forEach((queuedUser) => {
       queuedUser.socket.emit('playerLeftTournament', user.userData.username);
     });
   }

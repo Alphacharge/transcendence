@@ -298,7 +298,10 @@ export class PrismaService extends PrismaClient {
     try {
       const allGames = await this.games.findMany({
         where: {
-          OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
+          OR: [
+            { left_user_id: Number(userId) },
+            { right_user_id: Number(userId) },
+          ],
         },
         orderBy: {
           id: 'desc',
