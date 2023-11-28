@@ -56,7 +56,7 @@ export class AuthController {
   @Get('/42/callback')
   async handleCallback(@Req() request: Request) {
     const authorizationCode = request.query.code as string;
-    const clientId=`${process.env.FORTYTWO_APP_ID}`;
+    const clientId = `${process.env.FORTYTWO_APP_ID}`;
     const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
     const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
     const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
@@ -80,7 +80,9 @@ export class AuthController {
         const tokenData = await tokenResponse.json();
         accessToken = tokenData.access_token;
       } else {
-        console.error("AUTH.CONTROLLER: HANDLECALLBACK, Problems with the tokenresponse");
+        console.error(
+          'AUTH.CONTROLLER: HANDLECALLBACK, Problems with the tokenresponse',
+        );
       }
       const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
         headers: {
@@ -89,13 +91,20 @@ export class AuthController {
       });
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
-        console.log(`AUTH.CONTROLLER: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`);
+        console.log(
+          `AUTH.CONTROLLER: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
+        );
       } else {
-        console.error('AUTH.CONTROLLER: HANDLECALLBACK, API Request failed', apiResponse.statusText);
+        console.error(
+          'AUTH.CONTROLLER: HANDLECALLBACK, API Request failed',
+          apiResponse.statusText,
+        );
       }
     } catch (error) {
       // Handle fetch errors
-      console.error(`AUTH.CONTROLLER: HANDLECALLBACK, exception caught: ${error}`);
+      console.error(
+        `AUTH.CONTROLLER: HANDLECALLBACK, exception caught: ${error}`,
+      );
     }
   }
 }

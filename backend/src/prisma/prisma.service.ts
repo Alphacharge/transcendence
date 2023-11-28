@@ -15,7 +15,10 @@ export class PrismaService extends PrismaClient {
   }
 
   //User
-  async createUserBySignUp(inEmail: string, inHash: string): Promise<Users | null>{
+  async createUserBySignUp(
+    inEmail: string,
+    inHash: string,
+  ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
@@ -71,7 +74,9 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getAllUsersIdNiAv(): Promise<{id: number; nick: string; avatar: number}[] | null> {
+  async getAllUsersIdNiAv(): Promise<
+    { id: number; nick: string; avatar: number }[] | null
+  > {
     try {
       const allUsers = await this.users.findMany({
         select: {
@@ -106,7 +111,12 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async updateGameScore(gameId: number, leftScore: number, rightScore: number, winnerId: number) {
+  async updateGameScore(
+    gameId: number,
+    leftScore: number,
+    rightScore: number,
+    winnerId: number,
+  ) {
     try {
       const updatedGame = await this.games.update({
         where: { id: gameId }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
@@ -124,7 +134,12 @@ export class PrismaService extends PrismaClient {
   }
 
   //Tournament
-  async createNewTournament(firstGameId: number, secondGameId: number, thirdGameId: number, tourWinnerId: number): Promise<Tournaments | null> {
+  async createNewTournament(
+    firstGameId: number,
+    secondGameId: number,
+    thirdGameId: number,
+    tourWinnerId: number,
+  ): Promise<Tournaments | null> {
     // Assuming you're using Prisma to interact with a database
     try {
       const TournamentData: Tournaments = await this.tournaments.create({
@@ -168,7 +183,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
           NOT: {
             winner_id: userId,
@@ -192,7 +207,7 @@ export class PrismaService extends PrismaClient {
             },
             {
               right_user_id: userId,
-            }
+            },
           ],
         },
       });
@@ -210,26 +225,17 @@ export class PrismaService extends PrismaClient {
           OR: [
             {
               f_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               s_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
             {
               t_game: {
-                OR: [
-                  { left_user_id: userId },
-                  { right_user_id: userId },
-                ],
+                OR: [{ left_user_id: userId }, { right_user_id: userId }],
               },
             },
           ],
@@ -260,11 +266,13 @@ export class PrismaService extends PrismaClient {
     const allUsers = await this.getAllUsersIdNiAv();
     const userStatistics = [];
 
-    for (const user of allUsers){
+    for (const user of allUsers) {
       const matches: number = await this.getAmountOfMatchesById(user.id);
       const wins: number = await this.getGameWinsById(user.id);
       const losses: number = await this.getGameLossesById(user.id);
-      const tourmatches: number = await this.getAmountOfTournamentMatchesById(user.id);
+      const tourmatches: number = await this.getAmountOfTournamentMatchesById(
+        user.id,
+      );
       const tourwins: number = await this.getTournamentWinsById(user.id);
 
       userStatistics.push({
@@ -275,7 +283,7 @@ export class PrismaService extends PrismaClient {
         wins,
         losses,
         tourmatches,
-        tourwins
+        tourwins,
       });
     }
     return userStatistics;

@@ -1,11 +1,9 @@
 <template>
-	<div>
+  <div>
     <h1>Logging in with Intra</h1>
   </div>
 </template>
 
 <script>
-export default {
-	
-}
+export default {};
 </script>

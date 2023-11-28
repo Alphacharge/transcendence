@@ -1,4 +1,8 @@
-import { ForbiddenException, GatewayTimeoutException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  GatewayTimeoutException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon from 'argon2';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -20,7 +24,10 @@ export class AuthService {
       const hash = await argon.hash(user.password);
       //save the new user
 
-      const newUser = await this.prismaService.createUserBySignUp(user.email, hash);
+      const newUser = await this.prismaService.createUserBySignUp(
+        user.email,
+        hash,
+      );
       if (newUser == null)
         throw new GatewayTimeoutException('Database unreachable');
       // console.log(this.signToken(user.id, user.email));

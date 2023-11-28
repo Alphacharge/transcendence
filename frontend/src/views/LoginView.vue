@@ -29,17 +29,10 @@
     <div>
       {{ $t("or") }} <router-link to="/signup">{{ $t("SignUp") }}</router-link>
     </div>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      >
+    <button type="submit" class="btn btn-primary">
       {{ $t("Submit") }}
     </button>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      @click.prevent="authorize"
-      >
+    <button type="submit" class="btn btn-primary" @click.prevent="authorize">
       {{ $t("AuthorizeWithFortytwo") }}
     </button>
   </form>
@@ -88,7 +81,7 @@ export default {
     async authorize() {
       const redirectUri = `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`;
       const scope = `${process.env.VUE_APP_SCOPE}`;
-      const authorizationEndpoint = 'https://api.intra.42.fr/oauth/authorize';
+      const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const state = `${process.env.VUE_APP_STATE}`;
 
       const queryParams = new URLSearchParams({
@@ -96,13 +89,15 @@ export default {
         redirect_uri: redirectUri,
         scope: scope,
         state: state,
-        response_type: 'code',
+        response_type: "code",
       });
       const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
       if (authorizationUrl) {
-        window.location.href=authorizationUrl;
+        window.location.href = authorizationUrl;
       } else {
-        console.error(`LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: process.env.AUTH_URL=${authorizationUrl}`);
+        console.error(
+          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: process.env.AUTH_URL=${authorizationUrl}`,
+        );
       }
     },
   },
