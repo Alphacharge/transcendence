@@ -16,30 +16,32 @@
       </div>
       <h2 class="centered">Statistics</h2>
       <table class="table table-bordered transparent-table">
-         <thead>
-           <tr>
-             <th>{{ $t("User") }}</th>
-             <th @click="sortTable('matches')"> {{ $t("Matches") }}</th>
-             <th @click="sortTable('wins')"> {{ $t("Wins") }}</th>
-             <th @click="sortTable('losses')"> {{ $t("Losses") }}</th>
-             <th @click="sortTable('kd')"> K/D</th>
-             <th @click="sortTable('tourmatches')"> {{ $t("TournamentMatches") }}</th>
-             <th @click="sortTable('tourwins')"> {{ $t("TournamentWins") }}</th>
-           </tr>
-         </thead>
-         <tbody>
-           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-           <tr v-for="row in sortedStatistics" :key="row.userId">
-             <td>{{ row.username }}</td>
-             <td>{{ row.matches }}</td>
-             <td>{{ row.wins }}</td>
-             <td>{{ row.losses }}</td>
-             <td>{{ row.wins - row.losses }}</td>
-             <td>{{ row.tourmatches }}</td>
-             <td>{{ row.tourwins }}</td>
-           </tr>
-         </tbody>
-        </table>
+        <thead>
+          <tr>
+            <th>{{ $t("User") }}</th>
+            <th @click="sortTable('matches')">{{ $t("Matches") }}</th>
+            <th @click="sortTable('wins')">{{ $t("Wins") }}</th>
+            <th @click="sortTable('losses')">{{ $t("Losses") }}</th>
+            <th @click="sortTable('kd')">K/D</th>
+            <th @click="sortTable('tourmatches')">
+              {{ $t("TournamentMatches") }}
+            </th>
+            <th @click="sortTable('tourwins')">{{ $t("TournamentWins") }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
+          <tr v-for="row in sortedStatistics" :key="row.userId">
+            <td>{{ row.username }}</td>
+            <td>{{ row.matches }}</td>
+            <td>{{ row.wins }}</td>
+            <td>{{ row.losses }}</td>
+            <td>{{ row.wins - row.losses }}</td>
+            <td>{{ row.tourmatches }}</td>
+            <td>{{ row.tourwins }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>

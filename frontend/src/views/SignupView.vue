@@ -55,10 +55,7 @@ export default {
   },
   computed: {
     isDisabled() {
-      return !(
-        this.rePassword &&
-        this.password === this.rePassword
-      );
+      return !(this.rePassword && this.password === this.rePassword);
     },
   },
   methods: {
