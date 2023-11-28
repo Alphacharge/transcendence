@@ -372,7 +372,10 @@ export class PrismaService extends PrismaClient {
           },
         },
       });
-      const friendsData = allFriends.map((friend) => friend.friend);
+      const friendsData = allFriends.map((friend) => ({
+        ...friend.friend,
+        status: 0,
+      }));
       return friendsData;
     } catch (error) {
       console.error('Error fetching friends data:', error);
