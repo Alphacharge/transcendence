@@ -33,7 +33,7 @@
       {{ $t("Submit") }}
     </button>
     <button type="submit" class="btn btn-primary" @click.prevent="authorize">
-      {{ $t("AuthorizeWithFortytwo") }}
+      {{ $t("loginWithIntra") }}
     </button>
   </form>
 </template>
@@ -96,7 +96,7 @@ export default {
         window.location.href = authorizationUrl;
       } else {
         console.error(
-          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: process.env.AUTH_URL=${authorizationUrl}`,
+          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
         );
       }
     },
