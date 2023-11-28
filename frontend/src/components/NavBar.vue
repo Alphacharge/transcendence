@@ -1,7 +1,12 @@
 <template>
-  <router-link to="/"
-    ><img src="/favicon.ico" alt="favicon" class="navbar-brand-icon"
-  /></router-link>
+  <router-link to="/">
+    <img
+      style="width: 64px; height: auto"
+      :src="getTeam()"
+      alt="favicon"
+      class="navbar-brand-icon"
+    />
+  </router-link>
   <button
     class="navbar-toggler"
     type="button"
@@ -59,5 +64,10 @@ import LanguageToggle from "@/components/LanguageToggle.vue";
 
 export default {
   components: { LanguageToggle },
+  methods: {
+    getTeam() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/team.gif`;
+    },
+  },
 };
 </script>
