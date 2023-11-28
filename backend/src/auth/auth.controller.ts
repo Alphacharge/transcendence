@@ -15,7 +15,8 @@ import { Request, Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService) {}
 
   @Post('signup')
   signup(@Body() dto: AuthDto) {
@@ -55,6 +56,8 @@ export class AuthController {
 
   @Get('/42/callback')
   handleCallback(@Req() request: Request) {
-    this.authService.handleCallback(request);
+    return this.authService.handleCallback(request);
   }
+
+
 }

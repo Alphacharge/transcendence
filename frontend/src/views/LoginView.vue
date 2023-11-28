@@ -46,6 +46,8 @@ export default {
     return {
       inputEmail: "",
       password: "",
+      apiRequest: false,
+      eventSource: null,
     };
   },
   methods: {
@@ -64,24 +66,16 @@ export default {
             }),
           },
         );
-
-        const responseData = await response.json();
-        if (response.ok) {
-          localStorage.setItem("access_token", responseData["access_token"]);
-          localStorage.setItem("userId", responseData["userId"]);
-          router.push("/");
-        } else {
-          alert("User or Password wrong!");
-        }
+        this.setResponse(response);
       } catch (error) {
         alert("Login failed!");
         router.push("/login");
       }
     },
-    async authorize() {
+    authorize() {
+      const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const redirectUri = `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`;
       const scope = `${process.env.VUE_APP_SCOPE}`;
-      const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const state = `${process.env.VUE_APP_STATE}`;
       const queryParams = new URLSearchParams({
         client_id: `${process.env.VUE_APP_FORTYTWO_APP_ID}`,
@@ -98,7 +92,37 @@ export default {
           `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
         );
       }
+      this.startSSEListener();
+    },
+    startSSEListener() {
+      this.eventSource = new EventSource('/auth/42/callback'); // Replace with your SSE endpoint
+      this.eventSource.addEventListener('OAuthCompletion', (event) => {
+        console.log('OAuth process completed');
+        const eventData = JSON.parse(event.data);
+        this.eventSource.close(); // Close the SSE connection after receiving the completion event
+        this.getResponse(eventData);
+        // Proceed with further actions after OAuth completion
+      });
+      this.eventSource.onerror = (error) => {
+        console.error('SSE error:', error);
+        this.eventSource.close(); // Close the SSE connection on error
+      };
+    },
+    async setResponse(response) {
+      if (response.ok) {
+        const responseData = await response.json();
+        localStorage.setItem("access_token", responseData["access_token"]);
+        localStorage.setItem("userId", responseData["userId"]);
+        router.push("/");
+      } else {
+        alert("User or Password wrong!");
+      }
     },
   },
+  beforeUnmount() {
+    if(this.eventSource) {
+      this.eventSource.close();
+    }
+  }
 };
 </script>

@@ -9,8 +9,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
+import { Users } from '@prisma/client';
 import { type } from 'os';
 import { Request, Response } from 'express';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +21,16 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
+  private oAuthCompletionSubject = new Subject<void>();
+
+  emitOAuthCompletion() {
+    this.oAuthCompletionSubject.next();
+  }
+
+  onOAuthCompletion() {
+    return this.oAuthCompletionSubject.asObservable();
+  }
+
   async signup(user: User) {
     try {
       //generate the pw hash
@@ -48,10 +60,13 @@ export class AuthService {
     }
   }
 
+  async checkUserInDB(user: User): Promise<Users> {
+    const newUser =  await this.prismaService.getUserByEmail(user.email);
+    return newUser;
+  }
+
   async signin(user: User) {
-    //find the user by email
-    const newUser = await this.prismaService.getUserByEmail(user.email);
-    //if user does not exist throw exception
+    const newUser = await this.checkUserInDB(user);
     if (!newUser) {
       throw new ForbiddenException('User not found');
     }
@@ -145,7 +160,7 @@ export class AuthService {
           redirect_uri: redirectUri,
         }),
       });
-      let accessToken;
+      let accessToken: string;
       if (tokenResponse.ok) {
         const tokenData = await tokenResponse.json();
         accessToken = tokenData.access_token;
@@ -161,9 +176,20 @@ export class AuthService {
       });
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
-        console.log(
-          `AUTH.SERVICE: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
-        );
+        // console.log(
+        //   `AUTH.SERVICE: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
+        // );
+        const user:User = {username:responseData.login, password:process.env.BACKEND_API_TOKEN, email:responseData.email, id:0};
+        const newUser = await this.checkUserInDB(user);
+        let response: {access_token:string, userId: number, userEmail: string};
+        if(!newUser) {
+          //todo kick off signup
+        } else {
+          const bToken = await this.signToken(newUser.id, newUser.email);
+          response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
+        }
+        /*stopped here */
+        this.emitOAuthCompletion(JSON.stringify(response));
       } else {
         console.error(
           'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
