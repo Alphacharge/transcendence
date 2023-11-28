@@ -131,11 +131,22 @@ export class GameGateway {
   }
 
   @SubscribeMessage('requestTournamentInfo')
+  sendTournamentInfo() {
+    this.sendTournamentQueueLength();
+    this.sendTournamentQueue();
+  }
+
   sendTournamentQueueLength() {
     this.server.emit(
       'tournamentPlayerCount',
       this.gameService.queueTournament.length,
     );
+  }
+
+  sendTournamentQueue() {
+    this.gameService.queueTournament.forEach(queuedUser => {
+      queuedUser.socket.emit('playerJoinedTournament', queuedUser.userData.email);
+    });
   }
 
   /* Tell the client the game starts now. */
@@ -201,8 +212,8 @@ export class GameGateway {
     console.log(
       `GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`,
     );
-    game.user1.socket.emit('victory', game.winningPlayer.userData.id);
-    game.user2.socket.emit('victory', game.winningPlayer.userData.id);
+    game.user1.socket.emit('victory', game.winningPlayer.userData.email);
+    game.user2.socket.emit('victory', game.winningPlayer.userData.email);
   }
 
   matchStart(game: GameState) {
@@ -217,18 +228,19 @@ export class GameGateway {
 
   addedToTournamentQueue(user: User) {
     user.socket.emit('addedToTournamentQueue');
-    user.socket.emit('playerJoinedTournament', user.userData.nick);
+    this.sendTournamentInfo();
   }
 
   removedFromTournamentQueue(user: User) {
     user.socket.emit('removedFromTournamentQueue');
-    user.socket.emit('playerLeftTournament', user.userData.nick);
+    this.gameService.queueTournament.forEach(queuedUser => {
+      queuedUser.socket.emit('playerLeftTournament', user.userData.email);
+    });
   }
 
   tournamentStart(tournament: TournamentState) {
-    tournament.players[0].socket.emit('tournamentStart');
-    tournament.players[1].socket.emit('tournamentStart');
-    tournament.players[2].socket.emit('tournamentStart');
-    tournament.players[3].socket.emit('tournamentStart');
+    tournament.players.forEach(user => {
+      user.socket.emit('tournamentStart');
+    });
   }
 }

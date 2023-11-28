@@ -2,8 +2,8 @@
   <div>
     <p>I am player number: {{ playerNumber }}</p>
   </div>
-  <CountDown />
   <PongButtons />
+  <CountDown />
   <ScoreBoard />
   <GameArea :player-number="playerNumber"></GameArea>
 </template>

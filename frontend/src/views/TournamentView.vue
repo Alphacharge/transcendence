@@ -22,19 +22,25 @@
       <p>No players available yet.</p>
     </div>
   </div>
+  <CountDown></CountDown>
+  <ScoreBoard></ScoreBoard>
   <GameArea></GameArea>
 </template>
 
 <script>
 import { socket, connectWebSocket } from "@/assets/utils/socket";
+import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
+import ScoreBoard from "@/components/ScoreBoard.vue";
 
 export default {
   components: {
     PlayerCheckin,
     GameArea,
-  },
+    ScoreBoard,
+    CountDown
+},
   data() {
     return {
       players: [],
@@ -45,6 +51,8 @@ export default {
   },
   mounted() {
     connectWebSocket();
+
+    socket.requestTournamentInfo();
 
     socket.on("tournamentStart", () => {
       // INSERT remove all parts of the interface you don't want to show during a tournament
