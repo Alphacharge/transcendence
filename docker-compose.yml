@@ -24,7 +24,7 @@ services:
   vue:
     container_name: vue
     image: node:21-alpine3.17
-    command: sh -c "cd /frontend && npm install && npm run serve"
+    command: sh -c "cd /frontend && npm install -g @vue/cli && npm install && npm run serve"
     ports:
       - "8080:8080"
     networks:

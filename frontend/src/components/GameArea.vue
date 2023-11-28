@@ -12,13 +12,14 @@
 import { socket } from "@/assets/utils/socket";
 
 export default {
-  props: ["gameId", "playerNumber"],
   data() {
     return {
-      bouncingBallX: this.containerWidth / 2, // Annahme: Du hast eine Variable für die Breite des Containers (containerWidth)
-      bouncingBallY: this.containerHeight / 2, // Annahme: Du hast eine Variable für die Höhe des Containers (containerHeight)
-      leftPaddleY: this.containerHeight / 2 - 50, // Annahme: Die Paddel sind 100px hoch
-      rightPaddleY: this.containerHeight / 2 - 50, // Annahme: Die Paddel sind 100px hoch
+      playerNumber: 0,
+      // abll and paddle starting positions
+      bouncingBallX: 400,
+      bouncingBallY: 200,
+      leftPaddleY: 150,
+      rightPaddleY: 150,
       animationFrameId: null,
       messageInterval: null,
     };
@@ -32,7 +33,6 @@ export default {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
-
     // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
@@ -40,23 +40,18 @@ export default {
     socket.on("rightPaddle", (pY) => {
       this.rightPaddleY = pY;
     });
-
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (!this.gameId) {
-        return;
-      }
       if (event.key === "w") {
         if (!this.messageInterval) {
-          console.log("sending paddle up with id", this.gameId);
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleUp(this.gameId);
+            socket.sendPaddleUp();
           }, 10);
         }
       } else if (event.key === "s") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
-            socket.sendPaddleDown(this.gameId);
+            socket.sendPaddleDown();
           }, 10);
         }
       }
@@ -69,7 +64,6 @@ export default {
       }
     });
   },
-
   beforeUnmounted() {
     console.log("unmount called");
     // Clean up by canceling the animation frame
@@ -82,14 +76,10 @@ export default {
     clearInterval(this.messageInterval);
     this.messageInterval = null;
   },
-
   methods: {
     newGame() {
       console.error("logging new game event");
       socket.newGame();
-    },
-    stopGame() {
-      socket.stopGame(this.gameId);
     },
   },
 };

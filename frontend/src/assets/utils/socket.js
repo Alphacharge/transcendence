@@ -30,6 +30,10 @@ socket.on("disconnect", () => {
   state.connected = false;
 });
 
+socket.on("connect_error", () => {
+  connectWebSocket();
+});
+
 socket.enterQueue = function () {
   socket.emit("enterQueue");
 };
@@ -47,17 +51,14 @@ socket.stopGame = function () {
 };
 
 // send paddle position updates to server
-socket.sendPaddleUp = function (gameId) {
-  socket.emit("paddleUp", { gameId });
+socket.sendPaddleUp = function () {
+  socket.emit("paddleUp");
 };
 
-socket.sendPaddleDown = function (gameId) {
-  socket.emit("paddleDown", { gameId });
+socket.sendPaddleDown = function () {
+  socket.emit("paddleDown");
 };
 
-export function getSocket() {
-  if (!socket) {
-    throw new Error("Socket not initialized");
-  }
-  return socket;
-}
+socket.requestTournamentInfo = function () {
+  socket.emit("requestTournamentInfo");
+};
