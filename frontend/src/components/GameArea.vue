@@ -13,8 +13,6 @@
 <script>
 // import the socket object
 import { socket } from "@/assets/utils/socket";
-import ScoreBoard from "./ScoreBoard.vue";
-import CountDown from "./CountDown.vue";
 
 export default {
   data() {
@@ -44,7 +42,6 @@ export default {
     });
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-
       if (event.key === "w") {
         if (!this.messageInterval) {
           this.messageInterval = setInterval(() => {
@@ -85,7 +82,6 @@ export default {
       socket.newGame();
     },
   },
-  components: { ScoreBoard, CountDown },
 };
 </script>
 

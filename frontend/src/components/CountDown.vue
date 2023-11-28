@@ -17,9 +17,9 @@ export default {
     this.countdownVisible = true;
     socket.on("countDown", (payload) => {
       this.currentCount = payload;
-      console.log("countdown payload", payload);
     });
   },
+
   beforeUnmount() {
     this.countdownVisible = false;
   },

@@ -18,27 +18,22 @@ import { connectWebSocket, socket } from "@/assets/utils/socket";
 export default {
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
 
+  data() {
+    return {
+      playerNumber: null,
+    };
+  },
+
   mounted() {
     connectWebSocket();
 
     // received info if we are left or right
     socket.on("player1", () => {
       this.playerNumber = 1;
-      this.player1Score = 0;
     });
     socket.on("player2", () => {
       this.playerNumber = 2;
-      this.player2Score = 0;
     });
-  },
-
-  methods: {
-    enterQueue() {
-      socket.enterQueue();
-    },
-    leaveQueue() {
-      socket.leaveQueue();
-    },
   },
 };
 </script>

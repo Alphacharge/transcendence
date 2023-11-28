@@ -11,12 +11,7 @@ module.exports = defineConfig({
       key: fs.readFileSync('/certificates/certificate.key'),
       cert: fs.readFileSync('/certificates/certificate.cert'),
     },
-    proxy: {
-      '^/api': {
-        target: 'https://' + process.env.VUE_APP_BACKEND_IP + ':3000',
-        secure: false,
-        changeOrigin: true
-      },
+    // public: 'localhost:8080', // Restrict access to localhost
+    webSocketServer: false,
     }
-  }
-});
+  });
