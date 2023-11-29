@@ -86,12 +86,12 @@ export default {
       const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
       if (authorizationUrl) {
         // window.location.href = authorizationUrl;
-        window.location.href=authorizationUrl;
+        window.location.href = authorizationUrl;
       } else {
-          console.error(
+        console.error(
           `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
-          );
-        }
+        );
+      }
     },
     async setResponse(response) {
       if (response.ok) {
@@ -105,9 +105,9 @@ export default {
     },
   },
   beforeUnmount() {
-    if(this.eventSource) {
+    if (this.eventSource) {
       this.eventSource.close();
     }
-  }
+  },
 };
 </script>

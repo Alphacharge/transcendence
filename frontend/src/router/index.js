@@ -87,11 +87,9 @@ router.beforeEach(async (to, from, next) => {
       to.name !== "ip" &&
       to.name !== "redirect" &&
       !isLoggedIn
-    )
-    {
-        next("/login");
-    }
-    else {
+    ) {
+      next("/login");
+    } else {
       next(); // Proceed to the requested route
     }
   } catch (error) {
