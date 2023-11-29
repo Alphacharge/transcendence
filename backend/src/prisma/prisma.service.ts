@@ -4,7 +4,7 @@ import {
   PrismaClient,
   Users,
   Games,
-  Friends,
+  Avatars,
   Tournaments,
 } from '@prisma/client';
 
@@ -399,6 +399,32 @@ export class PrismaService extends PrismaClient {
     } catch (error) {
       console.error('Error deleting friend:', error);
       return false;
+    }
+  }
+
+  async createNewAvatarById(userId: number): Promise<Avatars | null> {
+    try {
+      const newAvatar = await this.avatars.create({
+        data: {
+          user_id: userId,
+        },
+      });
+  
+      const updatedUser = await this.users.update({
+        where: { id: userId },
+        data: {
+          avatar: newAvatar.id,
+        },
+      });
+  
+      if (updatedUser) {
+        return newAvatar;
+      }
+  
+      return null;
+    } catch (error) {
+      console.error('Error creating new avatar:', error);
+      return null;
     }
   }
 }

@@ -25,6 +25,7 @@ model Users {
   tourwinner  Tournaments[] @relation("TourWinner")
   user        Friends[]     @relation("User")
   friend      Friends[]     @relation("Friend")
+  avatarid    Avatars[]     @relation("Avatar")
 }
 
 model Games {
@@ -67,4 +68,11 @@ model Friends {
 
   user    Users @relation("User", fields: [user_id], references: [id])
   friend  Users @relation("Friend", fields: [friend_id], references: [id])
+}
+
+model Avatars {
+    id          Int @id @default(autoincrement())
+    user_id     Int
+
+    avatarid    Users @relation("Avatar", fields: [user_id], references: [id])
 }
