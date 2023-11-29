@@ -19,8 +19,8 @@ export default {
   RepeatPassword: "Passwort wiederholen",
   Submit: "Absenden",
   or: "oder",
-  loginWithIntra: "melde dich über 42",
-  signupWithIntra: "melde dich über 42",
+  loginWithIntra: "Über 42 fortsetzen",
+  signupWithIntra: "Über 42 fortsetzen",
 
   // STATISTICS
   User: "Nutzer",

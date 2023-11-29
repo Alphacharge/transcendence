@@ -59,7 +59,7 @@ export class AuthService {
   }
 
   async checkUserInDB(user: User): Promise<Users> {
-    const newUser =  await this.prismaService.getUserByEmail(user.email);
+    const newUser =  await this.prismaService.getUserByName(user.username);
     return newUser;
   }
 
@@ -198,14 +198,14 @@ export class AuthService {
       });
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
-        const user:User = {username:responseData.login, password:process.env.BACKEND_API_PW, email:responseData.email, id:0};
+        const user:User = {username:responseData.login, password:process.env.BACKEND_API_PW, id:0};
         const newUser = await this.checkUserInDB(user);
-        let response: {access_token:string, userId: number, userEmail: string};
+        let response: {access_token:string, userId: number, userName: string};
         if(!newUser) {
           response = await this.signup(user);
         } else {
-          const bToken = await this.signToken(newUser.id, newUser.email);
-          response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
+          const bToken = await this.signToken(newUser.id, newUser.username);
+          response = {access_token: bToken, userId: newUser.id, userName: newUser.username};
         }
         return response;
       } else {

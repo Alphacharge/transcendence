@@ -69,7 +69,7 @@ export class AuthController {
     url.pathname = 'redirect';
     url.searchParams.set('access_token', authResponse.access_token);
     url.searchParams.set('userId', authResponse.userId.toString());
-    url.searchParams.set('userEmail', authResponse.userEmail);
+    url.searchParams.set('userEmail', authResponse.userName);
     console.log(`AUTH.CONTROLLER, HANDLECALLBACK, url=${url}`);
     response.status(302).redirect(url.href);
   }

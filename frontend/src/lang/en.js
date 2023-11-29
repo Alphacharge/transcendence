@@ -21,8 +21,8 @@ export default {
   RepeatPassword: "repeat Password",
   Submit: "Submit",
   or: "or",
-  loginWithIntra: "login with 42",
-  signupWithIntra: "sign-up with 42",
+  loginWithIntra: "Continue with 42",
+  signupWithIntra: "Continue with 42",
 
   // STATISTICS
   User: "User",

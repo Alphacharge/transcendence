@@ -15,12 +15,9 @@
       }
     },
     mounted() {
-      console.error(`REDIRECTVIEW, MOUNTED, debug checkin`);
       const urlParams = new URLSearchParams(window.location.search);
       const access_token = urlParams.get('access_token');
       const userId = urlParams.get('userId');
-      const userEmail = urlParams.get('userEmail');
-      console.log(`REDIRECTVIEW, ONMOUNTED, access_token=${access_token}, userId=${userId}, userName=${userEmail}`);
       localStorage.setItem("access_token", access_token);
       localStorage.setItem("userId", userId);
       router.push("/");
