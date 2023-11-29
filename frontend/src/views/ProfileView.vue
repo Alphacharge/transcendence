@@ -4,8 +4,19 @@
       <thead>
         <tr v-if="userProfil">
           <th colspan="2">
-            <div class="image_profile">
-              <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
+            <div class="image-profile-container">
+              <div class="image-profile">
+                <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
+              </div>
+              <div class="upload-icon" @click="openFileUpload">
+                <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
+                <input
+                  type="file"
+                  ref="fileInput"
+                  style="display: none"
+                  @change="handleFileChange"
+                />
+              </div>
             </div>
           </th>
           <th colspan="2">
@@ -99,6 +110,13 @@ export default {
       // Adjust the path as needed based on your avatar structure
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar}.png`;
     },
+    getUploadSrc() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;
+    },
+    openFileUpload() {
+      // Trigger the click event of the file input when the image or upload icon is clicked
+      this.$refs.fileInput.click();
+    },
   },
 };
 </script>
@@ -132,20 +150,34 @@ export default {
 .image_history + div b {
   font-weight: bold;
 }
-.image_profile {
+.image-profile-container {
+  position: relative;
+  display: inline-block; /* Ensures the container only takes as much space as necessary */
+}
+.image-profile {
   width: 128px;
   height: 128px;
   overflow: hidden;
-  display: inline-block;
+  display: block;
   position: relative;
 }
 
-.image_profile img {
+.image-profile img {
   width: 100%;
   height: 100%;
   object-fit: cover; /* This property ensures the image fills the 32x32 container without distorting its aspect ratio */
   transform: scale(
     1
   ); /* Scale the image down to fit within the 32x32 container */
+}
+.upload-icon {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  bottom: 0px; /* Adjust this value to position the icon where you want it */
+  right: 0px; /* Adjust this value to position the icon where you want it */
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer; /* Add a pointer cursor to indicate it's clickable */
 }
 </style>
