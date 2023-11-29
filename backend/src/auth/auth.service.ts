@@ -183,7 +183,7 @@ export class AuthService {
         const newUser = await this.checkUserInDB(user);
         let response: {access_token:string, userId: number, userEmail: string};
         if(!newUser) {
-          //todo kick off signup
+          response = await this.signup(user);
         } else {
           const bToken = await this.signToken(newUser.id, newUser.email);
           response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
