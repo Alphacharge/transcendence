@@ -12,7 +12,7 @@ import { User } from './interfaces/user.interface';
 import { Users } from '@prisma/client';
 import { type } from 'os';
 import { Request, Response } from 'express';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -21,13 +21,13 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
-  private oAuthCompletionSubject = new Subject<void>();
+  private oAuthCompletionSubject = new Subject<any>();
 
-  emitOAuthCompletion() {
-    this.oAuthCompletionSubject.next();
+  emitOAuthCompletion(response: any) {
+    this.oAuthCompletionSubject.next(response);
   }
 
-  onOAuthCompletion() {
+  onOAuthCompletion(): Observable<any> {
     return this.oAuthCompletionSubject.asObservable();
   }
 
@@ -188,8 +188,7 @@ export class AuthService {
           const bToken = await this.signToken(newUser.id, newUser.email);
           response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
         }
-        /*stopped here */
-        this.emitOAuthCompletion(JSON.stringify(response));
+        this.emitOAuthCompletion(response);
       } else {
         console.error(
           'AUTH.SERVICE: HANDLECALLBACK, API Request failed',

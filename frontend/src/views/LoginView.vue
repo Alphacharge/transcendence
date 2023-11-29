@@ -98,9 +98,9 @@ export default {
       this.eventSource = new EventSource('/auth/42/callback'); // Replace with your SSE endpoint
       this.eventSource.addEventListener('OAuthCompletion', (event) => {
         console.log('OAuth process completed');
-        const eventData = JSON.parse(event.data);
+        const eventData = event.data;
         this.eventSource.close(); // Close the SSE connection after receiving the completion event
-        this.getResponse(eventData);
+        this.setResponse(eventData);
         // Proceed with further actions after OAuth completion
       });
       this.eventSource.onerror = (error) => {

@@ -58,6 +58,4 @@ export class AuthController {
   handleCallback(@Req() request: Request) {
     return this.authService.handleCallback(request);
   }
-
-
 }
