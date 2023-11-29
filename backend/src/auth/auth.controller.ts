@@ -12,11 +12,25 @@ import {
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Request, Response } from 'express';
+import { Subject, Observable } from 'rxjs';
+
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private oAuthCompletionSubject = new Subject<any>()
+    ) {}
+
+  emitOAuthCompletion(response: any) {
+    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION, reponse=${response}`);
+    this.oAuthCompletionSubject.next(response);
+  }
+
+  onOAuthCompletion(): Observable<any> {
+    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION`);
+    return this.oAuthCompletionSubject.asObservable();
+  }
 
   @Post('signup')
   signup(@Body() dto: AuthDto) {
@@ -55,7 +69,8 @@ export class AuthController {
   }
 
   @Get('/42/callback')
-  handleCallback(@Req() request: Request) {
-    return this.authService.handleCallback(request);
+  async handleCallback(@Req() request: Request) {
+    const response = await this.authService.handleCallback(request);
+    this.emitOAuthCompletion(response);
   }
 }

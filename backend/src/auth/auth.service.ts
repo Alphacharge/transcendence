@@ -21,17 +21,6 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
-  private oAuthCompletionSubject = new Subject<any>();
-
-  emitOAuthCompletion(response: any) {
-    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION, reponse=${response}`);
-    this.oAuthCompletionSubject.next(response);
-  }
-
-  onOAuthCompletion(): Observable<any> {
-    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION`);
-    return this.oAuthCompletionSubject.asObservable();
-  }
 
   async signup(user: User) {
     try {
@@ -190,13 +179,14 @@ export class AuthService {
           const bToken = await this.signToken(newUser.id, newUser.email);
           response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
         }
-        this.emitOAuthCompletion(response);
-        console.error(`AUTH.SERVICE, HANDLECALLBACK, response=${response}`);
+        // console.error(`AUTH.SERVICE, HANDLECALLBACK, response=${response}`);
+        return response;
       } else {
         console.error(
           'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
           apiResponse.statusText,
         );
+        return null;
       }
     } catch (error) {
       // Handle fetch errors
