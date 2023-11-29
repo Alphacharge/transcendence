@@ -86,24 +86,26 @@ export default {
       });
       const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
       if (authorizationUrl) {
-        window.location.href = authorizationUrl;
+        // window.location.href = authorizationUrl;
+        window.open(authorizationUrl, '_blank');
       } else {
         console.error(
           `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
-        );
-      }
-      this.startSSEListener();
-    },
-    startSSEListener() {
-      this.eventSource = new EventSource('/auth/42/callback'); // Replace with your SSE endpoint
-      this.eventSource.addEventListener('OAuthCompletion', (event) => {
-        console.log('OAuth process completed');
-        const eventData = event.data;
-        this.eventSource.close(); // Close the SSE connection after receiving the completion event
-        this.setResponse(eventData);
-        // Proceed with further actions after OAuth completion
-      });
-      this.eventSource.onerror = (error) => {
+          );
+        }
+        this.startSSEListener();
+      },
+      startSSEListener() {
+        this.eventSource = new EventSource(`https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`); // Replace with your SSE endpoint
+        this.eventSource.addEventListener('OAuthCompletion', (event) => {
+          console.log('OAuth process completed');
+          const eventData = event.data;
+          this.eventSource.close(); // Close the SSE connection after receiving the completion event
+          this.setResponse(eventData);
+          // Proceed with further actions after OAuth completion
+        });
+        this.eventSource.onerror = (error) => {
+        console.error("LOGINVIEW,STARTSSELISTENER, debug");
         console.error('SSE error:', error);
         this.eventSource.close(); // Close the SSE connection on error
       };
