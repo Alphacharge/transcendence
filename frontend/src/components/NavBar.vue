@@ -1,7 +1,12 @@
 <template>
-  <router-link to="/"
-    ><img src="/favicon.ico" alt="favicon" class="navbar-brand-icon"
-  /></router-link>
+  <router-link to="/">
+    <img
+      style="width: 64px; height: auto"
+      :src="getTeam()"
+      alt="favicon"
+      class="navbar-brand-icon"
+    />
+  </router-link>
   <button
     class="navbar-toggler"
     type="button"
@@ -17,6 +22,11 @@
     <ul class="navbar-nav flex-grow-1">
       <li class="nav-item flex-grow-1">
         <router-link to="/pong" class="nav-link">{{ $t("Game") }}</router-link>
+      </li>
+      <li class="navbar-nav flex-grow-1">
+        <router-link to="/localgame" class="nav-link">{{
+          $t("LocalGame")
+        }}</router-link>
       </li>
       <li class="nav-item flex-grow-1">
         <router-link to="/tournament" class="nav-link">{{
@@ -59,5 +69,10 @@ import LanguageToggle from "@/components/LanguageToggle.vue";
 
 export default {
   components: { LanguageToggle },
+  methods: {
+    getTeam() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/team.gif`;
+    },
+  },
 };
 </script>

@@ -1,11 +1,15 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
+import { AuthService } from 'src/auth/auth.service';
 
-@Controller('stats')
+@Controller('data')
 export class PrismaController {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    readonly authService: AuthService,
+  ) {}
 
-  @Post('user')
+  @Post('userstats')
   async getHistoryMatches(
     @Body() body: { userId: number },
   ): Promise<{ userHistory: any[] | null; userProfil: any | null }> {
@@ -21,7 +25,7 @@ export class PrismaController {
     }
   }
 
-  @Post('all')
+  @Post('allstats')
   async getUserStatistics(): Promise<any | null> {
     return await this.prismaService.getUserStatistics();
   }

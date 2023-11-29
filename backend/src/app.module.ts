@@ -9,6 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TournamentController } from './tournament/tournament.controller';
 import { TournamentService } from './tournament/tournament.service';
 import { TournamentModule } from './tournament/tournament.module';
+import { PrismaController } from './prisma/prisma.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { TournamentModule } from './tournament/tournament.module';
     PrismaModule,
     TournamentModule,
   ],
-  controllers: [AppController, TournamentController],
+  controllers: [AppController, TournamentController, PrismaController],
   providers: [AppService, TournamentService],
 })
 export class AppModule {}

@@ -30,7 +30,7 @@ all: ip certs
 ifeq ($(OS), Darwin)
 	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || chown -R ${USER}:2021_heilbronn data/pgadmin"
 else
-	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
+	-@bash -c "sudo chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
 endif
 	docker-compose -f $(SRC) $(ENV) up
 	@echo "$(GREEN)Build changes and/or new containers.$(WHITE)"
@@ -74,22 +74,22 @@ status:
 	docker ps
 
 clean: stop
-	@-docker stop $$(docker ps -qa)
-	@-docker rm $$(docker ps -qa)
-	@-docker rmi -f $$(docker images -qa)
-	@-docker volume rm $$(docker volume ls -q)
-	@-docker network rm $$(docker network ls -q)
+	-docker stop $$(docker ps -qa)
+	-docker rm $$(docker ps -qa)
+	-docker rmi -f $$(docker images -qa)
+	-docker volume rm $$(docker volume ls -q)
+	-docker network rm $$(docker network ls -q)
 
 fclean: clean
-	@rm -rf ./frontend/node_modules
-	@rm -rf ./backend/node_modules
-	@-@docker system prune -a --volumes --force
+	rm -rf ./frontend/node_modules
+	rm -rf ./backend/node_modules
+	-@docker system prune -a --volumes --force
 	@echo "$(BLUE)Hardcleaned docker.$(WHITE)"
 
 sclean: fclean
 ifdef CONFIRM
 	@echo "$(YELL)Continuing with the operation...$(WHITE)"
-	-@sudo rm -rf $(DB_D) && mkdir -p $(DB_D); true;
+	-sudo rm -rf $(DB_D) && mkdir -p $(DB_D); true;
 	@echo "$(BLUE)Cleaned all data.$(WHITE)"
 else
 	@echo $(CONFIRM_MESSAGE)

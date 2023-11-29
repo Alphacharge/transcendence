@@ -1,15 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { TournamentState } from './TournamentState';
 import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
 import { Games } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-@Injectable()
+
 export class GameState {
-  GameData: Games | undefined = undefined;
+  gameData: Games | null;
   intervalId: NodeJS.Timeout | null;
   intervalCountId: NodeJS.Timeout | null;
 
-  tournamentStatus: number;
+  isLocalGame: boolean;
+  tournamentState: TournamentState | null;
 
   user1: User;
   user2: User;
@@ -44,17 +44,14 @@ export class GameState {
 
   currentCount: number;
 
-  constructor(
-    user1: User,
-    user2: User,
-    private readonly prismaService: PrismaService,
-  ) {
-    // this.prisma = new PrismaClient();
-    this.GameData = null;
+  constructor() {
+    this.gameData = null;
     this.intervalId = null;
+    this.isLocalGame = false;
+    this.tournamentState = null;
 
-    this.user1 = user1;
-    this.user2 = user2;
+    this.user1 = null;
+    this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
     this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
@@ -258,31 +255,45 @@ export class GameState {
     return angle;
   }
 
-  async playerVictory() {
+  hasEnded(): boolean {
     if (
-      this.scorePlayer1 == this.winningScore ||
-      this.scorePlayer2 == this.winningScore
+      this.scorePlayer1 >= this.winningScore ||
+      this.scorePlayer2 >= this.winningScore
     ) {
-      await this.prismaService.updateGameScore(
-        this.GameData.id,
-        this.scorePlayer1,
-        this.scorePlayer2,
-        this.winningPlayer.userData.id,
-      );
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-      this.gameInit();
-      /* promote flag to second round if this has been a 1st round tournament game */
-      if (this.tournamentStatus && this.tournamentStatus & 2) {
-        this.tournamentStatus = this.tournamentStatus << 1;
-      }
-      if (this.scorePlayer1 == this.winningScore) {
-        this.winningPlayer = this.user1;
-      } else {
-        this.winningPlayer = this.user2;
-      }
-      sharedEventEmitter.emit('victory', this);
+      return true;
     }
+
+    if (this.intervalId == null) {
+      return true;
+    }
+    return false;
+  }
+
+  playerVictory() {
+    if (this.hasEnded() == false) {
+      return;
+    }
+
+    clearInterval(this.intervalId);
+    this.intervalId = null;
+    this.gameInit();
+
+    if (this.scorePlayer1 == this.winningScore) {
+      this.winningPlayer = this.user1;
+    } else {
+      this.winningPlayer = this.user2;
+    }
+
+    // update tournament information
+    if (this.tournamentState) {
+      if (this.tournamentState.round & 2) {
+        this.tournamentState.round << 1;
+      }
+      this.tournamentState.gamesPlayed++;
+      this.tournamentState.winners.push(this.winningPlayer);
+    }
+
+    sharedEventEmitter.emit('victory', this);
   }
 
   isRunning(): boolean {

@@ -44,10 +44,15 @@ export class AuthController {
         return;
       }
 
-      const isValid = await this.authService.validateToken(token);
+      const { valid, renewedToken } =
+        await this.authService.validateToken(token);
 
-      if (isValid) {
-        res.status(200).json({ message: 'Authorized' });
+      if (valid) {
+        if (renewedToken) {
+          res.status(200).json({ message: 'Authorized', renewedToken });
+        } else {
+          res.status(200).json({ message: 'Authorized' });
+        }
       } else {
         res.status(401).json({ message: 'Invalid or expired token' });
       }

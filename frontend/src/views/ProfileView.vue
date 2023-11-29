@@ -9,8 +9,7 @@
             </div>
           </th>
           <th colspan="2">
-            <p>{{ userProfil.nick }}</p>
-            <p>{{ userProfil.email }}</p>
+            <p>{{ userProfil.username }}</p>
             <p>Registered since</p>
             <p>{{ userProfil.createdAt }}</p>
           </th>
@@ -25,7 +24,7 @@
             </div>
           </td>
           <td>
-            {{ match.leftUser.nick }}
+            {{ match.leftUser.username }}
           </td>
           <td>
             {{ match.left_user_score }}
@@ -37,7 +36,7 @@
             {{ match.right_user_score }}
           </td>
           <td>
-            {{ match.rightUser.nick }}
+            {{ match.rightUser.username }}
           </td>
           <td>
             <div class="image_history">
@@ -48,10 +47,14 @@
       </tbody>
     </table>
   </div>
+  <FriendList />
 </template>
 
 <script>
+import FriendList from "@/components/FriendList.vue";
+
 export default {
+  components: { FriendList },
   data() {
     return {
       userProfil: null,
@@ -67,7 +70,7 @@ export default {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/stats/user`,
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/userstats`,
           {
             method: "POST",
             headers: {

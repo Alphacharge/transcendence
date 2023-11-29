@@ -4,15 +4,14 @@
   </div>
   <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
     <div class="mb-3">
-      <label for="InputEmail" class="form-label"
-        ><h5>{{ $t("EmailAddress") }}</h5></label
+      <label for="Username" class="form-label"
+        ><h5>{{ $t("Username") }}</h5></label
       >
       <input
-        v-model="inputEmail"
-        type="email"
+        v-model="username"
+        type="text"
         class="form-control"
-        id="InputEmail"
-        aria-describedby="email"
+        id="Username"
       />
     </div>
     <div class="mb-3">
@@ -44,7 +43,7 @@ import router from "@/router";
 export default {
   data() {
     return {
-      inputEmail: "",
+      username: "",
       password: "",
       apiRequest: false,
       eventSource: null,
@@ -61,7 +60,7 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              email: this.inputEmail,
+              username: this.username,
               password: this.password,
             }),
           },

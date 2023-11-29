@@ -6,24 +6,19 @@
     <button @click="leaveQueue()" class="btn btn-warning">
       {{ $t("LeaveQueue") }}
     </button>
-    <button @click="stopGame()" class="btn btn-success">
-      {{ $t("AbortGame") }}
-    </button>
   </div>
 </template>
 <script>
-import { socket } from "@/assets/utils/socket";
+import { connectWebSocket, socket } from "@/assets/utils/socket";
 
 export default {
   methods: {
     enterQueue() {
+      connectWebSocket();
       socket.enterQueue();
     },
     leaveQueue() {
       socket.leaveQueue();
-    },
-    stopGame() {
-      socket.stopGame();
     },
   },
 };

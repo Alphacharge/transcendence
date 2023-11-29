@@ -10,6 +10,7 @@ import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
 import StatisticView from "@/views/StatisticView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import LocalGame from "@/views/LocalGameView.vue";
 import RedirectView from "@/views/RedirectView.vue";
 import { checkLoggedIn } from "@/services/authService";
 
@@ -28,6 +29,11 @@ const routes = [
     path: "/pong",
     name: "pong",
     component: PongView,
+  },
+  {
+    path: "/localgame",
+    name: "local game",
+    component: LocalGame,
   },
   {
     path: "/ip",

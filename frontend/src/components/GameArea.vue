@@ -15,7 +15,13 @@
 import { socket } from "@/assets/utils/socket";
 
 export default {
-  props: ["gameId", "playerNumber"],
+  props: {
+    isLocalGame: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
       // abll and paddle starting positions
@@ -24,16 +30,17 @@ export default {
       leftPaddleY: 150,
       rightPaddleY: 150,
       animationFrameId: null,
-      messageInterval: null,
+      messageIntervalPlayer1: null,
+      messageIntervalPlayer2: null,
     };
   },
+
   mounted() {
     // received ball update from server
     socket.on("ballUpdate", (ballCoordinates) => {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
-
     // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
@@ -44,54 +51,76 @@ export default {
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (!this.gameId) {
-        return;
-      }
-      if (event.key === "w") {
-        if (!this.messageInterval) {
-          console.log("sending paddle up with id", this.gameId);
-          this.messageInterval = setInterval(() => {
-            socket.sendPaddleUp(this.gameId);
-          }, 10);
-        }
-      } else if (event.key === "s") {
-        if (!this.messageInterval) {
-          this.messageInterval = setInterval(() => {
-            socket.sendPaddleDown(this.gameId);
-          }, 10);
+      if (this.isLocalGame) {
+        switch (event.key) {
+          case "w":
+            if (!this.messageIntervalPlayer1) {
+              this.messageIntervalPlayer1 = setInterval(() => {
+                socket.sendPaddleUp("left");
+              }, 10);
+            }
+            break;
+          case "s":
+            if (!this.messageIntervalPlayer1) {
+              this.messageIntervalPlayer1 = setInterval(() => {
+                socket.sendPaddleDown("left");
+              }, 10);
+            }
+            break;
+          case "ArrowUp":
+            if (!this.messageIntervalPlayer2) {
+              this.messageIntervalPlayer2 = setInterval(() => {
+                socket.sendPaddleUp("right");
+              }, 10);
+            }
+            break;
+          case "ArrowDown":
+            if (!this.messageIntervalPlayer2) {
+              this.messageIntervalPlayer2 = setInterval(() => {
+                socket.sendPaddleDown("right");
+              }, 10);
+            }
+            break;
+          default:
+            break;
         }
       }
     });
-    // stop sending paddle movement messages
+
     window.addEventListener("keyup", (event) => {
-      if (event.key === "w" || event.key === "s") {
-        clearInterval(this.messageInterval);
-        this.messageInterval = null;
+      if (this.isLocalGame) {
+        switch (event.key) {
+          case "w":
+          case "s":
+            clearInterval(this.messageIntervalPlayer1);
+            this.messageIntervalPlayer1 = null;
+            break;
+          case "ArrowUp":
+          case "ArrowDown":
+            clearInterval(this.messageIntervalPlayer2);
+            this.messageIntervalPlayer2 = null;
+            break;
+          default:
+            break;
+        }
       }
     });
   },
 
   beforeUnmounted() {
-    console.log("unmount called");
     // Clean up by canceling the animation frame
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
     // Remove the event listener for keydown events
-    window.removeEventListener("keydown");
-    window.removeEventListener("keyup");
-    clearInterval(this.messageInterval);
-    this.messageInterval = null;
-  },
-
-  methods: {
-    newGame() {
-      console.error("logging new game event");
-      socket.newGame();
-    },
-    stopGame() {
-      socket.stopGame(this.gameId);
-    },
+    window.removeEventListener("keydownPlayer1");
+    window.removeEventListener("keyupPlayer1");
+    window.removeEventListener("keydownPlayer2");
+    window.removeEventListener("keyupPlayer2");
+    clearInterval(this.messageIntervalPlayer1);
+    clearInterval(this.messageIntervalPlayer2);
+    this.messageIntervalPlayer1 = null;
+    this.messageIntervalPlayer2 = null;
   },
 };
 </script>

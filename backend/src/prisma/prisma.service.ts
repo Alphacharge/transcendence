@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaClient, Users, Games, Tournaments } from '@prisma/client';
+import {
+  PrismaClient,
+  Users,
+  Games,
+  Friends,
+  Tournaments,
+} from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -16,13 +22,13 @@ export class PrismaService extends PrismaClient {
 
   //User
   async createUserBySignUp(
-    inEmail: string,
+    inName: string,
     inHash: string,
   ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
-          email: inEmail,
+          username: inName,
           hash: inHash,
         },
       });
@@ -54,18 +60,17 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getUserByEmail(userEmail: string): Promise<Users | null> {
-    console.log('Search User with email: ', userEmail);
+  async getUserByName(userName: string): Promise<Users | null> {
+    console.log('Search User with username: ', userName);
 
     try {
       const userData = await this.users.findUnique({
-        where: { email: userEmail },
+        where: { username: userName },
       });
-
       if (userData) {
         return userData;
       } else {
-        console.error(`User with email ${userEmail} not found.`);
+        console.error(`User with username ${userName} not found.`);
         return null;
       }
     } catch (error) {
@@ -74,14 +79,14 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getAllUsersIdNiAv(): Promise<
-    { id: number; nick: string; avatar: number }[] | null
+  async getAllUsersIdNaAv(): Promise<
+    { id: number; username: string; avatar: number }[] | null
   > {
     try {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
-          nick: true,
+          username: true,
           avatar: true,
         },
       });
@@ -101,6 +106,7 @@ export class PrismaService extends PrismaClient {
           right_user_id: rightId,
           left_user_score: 0,
           right_user_score: 0,
+          winner_id: leftId,
           createdAt: new Date(),
         },
       });
@@ -124,7 +130,6 @@ export class PrismaService extends PrismaClient {
           left_user_score: leftScore,
           right_user_score: rightScore,
           winner_id: winnerId,
-          // Other fields you want to update
         },
       });
       console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
@@ -263,7 +268,7 @@ export class PrismaService extends PrismaClient {
   }
 
   async getUserStatistics() {
-    const allUsers = await this.getAllUsersIdNiAv();
+    const allUsers = await this.getAllUsersIdNaAv();
     const userStatistics = [];
 
     for (const user of allUsers) {
@@ -277,7 +282,7 @@ export class PrismaService extends PrismaClient {
 
       userStatistics.push({
         userId: user.id,
-        nick: user.nick,
+        username: user.username,
         avatar: user.avatar,
         matches,
         wins,
@@ -305,14 +310,14 @@ export class PrismaService extends PrismaClient {
           l_user: {
             select: {
               id: true,
-              nick: true,
+              username: true,
               avatar: true,
             },
           },
           r_user: {
             select: {
               id: true,
-              nick: true,
+              username: true,
               avatar: true,
             },
           },
@@ -325,18 +330,75 @@ export class PrismaService extends PrismaClient {
         right_user_score: game.right_user_score,
         leftUser: {
           id: game.l_user.id,
-          nick: game.l_user.nick,
+          username: game.l_user.username,
           avatar: game.l_user.avatar,
         },
         rightUser: {
           id: game.r_user.id,
-          nick: game.r_user.nick,
+          username: game.r_user.username,
           avatar: game.r_user.avatar,
         },
       }));
     } catch (error) {
       console.error('Error fetching match history:', error);
       return null;
+    }
+  }
+
+  async addFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const newFriend = await this.friends.create({
+        data: {
+          user_id: userId,
+          friend_id: friendId,
+        },
+      });
+      if (newFriend) return true;
+    } catch (error) {
+      console.error('Error creating new friend:', error);
+      return false;
+    }
+  }
+
+  async getFriendsById(userId: number): Promise<any[] | null> {
+    try {
+      const allFriends = await this.friends.findMany({
+        where: {
+          user_id: Number(userId),
+        },
+        select: {
+          friend: {
+            select: {
+              id: true,
+              username: true,
+              avatar: true,
+            },
+          },
+        },
+      });
+      const friendsData = allFriends.map((friend) => ({
+        ...friend.friend,
+        status: 0,
+      }));
+      return friendsData;
+    } catch (error) {
+      console.error('Error fetching friends data:', error);
+      return null;
+    }
+  }
+
+  async deleteFriendByIds(userId: number, friendId: number): Promise<boolean> {
+    try {
+      const deletedFriend = await this.friends.deleteMany({
+        where: {
+          user_id: Number(userId),
+          friend_id: Number(friendId),
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting friend:', error);
+      return false;
     }
   }
 }

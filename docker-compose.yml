@@ -9,7 +9,7 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "cd /backend && npm cache clean -f && npm install && sleep 10 && npx prisma migrate deploy && npm run start:dev"
+    command: bash -c "cd /backend && npm cache clean -f && npm install && sleep 10 && npx ts-node src/seed.ts && echo y | npx prisma migrate dev -n update && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
@@ -24,7 +24,7 @@ services:
   vue:
     container_name: vue
     image: node:21-alpine3.17
-    command: sh -c "cd /frontend && npm install && npm run serve"
+    command: sh -c "cd /frontend && npm install -g @vue/cli && npm install && npm run serve"
     ports:
       - "8080:8080"
     networks:

@@ -3,7 +3,7 @@ export default {
   Game: "Game",
   Tournament: "Tournament",
   Statistics: "Statistics",
-  Profil: "Profil",
+  Profil: "Profile",
   LogIn: "Log in",
   SignUp: "Sign up",
   About: "About",
@@ -11,10 +11,12 @@ export default {
   // PONG GAME
   EnterQueue: "Enter Queue",
   LeaveQueue: "Leave Queue",
-  AbortGame: "Abort Game",
+  StartLocalGame: "Start Local Game",
+  LocalGameExplanation:
+    "Play on the same keyboard with the buttons W/S and arrow up/arrow down",
 
   // SIGNUP & LOGIN
-  EmailAddress: "Email address",
+  Username: "Username",
   Password: "Password",
   RepeatPassword: "repeat Password",
   Submit: "Submit",
