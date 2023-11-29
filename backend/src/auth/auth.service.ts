@@ -27,12 +27,11 @@ export class AuthService {
       //generate the pw hash
       const hash = await argon.hash(user.password);
       //save the new user
-
       const newUser = await this.prismaService.createUserBySignUp(
         user.email,
         hash,
-      );
-      if (newUser == null)
+        );
+        if (newUser == null)
         throw new GatewayTimeoutException('Database unreachable');
       // console.log(this.signToken(user.id, user.email));
       const bToken = await this.signToken(newUser.id, newUser.email);
@@ -91,6 +90,7 @@ export class AuthService {
       expiresIn: '15m',
       secret: secret,
     });
+
 
     return token;
   }
@@ -167,9 +167,6 @@ export class AuthService {
       });
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
-        // console.log(
-        //   `AUTH.SERVICE: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
-        // );
         const user:User = {username:responseData.login, password:process.env.BACKEND_API_PW, email:responseData.email, id:0};
         const newUser = await this.checkUserInDB(user);
         let response: {access_token:string, userId: number, userEmail: string};
@@ -179,7 +176,6 @@ export class AuthService {
           const bToken = await this.signToken(newUser.id, newUser.email);
           response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
         }
-        // console.error(`AUTH.SERVICE, HANDLECALLBACK, response=${response}`);
         return response;
       } else {
         console.error(
