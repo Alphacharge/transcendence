@@ -4,7 +4,7 @@ import { User } from "./auth/interfaces/user.interface";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Users } from "@prisma/client";
-
+import * as argon from 'argon2';
 
 async function seed() {
   const config = new ConfigService();
@@ -29,14 +29,14 @@ async function seed() {
     let authuser7: User = { id: 7, password: "g", username: "g" };
     let authuser8: User = { id: 8, password: "h", username: "h" };
 
-    let user1: Users = await prisma.createUserBySignUp(authuser1.username, await auth.signToken(authuser1.id, authuser1.username));
-    let user2: Users = await prisma.createUserBySignUp(authuser2.username, await auth.signToken(authuser2.id, authuser2.username));
-    let user3: Users = await prisma.createUserBySignUp(authuser3.username, await auth.signToken(authuser3.id, authuser3.username));
-    let user4: Users = await prisma.createUserBySignUp(authuser4.username, await auth.signToken(authuser4.id, authuser4.username));
-    let user5: Users = await prisma.createUserBySignUp(authuser5.username, await auth.signToken(authuser5.id, authuser5.username));
-    let user6: Users = await prisma.createUserBySignUp(authuser6.username, await auth.signToken(authuser6.id, authuser6.username));
-    let user7: Users = await prisma.createUserBySignUp(authuser7.username, await auth.signToken(authuser7.id, authuser7.username));
-    let user8: Users = await prisma.createUserBySignUp(authuser8.username, await auth.signToken(authuser8.id, authuser8.username));
+    let user1: Users = await prisma.createUserBySignUp(authuser1.username, await argon.hash(authuser1.password));
+    let user2: Users = await prisma.createUserBySignUp(authuser2.username, await argon.hash(authuser2.password));
+    let user3: Users = await prisma.createUserBySignUp(authuser3.username, await argon.hash(authuser3.password));
+    let user4: Users = await prisma.createUserBySignUp(authuser4.username, await argon.hash(authuser4.password));
+    let user5: Users = await prisma.createUserBySignUp(authuser5.username, await argon.hash(authuser5.password));
+    let user6: Users = await prisma.createUserBySignUp(authuser6.username, await argon.hash(authuser6.password));
+    let user7: Users = await prisma.createUserBySignUp(authuser7.username, await argon.hash(authuser7.password));
+    let user8: Users = await prisma.createUserBySignUp(authuser8.username, await argon.hash(authuser8.password));
 
     //Play 8 Queued Games
     const game1 = await prisma.createNewGame(user1.id, user2.id);
