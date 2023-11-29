@@ -10,6 +10,7 @@ import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
 import StatisticView from "@/views/StatisticView.vue";
 import ProfileView from "@/views/ProfileView.vue";
+import RedirectView from "@/views/RedirectView.vue";
 import { checkLoggedIn } from "@/services/authService";
 
 const routes = [
@@ -58,6 +59,11 @@ const routes = [
     name: "torunament",
     component: TournamentView,
   },
+  {
+    path: "/redirect",
+    name: "redirect",
+    component: RedirectView,
+  },
 ];
 
 const router = createRouter({
@@ -69,15 +75,17 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   try {
     const isLoggedIn = await checkLoggedIn();
-
     if (
       to.name !== "login" &&
       to.name !== "signup" &&
       to.name !== "ip" &&
+      to.name !== "redirect" &&
       !isLoggedIn
-    ) {
-      next("/login");
-    } else {
+    )
+    {
+        next("/login");
+    }
+    else {
       next(); // Proceed to the requested route
     }
   } catch (error) {
