@@ -24,10 +24,12 @@ export class AuthService {
   private oAuthCompletionSubject = new Subject<any>();
 
   emitOAuthCompletion(response: any) {
+    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION, reponse=${response}`);
     this.oAuthCompletionSubject.next(response);
   }
 
   onOAuthCompletion(): Observable<any> {
+    console.error(`AUTH:SERVICE, EMITOAUTHCOMPLETION`);
     return this.oAuthCompletionSubject.asObservable();
   }
 
