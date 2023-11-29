@@ -179,7 +179,7 @@ export class AuthService {
         // console.log(
         //   `AUTH.SERVICE: HANDLECALLBACK, intra login: ${responseData.login}, email: ${responseData.email}`,
         // );
-        const user:User = {username:responseData.login, password:process.env.BACKEND_API_TOKEN, email:responseData.email, id:0};
+        const user:User = {username:responseData.login, password:process.env.BACKEND_API_PW, email:responseData.email, id:0};
         const newUser = await this.checkUserInDB(user);
         let response: {access_token:string, userId: number, userEmail: string};
         if(!newUser) {
@@ -189,6 +189,7 @@ export class AuthService {
           response = {access_token: bToken, userId: newUser.id, userEmail: newUser.email};
         }
         this.emitOAuthCompletion(response);
+        console.error(`AUTH.SERVICE, HANDLECALLBACK, response=${response}`);
       } else {
         console.error(
           'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
