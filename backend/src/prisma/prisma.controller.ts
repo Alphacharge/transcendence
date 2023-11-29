@@ -62,40 +62,82 @@ export class PrismaController {
     }
   }
 
+  // @Post('upload')
+  // @UseInterceptors(
+  //   FileInterceptor('file', {
+  //     storage: diskStorage({
+  //       destination: './',
+  //       filename: async (req: Request, file, callback) => {
+  //         try {
+  //           const prismaService = (req as any).prismaService;
+  //           // Get the user ID from the request
+  //           const userId = req.body.userId;
+  //           // Create a new avatar entry in the database
+  //           console.error("trap");
+  //           const avatar: Avatars = await prismaService.createNewAvatarById(userId);
+  //           console.error(avatar)
+  //           if (!avatar)
+  //             throw new AvatarCreationFailedException();
+  //           // Use the avatar ID as the filename
+  //           const filename = `${avatar.id}${extname(file.originalname)}`;
+  
+  //           // Callback with the generated filename
+  //           callback(null, filename);
+  //         } catch (error) {
+  //           // Handle errors
+  //           callback(error, null);
+  //         }
+  //       },
+  //     }),
+  //   }),
+  // )
+
+  // async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
+  //   // Access the file information from the request object
+  //   // Handle the uploaded file here
+  //   // 'file' contains information about the uploaded file, including the path
+
+  //   return { filename: file.filename };
+  // }
   @Post('upload')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: '../frontend/public/avatars/',
-        filename: async function (req: Request, file, callback) {
-          try {
-            // Get the user ID from the request
-            const userId = req.body.userId;
-  
-            // Create a new avatar entry in the database
-            const avatar: Avatars = await this.prismaService.createNewAvatarById(userId);
-  
-            if (!avatar)
-              throw new AvatarCreationFailedException();
-            // Use the avatar ID as the filename
-            const filename = `${avatar.id}${extname(file.originalname)}`;
-  
-            // Callback with the generated filename
-            callback(null, filename);
-          } catch (error) {
-            // Handle errors
-            callback(error, null);
-          }
-        }.bind(this),
-      }),
+@UseInterceptors(
+  FileInterceptor('file', {
+    storage: diskStorage({
+      destination: './',
+      filename: (req, file, callback) => {
+        // Get the user ID from the request
+        const userId = req.body.userId;
+
+        // Use a simple filename for now (you can customize this as needed)
+        const filename = `${userId}_${Date.now()}${extname(file.originalname)}`;
+
+        // Callback with the generated filename
+        callback(null, filename);
+      },
     }),
-  )
+  }),
+)
+async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
+  try {
+    // Get the user ID from the request
+    const userId = req.body.userId;
 
-  async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
-    // Access the file information from the request object
-    // Handle the uploaded file here
-    // 'file' contains information about the uploaded file, including the path
+    // Create a new avatar entry in the database
+    const avatar: Avatars = await this.prismaService.createNewAvatarById(userId);
 
-    return { filename: file.filename };
+    if (!avatar) {
+      throw new AvatarCreationFailedException();
+    }
+
+    // Handle the uploaded file here (you can save the filename or avatar ID in the database)
+    console.log('File uploaded successfully:', file);
+
+    // Return the appropriate response
+    return { filename: file.filename, avatarId: avatar.id }; 
+  } catch (error) {
+    // Handle errors
+    console.error('Error uploading file:', error);
+    throw new AvatarCreationFailedException();
   }
+}
 }
