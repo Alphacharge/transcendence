@@ -108,13 +108,14 @@ export class GameService {
         queuedUser.userData.id === user.userData.id,
     );
     if (userToRemove) {
+      sharedEventEmitter.emit('removedFromTournamentQueue', user);
+      
       const index = this.queueTournament.indexOf(userToRemove);
       if (index !== -1) {
         this.queueTournament.splice(index, 1);
       }
     }
 
-    sharedEventEmitter.emit('removedFromTournamentQueue', user);
   }
 
   startTournament() {

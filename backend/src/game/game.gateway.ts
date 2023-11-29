@@ -244,10 +244,15 @@ export class GameGateway {
   }
 
   removedFromTournamentQueue(user: User) {
-    user.socket.emit('removedFromTournamentQueue');
     this.gameService.queueTournament.forEach((queuedUser) => {
-      queuedUser.socket.emit('playerLeftTournament', user.userData.username);
+      this.gameService.queueTournament.forEach((queuedSocket) => {
+        queuedSocket.socket.emit(
+          'playerLeftTournament',
+          queuedUser.userData.username,
+        );
+      });
     });
+    user.socket.emit('removedFromTournamentQueue');
   }
 
   tournamentStart(tournament: TournamentState) {
