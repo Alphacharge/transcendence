@@ -23,6 +23,11 @@
       <li class="nav-item flex-grow-1">
         <router-link to="/pong" class="nav-link">{{ $t("Game") }}</router-link>
       </li>
+      <li class="navbar-nav flex-grow-1">
+        <router-link to="/localgame" class="nav-link">{{
+          $t("LocalGame")
+        }}</router-link>
+      </li>
       <li class="nav-item flex-grow-1">
         <router-link to="/tournament" class="nav-link">{{
           $t("Tournament")

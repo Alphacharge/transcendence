@@ -16,7 +16,6 @@ import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
-import { queue } from 'rxjs';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -112,6 +111,11 @@ export class GameGateway {
     this.gameService.websocketUsers.delete(socket.id);
   }
 
+  @SubscribeMessage('startLocalGame')
+  startLocalGame(@ConnectedSocket() socket: Socket) {
+    this.gameService.startLocalGame(socket);
+  }
+
   @SubscribeMessage('enterQueue')
   enterQueue(@ConnectedSocket() socket: Socket) {
     this.gameService.addToQueue(socket);
@@ -164,20 +168,14 @@ export class GameGateway {
   /* Tell the client the game starts now. */
   sendGameStart(game: GameState) {
     game.user1.socket.emit('start');
-    game.user2.socket.emit('start');
+    if (game.user2) game.user2.socket.emit('start');
   }
 
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
-    // if any user left the game, abort
-    if (!game.user1 || !game.user2) {
-      console.error('GAME.GATEWAY: sendPrepareGame, Player left game.');
-      return;
-    }
-
     // tell the client the player number
     game.user1.socket.emit('player1');
-    game.user2.socket.emit('player2');
+    if (game.user2) game.user2.socket.emit('player2');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -187,11 +185,11 @@ export class GameGateway {
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
     game.user1.socket.emit('ballUpdate', game.ballCoordinates());
-    game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+    if (game.user2) game.user2.socket.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
-    if (game.user1) game.user1.socket.emit('scoreUpdate', game.getScore());
+    game.user1.socket.emit('scoreUpdate', game.getScore());
     if (game.user2) game.user2.socket.emit('scoreUpdate', game.getScore());
   }
 
@@ -199,24 +197,26 @@ export class GameGateway {
   sendPaddleUpdate(game: GameState) {
     game.user1.socket.emit('leftPaddle', game.leftPosition);
     game.user1.socket.emit('rightPaddle', game.rightPosition);
-    game.user2.socket.emit('leftPaddle', game.leftPosition);
-    game.user2.socket.emit('rightPaddle', game.rightPosition);
+    if (game.user2) {
+      game.user2.socket.emit('leftPaddle', game.leftPosition);
+      game.user2.socket.emit('rightPaddle', game.rightPosition);
+    }
   }
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  PaddleUp(@ConnectedSocket() socket: Socket) {
+  PaddleUp(@ConnectedSocket() socket: Socket, @MessageBody() payload: { localPlayer: string }) {
     const user = this.gameService.websocketUsers.get(socket.id);
     if (user) {
-      const game = this.gameService.paddleUp(user);
+      const game = this.gameService.paddleUp(user, payload.localPlayer);
       if (game) this.sendPaddleUpdate(game);
     }
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@ConnectedSocket() socket: Socket) {
+  PaddleDown(@ConnectedSocket() socket: Socket, @MessageBody() payload: { localPlayer: string }) {
     const user = this.gameService.websocketUsers.get(socket.id);
-    const game = this.gameService.paddleDown(user);
+    const game = this.gameService.paddleDown(user, payload.localPlayer);
     if (game) this.sendPaddleUpdate(game);
   }
 
@@ -225,7 +225,7 @@ export class GameGateway {
       `GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`,
     );
     game.user1.socket.emit('victory', game.winningPlayer.userData.username);
-    game.user2.socket.emit('victory', game.winningPlayer.userData.username);
+    if (game.user2) game.user2.socket.emit('victory', game.winningPlayer.userData.username);
   }
 
   matchStart(game: GameState) {

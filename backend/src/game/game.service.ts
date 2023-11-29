@@ -13,7 +13,27 @@ export class GameService {
   queueTournament: User[] = [];
   queue: User[] = [];
   websocketUsers: Map<string, User> = new Map(); //socket.id -> user
-  // games: Map<number, GameState> = new Map(); // gamestate.gameid -> gamestate
+
+  async startLocalGame(socket: Socket) {
+    const user = this.websocketUsers.get(socket.id);
+    if (user.activeTournament || user.activeGame) return;
+
+    const game = new GameState;
+    game.isLocalGame = true;
+    game.user1 = user;
+
+    user.activeGame = game;
+
+    await game.countDown();
+    sharedEventEmitter.emit('prepareGame', game);
+
+    const updateRate = 5;
+
+    game.intervalId = setInterval(() => {
+      this.animateBall(game);
+    }, updateRate);
+    sharedEventEmitter.emit('startGame');
+  }
 
   /* A new user is added to the game queue */
   addToQueue(socket: Socket) {
@@ -179,33 +199,45 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  paddleUp(player: User) {
+  paddleUp(player: User, leftOrRight: string) {
     const game = player.activeGame;
+
     if (game && game.isRunning()) {
-      game.movePaddleUp(player);
+      if (game.isLocalGame && leftOrRight == "right") {
+        game.movePaddleUp(null);
+      } else {
+        game.movePaddleUp(player);
+      }
     }
     return game;
   }
 
-  paddleDown(player: User) {
+  paddleDown(player: User, leftOrRight: string) {
     const game = player.activeGame;
+
     if (game && game.isRunning()) {
-      game.movePaddleDown(player);
+      if (game.isLocalGame && leftOrRight == "right") {
+        game.movePaddleDown(null);
+      } else {
+        game.movePaddleDown(player);
+      }
     }
     return game;
   }
 
   endGame(game: GameState) {
     game.playerVictory();
-    this.prismaService.updateGameScore(
-      game.gameData.id,
-      game.scorePlayer1,
-      game.scorePlayer2,
-      game.winningPlayer.userData.id,
-    );
+    if (!game.isLocalGame) {
+      this.prismaService.updateGameScore(
+        game.gameData.id,
+        game.scorePlayer1,
+        game.scorePlayer2,
+        game.winningPlayer.userData.id,
+      );
+    }
 
     game.user1.activeGame = null;
-    game.user2.activeGame = null;
+    if (game.user2) game.user2.activeGame = null;
 
     if (game.tournamentState) {
       if (

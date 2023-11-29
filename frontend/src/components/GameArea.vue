@@ -15,18 +15,26 @@
 import { socket } from "@/assets/utils/socket";
 
 export default {
+  props: {
+    isLocalGame: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
-      playerNumber: 0,
       // abll and paddle starting positions
       bouncingBallX: 400,
       bouncingBallY: 200,
       leftPaddleY: 150,
       rightPaddleY: 150,
       animationFrameId: null,
-      messageInterval: null,
+      messageIntervalPlayer1: null,
+      messageIntervalPlayer2: null,
     };
   },
+
   mounted() {
     // received ball update from server
     socket.on("ballUpdate", (ballCoordinates) => {
@@ -40,47 +48,79 @@ export default {
     socket.on("rightPaddle", (pY) => {
       this.rightPaddleY = pY;
     });
+
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (event.key === "w") {
-        if (!this.messageInterval) {
-          this.messageInterval = setInterval(() => {
-            socket.sendPaddleUp();
-          }, 10);
-        }
-      } else if (event.key === "s") {
-        if (!this.messageInterval) {
-          this.messageInterval = setInterval(() => {
-            socket.sendPaddleDown();
-          }, 10);
+      if (this.isLocalGame) {
+        switch (event.key) {
+          case "w":
+            if (!this.messageIntervalPlayer1) {
+              this.messageIntervalPlayer1 = setInterval(() => {
+                socket.sendPaddleUp("left");
+              }, 10);
+            }
+            break;
+          case "s":
+            if (!this.messageIntervalPlayer1) {
+              this.messageIntervalPlayer1 = setInterval(() => {
+                socket.sendPaddleDown("left");
+              }, 10);
+            }
+            break;
+          case "ArrowUp":
+            if (!this.messageIntervalPlayer2) {
+              this.messageIntervalPlayer2 = setInterval(() => {
+                socket.sendPaddleUp("right");
+              }, 10);
+            }
+            break;
+          case "ArrowDown":
+            if (!this.messageIntervalPlayer2) {
+              this.messageIntervalPlayer2 = setInterval(() => {
+                socket.sendPaddleDown("right");
+              }, 10);
+            }
+            break;
+          default:
+            break;
         }
       }
     });
-    // stop sending paddle movement messages
+
     window.addEventListener("keyup", (event) => {
-      if (event.key === "w" || event.key === "s") {
-        clearInterval(this.messageInterval);
-        this.messageInterval = null;
+      if (this.isLocalGame) {
+        switch (event.key) {
+          case "w":
+          case "s":
+            clearInterval(this.messageIntervalPlayer1);
+            this.messageIntervalPlayer1 = null;
+            break;
+          case "ArrowUp":
+          case "ArrowDown":
+            clearInterval(this.messageIntervalPlayer2);
+            this.messageIntervalPlayer2 = null;
+            break;
+          default:
+            break;
+        }
       }
     });
   },
+
   beforeUnmounted() {
-    console.log("unmount called");
     // Clean up by canceling the animation frame
     if (this.animationFrameId) {
       cancelAnimationFrame(this.animationFrameId);
     }
     // Remove the event listener for keydown events
-    window.removeEventListener("keydown");
-    window.removeEventListener("keyup");
-    clearInterval(this.messageInterval);
-    this.messageInterval = null;
-  },
-  methods: {
-    newGame() {
-      console.error("logging new game event");
-      socket.newGame();
-    },
+    window.removeEventListener("keydownPlayer1");
+    window.removeEventListener("keyupPlayer1");
+    window.removeEventListener("keydownPlayer2");
+    window.removeEventListener("keyupPlayer2");
+    clearInterval(this.messageIntervalPlayer1);
+    clearInterval(this.messageIntervalPlayer2);
+    this.messageIntervalPlayer1 = null;
+    this.messageIntervalPlayer2 = null;
   },
 };
 </script>
