@@ -45,8 +45,6 @@ export default {
     return {
       username: "",
       password: "",
-      apiRequest: false,
-      eventSource: null,
     };
   },
   methods: {
@@ -103,11 +101,6 @@ export default {
         alert("User or Password wrong!");
       }
     },
-  },
-  beforeUnmount() {
-    if (this.eventSource) {
-      this.eventSource.close();
-    }
   },
 };
 </script>
