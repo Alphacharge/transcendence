@@ -66,7 +66,7 @@ export class AuthController {
     url.pathname = 'redirect';
     url.searchParams.set('access_token', authResponse.access_token);
     url.searchParams.set('userId', authResponse.userId.toString());
-    url.searchParams.set('userEmail', authResponse.userName);
+    url.searchParams.set('userName', authResponse.userName);
     response.status(302).redirect(url.href);
   }
 }
