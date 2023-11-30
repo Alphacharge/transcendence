@@ -29,4 +29,23 @@ export class PrismaController {
   async getUserStatistics(): Promise<any | null> {
     return await this.prismaService.getUserStatistics();
   }
+
+  @Post('friends')
+  async getFriendsById(
+    @Body() body: { userId: number },
+  ): Promise<{ friends: any[] | null }> {
+    const { userId } = body;
+    try {
+      const friends = await this.prismaService.getFriendsById(userId);
+      friends.forEach((element) => {
+        if (this.authService.activeUser.includes(element.id)) {
+          element.status = 1;
+        }
+      });
+      return { friends };
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+      return { friends: null };
+    }
+  }
 }
