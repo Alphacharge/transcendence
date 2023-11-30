@@ -19,7 +19,8 @@ export default {
   RepeatPassword: "Ripeti Password",
   Submit: "Invia",
   or: "o",
-  intra: "accedi con intra",
+  loginWithIntra: "Continua con 42",
+  signupWithIntra: "Continua con 42",
 
   // STATISTICS
   User: "Utente",

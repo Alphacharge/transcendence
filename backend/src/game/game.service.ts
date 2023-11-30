@@ -18,7 +18,7 @@ export class GameService {
     const user = this.websocketUsers.get(socket.id);
     if (user.activeTournament || user.activeGame) return;
 
-    const game = new GameState;
+    const game = new GameState();
     game.isLocalGame = true;
     game.user1 = user;
 
@@ -129,13 +129,12 @@ export class GameService {
     );
     if (userToRemove) {
       sharedEventEmitter.emit('removedFromTournamentQueue', user);
-      
+
       const index = this.queueTournament.indexOf(userToRemove);
       if (index !== -1) {
         this.queueTournament.splice(index, 1);
       }
     }
-
   }
 
   startTournament() {
@@ -203,7 +202,7 @@ export class GameService {
     const game = player.activeGame;
 
     if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == "right") {
+      if (game.isLocalGame && leftOrRight == 'right') {
         game.movePaddleUp(null);
       } else {
         game.movePaddleUp(player);
@@ -216,7 +215,7 @@ export class GameService {
     const game = player.activeGame;
 
     if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == "right") {
+      if (game.isLocalGame && leftOrRight == 'right') {
         game.movePaddleDown(null);
       } else {
         game.movePaddleDown(player);

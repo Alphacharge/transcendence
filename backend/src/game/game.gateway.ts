@@ -185,7 +185,8 @@ export class GameGateway {
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
     game.user1.socket.emit('ballUpdate', game.ballCoordinates());
-    if (game.user2) game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+    if (game.user2)
+      game.user2.socket.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
@@ -205,7 +206,10 @@ export class GameGateway {
 
   // listen for paddle updates
   @SubscribeMessage('paddleUp')
-  PaddleUp(@ConnectedSocket() socket: Socket, @MessageBody() payload: { localPlayer: string }) {
+  PaddleUp(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { localPlayer: string },
+  ) {
     const user = this.gameService.websocketUsers.get(socket.id);
     if (user) {
       const game = this.gameService.paddleUp(user, payload.localPlayer);
@@ -214,7 +218,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('paddleDown')
-  PaddleDown(@ConnectedSocket() socket: Socket, @MessageBody() payload: { localPlayer: string }) {
+  PaddleDown(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { localPlayer: string },
+  ) {
     const user = this.gameService.websocketUsers.get(socket.id);
     const game = this.gameService.paddleDown(user, payload.localPlayer);
     if (game) this.sendPaddleUpdate(game);
@@ -225,7 +232,8 @@ export class GameGateway {
       `GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`,
     );
     game.user1.socket.emit('victory', game.winningPlayer.userData.username);
-    if (game.user2) game.user2.socket.emit('victory', game.winningPlayer.userData.username);
+    if (game.user2)
+      game.user2.socket.emit('victory', game.winningPlayer.userData.username);
   }
 
   matchStart(game: GameState) {

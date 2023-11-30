@@ -27,9 +27,13 @@
     </div>
     <div>
       {{ $t("or") }} <router-link to="/signup">{{ $t("SignUp") }}</router-link>
-      {{ $t("or") }} <router-link to="/intra">{{ $t("intra") }}</router-link>
     </div>
-    <button type="submit" class="btn btn-primary">{{ $t("Submit") }}</button>
+    <button type="submit" class="btn btn-primary">
+      {{ $t("Submit") }}
+    </button>
+    <button type="submit" class="btn btn-primary" @click.prevent="authorize">
+      {{ $t("loginWithIntra") }}
+    </button>
   </form>
 </template>
 
@@ -59,18 +63,42 @@ export default {
             }),
           },
         );
-
-        const responseData = await response.json();
-        if (response.ok) {
-          localStorage.setItem("access_token", responseData["access_token"]);
-          localStorage.setItem("userId", responseData["userId"]);
-          router.push("/");
-        } else {
-          alert("User or Password wrong!");
-        }
+        this.setResponse(response);
       } catch (error) {
         alert("Login failed!");
         router.push("/login");
+      }
+    },
+    authorize() {
+      const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
+      const redirectUri = `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`;
+      const scope = `${process.env.VUE_APP_SCOPE}`;
+      const state = `${process.env.VUE_APP_STATE}`;
+      const queryParams = new URLSearchParams({
+        client_id: `${process.env.VUE_APP_FORTYTWO_APP_ID}`,
+        redirect_uri: redirectUri,
+        scope: scope,
+        state: state,
+        response_type: "code",
+      });
+      const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
+      if (authorizationUrl) {
+        // window.location.href = authorizationUrl;
+        window.location.href = authorizationUrl;
+      } else {
+        console.error(
+          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
+        );
+      }
+    },
+    async setResponse(response) {
+      if (response.ok) {
+        const responseData = await response.json();
+        localStorage.setItem("access_token", responseData["access_token"]);
+        localStorage.setItem("userId", responseData["userId"]);
+        router.push("/");
+      } else {
+        alert("User or Password wrong!");
       }
     },
   },

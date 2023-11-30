@@ -39,6 +39,9 @@
     <button type="submit" class="btn btn-primary" :disabled="isDisabled">
       {{ $t("Submit") }}
     </button>
+    <button type="submit" class="btn btn-primary" @click.prevent="authorize">
+      {{ $t("signupWithIntra") }}
+    </button>
   </form>
 </template>
 
@@ -91,6 +94,27 @@ export default {
       } catch (error) {
         alert("Signup failed!");
         router.push("/signup");
+      }
+    },
+    async authorize() {
+      const redirectUri = `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`;
+      const scope = `${process.env.VUE_APP_SCOPE}`;
+      const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
+      const state = `${process.env.VUE_APP_STATE}`;
+      const queryParams = new URLSearchParams({
+        client_id: `${process.env.VUE_APP_FORTYTWO_APP_ID}`,
+        redirect_uri: redirectUri,
+        scope: scope,
+        state: state,
+        response_type: "code",
+      });
+      const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
+      if (authorizationUrl) {
+        window.location.href = authorizationUrl;
+      } else {
+        console.error(
+          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
+        );
       }
     },
   },
