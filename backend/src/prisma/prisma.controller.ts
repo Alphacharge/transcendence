@@ -1,4 +1,11 @@
-import { Controller, Post, Body, UseInterceptors, Req, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseInterceptors,
+  Req,
+  UploadedFile,
+} from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -9,10 +16,12 @@ import { Avatars } from '@prisma/client';
 import { Request } from 'express';
 import { promises as fsPromises } from 'fs';
 
-
 export class AvatarCreationFailedException extends HttpException {
   constructor() {
-    super('Failed to create a new avatar entry', HttpStatus.INTERNAL_SERVER_ERROR);
+    super(
+      'Failed to create a new avatar entry',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
   }
 }
 
@@ -21,8 +30,7 @@ export class PrismaController {
   constructor(
     private readonly prismaService: PrismaService,
     readonly authService: AuthService,
-    ) {}
-
+  ) {}
 
   @Post('userstats')
   async getHistoryMatches(
@@ -65,50 +73,56 @@ export class PrismaController {
   }
 
   @Post('upload')
-@UseInterceptors(
-  FileInterceptor('file', {
-    storage: diskStorage({
-      destination: './avatars',
-      filename: (req, file, callback) => {
-        // Use a simple filename for now (you can customize this as needed)
-        const filename = `${Date.now()}${extname(file.originalname)}`;
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './avatars',
+        filename: (req, file, callback) => {
+          // Use a simple filename for now (you can customize this as needed)
+          const filename = `${Date.now()}${extname(file.originalname)}`;
 
-        // Callback with the generated filename
-        callback(null, filename);
-      },
+          // Callback with the generated filename
+          callback(null, filename);
+        },
+      }),
     }),
-  }),
-)
-async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
-  try {
-    // Get the user ID from the request
-    const userId = req.body.userId;
+  )
+  async uploadFile(
+    @Req() req: Request,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    try {
+      // Get the user ID from the request
+      const userId = req.body.userId;
 
-    // Create a new avatar entry in the database
-    const avatar: Avatars = await this.prismaService.createNewAvatarById(userId);
+      // Create a new avatar entry in the database
+      const avatar: Avatars =
+        await this.prismaService.createNewAvatarById(userId);
 
-    if (!avatar) {
+      if (!avatar) {
+        throw new AvatarCreationFailedException();
+      }
+
+      // Get the original filename of the uploaded file
+      const originalFilename = 'avatars/' + file.filename;
+      const newFilename = `avatars/${avatar.id.toString()}${extname(
+        file.originalname,
+      )}`;
+
+      console.error(originalFilename, '---', newFilename);
+      // Rename the file with the new filename
+      await fsPromises.rename(originalFilename, newFilename);
+      await fsPromises.unlink(originalFilename);
+
+      // Handle the uploaded file here (you can save the filename or avatar ID in the database)
+      console.log('File uploaded successfully:', file);
+
+      // Return the appropriate response
+      return { avatar: newFilename };
+    } catch (error) {
+      // Handle errors
+      console.error('Error uploading file:', error);
       throw new AvatarCreationFailedException();
     }
-
-    // Get the original filename of the uploaded file
-    const originalFilename = "avatars/"+file.filename;
-    const newFilename = `avatars/${avatar.id.toString()}${extname(file.originalname)}`;
-    
-    console.error(originalFilename, "---", newFilename);
-    // Rename the file with the new filename
-    await fsPromises.rename(originalFilename, newFilename);
-    await fsPromises.unlink(originalFilename);
-
-    // Handle the uploaded file here (you can save the filename or avatar ID in the database)
-    console.log('File uploaded successfully:', file);
-
-    // Return the appropriate response
-    return { avatar: newFilename }; 
-  } catch (error) {
-    // Handle errors
-    console.error('Error uploading file:', error);
-    throw new AvatarCreationFailedException();
   }
-}
 }

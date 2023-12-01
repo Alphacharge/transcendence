@@ -1,16 +1,16 @@
-import { PrismaService } from "./prisma/prisma.service";
-import { AuthService } from "./auth/auth.service";
-import { User } from "./auth/interfaces/user.interface";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import { Users } from "@prisma/client";
+import { PrismaService } from './prisma/prisma.service';
+import { AuthService } from './auth/auth.service';
+import { User } from './auth/interfaces/user.interface';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import { Users } from '@prisma/client';
 import * as argon from 'argon2';
 
 async function seed() {
   const config = new ConfigService();
   const prisma = new PrismaService(config);
   const jwt = new JwtService();
-  const auth = new AuthService(prisma, jwt,config);
+  const auth = new AuthService(prisma, jwt, config);
 
   try {
     // Delete all tables
@@ -21,23 +21,47 @@ async function seed() {
     await prisma.users.deleteMany({});
 
     // Create users
-    let authuser1: User = { id: 1, password: "a", username: "a" };
-    let authuser2: User = { id: 2, password: "b", username: "b" };
-    let authuser3: User = { id: 3, password: "c", username: "c" };
-    let authuser4: User = { id: 4, password: "d", username: "d" };
-    let authuser5: User = { id: 5, password: "e", username: "e" };
-    let authuser6: User = { id: 6, password: "f", username: "f" };
-    let authuser7: User = { id: 7, password: "g", username: "g" };
-    let authuser8: User = { id: 8, password: "h", username: "h" };
+    let authuser1: User = { id: 1, password: 'a', username: 'a' };
+    let authuser2: User = { id: 2, password: 'b', username: 'b' };
+    let authuser3: User = { id: 3, password: 'c', username: 'c' };
+    let authuser4: User = { id: 4, password: 'd', username: 'd' };
+    let authuser5: User = { id: 5, password: 'e', username: 'e' };
+    let authuser6: User = { id: 6, password: 'f', username: 'f' };
+    let authuser7: User = { id: 7, password: 'g', username: 'g' };
+    let authuser8: User = { id: 8, password: 'h', username: 'h' };
 
-    let user1: Users = await prisma.createUserBySignUp(authuser1.username, await argon.hash(authuser1.password));
-    let user2: Users = await prisma.createUserBySignUp(authuser2.username, await argon.hash(authuser2.password));
-    let user3: Users = await prisma.createUserBySignUp(authuser3.username, await argon.hash(authuser3.password));
-    let user4: Users = await prisma.createUserBySignUp(authuser4.username, await argon.hash(authuser4.password));
-    let user5: Users = await prisma.createUserBySignUp(authuser5.username, await argon.hash(authuser5.password));
-    let user6: Users = await prisma.createUserBySignUp(authuser6.username, await argon.hash(authuser6.password));
-    let user7: Users = await prisma.createUserBySignUp(authuser7.username, await argon.hash(authuser7.password));
-    let user8: Users = await prisma.createUserBySignUp(authuser8.username, await argon.hash(authuser8.password));
+    let user1: Users = await prisma.createUserBySignUp(
+      authuser1.username,
+      await argon.hash(authuser1.password),
+    );
+    let user2: Users = await prisma.createUserBySignUp(
+      authuser2.username,
+      await argon.hash(authuser2.password),
+    );
+    let user3: Users = await prisma.createUserBySignUp(
+      authuser3.username,
+      await argon.hash(authuser3.password),
+    );
+    let user4: Users = await prisma.createUserBySignUp(
+      authuser4.username,
+      await argon.hash(authuser4.password),
+    );
+    let user5: Users = await prisma.createUserBySignUp(
+      authuser5.username,
+      await argon.hash(authuser5.password),
+    );
+    let user6: Users = await prisma.createUserBySignUp(
+      authuser6.username,
+      await argon.hash(authuser6.password),
+    );
+    let user7: Users = await prisma.createUserBySignUp(
+      authuser7.username,
+      await argon.hash(authuser7.password),
+    );
+    let user8: Users = await prisma.createUserBySignUp(
+      authuser8.username,
+      await argon.hash(authuser8.password),
+    );
 
     //Play 8 Queued Games
     const game1 = await prisma.createNewGame(user1.id, user2.id);
@@ -58,7 +82,6 @@ async function seed() {
     const game8 = await prisma.createNewGame(user7.id, user8.id);
     await prisma.updateGameScore(game8.id, 1, 11, user8.id);
 
-
     //Play 4 Tournaments
     const game9 = await prisma.createNewGame(user1.id, user2.id);
     await prisma.updateGameScore(game9.id, 11, 8, user1.id);
@@ -66,7 +89,12 @@ async function seed() {
     await prisma.updateGameScore(game10.id, 7, 11, user4.id);
     const game11 = await prisma.createNewGame(user1.id, user4.id);
     await prisma.updateGameScore(game11.id, 11, 9, user1.id);
-    const tour1 = await prisma.createNewTournament(game9.id, game10.id, game11.id, user1.id);
+    const tour1 = await prisma.createNewTournament(
+      game9.id,
+      game10.id,
+      game11.id,
+      user1.id,
+    );
 
     const game12 = await prisma.createNewGame(user1.id, user3.id);
     await prisma.updateGameScore(game12.id, 11, 3, user1.id);
@@ -74,7 +102,12 @@ async function seed() {
     await prisma.updateGameScore(game13.id, 5, 11, user4.id);
     const game14 = await prisma.createNewGame(user4.id, user1.id);
     await prisma.updateGameScore(game14.id, 11, 4, user4.id);
-    const tour2 = await prisma.createNewTournament(game12.id, game13.id, game14.id, user4.id);
+    const tour2 = await prisma.createNewTournament(
+      game12.id,
+      game13.id,
+      game14.id,
+      user4.id,
+    );
 
     const game15 = await prisma.createNewGame(user5.id, user6.id);
     await prisma.updateGameScore(game15.id, 11, 6, user5.id);
@@ -82,7 +115,12 @@ async function seed() {
     await prisma.updateGameScore(game16.id, 10, 11, user8.id);
     const game17 = await prisma.createNewGame(user5.id, user8.id);
     await prisma.updateGameScore(game17.id, 11, 7, user5.id);
-    const tour3 = await prisma.createNewTournament(game15.id, game16.id, game17.id, user5.id);
+    const tour3 = await prisma.createNewTournament(
+      game15.id,
+      game16.id,
+      game17.id,
+      user5.id,
+    );
 
     //Add Firends
     await prisma.addFriendByIds(user1.id, user2.id);
@@ -95,7 +133,6 @@ async function seed() {
     await prisma.addFriendByIds(user8.id, user6.id);
     await prisma.addFriendByIds(user6.id, user8.id);
     await prisma.addFriendByIds(user3.id, user7.id);
-
   } catch (error) {
     console.error('Error in seeding:', error);
   } finally {

@@ -116,37 +116,40 @@ export default {
       this.$refs.fileInput.click();
     },
     async uploadFile() {
-    try {
-      const fileInput = this.$refs.fileInput;
-      const file = fileInput.files[0];
+      try {
+        const fileInput = this.$refs.fileInput;
+        const file = fileInput.files[0];
 
-      if (!file) {
-        console.error('No file selected');
-        return;
+        if (!file) {
+          console.error("No file selected");
+          return;
+        }
+
+        // Create a FormData object to send the file
+        const formData = new FormData();
+        formData.append("file", file);
+        // Append the userId to the FormData
+        formData.append("userId", localStorage.getItem("userId"));
+
+        // Make a POST request to your backend
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/upload`,
+          {
+            method: "POST",
+            body: formData,
+          },
+        );
+
+        if (response.ok) {
+          const responseData = await response.json();
+          console.log("File uploaded successfully:", responseData);
+        } else {
+          console.error("Failed to upload file:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error uploading file:", error);
       }
-
-      // Create a FormData object to send the file
-      const formData = new FormData();
-      formData.append('file', file);
-      // Append the userId to the FormData
-      formData.append('userId', localStorage.getItem("userId"));
-
-      // Make a POST request to your backend
-      const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/data/upload`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('File uploaded successfully:', responseData);
-      } else {
-        console.error('Failed to upload file:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
-  },
+    },
   },
 };
 </script>

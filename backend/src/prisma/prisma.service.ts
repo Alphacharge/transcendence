@@ -409,18 +409,18 @@ export class PrismaService extends PrismaClient {
           user_id: Number(userId),
         },
       });
-  
+
       const updatedUser = await this.users.update({
         where: { id: Number(userId) },
         data: {
           avatar: newAvatar.id,
         },
       });
-  
+
       if (updatedUser) {
         return newAvatar;
       }
-  
+
       return null;
     } catch (error) {
       console.error('Error creating new avatar:', error);
