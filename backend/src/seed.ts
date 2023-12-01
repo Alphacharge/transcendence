@@ -14,6 +14,7 @@ async function seed() {
 
   try {
     // Delete all tables
+    await prisma.avatars.deleteMany({});
     await prisma.friends.deleteMany({});
     await prisma.tournaments.deleteMany({});
     await prisma.games.deleteMany({});
