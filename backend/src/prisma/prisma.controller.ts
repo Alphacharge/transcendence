@@ -25,6 +25,15 @@ export class AvatarCreationFailedException extends HttpException {
   }
 }
 
+export class ForbiddenFileExtensionException extends HttpException {
+  constructor() {
+    super(
+      'Forbidden Fileextension. Use png or jpg',
+      HttpStatus.INTERNAL_SERVER_ERROR,
+    );
+  }
+}
+
 @Controller('data')
 export class PrismaController {
   constructor(
@@ -92,6 +101,9 @@ export class PrismaController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     try {
+      const originalFilename = 'avatars/' + file.filename;
+      if (extname(file.originalname) === ".png" || extname(file.originalname) === ".jpg") {
+
       // Get the user ID from the request
       const userId = req.body.userId;
 
@@ -104,7 +116,6 @@ export class PrismaController {
       }
 
       // Get the original filename of the uploaded file
-      const originalFilename = 'avatars/' + file.filename;
       const newFilename = `avatars/${avatar.id.toString()}${extname(
         file.originalname,
       )}`;
@@ -118,6 +129,10 @@ export class PrismaController {
 
       // Return the appropriate response
       return { avatar: newFilename };
+      } else {
+        await fsPromises.unlink(originalFilename);
+        throw new ForbiddenFileExtensionException();
+      }
     } catch (error) {
       // Handle errors
       console.error('Error uploading file:', error);
