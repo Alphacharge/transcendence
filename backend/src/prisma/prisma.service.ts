@@ -406,12 +406,12 @@ export class PrismaService extends PrismaClient {
     try {
       const newAvatar = await this.avatars.create({
         data: {
-          user_id: userId,
+          user_id: Number(userId),
         },
       });
   
       const updatedUser = await this.users.update({
-        where: { id: userId },
+        where: { id: Number(userId) },
         data: {
           avatar: newAvatar.id,
         },
