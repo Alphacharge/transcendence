@@ -7,6 +7,7 @@ import { extname } from 'path';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Avatars } from '@prisma/client';
 import { Request } from 'express';
+import { promises as fsPromises } from 'fs';
 
 
 export class AvatarCreationFailedException extends HttpException {
@@ -21,6 +22,7 @@ export class PrismaController {
     private readonly prismaService: PrismaService,
     readonly authService: AuthService,
     ) {}
+
 
   @Post('userstats')
   async getHistoryMatches(
@@ -62,54 +64,14 @@ export class PrismaController {
     }
   }
 
-  // @Post('upload')
-  // @UseInterceptors(
-  //   FileInterceptor('file', {
-  //     storage: diskStorage({
-  //       destination: './',
-  //       filename: async (req: Request, file, callback) => {
-  //         try {
-  //           const prismaService = (req as any).prismaService;
-  //           // Get the user ID from the request
-  //           const userId = req.body.userId;
-  //           // Create a new avatar entry in the database
-  //           console.error("trap");
-  //           const avatar: Avatars = await prismaService.createNewAvatarById(userId);
-  //           console.error(avatar)
-  //           if (!avatar)
-  //             throw new AvatarCreationFailedException();
-  //           // Use the avatar ID as the filename
-  //           const filename = `${avatar.id}${extname(file.originalname)}`;
-  
-  //           // Callback with the generated filename
-  //           callback(null, filename);
-  //         } catch (error) {
-  //           // Handle errors
-  //           callback(error, null);
-  //         }
-  //       },
-  //     }),
-  //   }),
-  // )
-
-  // async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File) {
-  //   // Access the file information from the request object
-  //   // Handle the uploaded file here
-  //   // 'file' contains information about the uploaded file, including the path
-
-  //   return { filename: file.filename };
-  // }
   @Post('upload')
 @UseInterceptors(
   FileInterceptor('file', {
     storage: diskStorage({
-      destination: './',
+      destination: './avatars',
       filename: (req, file, callback) => {
-        // Get the user ID from the request
-        const userId = req.body.userId;
-
         // Use a simple filename for now (you can customize this as needed)
-        const filename = `${userId}_${Date.now()}${extname(file.originalname)}`;
+        const filename = `${Date.now()}${extname(file.originalname)}`;
 
         // Callback with the generated filename
         callback(null, filename);
@@ -129,11 +91,20 @@ async uploadFile(@Req() req: Request, @UploadedFile() file: Express.Multer.File)
       throw new AvatarCreationFailedException();
     }
 
+    // Get the original filename of the uploaded file
+    const originalFilename = "avatars/"+file.filename;
+    const newFilename = `avatars/${avatar.id.toString()}${extname(file.originalname)}`;
+    
+    console.error(originalFilename, "---", newFilename);
+    // Rename the file with the new filename
+    await fsPromises.rename(originalFilename, newFilename);
+    await fsPromises.unlink(originalFilename);
+
     // Handle the uploaded file here (you can save the filename or avatar ID in the database)
     console.log('File uploaded successfully:', file);
 
     // Return the appropriate response
-    return { filename: file.filename, avatarId: avatar.id }; 
+    return { avatar: newFilename }; 
   } catch (error) {
     // Handle errors
     console.error('Error uploading file:', error);
