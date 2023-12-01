@@ -4,7 +4,7 @@ import {
   PrismaClient,
   Users,
   Games,
-  Friends,
+  Avatars,
   Tournaments,
 } from '@prisma/client';
 
@@ -39,21 +39,27 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getUserById(userId: number): Promise<Users | null> {
-    console.log('Search User with ID: ', userId);
+  async getUserById(userId: number): Promise<any | null> {
 
     try {
       const userData = await this.users.findUnique({
-        where: { id: Number(userId) },
+        where: { 
+          id: Number(userId)
+         },
+         select: {
+          id: true,
+          username: true,
+          createdAt: true,
+          avatar: {
+            select: {
+              id: true,
+              mime_type: true,
+            },
+          },
+         },
       });
 
-      if (userData) {
-        delete userData.hash;
-        return userData;
-      } else {
-        console.error(`User with ID ${userId} not found.`);
-        return null;
-      }
+      return userData;
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -80,17 +86,30 @@ export class PrismaService extends PrismaClient {
   }
 
   async getAllUsersIdNaAv(): Promise<
-    { id: number; username: string; avatar: number }[] | null
+    { id: number; username: string; avatar: { id: number; mime_type: string } }[] | null
   > {
     try {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
           username: true,
-          avatar: true,
+          avatar: {
+            select: {
+              id: true,
+              mime_type: true,
+            },
+          },
         },
       });
-      return allUsers;
+
+      return allUsers.map((user) => ({
+        id: user.id,
+        username: user.username,
+        avatar: {
+          id: user.avatar.id,
+          mime_type: user.avatar.mime_type,
+        },
+      }));
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -306,39 +325,59 @@ export class PrismaService extends PrismaClient {
         orderBy: {
           id: 'desc',
         },
-        include: {
+        select: {
+          id: true,
+          left_user_score: true,
+          right_user_score: true,
           l_user: {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
             },
           },
           r_user: {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
             },
           },
         },
       });
-
-      return allGames.map((game) => ({
+  
+      const allData = allGames.map((game) => ({
         id: game.id,
         left_user_score: game.left_user_score,
         right_user_score: game.right_user_score,
         leftUser: {
           id: game.l_user.id,
           username: game.l_user.username,
-          avatar: game.l_user.avatar,
+          avatar: {
+            id: game.l_user.avatar.id,
+            mime_type: game.l_user.avatar.mime_type,
+          },
         },
         rightUser: {
           id: game.r_user.id,
           username: game.r_user.username,
-          avatar: game.r_user.avatar,
+          avatar: {
+            id: game.r_user.avatar.id,
+            mime_type: game.r_user.avatar.mime_type,
+          },
         },
       }));
+      return allData;
     } catch (error) {
       console.error('Error fetching match history:', error);
       return null;
@@ -371,13 +410,24 @@ export class PrismaService extends PrismaClient {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
             },
           },
         },
       });
+  
       const friendsData = allFriends.map((friend) => ({
-        ...friend.friend,
+        id: friend.friend.id,
+        username: friend.friend.username,
+        avatar: {
+          id: friend.friend.avatar.id,
+          mime_type: friend.friend.avatar.mime_type,
+        },
         status: 0,
       }));
       return friendsData;
@@ -399,6 +449,44 @@ export class PrismaService extends PrismaClient {
     } catch (error) {
       console.error('Error deleting friend:', error);
       return false;
+    }
+  }
+
+  async createNewAvatarById(userId: number, mimeType: string): Promise<Avatars | null> {
+    try {
+      const newAvatar = await this.createNewAvatar(mimeType);
+
+      const updatedUser = await this.users.update({
+        where: { id: Number(userId) },
+        data: {
+          avatar_id: newAvatar.id,
+        },
+      });
+
+      if (updatedUser) {
+        return newAvatar;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error creating new avatar:', error);
+      return null;
+    }
+  }
+
+  async createNewAvatar(mimeType: string): Promise<Avatars | null> {
+    try {
+      const newAvatar = await this.avatars.create({
+        data: {
+          mime_type: mimeType,
+        },
+      });
+
+     return newAvatar;
+
+    } catch (error) {
+      console.error('Error creating new default avatar:', error);
+      return null;
     }
   }
 }

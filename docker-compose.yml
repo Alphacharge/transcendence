@@ -18,6 +18,7 @@ services:
       - network
     volumes:
       - ./backend:/backend
+      - ./frontend/public/avatars:/backend/avatars
       - ./certificate.key/:/certificates/certificate.key
       - ./certificate.cert/:/certificates/certificate.cert
 

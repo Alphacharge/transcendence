@@ -26,7 +26,7 @@ endif
 ###			###			RULES			###			###
 #Build changes or all if nothing is builded and run
 all: ip certs
-	@mkdir -p backend frontend data $(DB_D) data/myadmin data/mysql data/pgadmin
+	@mkdir -p backend frontend data $(DB_D) data/pgadmin
 ifeq ($(OS), Darwin)
 	-@bash -c "chmod 600 data/pgadmin/pgadmin4.db || chown -R ${USER}:2021_heilbronn data/pgadmin"
 else
