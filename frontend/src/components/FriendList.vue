@@ -69,7 +69,7 @@ export default {
 
         if (response.ok) {
           const responseData = await response.json();
-          console.log(responseData);
+          console.log(responseData.friends);
           this.friends = responseData.friends;
           // Handle the user history data as needed
         } else {
@@ -80,7 +80,7 @@ export default {
       }
     },
     getAvatarSrc(avatar) {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar.id}.${avatar.mime_type}`;
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}.${avatar.mime_type}`;
     },
     getStatusSrc(status) {
       if (status) {
