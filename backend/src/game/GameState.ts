@@ -2,6 +2,7 @@ import { TournamentState } from './TournamentState';
 import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
 import { Games } from '@prisma/client';
+import { trace } from 'console';
 
 export class GameState {
   gameData: Games | null;
@@ -155,7 +156,7 @@ export class GameState {
   }
 
   leftBreakthrough() {
-    if (this.ballX <= this.ballRadius) {
+    if (this.ballX <= 2 * this.ballRadius) {
       this.scorePlayer2 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
@@ -163,7 +164,7 @@ export class GameState {
   }
 
   rightBreakthrough() {
-    if (this.ballX >= this.fieldWidth - this.ballRadius) {
+    if (this.ballX >= this.fieldWidth - (4 * this.ballRadius)) {
       this.scorePlayer1 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
