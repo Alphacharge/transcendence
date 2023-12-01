@@ -80,17 +80,30 @@ export class PrismaService extends PrismaClient {
   }
 
   async getAllUsersIdNaAv(): Promise<
-    { id: number; username: string; avatar: number }[] | null
+    { id: number; username: string; avatar: { id: number; mime_type: string } }[] | null
   > {
     try {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
           username: true,
-          avatar: true,
+          avatarid: {
+            select: {
+              id: true,
+              mime_type: true,
+            },
+          },
         },
       });
-      return allUsers;
+
+      return allUsers.map((user) => ({
+        id: user.id,
+        username: user.username,
+        avatar: {
+          id: user.avatarid[0].id,
+          mime_type: user.avatarid[0].mime_type,
+        },
+      }));
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -311,19 +324,29 @@ export class PrismaService extends PrismaClient {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              avatarid: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
             },
           },
           r_user: {
             select: {
               id: true,
               username: true,
-              avatar: true,
+              avatarid: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
             },
           },
         },
       });
-
+  
       return allGames.map((game) => ({
         id: game.id,
         left_user_score: game.left_user_score,
@@ -331,12 +354,18 @@ export class PrismaService extends PrismaClient {
         leftUser: {
           id: game.l_user.id,
           username: game.l_user.username,
-          avatar: game.l_user.avatar,
+          avatar: {
+            id: game.l_user.avatarid[0].id,
+            mime_type: game.l_user.avatarid[0].mime_type,
+          },
         },
         rightUser: {
           id: game.r_user.id,
           username: game.r_user.username,
-          avatar: game.r_user.avatar,
+          avatar: {
+            id: game.r_user.avatarid[0].id,
+            mime_type: game.r_user.avatarid[0].mime_type,
+          },
         },
       }));
     } catch (error) {
@@ -362,24 +391,36 @@ export class PrismaService extends PrismaClient {
 
   async getFriendsById(userId: number): Promise<any[] | null> {
     try {
-      const allFriends = await this.friends.findMany({
-        where: {
-          user_id: Number(userId),
-        },
-        select: {
-          friend: {
-            select: {
-              id: true,
-              username: true,
-              avatar: true,
+    const allFriends = await this.friends.findMany({
+      where: {
+        user_id: Number(userId),
+      },
+      include: {
+        friend: {
+          select: {
+            id: true,
+            username: true,
+            avatarid: {
+              select: {
+                id: true,
+                mime_type: true,
+              },
             },
           },
         },
-      });
-      const friendsData = allFriends.map((friend) => ({
-        ...friend.friend,
-        status: 0,
-      }));
+      },
+    });
+  
+    const friendsData = allFriends.map((friend) => ({
+      id: friend.friend.id,
+      username: friend.friend.username,
+      avatar: {
+        id: friend.friend.avatarid[0].id || null,
+        mime_type: friend.friend.avatarid[0].mime_type || '',
+      },
+      status: 0,
+    }));
+  
       return friendsData;
     } catch (error) {
       console.error('Error fetching friends data:', error);
@@ -402,11 +443,12 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async createNewAvatarById(userId: number): Promise<Avatars | null> {
+  async createNewAvatarById(userId: number, mimeType: string): Promise<Avatars | null> {
     try {
       const newAvatar = await this.avatars.create({
         data: {
           user_id: Number(userId),
+          mime_type: mimeType,
         },
       });
 
