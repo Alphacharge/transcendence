@@ -102,27 +102,26 @@ export class PrismaController {
   ) {
     try {
       const originalFilename = 'avatars/' + file.filename;
-      if (extname(file.originalname) === ".png" || extname(file.originalname) === ".jpg") {
-
-      // Get the user ID from the request
-      const userId = req.body.userId;
-
-      // Create a new avatar entry in the database
-      const avatar: Avatars =
+      if (extname(file.originalname) == ".png" || extname(file.originalname) == ".jpg") {
+        
+        // Get the user ID from the request
+        const userId = req.body.userId;
+        
+        // Create a new avatar entry in the database
+        const avatar: Avatars =
         await this.prismaService.createNewAvatarById(userId, extname(file.originalname));
-
-      if (!avatar) {
-        throw new AvatarCreationFailedException();
-      }
-
-      // Get the original filename of the uploaded file
+        
+        if (!avatar) {
+          throw new AvatarCreationFailedException();
+        }
+        
+        // Get the original filename of the uploaded file
       const newFilename = `avatars/${avatar.id.toString()}${extname(
         file.originalname,
       )}`;
 
       // Rename the file with the new filename
       await fsPromises.rename(originalFilename, newFilename);
-      await fsPromises.unlink(originalFilename);
 
       // Handle the uploaded file here (you can save the filename or avatar ID in the database)
       console.log('File uploaded successfully:', file);
