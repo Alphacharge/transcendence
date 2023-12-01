@@ -104,7 +104,7 @@ export default {
     },
     getAvatarSrc(avatar) {
       // Adjust the path as needed based on your avatar structure
-      return `avatar/${avatar}.png`;
+      return `avatar/${avatar.id}.${avatar.mime_type}`;
     },
   },
 };

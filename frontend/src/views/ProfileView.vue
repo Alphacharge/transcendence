@@ -106,7 +106,7 @@ export default {
     },
     getAvatarSrc(avatar) {
       // Adjust the path as needed based on your avatar structure
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar}.png`;
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}.${avatar.mime_type}`;
     },
     getUploadSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;

@@ -80,7 +80,7 @@ export default {
       }
     },
     getAvatarSrc(avatar) {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar}.png`;
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar.id}.${avatar.mime_type}`;
     },
     getStatusSrc(status) {
       if (status) {
