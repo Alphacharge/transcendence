@@ -95,7 +95,7 @@ export default {
           const responseData = await response.json();
           this.userProfil = responseData.userProfil;
           this.userHistory = responseData.userHistory;
-          console.log(this.data);
+
           // Handle the user history data as needed
         } else {
           console.error("Failed to fetch user history");
@@ -106,7 +106,7 @@ export default {
     },
     getAvatarSrc(avatar) {
       // Adjust the path as needed based on your avatar structure
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}.${avatar.mime_type}`;
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
     },
     getUploadSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;
@@ -139,9 +139,10 @@ export default {
             body: formData,
           },
         );
-
+          console.log(response)
         if (response.ok) {
           const responseData = await response.json();
+          window.location.reload();
           console.log("File uploaded successfully:", responseData);
         } else {
           console.error("Failed to upload file:", response.statusText);
