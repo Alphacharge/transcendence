@@ -57,4 +57,16 @@ export class AuthController {
       res.status(500).json({ message: 'Internal server error' });
     }
   }
+
+  @Get('/42/callback')
+  async handleCallback(@Req() request: Request, @Res() response: Response) {
+    const authResponse = await this.authService.handleCallback(request);
+    const url = new URL(`${request.protocol}:${request.hostname}`);
+    url.port = '8080';
+    url.pathname = 'redirect';
+    url.searchParams.set('access_token', authResponse.access_token);
+    url.searchParams.set('userId', authResponse.userId.toString());
+    url.searchParams.set('userName', authResponse.userName);
+    response.status(302).redirect(url.href);
+  }
 }

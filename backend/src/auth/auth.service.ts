@@ -9,6 +9,10 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
+import { Users } from '@prisma/client';
+import { type } from 'os';
+import { Request, Response } from 'express';
+import { Subject, Observable } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -54,9 +58,14 @@ export class AuthService {
     }
   }
 
+  async checkUserInDB(user: User): Promise<Users> {
+    const newUser = await this.prismaService.getUserByName(user.username);
+    return newUser;
+  }
+
   async signin(user: User) {
     //find the user by username in database
-    const newUser = await this.prismaService.getUserByName(user.username);
+    const newUser = await this.checkUserInDB(user);
     //if user does not exist throw exception
     if (!newUser) {
       throw new ForbiddenException('User not found');
@@ -86,6 +95,7 @@ export class AuthService {
       expiresIn: this.config.get('JWT_EXPIRE'),
       secret: secret,
     });
+
     return token;
   }
 
@@ -149,6 +159,77 @@ export class AuthService {
 
     if (!allowedCharsRegex.test(username)) {
       throw new ForbiddenException('Username contains forbidden characters');
+    }
+  }
+
+  async handleCallback(request: Request) {
+    const authorizationCode = request.query.code as string;
+    const clientId = `${process.env.FORTYTWO_APP_ID}`;
+    const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
+    const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
+    const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
+    try {
+      const tokenResponse = await fetch(tokenEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          client_id: clientId,
+          client_secret: clientSecret,
+          code: authorizationCode,
+          redirect_uri: redirectUri,
+        }),
+      });
+      let accessToken: string;
+      if (tokenResponse.ok) {
+        const tokenData = await tokenResponse.json();
+        accessToken = tokenData.access_token;
+      } else {
+        console.error(
+          'AUTH.SERVICE: HANDLECALLBACK, Problems with the tokenresponse',
+        );
+      }
+      const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      if (apiResponse.ok) {
+        const responseData = await apiResponse.json();
+        const user: User = {
+          username: responseData.login,
+          password: process.env.BACKEND_API_PW,
+          id: 0,
+        };
+        const newUser = await this.checkUserInDB(user);
+        let response: {
+          access_token: string;
+          userId: number;
+          userName: string;
+        };
+        if (!newUser) {
+          response = await this.signup(user);
+        } else {
+          const bToken = await this.signToken(newUser.id, newUser.username);
+          response = {
+            access_token: bToken,
+            userId: newUser.id,
+            userName: newUser.username,
+          };
+        }
+        return response;
+      } else {
+        console.error(
+          'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
+          apiResponse.statusText,
+        );
+        return null;
+      }
+    } catch (error) {
+      // Handle fetch errors
+      console.error(`AUTH.SERVICE: HANDLECALLBACK, exception caught: ${error}`);
     }
   }
 }
