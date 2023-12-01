@@ -97,7 +97,7 @@ export class PrismaController {
 
       // Create a new avatar entry in the database
       const avatar: Avatars =
-        await this.prismaService.createNewAvatarById(userId);
+        await this.prismaService.createNewAvatarById(userId, extname(file.originalname));
 
       if (!avatar) {
         throw new AvatarCreationFailedException();
@@ -109,7 +109,6 @@ export class PrismaController {
         file.originalname,
       )}`;
 
-      console.error(originalFilename, '---', newFilename);
       // Rename the file with the new filename
       await fsPromises.rename(originalFilename, newFilename);
       await fsPromises.unlink(originalFilename);
