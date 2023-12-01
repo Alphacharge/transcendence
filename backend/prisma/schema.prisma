@@ -16,7 +16,7 @@ model Users {
   updatedAt DateTime  @updatedAt
   username  String    @unique @default("")
   hash      String
-  avatar    Int       @default(-1)
+  avatar_id Int       @default(1)
 
   //Opposite Relations
   gamesL      Games[]       @relation("LeftUser")
@@ -25,8 +25,8 @@ model Users {
   tourwinner  Tournaments[] @relation("TourWinner")
   user        Friends[]     @relation("User")
   friend      Friends[]     @relation("Friend")
-  avatarid    Avatars[]     @relation("Avatar")
-  avatari      Avatars       @relation("Avatarconstraint", fields: [avatar], references: [id])
+
+  avatar      Avatars       @relation("Avatar", fields: [avatar_id], references: [id])
 }
 
 model Games {
@@ -73,9 +73,7 @@ model Friends {
 
 model Avatars {
     id          Int     @id @default(autoincrement())
-    user_id     Int
     mime_type   String  @default("")
 
-    avatari      Users[] @relation("Avatarconstraint")
-    avatarid    Users   @relation("Avatar", fields: [user_id], references: [id])
+    avatar      Users[] @relation("Avatar")
 }
