@@ -14,6 +14,7 @@
                   type="file"
                   ref="fileInput"
                   style="display: none"
+                  @change="uploadFile"
                 />
               </div>
             </div>
@@ -105,7 +106,7 @@ export default {
     },
     getAvatarSrc(avatar) {
       // Adjust the path as needed based on your avatar structure
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatar/${avatar}.png`;
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar}.png`;
     },
     getUploadSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;
@@ -127,12 +128,13 @@ export default {
       // Create a FormData object to send the file
       const formData = new FormData();
       formData.append('file', file);
+      // Append the userId to the FormData
+      formData.append('userId', localStorage.getItem("userId"));
 
       // Make a POST request to your backend
       const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/data/upload`, {
         method: 'POST',
         body: formData,
-          userId: localStorage.getItem("userId"),
       });
 
       if (response.ok) {
