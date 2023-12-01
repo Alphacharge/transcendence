@@ -39,21 +39,27 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getUserById(userId: number): Promise<Users | null> {
-    console.log('Search User with ID: ', userId);
+  async getUserById(userId: number): Promise<any | null> {
 
     try {
       const userData = await this.users.findUnique({
-        where: { id: Number(userId) },
+        where: { 
+          id: Number(userId)
+         },
+         select: {
+          id: true,
+          username: true,
+          createdAt: true,
+          avatar: {
+            select: {
+              id: true,
+              mime_type: true,
+            },
+          },
+         },
       });
 
-      if (userData) {
-        delete userData.hash;
-        return userData;
-      } else {
-        console.error(`User with ID ${userId} not found.`);
-        return null;
-      }
+      return userData;
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -87,7 +93,7 @@ export class PrismaService extends PrismaClient {
         select: {
           id: true,
           username: true,
-          avatarid: {
+          avatar: {
             select: {
               id: true,
               mime_type: true,
@@ -100,8 +106,8 @@ export class PrismaService extends PrismaClient {
         id: user.id,
         username: user.username,
         avatar: {
-          id: user.avatarid[0].id,
-          mime_type: user.avatarid[0].mime_type,
+          id: user.avatar.id,
+          mime_type: user.avatar.mime_type,
         },
       }));
     } catch (error) {
@@ -319,12 +325,15 @@ export class PrismaService extends PrismaClient {
         orderBy: {
           id: 'desc',
         },
-        include: {
+        select: {
+          id: true,
+          left_user_score: true,
+          right_user_score: true,
           l_user: {
             select: {
               id: true,
               username: true,
-              avatarid: {
+              avatar: {
                 select: {
                   id: true,
                   mime_type: true,
@@ -336,7 +345,7 @@ export class PrismaService extends PrismaClient {
             select: {
               id: true,
               username: true,
-              avatarid: {
+              avatar: {
                 select: {
                   id: true,
                   mime_type: true,
@@ -347,7 +356,7 @@ export class PrismaService extends PrismaClient {
         },
       });
   
-      return allGames.map((game) => ({
+      const allData = allGames.map((game) => ({
         id: game.id,
         left_user_score: game.left_user_score,
         right_user_score: game.right_user_score,
@@ -355,19 +364,20 @@ export class PrismaService extends PrismaClient {
           id: game.l_user.id,
           username: game.l_user.username,
           avatar: {
-            id: game.l_user.avatarid[0].id,
-            mime_type: game.l_user.avatarid[0].mime_type,
+            id: game.l_user.avatar.id,
+            mime_type: game.l_user.avatar.mime_type,
           },
         },
         rightUser: {
           id: game.r_user.id,
           username: game.r_user.username,
           avatar: {
-            id: game.r_user.avatarid[0].id,
-            mime_type: game.r_user.avatarid[0].mime_type,
+            id: game.r_user.avatar.id,
+            mime_type: game.r_user.avatar.mime_type,
           },
         },
       }));
+      return allData;
     } catch (error) {
       console.error('Error fetching match history:', error);
       return null;
@@ -391,36 +401,35 @@ export class PrismaService extends PrismaClient {
 
   async getFriendsById(userId: number): Promise<any[] | null> {
     try {
-    const allFriends = await this.friends.findMany({
-      where: {
-        user_id: Number(userId),
-      },
-      include: {
-        friend: {
-          select: {
-            id: true,
-            username: true,
-            avatarid: {
-              select: {
-                id: true,
-                mime_type: true,
+      const allFriends = await this.friends.findMany({
+        where: {
+          user_id: Number(userId),
+        },
+        select: {
+          friend: {
+            select: {
+              id: true,
+              username: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
   
-    const friendsData = allFriends.map((friend) => ({
-      id: friend.friend.id,
-      username: friend.friend.username,
-      avatar: {
-        id: friend.friend.avatarid[0].id || null,
-        mime_type: friend.friend.avatarid[0].mime_type || '',
-      },
-      status: 0,
-    }));
-  
+      const friendsData = allFriends.map((friend) => ({
+        id: friend.friend.id,
+        username: friend.friend.username,
+        avatar: {
+          id: friend.friend.avatar.id,
+          mime_type: friend.friend.avatar.mime_type,
+        },
+        status: 0,
+      }));
       return friendsData;
     } catch (error) {
       console.error('Error fetching friends data:', error);
@@ -445,17 +454,12 @@ export class PrismaService extends PrismaClient {
 
   async createNewAvatarById(userId: number, mimeType: string): Promise<Avatars | null> {
     try {
-      const newAvatar = await this.avatars.create({
-        data: {
-          user_id: Number(userId),
-          mime_type: mimeType,
-        },
-      });
+      const newAvatar = await this.createNewAvatar(mimeType);
 
       const updatedUser = await this.users.update({
         where: { id: Number(userId) },
         data: {
-          avatar: newAvatar.id,
+          avatar_id: newAvatar.id,
         },
       });
 
@@ -466,6 +470,22 @@ export class PrismaService extends PrismaClient {
       return null;
     } catch (error) {
       console.error('Error creating new avatar:', error);
+      return null;
+    }
+  }
+
+  async createNewAvatar(mimeType: string): Promise<Avatars | null> {
+    try {
+      const newAvatar = await this.avatars.create({
+        data: {
+          mime_type: mimeType,
+        },
+      });
+
+     return newAvatar;
+
+    } catch (error) {
+      console.error('Error creating new default avatar:', error);
       return null;
     }
   }
