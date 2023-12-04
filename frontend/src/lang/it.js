@@ -12,7 +12,10 @@ export default {
   // PONG GAME
   EnterQueue: "Entra in Coda",
   LeaveQueue: "Lascia la Coda",
-  AbortGame: "Interrompi Gioco",
+  LocalGame: "gioco locale",
+  StartLocalGame: "avviare il gioco locale",
+  LocalGameExplanation:
+    "Gioca sulla stessa tastiera con i pulsanti W/S e freccia su/freccia giù",
 
   // SIGNUP & LOGIN
   Username: "Nome utente",

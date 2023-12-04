@@ -1,7 +1,4 @@
 <template>
-  <div>
-    <p>I am player number: {{ playerNumber }}</p>
-  </div>
   <PongButtons />
   <CountDown />
   <ScoreBoard />
