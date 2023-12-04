@@ -3,6 +3,7 @@ import { IoAdapter } from '@nestjs/platform-socket.io';
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
+import * as cors from 'cors';
 import * as fs from 'fs';
 
 // necessary for handling wss connections.
@@ -44,6 +45,9 @@ async function bootstrap() {
     ],
   });
 
+  // Enable CORS for all routes
+  app.use(cors());
+  
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   await app.listen(3000);
