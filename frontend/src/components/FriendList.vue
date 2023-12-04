@@ -69,7 +69,6 @@ export default {
 
         if (response.ok) {
           const responseData = await response.json();
-          console.log(responseData.friends);
           this.friends = responseData.friends;
           // Handle the user history data as needed
         } else {
