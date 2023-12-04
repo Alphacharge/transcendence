@@ -164,7 +164,7 @@ export class GameState {
   }
 
   rightBreakthrough() {
-    if (this.ballX >= this.fieldWidth - (4 * this.ballRadius)) {
+    if (this.ballX >= this.fieldWidth - 4 * this.ballRadius) {
       this.scorePlayer1 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
