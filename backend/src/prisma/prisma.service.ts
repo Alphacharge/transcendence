@@ -388,8 +388,8 @@ export class PrismaService extends PrismaClient {
     try {
       const newFriend = await this.friends.create({
         data: {
-          user_id: userId,
-          friend_id: friendId,
+          user_id: Number(userId),
+          friend_id: Number(friendId),
         },
       });
       if (newFriend) return true;
@@ -433,6 +433,49 @@ export class PrismaService extends PrismaClient {
       return friendsData;
     } catch (error) {
       console.error('Error fetching friends data:', error);
+      return null;
+    }
+  }
+
+  async getNonFriendsById(userId: number): Promise<any[] | null> {
+    try {
+      const usersNotFriends = await this.users.findMany({
+        where: {
+          id: {
+            not: Number(userId), // Exclude the current user from the results
+          },
+          NOT: {
+            friend: {
+              some: {
+                user_id: Number(userId),
+              },
+            },
+          },
+        },
+        select: {
+          id: true,
+          username: true,
+          avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
+        },
+      });
+  
+      const usersNotFriendsData = usersNotFriends.map((user) => ({
+        id: user.id,
+        username: user.username,
+        avatar: {
+          id: user.avatar.id,
+          mime_type: user.avatar.mime_type,
+        },
+        status: 0,
+      }));
+      return usersNotFriendsData;
+    } catch (error) {
+      console.error('Error fetching non friends data:', error);
       return null;
     }
   }

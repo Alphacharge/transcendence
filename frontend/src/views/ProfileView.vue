@@ -23,7 +23,7 @@
             <th colspan="2">
               <p>{{ userProfil.username }}</p>
               <p>Registered since</p>
-              <p>{{ userProfil.createdAt }}</p>
+              <p>{{ userProfil.createdAt.slice(0, 10) }}</p>
             </th>
           </tr>
         </thead>
