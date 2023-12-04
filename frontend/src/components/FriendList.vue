@@ -1,10 +1,9 @@
 <template>
-  <!-- v-if="showFriendList" -->
   <div class="friend-list">
     <ul>
       <li>
         <div @click="addFriend">Add Friends</div>
-        <div class="image_friends_add">
+        <div class="image_friends_add" @click="openFriendSelectionModal">
           <img
             style="width: 16px; height: auto"
             :src="getPlusSrc()"
@@ -36,24 +35,31 @@
       </li>
     </ul>
   </div>
+  <friend-selection-modal
+    ref="friendSelectionModal"
+    :nonFriends="nonFriends"
+    @add-friends="handleFriendsAdded"
+  ></friend-selection-modal>
 </template>
 
 <script>
+import FriendSelectionModal from "./FriendSelectionModal.vue";
+
 export default {
+  components: { FriendSelectionModal },
   data() {
     return {
       isMouseOver: false,
       friends: null,
+      nonFriends: [],
     };
   },
   mounted() {
-    // Make a call to your NestJS backend when the component is mounted
     this.getUsersFriends();
   },
   methods: {
     async getUsersFriends() {
       try {
-        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
           `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/friends`,
           {
@@ -70,7 +76,6 @@ export default {
         if (response.ok) {
           const responseData = await response.json();
           this.friends = responseData.friends;
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch friends");
         }
@@ -78,37 +83,33 @@ export default {
         console.error("Error fetching friends:", error);
       }
     },
-    // async addFriend() {
-    //   try {
-    //     // Implement the logic for adding a friend
-    //     const response = await fetch(
-    //       `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/addFriend`,
-    //       {
-    //         method: "POST",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           userId: localStorage.getItem("userId"),
-    //           friendId: /* provide the friend ID or other necessary info */,
-    //         }),
-    //       },
-    //     );
+    async getUsersNonFriends() {
+      try {
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/nofriends`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: localStorage.getItem("userId"),
+            }),
+          },
+        );
 
-    //     if (response.ok) {
-    //       // Handle success, e.g., refresh the friend list
-    //       this.getUsersFriends();
-    //     } else {
-    //       console.error("Failed to add friend");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error adding friend:", error);
-    //   }
-    // },
-
+        if (response.ok) {
+          const responseData = await response.json();
+          this.nonFriends = responseData.friends;
+        } else {
+          console.error("Failed to fetch nofriends");
+        }
+      } catch (error) {
+        console.error("Error fetching nofriends:", error);
+      }
+    },
     async removeFriend(friendId) {
       try {
-        // Implement the logic for removing a friend
         const response = await fetch(
           `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/removefriend`,
           {
@@ -124,7 +125,6 @@ export default {
         );
 
         if (response.ok) {
-          // Handle success, e.g., refresh the friend list
           const responseData = await response.json();
           this.friends = responseData.friends;
         } else {
@@ -134,7 +134,22 @@ export default {
         console.error("Error removing friend:", error);
       }
     },
+    async openFriendSelectionModal() {
+      try {
+        await this.getUsersNonFriends();
 
+        if (this.$refs.friendSelectionModal) {
+          this.$refs.friendSelectionModal.showModal = true;
+        } else {
+          console.error("FriendSelectionModal ref is not defined");
+        }
+      } catch (error) {
+        console.error("Error fetching non-friends:", error);
+      }
+    },
+    handleFriendsAdded() {
+      this.getUsersFriends();
+    },
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
     },
