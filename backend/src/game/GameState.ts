@@ -86,7 +86,7 @@ export class GameState {
     this.ballY = this.fieldHeight / 2;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
-    console.log("current speed: ", this.speedFactor);
+    console.log('current speed: ', this.speedFactor);
     this.speedFactor = 1;
   }
 
@@ -191,12 +191,9 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.leftPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX =
-        this.speedFactor *
-        Math.cos(angle) ;
-      this.ballSpeedY =
-        this.speedFactor * Math.sin(angle) ;
-      if (this.speedFactor < 6){
+      this.ballSpeedX = this.speedFactor * Math.cos(angle);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      if (this.speedFactor < 6) {
         this.speedFactor *= 1.2;
       }
     }
@@ -221,13 +218,11 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.rightPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX =
-        -this.speedFactor * Math.cos(angle) 
-      this.ballSpeedY =
-        this.speedFactor * Math.sin(angle)
-        if (this.speedFactor < 6) {
-          this.speedFactor *= 1.2;
-        }
+      this.ballSpeedX = -this.speedFactor * Math.cos(angle);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      if (this.speedFactor < 6) {
+        this.speedFactor *= 1.2;
+      }
     }
   }
 
