@@ -146,7 +146,16 @@ export default {
         console.log(response);
         if (response.ok) {
           const responseData = await response.json();
-          window.location.reload();
+          this.userProfil.avatar = responseData;
+          this.userHistory.forEach((match) => {
+            if (match.leftUser.id === this.userProfil.id) {
+              match.leftUser.avatar = responseData;
+            }
+            if (match.rightUser.id === this.userProfil.id) {
+              match.rightUser.avatar = responseData;
+            }
+          });
+
           console.log("File uploaded successfully:", responseData);
         } else {
           console.error("Failed to upload file:", response.statusText);
