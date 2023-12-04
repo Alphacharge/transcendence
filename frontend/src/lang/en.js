@@ -7,6 +7,7 @@ export default {
   LogIn: "Log in",
   SignUp: "Sign up",
   About: "About",
+  Logout: "Log out",
 
   // PONG GAME
   EnterQueue: "Enter Queue",

@@ -59,6 +59,11 @@
           $t("About")
         }}</router-link>
       </li>
+      <li class="nav-item flex-grow-1">
+        <router-link @click="logout" to="/login" class="nav-link">{{
+          $t("Logout")
+        }}</router-link>
+      </li>
     </ul>
   </div>
   <LanguageToggle></LanguageToggle>
@@ -72,6 +77,10 @@ export default {
   methods: {
     getTeam() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/team.gif`;
+    },
+    logout() {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('userId');
     },
   },
 };
