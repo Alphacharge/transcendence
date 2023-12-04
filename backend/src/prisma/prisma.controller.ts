@@ -81,24 +81,40 @@ export class PrismaController {
     }
   }
 
-  // @Post('addfriends')
-  // async addFriendById(
-  //   @Body() body: { userId: number, friendId: number },
-  // ): Promise<{ friends: any[] | null }> {
-  //   const { userId } = body;
-  //   try {
-  //     const friends = await this.prismaService.getFriendsById(userId);
-  //     friends.forEach((element) => {
-  //       if (this.authService.activeUser.includes(element.id)) {
-  //         element.status = 1;
-  //       }
-  //     });
-  //     return { friends };
-  //   } catch (error) {
-  //     console.error('Error fetching friends:', error);
-  //     return { friends: null };
-  //   }
-  // }
+  @Post('nofriends')
+  async getNONFriendsById(
+    @Body() body: { userId: number },
+  ): Promise<{ friends: any[] | null }> {
+    const { userId } = body;
+    try {
+      const friends = await this.prismaService.getNonFriendsById(userId);
+      friends.forEach((element) => {
+        if (this.authService.activeUser.includes(element.id)) {
+          element.status = 1;
+        }
+      });
+      return { friends };
+    } catch (error) {
+      console.error('Error fetching nonfriends:', error);
+      return { friends: null };
+    }
+  }
+
+  @Post('addfriends')
+  async addFriendsByIds(
+    @Body() body: { userId: number, friendIds: number[] },
+  ): Promise<void> {
+    const { userId, friendIds } = body;
+    try {
+      // Add each friend in a loop
+      for (const friendId of friendIds) {
+        await this.prismaService.addFriendByIds(userId, friendId);
+      }
+    } catch (error) {
+      console.error('Error adding friends:', error);
+      // You can choose to handle the error as needed
+    }
+  }
 
   @Post('removefriend')
   async deleteFriendByIds(
