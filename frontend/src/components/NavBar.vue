@@ -79,8 +79,8 @@ export default {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/team.gif`;
     },
     logout() {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('userId');
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("userId");
     },
   },
 };
