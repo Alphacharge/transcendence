@@ -35,45 +35,45 @@ async function seed() {
     let authuser6: User = { id: 6, password: 'f', username: 'f' };
     let authuser7: User = { id: 7, password: 'g', username: 'g' };
     let authuser8: User = { id: 8, password: 'h', username: 'h' };
-    
+
     let user1: Users = await prisma.createUserBySignUp(
       authuser1.username,
       await argon.hash(authuser1.password),
-      );
-      let user2: Users = await prisma.createUserBySignUp(
-        authuser2.username,
-        await argon.hash(authuser2.password),
-        );
-        let user3: Users = await prisma.createUserBySignUp(
-          authuser3.username,
-          await argon.hash(authuser3.password),
-          );
-          let user4: Users = await prisma.createUserBySignUp(
-            authuser4.username,
-            await argon.hash(authuser4.password),
-            );
-            let user5: Users = await prisma.createUserBySignUp(
-              authuser5.username,
-              await argon.hash(authuser5.password),
-              );
-              let user6: Users = await prisma.createUserBySignUp(
-                authuser6.username,
-                await argon.hash(authuser6.password),
-                );
-                let user7: Users = await prisma.createUserBySignUp(
-                  authuser7.username,
-                  await argon.hash(authuser7.password),
-                  );
-                  let user8: Users = await prisma.createUserBySignUp(
-                    authuser8.username,
-                    await argon.hash(authuser8.password),
-                    );
-                    
-                    //Play 8 Queued Games
-                    const game1 = await prisma.createNewGame(user1.id, user2.id);
-                    await prisma.updateGameScore(game1.id, 11, 5, user1.id);
-                    const game2 = await prisma.createNewGame(user1.id, user2.id);
-                    await prisma.updateGameScore(game2.id, 4, 11, user2.id);
+    );
+    let user2: Users = await prisma.createUserBySignUp(
+      authuser2.username,
+      await argon.hash(authuser2.password),
+    );
+    let user3: Users = await prisma.createUserBySignUp(
+      authuser3.username,
+      await argon.hash(authuser3.password),
+    );
+    let user4: Users = await prisma.createUserBySignUp(
+      authuser4.username,
+      await argon.hash(authuser4.password),
+    );
+    let user5: Users = await prisma.createUserBySignUp(
+      authuser5.username,
+      await argon.hash(authuser5.password),
+    );
+    let user6: Users = await prisma.createUserBySignUp(
+      authuser6.username,
+      await argon.hash(authuser6.password),
+    );
+    let user7: Users = await prisma.createUserBySignUp(
+      authuser7.username,
+      await argon.hash(authuser7.password),
+    );
+    let user8: Users = await prisma.createUserBySignUp(
+      authuser8.username,
+      await argon.hash(authuser8.password),
+    );
+
+    //Play 8 Queued Games
+    const game1 = await prisma.createNewGame(user1.id, user2.id);
+    await prisma.updateGameScore(game1.id, 11, 5, user1.id);
+    const game2 = await prisma.createNewGame(user1.id, user2.id);
+    await prisma.updateGameScore(game2.id, 4, 11, user2.id);
     const game3 = await prisma.createNewGame(user3.id, user2.id);
     await prisma.updateGameScore(game3.id, 11, 7, user3.id);
     const game4 = await prisma.createNewGame(user3.id, user4.id);

@@ -40,13 +40,12 @@ export class PrismaService extends PrismaClient {
   }
 
   async getUserById(userId: number): Promise<any | null> {
-
     try {
       const userData = await this.users.findUnique({
-        where: { 
-          id: Number(userId)
-         },
-         select: {
+        where: {
+          id: Number(userId),
+        },
+        select: {
           id: true,
           username: true,
           createdAt: true,
@@ -56,7 +55,7 @@ export class PrismaService extends PrismaClient {
               mime_type: true,
             },
           },
-         },
+        },
       });
 
       return userData;
@@ -86,7 +85,12 @@ export class PrismaService extends PrismaClient {
   }
 
   async getAllUsersIdNaAv(): Promise<
-    { id: number; username: string; avatar: { id: number; mime_type: string } }[] | null
+    | {
+        id: number;
+        username: string;
+        avatar: { id: number; mime_type: string };
+      }[]
+    | null
   > {
     try {
       const allUsers = await this.users.findMany({
@@ -355,7 +359,7 @@ export class PrismaService extends PrismaClient {
           },
         },
       });
-  
+
       const allData = allGames.map((game) => ({
         id: game.id,
         left_user_score: game.left_user_score,
@@ -420,7 +424,7 @@ export class PrismaService extends PrismaClient {
           },
         },
       });
-  
+
       const friendsData = allFriends.map((friend) => ({
         id: friend.friend.id,
         username: friend.friend.username,
@@ -456,14 +460,14 @@ export class PrismaService extends PrismaClient {
           id: true,
           username: true,
           avatar: {
-                select: {
-                  id: true,
-                  mime_type: true,
-                },
-              },
+            select: {
+              id: true,
+              mime_type: true,
+            },
+          },
         },
       });
-  
+
       const usersNotFriendsData = usersNotFriends.map((user) => ({
         id: user.id,
         username: user.username,
@@ -495,7 +499,10 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async createNewAvatarById(userId: number, mimeType: string): Promise<Avatars | null> {
+  async createNewAvatarById(
+    userId: number,
+    mimeType: string,
+  ): Promise<Avatars | null> {
     try {
       const newAvatar = await this.createNewAvatar(mimeType);
 
@@ -525,8 +532,7 @@ export class PrismaService extends PrismaClient {
         },
       });
 
-     return newAvatar;
-
+      return newAvatar;
     } catch (error) {
       console.error('Error creating new default avatar:', error);
       return null;

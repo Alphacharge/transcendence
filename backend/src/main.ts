@@ -47,7 +47,7 @@ async function bootstrap() {
 
   // Enable CORS for all routes
   app.use(cors());
-  
+
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   await app.listen(3000);
