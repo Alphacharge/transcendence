@@ -3,7 +3,7 @@
   <div class="friend-list">
     <ul>
       <li>
-        <div>Add Friends</div>
+        <div @click="addFriend">Add Friends</div>
         <div class="image_friends_add">
           <img
             style="width: 16px; height: auto"
@@ -26,7 +26,7 @@
             alt="Status"
           />
         </div>
-        <div class="image_friends_remove">
+        <div class="image_friends_remove" @click="removeFriend(friend.id)">
           <img
             style="width: 16px; height: auto"
             :src="getCrossSrc()"
@@ -78,6 +78,63 @@ export default {
         console.error("Error fetching friends:", error);
       }
     },
+    // async addFriend() {
+    //   try {
+    //     // Implement the logic for adding a friend
+    //     const response = await fetch(
+    //       `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/addFriend`,
+    //       {
+    //         method: "POST",
+    //         headers: {
+    //           "Content-Type": "application/json",
+    //         },
+    //         body: JSON.stringify({
+    //           userId: localStorage.getItem("userId"),
+    //           friendId: /* provide the friend ID or other necessary info */,
+    //         }),
+    //       },
+    //     );
+
+    //     if (response.ok) {
+    //       // Handle success, e.g., refresh the friend list
+    //       this.getUsersFriends();
+    //     } else {
+    //       console.error("Failed to add friend");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error adding friend:", error);
+    //   }
+    // },
+
+    async removeFriend(friendId) {
+      try {
+        // Implement the logic for removing a friend
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/removefriend`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: localStorage.getItem("userId"),
+              friendId: friendId,
+            }),
+          },
+        );
+
+        if (response.ok) {
+          // Handle success, e.g., refresh the friend list
+          const responseData = await response.json();
+          this.friends = responseData.friends;
+        } else {
+          console.error("Failed to remove friend");
+        }
+      } catch (error) {
+        console.error("Error removing friend:", error);
+      }
+    },
+
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
     },

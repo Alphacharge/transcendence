@@ -81,6 +81,45 @@ export class PrismaController {
     }
   }
 
+  // @Post('addfriends')
+  // async addFriendById(
+  //   @Body() body: { userId: number, friendId: number },
+  // ): Promise<{ friends: any[] | null }> {
+  //   const { userId } = body;
+  //   try {
+  //     const friends = await this.prismaService.getFriendsById(userId);
+  //     friends.forEach((element) => {
+  //       if (this.authService.activeUser.includes(element.id)) {
+  //         element.status = 1;
+  //       }
+  //     });
+  //     return { friends };
+  //   } catch (error) {
+  //     console.error('Error fetching friends:', error);
+  //     return { friends: null };
+  //   }
+  // }
+
+  @Post('removefriend')
+  async deleteFriendByIds(
+    @Body() body: { userId: number, friendId: number },
+  ): Promise<{ friends: any[] | null }> {
+    const { userId, friendId } = body;
+    try {
+      const response = await this.prismaService.deleteFriendByIds(userId, friendId);
+      if (response) {
+        const friends = await this.prismaService.getFriendsById(userId);
+        if (friends){
+          return { friends };
+        }
+      }
+      return { friends: null };
+    } catch (error) {
+      console.error('Error deleting friend:', error);
+      return { friends: null };
+    }
+  }
+
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
