@@ -12,7 +12,10 @@ export default {
   // PONG GAME
   EnterQueue: "Warteschlange",
   LeaveQueue: "Warteschlange verlassen",
-  AbortGame: "Spiel abbrechen",
+  LocalGame: "Lokales Spiel",
+  StartLocalGame: "Starte lokales Spiel",
+  LocalGameExplanation:
+    "Spiele an der gleichen Tastatur mit W/S und Pfeil nach oben/Pfeil nach unten",
 
   // SIGNUP & LOGIN
   Username: "Benutzername",

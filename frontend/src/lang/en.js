@@ -12,6 +12,7 @@ export default {
   // PONG GAME
   EnterQueue: "Enter Queue",
   LeaveQueue: "Leave Queue",
+  LocalGame: "Local Game",
   StartLocalGame: "Start Local Game",
   LocalGameExplanation:
     "Play on the same keyboard with the buttons W/S and arrow up/arrow down",
