@@ -102,7 +102,7 @@ export class PrismaController {
 
   @Post('addfriends')
   async addFriendsByIds(
-    @Body() body: { userId: number, friendIds: number[] },
+    @Body() body: { userId: number; friendIds: number[] },
   ): Promise<void> {
     const { userId, friendIds } = body;
     try {
@@ -118,14 +118,17 @@ export class PrismaController {
 
   @Post('removefriend')
   async deleteFriendByIds(
-    @Body() body: { userId: number, friendId: number },
+    @Body() body: { userId: number; friendId: number },
   ): Promise<{ friends: any[] | null }> {
     const { userId, friendId } = body;
     try {
-      const response = await this.prismaService.deleteFriendByIds(userId, friendId);
+      const response = await this.prismaService.deleteFriendByIds(
+        userId,
+        friendId,
+      );
       if (response) {
         const friends = await this.prismaService.getFriendsById(userId);
-        if (friends){
+        if (friends) {
           return { friends };
         }
       }
@@ -157,32 +160,39 @@ export class PrismaController {
   ) {
     try {
       const originalFilename = 'avatars/' + file.filename;
-      if (extname(file.originalname) == ".png" || extname(file.originalname) == ".jpg") {
-        
+      if (
+        extname(file.originalname) == '.png' ||
+        extname(file.originalname) == '.jpg'
+      ) {
         // Get the user ID from the request
         const userId = req.body.userId;
-        
+
         // Create a new avatar entry in the database
-        const avatar: Avatars =
-        await this.prismaService.createNewAvatarById(userId, extname(file.originalname));
-        
+        const avatar: Avatars = await this.prismaService.createNewAvatarById(
+          userId,
+          extname(file.originalname),
+        );
+
         if (!avatar) {
           throw new AvatarCreationFailedException();
         }
-        
+
         // Get the original filename of the uploaded file
-      const newFilename = `avatars/${avatar.id.toString()}${extname(
-        file.originalname,
-      )}`;
+        const newFilename = `avatars/${avatar.id.toString()}${extname(
+          file.originalname,
+        )}`;
 
-      // Rename the file with the new filename
-      await fsPromises.rename(originalFilename, newFilename);
+        // Rename the file with the new filename
+        await fsPromises.rename(originalFilename, newFilename);
 
-      // Handle the uploaded file here (you can save the filename or avatar ID in the database)
-      console.log('File uploaded successfully:', file);
+        // Handle the uploaded file here (you can save the filename or avatar ID in the database)
+        console.log('File uploaded successfully:', file);
 
-      // Return the appropriate response
-      return { avatar: newFilename };
+        // Return the appropriate response
+        return {
+          id: avatar.id,
+          mime_type: avatar.mime_type,
+        };
       } else {
         await fsPromises.unlink(originalFilename);
         throw new ForbiddenFileExtensionException();
