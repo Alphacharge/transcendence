@@ -30,7 +30,6 @@ export class GameState {
   ballAcceleration: number;
 
   paddlesHeight: number;
-
   paddlesSpeed: number;
 
   leftPosition: number;
@@ -87,6 +86,8 @@ export class GameState {
     this.ballY = this.fieldHeight / 2;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
+    console.log('current speed: ', this.speedFactor);
+    this.speedFactor = 1;
   }
 
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
@@ -190,16 +191,11 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.leftPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX =
-        this.speedFactor *
-        Math.cos(angle) *
-        (1 + this.ballAcceleration) *
-        (1 + this.ballAcceleration);
-      this.ballSpeedY =
-        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
-      this.ballAcceleration +=
-        this.ballAcceleration * (1 + this.ballAcceleration);
-      this.ballAcceleration += this.ballAcceleration;
+      this.ballSpeedX = this.speedFactor * Math.cos(angle);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      if (this.speedFactor < 6) {
+        this.speedFactor *= 1.2;
+      }
     }
   }
 
@@ -222,11 +218,11 @@ export class GameState {
     ) {
       const distance = Math.max(this.ballY - this.rightPosition, 0);
       const angle = this.impact(distance);
-      this.ballSpeedX =
-        -this.speedFactor * Math.cos(angle) * (1 + this.ballAcceleration);
-      this.ballSpeedY =
-        this.speedFactor * Math.sin(angle) * (1 + this.ballAcceleration);
-      this.ballAcceleration *= this.ballAcceleration;
+      this.ballSpeedX = -this.speedFactor * Math.cos(angle);
+      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+      if (this.speedFactor < 6) {
+        this.speedFactor *= 1.2;
+      }
     }
   }
 

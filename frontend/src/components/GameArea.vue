@@ -57,28 +57,28 @@ export default {
             if (!this.messageIntervalPlayer1) {
               this.messageIntervalPlayer1 = setInterval(() => {
                 socket.sendPaddleUp("left");
-              }, 10);
+              }, 30);
             }
             break;
           case "s":
             if (!this.messageIntervalPlayer1) {
               this.messageIntervalPlayer1 = setInterval(() => {
                 socket.sendPaddleDown("left");
-              }, 10);
+              }, 30);
             }
             break;
           case "ArrowUp":
             if (!this.messageIntervalPlayer2) {
               this.messageIntervalPlayer2 = setInterval(() => {
                 socket.sendPaddleUp("right");
-              }, 10);
+              }, 30);
             }
             break;
           case "ArrowDown":
             if (!this.messageIntervalPlayer2) {
               this.messageIntervalPlayer2 = setInterval(() => {
                 socket.sendPaddleDown("right");
-              }, 10);
+              }, 30);
             }
             break;
           default:
