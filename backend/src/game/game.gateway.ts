@@ -78,11 +78,11 @@ export class GameGateway {
       // save new user to users array in GameService
       const user = new User();
 
-      this.gameService.websocketUsers.set(socket.id, user);
       user.socket = socket;
       user.userData = await this.prismaService.getUserById(
         socket.handshake.query.userId,
-      );
+        );
+      this.gameService.websocketUsers.set(socket.id, user);
       if (!user.userData) {
         console.log('handleConnection: User not found in database.');
       }
