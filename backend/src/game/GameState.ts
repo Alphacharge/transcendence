@@ -86,7 +86,6 @@ export class GameState {
     this.ballY = this.fieldHeight / 2;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
-    console.log('current speed: ', this.speedFactor);
     this.speedFactor = 1;
   }
 
