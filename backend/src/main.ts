@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { AppModule } from './app.module';
 import * as cors from 'cors';
 import * as fs from 'fs';
+import { ExpressAdapter } from '@nestjs/platform-express';
+import * as express from 'express';
 
 // necessary for handling wss connections.
 class SocketIoAdapter extends IoAdapter {
@@ -27,8 +29,12 @@ class SocketIoAdapter extends IoAdapter {
 }
 
 async function bootstrap() {
+  const expressApp = express();
   const config = new ConfigService();
-  const app = await NestFactory.create(AppModule, {
+  const app = await NestFactory.create(
+    AppModule,
+    new ExpressAdapter(expressApp),
+    {
     httpsOptions: {
       key: fs.readFileSync('/certificates/certificate.key'),
       cert: fs.readFileSync('/certificates/certificate.cert'),
@@ -43,6 +49,15 @@ async function bootstrap() {
       `https://${process.env.BACKEND_IP}:3000`,
       'https://localhost:3000',
     ],
+  });
+
+  // Add a custom middleware for handling the redirect
+  expressApp.use((req, res, next) => {
+    if (req.url === '/' && req.method === 'GET') {
+      // Assuming your frontend is running on port 8080
+      return res.redirect(302, `https://${process.env.BACKEND_IP}:8080`);
+    }
+    next();
   });
 
   // Enable CORS for all routes
