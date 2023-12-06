@@ -62,6 +62,11 @@ export class PrismaController {
     return await this.prismaService.getUserStatistics();
   }
 
+  @Post('milestones')
+  async getMilestones(): Promise<any | null> {
+    return await this.prismaService.getMilestones();
+  }
+
   @Post('friends')
   async getFriendsById(
     @Body() body: { userId: number },
