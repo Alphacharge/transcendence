@@ -30,14 +30,17 @@ model Users {
 }
 
 model Games {
-  id                Int       @id @default(autoincrement())
-  createdAt         DateTime  @default(now())
-  left_user_id      Int
-  right_user_id     Int
-  left_user_score   Int?
-  right_user_score  Int?
-  winner_id         Int       @default(-1)
-  // tournament_id     Int       @default(0)
+  id                  Int       @id @default(autoincrement())
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt @default(now())
+  left_user_id        Int
+  right_user_id       Int
+  left_user_score     Int       @default(0)
+  right_user_score    Int       @default(0)
+  left_user_contacts  Int       @default(0)
+  right_user_contacts Int       @default(0)
+  longest_break       Int       @default(0)
+  winner_id           Int       @default(-1)
 
   //Opposite Relations
   l_user      Users         @relation("LeftUser", fields: [left_user_id], references: [id])
@@ -46,7 +49,6 @@ model Games {
   f_game      Tournaments[] @relation("FirstGame")
   s_game      Tournaments[] @relation("SecondGame")
   t_game      Tournaments[] @relation("ThirdGame")
-  // tournament  Tournaments   @relation("gameid", fields: [tournament_id], references: [id])
 }
 model Tournaments {
   id              Int       @id @default(autoincrement())

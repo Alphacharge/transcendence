@@ -144,6 +144,9 @@ export class PrismaService extends PrismaClient {
     gameId: number,
     leftScore: number,
     rightScore: number,
+    longestBreak: number,
+    leftContacts: number,
+    rightContacts: number,
     winnerId: number,
   ) {
     try {
@@ -152,6 +155,9 @@ export class PrismaService extends PrismaClient {
         data: {
           left_user_score: leftScore,
           right_user_score: rightScore,
+          left_user_contacts: leftContacts,
+          right_user_contacts: rightContacts,
+          longest_break: longestBreak,
           winner_id: winnerId,
         },
       });

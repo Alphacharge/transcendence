@@ -16,6 +16,11 @@ export class GameState {
   user2: User;
   scorePlayer1: number;
   scorePlayer2: number;
+  contactsPlayer1: number;
+  contactsPlayer2: number;
+  deltaContactsPlayer1: number;
+  deltaContactsPlayer2: number;
+  longestBreak: number;
   winningPlayer: User;
   winningScore: number;
 
@@ -54,6 +59,11 @@ export class GameState {
     this.user2 = null;
     this.scorePlayer1 = 0;
     this.scorePlayer2 = 0;
+    this.contactsPlayer1 = 0;
+    this.contactsPlayer2 = 0;
+    this.deltaContactsPlayer1 = 0;
+    this.deltaContactsPlayer2 = 0;
+    this.longestBreak = 0;
     this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
@@ -87,6 +97,12 @@ export class GameState {
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
     this.speedFactor = 1;
+    const breaklength = this.deltaContactsPlayer1 + this.deltaContactsPlayer2;
+    if (breaklength > this.longestBreak){
+      this.longestBreak = breaklength;
+    }
+    this.deltaContactsPlayer1 = 0;
+    this.deltaContactsPlayer2 = 0;
   }
 
   /* Generates a random starting startAngle which is not orthogonal to any boundary. */
@@ -195,6 +211,8 @@ export class GameState {
       if (this.speedFactor < 6) {
         this.speedFactor *= 1.2;
       }
+      this.contactsPlayer1++;
+      this.deltaContactsPlayer1++;
     }
   }
 
@@ -222,6 +240,8 @@ export class GameState {
       if (this.speedFactor < 6) {
         this.speedFactor *= 1.2;
       }
+      this.contactsPlayer2++;
+      this.deltaContactsPlayer2++;
     }
   }
 

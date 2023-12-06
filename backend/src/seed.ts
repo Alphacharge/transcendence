@@ -73,30 +73,30 @@ async function seed() {
 
     //Play 8 Queued Games
     const game1 = await prisma.createNewGame(user1.id, user2.id);
-    await prisma.updateGameScore(game1.id, 11, 5, user1.id);
+    await prisma.updateGameScore(game1.id, 11, 5, user1.id, 10, 52, 51);
     const game2 = await prisma.createNewGame(user1.id, user2.id);
-    await prisma.updateGameScore(game2.id, 4, 11, user2.id);
+    await prisma.updateGameScore(game2.id, 4, 11, user2.id, 5, 32, 28);
     const game3 = await prisma.createNewGame(user3.id, user2.id);
-    await prisma.updateGameScore(game3.id, 11, 7, user3.id);
+    await prisma.updateGameScore(game3.id, 11, 7, user3.id, 7, 42, 38);
     const game4 = await prisma.createNewGame(user3.id, user4.id);
-    await prisma.updateGameScore(game4.id, 10, 11, user4.id);
+    await prisma.updateGameScore(game4.id, 10, 11, user4.id, 2, 12, 10);
 
     const game5 = await prisma.createNewGame(user5.id, user6.id);
-    await prisma.updateGameScore(game5.id, 11, 9, user5.id);
+    await prisma.updateGameScore(game5.id, 11, 9, user5.id, 4, 25, 22);
     const game6 = await prisma.createNewGame(user5.id, user6.id);
-    await prisma.updateGameScore(game6.id, 2, 11, user6.id);
+    await prisma.updateGameScore(game6.id, 2, 11, user6.id, 4, 28, 24);
     const game7 = await prisma.createNewGame(user7.id, user6.id);
-    await prisma.updateGameScore(game7.id, 11, 4, user7.id);
+    await prisma.updateGameScore(game7.id, 11, 4, user7.id, 7, 33, 48);
     const game8 = await prisma.createNewGame(user7.id, user8.id);
-    await prisma.updateGameScore(game8.id, 1, 11, user8.id);
+    await prisma.updateGameScore(game8.id, 1, 11, user8.id, 13, 62, 76);
 
     //Play 4 Tournaments
     const game9 = await prisma.createNewGame(user1.id, user2.id);
-    await prisma.updateGameScore(game9.id, 11, 8, user1.id);
+    await prisma.updateGameScore(game9.id, 11, 8, user1.id, 9, 42, 55);
     const game10 = await prisma.createNewGame(user3.id, user4.id);
-    await prisma.updateGameScore(game10.id, 7, 11, user4.id);
+    await prisma.updateGameScore(game10.id, 7, 11, user4.id, 8, 42, 40);
     const game11 = await prisma.createNewGame(user1.id, user4.id);
-    await prisma.updateGameScore(game11.id, 11, 9, user1.id);
+    await prisma.updateGameScore(game11.id, 11, 9, user1.id, 6, 34, 38);
     const tour1 = await prisma.createNewTournament(
       game9.id,
       game10.id,
@@ -105,11 +105,11 @@ async function seed() {
     );
 
     const game12 = await prisma.createNewGame(user1.id, user3.id);
-    await prisma.updateGameScore(game12.id, 11, 3, user1.id);
+    await prisma.updateGameScore(game12.id, 11, 3, user1.id, 5, 29, 35);
     const game13 = await prisma.createNewGame(user2.id, user4.id);
-    await prisma.updateGameScore(game13.id, 5, 11, user4.id);
+    await prisma.updateGameScore(game13.id, 5, 11, user4.id, 14, 73, 75);
     const game14 = await prisma.createNewGame(user4.id, user1.id);
-    await prisma.updateGameScore(game14.id, 11, 4, user4.id);
+    await prisma.updateGameScore(game14.id, 11, 4, user4.id, 11, 64, 55);
     const tour2 = await prisma.createNewTournament(
       game12.id,
       game13.id,
@@ -118,11 +118,11 @@ async function seed() {
     );
 
     const game15 = await prisma.createNewGame(user5.id, user6.id);
-    await prisma.updateGameScore(game15.id, 11, 6, user5.id);
+    await prisma.updateGameScore(game15.id, 11, 6, user5.id, 9, 43, 57);
     const game16 = await prisma.createNewGame(user7.id, user8.id);
-    await prisma.updateGameScore(game16.id, 10, 11, user8.id);
+    await prisma.updateGameScore(game16.id, 10, 11, user8.id, 5, 36, 23);
     const game17 = await prisma.createNewGame(user5.id, user8.id);
-    await prisma.updateGameScore(game17.id, 11, 7, user5.id);
+    await prisma.updateGameScore(game17.id, 11, 7, user5.id, 6, 45, 23);
     const tour3 = await prisma.createNewTournament(
       game15.id,
       game16.id,
