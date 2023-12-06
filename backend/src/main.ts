@@ -35,11 +35,12 @@ async function bootstrap() {
     AppModule,
     new ExpressAdapter(expressApp),
     {
-    httpsOptions: {
-      key: fs.readFileSync('/certificates/certificate.key'),
-      cert: fs.readFileSync('/certificates/certificate.cert'),
+      httpsOptions: {
+        key: fs.readFileSync('/certificates/certificate.key'),
+        cert: fs.readFileSync('/certificates/certificate.cert'),
+      },
     },
-  });
+  );
   app.useWebSocketAdapter(new SocketIoAdapter(app));
 
   app.enableCors({
