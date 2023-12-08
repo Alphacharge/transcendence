@@ -8,11 +8,13 @@ import {
   Req,
   Header,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Request, Response } from 'express';
 
+@UseGuards(AuthDto)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

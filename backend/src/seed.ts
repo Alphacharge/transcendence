@@ -26,7 +26,7 @@ async function seed() {
     await prisma.games.deleteMany({});
     await prisma.users.deleteMany({});
 
-    await prisma.createNewAvatar(".png");
+    await prisma.createNewAvatar('.png');
 
     // Create users
     let authuser1: User = { id: 1, password: 'a', username: 'a' };

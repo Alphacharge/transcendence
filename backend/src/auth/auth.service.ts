@@ -154,6 +154,11 @@ export class AuthService {
         'Username must be at least 4 characters long',
       );
     }
+    if (username.length > 16) {
+      throw new ForbiddenException(
+        "Username can't be longer than 16 characters",
+      );
+    }
     // Define a whitelist of allowed characters (ASCII and common symbols)
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
 
