@@ -360,11 +360,11 @@ export class PrismaService extends PrismaClient {
       console.error('Error finding longest Game:', error);
       return null;
     }
-}
+  }
 
-async getShortestGame(): Promise<any | null> {
-  try {
-    const shortestGame = await this.$queryRaw`
+  async getShortestGame(): Promise<any | null> {
+    try {
+      const shortestGame = await this.$queryRaw`
       SELECT 
     "Games".id, 
     "Games"."createdAt",
@@ -394,16 +394,16 @@ async getShortestGame(): Promise<any | null> {
     duration ASC 
   LIMIT 1
     `;
-    return shortestGame[0] || null;
-  } catch (error) {
-    console.error('Error finding shortest Game:', error);
-    return null;
+      return shortestGame[0] || null;
+    } catch (error) {
+      console.error('Error finding shortest Game:', error);
+      return null;
+    }
   }
-}
 
-async getMostContacts(): Promise<any | null> {
-  try {
-    const mostContacts = await this.$queryRaw`
+  async getMostContacts(): Promise<any | null> {
+    try {
+      const mostContacts = await this.$queryRaw`
       WITH UserContacts AS (
     SELECT
       left_user_id AS user_id,
@@ -428,16 +428,16 @@ async getMostContacts(): Promise<any | null> {
   ORDER BY total_contacts DESC
   LIMIT 1;
 `;
-    return mostContacts[0] || null;
-  } catch (error) {
-    console.error('Error finding most Contacts:', error);
-    return null;
+      return mostContacts[0] || null;
+    } catch (error) {
+      console.error('Error finding most Contacts:', error);
+      return null;
+    }
   }
-}
 
-async getLeastContacts(): Promise<any | null> {
-  try {
-    const leastContacts = await this.$queryRaw`
+  async getLeastContacts(): Promise<any | null> {
+    try {
+      const leastContacts = await this.$queryRaw`
       WITH UserContacts AS (
     SELECT
       left_user_id AS user_id,
@@ -462,58 +462,58 @@ async getLeastContacts(): Promise<any | null> {
   ORDER BY total_contacts ASC
   LIMIT 1;
 `;
-    return leastContacts[0] || null;
-  } catch (error) {
-    console.error('Error finding Least Contacts:', error);
-    return null;
+      return leastContacts[0] || null;
+    } catch (error) {
+      console.error('Error finding Least Contacts:', error);
+      return null;
+    }
   }
-}
 
-async getLongestBreak(): Promise<any | null> {
-  try {
-    const longestBreak = await this.games.findFirst({
-      orderBy: {
-        longest_break: 'desc',
-      },
-      select: {
-        id: true,
-        left_user_score: true,
-        right_user_score: true,
-        longest_break: true,
-        l_user: {
-          select: {
-            username: true,
-            avatar: {
-              select: {
-                id: true,
-                mime_type: true,
+  async getLongestBreak(): Promise<any | null> {
+    try {
+      const longestBreak = await this.games.findFirst({
+        orderBy: {
+          longest_break: 'desc',
+        },
+        select: {
+          id: true,
+          left_user_score: true,
+          right_user_score: true,
+          longest_break: true,
+          l_user: {
+            select: {
+              username: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
+            },
+          },
+          r_user: {
+            select: {
+              username: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
               },
             },
           },
         },
-        r_user: {
-          select: {
-            username: true,
-            avatar: {
-              select: {
-                id: true,
-                mime_type: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    return longestBreak || null;
-  } catch (error) {
-    console.error('Error finding longest Break:', error);
-    return null;
+      });
+      return longestBreak || null;
+    } catch (error) {
+      console.error('Error finding longest Break:', error);
+      return null;
+    }
   }
-}
 
-async getHighestWin(): Promise<any | null> {
-  try {
-    const highestWin = await this.$queryRaw`
+  async getHighestWin(): Promise<any | null> {
+    try {
+      const highestWin = await this.$queryRaw`
     SELECT
     user_id,
     MAX(win_diff) AS max_win_diff,
@@ -537,22 +537,28 @@ async getHighestWin(): Promise<any | null> {
   ORDER BY max_win_diff DESC
   LIMIT 1;
 `;
-    return highestWin[0] || null;
-  } catch (error) {
-    console.error('Error finding Least Contacts:', error);
-    return null;
+      return highestWin[0] || null;
+    } catch (error) {
+      console.error('Error finding Least Contacts:', error);
+      return null;
+    }
   }
-}
 
   async getMilestones() {
-
     const longestGame = await this.getLongestGame();
     const shortestGame = await this.getShortestGame();
     const mostContacts = await this.getMostContacts();
     const leastContacts = await this.getLeastContacts();
     const longestBreak = await this.getLongestBreak();
     const highestWin = await this.getHighestWin();
-    const obj = {longestGame, shortestGame, mostContacts, leastContacts, longestBreak, highestWin};
+    const obj = {
+      longestGame,
+      shortestGame,
+      mostContacts,
+      leastContacts,
+      longestBreak,
+      highestWin,
+    };
     // console.log(obj);
     return obj;
   }

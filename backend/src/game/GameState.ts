@@ -98,7 +98,7 @@ export class GameState {
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
     this.speedFactor = 1;
     const breaklength = this.deltaContactsPlayer1 + this.deltaContactsPlayer2;
-    if (breaklength > this.longestBreak){
+    if (breaklength > this.longestBreak) {
       this.longestBreak = breaklength;
     }
     this.deltaContactsPlayer1 = 0;
