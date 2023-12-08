@@ -405,24 +405,29 @@ async getMostContacts(): Promise<any | null> {
   try {
     const mostContacts = await this.$queryRaw`
       WITH UserContacts AS (
+    SELECT
+      left_user_id AS user_id,
+      left_user_contacts AS contacts
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_contacts AS contacts
+    FROM "Games"
+  )
   SELECT
-    left_user_id AS user_id,
-    left_user_contacts AS contacts
-  FROM "Games"
-  UNION ALL
-  SELECT
-    right_user_id AS user_id,
-    right_user_contacts AS contacts
-  FROM "Games"
-)
-SELECT
-  user_id,
-  CAST(SUM(contacts) AS VARCHAR) AS total_contacts
-FROM UserContacts
-GROUP BY user_id
-ORDER BY total_contacts DESC
-LIMIT 1;
-    `;
+    uc.user_id,
+    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM UserContacts uc
+  INNER JOIN "Users" AS u ON uc.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY uc.user_id, u.username, a.id, a.mime_type
+  ORDER BY total_contacts DESC
+  LIMIT 1;
+`;
     return mostContacts[0] || null;
   } catch (error) {
     console.error('Error finding most Contacts:', error);
@@ -434,24 +439,29 @@ async getLeastContacts(): Promise<any | null> {
   try {
     const leastContacts = await this.$queryRaw`
       WITH UserContacts AS (
+    SELECT
+      left_user_id AS user_id,
+      left_user_contacts AS contacts
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_contacts AS contacts
+    FROM "Games"
+  )
   SELECT
-    left_user_id AS user_id,
-    left_user_contacts AS contacts
-  FROM "Games"
-  UNION ALL
-  SELECT
-    right_user_id AS user_id,
-    right_user_contacts AS contacts
-  FROM "Games"
-)
-SELECT
-  user_id,
-  CAST(SUM(contacts) AS VARCHAR) AS total_contacts
-FROM UserContacts
-GROUP BY user_id
-ORDER BY total_contacts ASC
-LIMIT 1;
-    `;
+    uc.user_id,
+    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM UserContacts uc
+  INNER JOIN "Users" AS u ON uc.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY uc.user_id, u.username, a.id, a.mime_type
+  ORDER BY total_contacts ASC
+  LIMIT 1;
+`;
     return leastContacts[0] || null;
   } catch (error) {
     console.error('Error finding Least Contacts:', error);
@@ -505,23 +515,28 @@ async getHighestWin(): Promise<any | null> {
   try {
     const highestWin = await this.$queryRaw`
     SELECT
-  user_id,
-  MAX(win_diff) AS max_win_diff
-FROM (
-  SELECT
-    left_user_id AS user_id,
-    left_user_score - right_user_score AS win_diff
-  FROM "Games"
-  UNION ALL
-  SELECT
-    right_user_id AS user_id,
-    right_user_score - left_user_score AS win_diff
-  FROM "Games"
-) AS UserWins
-GROUP BY user_id
-ORDER BY max_win_diff DESC
-LIMIT 1;
-    `;
+    user_id,
+    MAX(win_diff) AS max_win_diff,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM (
+    SELECT
+      left_user_id AS user_id,
+      left_user_score - right_user_score AS win_diff
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_score - left_user_score AS win_diff
+    FROM "Games"
+  ) AS UserWins
+  INNER JOIN "Users" AS u ON UserWins.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY user_id, u.username, a.id, a.mime_type
+  ORDER BY max_win_diff DESC
+  LIMIT 1;
+`;
     return highestWin[0] || null;
   } catch (error) {
     console.error('Error finding Least Contacts:', error);
