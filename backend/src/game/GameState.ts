@@ -74,7 +74,7 @@ export class GameState {
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
-    const paddlesDistance = (1 / 20) * this.fieldWidth;
+    const paddlesDistance = 0;
     const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
     this.ballRadius = paddlesWidth;
 
@@ -82,7 +82,7 @@ export class GameState {
     this.leftPosition = paddlesStartPosition;
     this.leftImpact = 0;
 
-    this.rightBorder = this.fieldWidth - paddlesDistance;
+    this.rightBorder = this.fieldWidth;
     this.rightPosition = paddlesStartPosition;
     this.rightImpact = 0;
 
@@ -172,7 +172,7 @@ export class GameState {
   }
 
   leftBreakthrough() {
-    if (this.ballX <= 2 * this.ballRadius) {
+    if (this.ballX <= 1) {
       this.scorePlayer2 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
@@ -180,7 +180,7 @@ export class GameState {
   }
 
   rightBreakthrough() {
-    if (this.ballX >= this.fieldWidth - 4 * this.ballRadius) {
+    if (this.ballX >= this.fieldWidth - this.ballRadius) {
       this.scorePlayer1 += 1;
       sharedEventEmitter.emit('scoreUpdate', this);
       this.gameInit();
@@ -217,11 +217,11 @@ export class GameState {
   }
 
   collisionRight() {
-    const collisionAreaX0 = this.rightBorder - 2 * this.ballRadius;
+    const collisionAreaX0 = this.rightBorder - 4 *this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
     const collisionAreaY0 = Math.min(
       this.rightPosition,
-      this.rightPosition - 2 * this.ballRadius,
+      this.rightPosition - 4 * this.ballRadius,
     );
     const collisionAreaY1 = Math.min(
       this.rightPosition + this.paddlesHeight,
@@ -246,14 +246,14 @@ export class GameState {
   }
 
   collisionTop() {
-    if (this.ballY <= this.ballRadius) {
+    if (this.ballY <= this.ballRadius / 2) {
       return true;
     }
     return false;
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - this.ballRadius) {
+    if (this.ballY >= this.fieldHeight - 2 * this.ballRadius) {
       return true;
     }
     return false;
