@@ -459,6 +459,48 @@ LIMIT 1;
   }
 }
 
+async getLongestBreak(): Promise<any | null> {
+  try {
+    const longestBreak = await this.games.findFirst({
+      orderBy: {
+        longest_break: 'desc',
+      },
+      select: {
+        id: true,
+        left_user_score: true,
+        right_user_score: true,
+        longest_break: true,
+        l_user: {
+          select: {
+            username: true,
+            avatar: {
+              select: {
+                id: true,
+                mime_type: true,
+              },
+            },
+          },
+        },
+        r_user: {
+          select: {
+            username: true,
+            avatar: {
+              select: {
+                id: true,
+                mime_type: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return longestBreak || null;
+  } catch (error) {
+    console.error('Error finding longest Break:', error);
+    return null;
+  }
+}
+
 async getHighestWin(): Promise<any | null> {
   try {
     const highestWin = await this.$queryRaw`
@@ -493,8 +535,7 @@ LIMIT 1;
     const shortestGame = await this.getShortestGame();
     const mostContacts = await this.getMostContacts();
     const leastContacts = await this.getLeastContacts();
-    // const longestBreak = await this.getLongestBreak();
-    const longestBreak={};
+    const longestBreak = await this.getLongestBreak();
     const highestWin = await this.getHighestWin();
     const obj = {longestGame, shortestGame, mostContacts, leastContacts, longestBreak, highestWin};
     // console.log(obj);
