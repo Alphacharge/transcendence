@@ -225,15 +225,15 @@ export class GameService {
   }
 
   endGame(game: GameState) {
-    game.playerVictory();
     if (!game.isLocalGame) {
       this.prismaService.updateGameScore(
         game.gameData.id,
         game.scorePlayer1,
         game.scorePlayer2,
         game.winningPlayer.userData.id,
-      );
-    }
+        );
+      }
+    game.playerVictory();
 
     game.user1.activeGame = null;
     if (game.user2) game.user2.activeGame = null;
