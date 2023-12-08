@@ -53,8 +53,7 @@ export default {
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      // if (this.isLocalGame) {
-        switch (event.key) {
+      switch (event.key) {
           case "w":
             if (!this.messageIntervalPlayer1) {
               this.messageIntervalPlayer1 = setInterval(() => {
@@ -69,14 +68,14 @@ export default {
               }, 30);
             }
             break;
-          case "ArrowUp":
+          case "ArrowUp" && this.isLocalGame:
             if (!this.messageIntervalPlayer2) {
               this.messageIntervalPlayer2 = setInterval(() => {
                 socket.sendPaddleUp("right");
               }, 30);
             }
             break;
-          case "ArrowDown":
+          case "ArrowDown" && this.isLocalGame:
             if (!this.messageIntervalPlayer2) {
               this.messageIntervalPlayer2 = setInterval(() => {
                 socket.sendPaddleDown("right");
@@ -86,7 +85,6 @@ export default {
           default:
             break;
         }
-      // }
     });
 
     window.addEventListener("keyup", (event) => {
