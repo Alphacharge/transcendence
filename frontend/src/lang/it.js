@@ -33,4 +33,10 @@ export default {
   Losses: "Sconfitte",
   TournamentMatches: "Torneo - Partite",
   TournamentWins: "Torneo - Vittorie",
+  LongestGame: "Partita più lunga",
+  LongestBreak: "Raduno più lungo",
+  MostContacts: "La maggior parte dei contatti con la palla",
+  ShortestGame: "Partita più breve",
+  HighestWin: "Profitto massimo",
+  LeastContacts: "Meno contatti con la palla",
 };

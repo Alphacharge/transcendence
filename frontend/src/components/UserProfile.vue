@@ -1,66 +1,65 @@
 <template>
   <div>
-      <table class="centered">
-        <thead>
-          <tr v-if="userProfil">
-            <th colspan="2">
-              <div class="image-profile-container">
-                <div class="image-profile">
-                  <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
-                </div>
-                <div class="upload-icon" @click="openFileUpload">
-                  <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
-                  <input
-                    type="file"
-                    ref="fileInput"
-                    style="display: none"
-                    @change="uploadFile"
-                  />
-                </div>
+    <table class="centered">
+      <thead>
+        <tr v-if="userProfil">
+          <th colspan="2">
+            <div class="image-profile-container">
+              <div class="image-profile">
+                <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
               </div>
-            </th>
-            <th colspan="2">
-              <p>{{ userProfil.username }}</p>
-              <p>Registered since</p>
-              <p>{{ userProfil.createdAt.slice(0, 10) }}</p>
-            </th>
-          </tr>
-        </thead>
-        <tbody v-if="userHistory">
-          <tr v-for="match in userHistory" :key="match.id">
-            <td>
-              <div class="image_history">
-                <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
+              <div class="upload-icon" @click="openFileUpload">
+                <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
+                <input
+                  type="file"
+                  ref="fileInput"
+                  style="display: none"
+                  @change="uploadFile"
+                />
               </div>
-            </td>
-            <td>
-              {{ match.leftUser.username }}
-            </td>
-            <td>
-              {{ match.left_user_score }}
-            </td>
-            <td>
-              <b>:</b>
-            </td>
-            <td>
-              {{ match.right_user_score }}
-            </td>
-            <td>
-              {{ match.rightUser.username }}
-            </td>
-            <td>
-              <div class="image_history">
-                <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            </div>
+          </th>
+          <th colspan="2">
+            <p>{{ userProfil.username }}</p>
+            <p>Registered since</p>
+            <p>{{ userProfil.createdAt.slice(0, 10) }}</p>
+          </th>
+        </tr>
+      </thead>
+      <tbody v-if="userHistory">
+        <tr v-for="match in userHistory" :key="match.id">
+          <td>
+            <div class="image_history">
+              <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
+            </div>
+          </td>
+          <td>
+            {{ match.leftUser.username }}
+          </td>
+          <td>
+            {{ match.left_user_score }}
+          </td>
+          <td>
+            <b>:</b>
+          </td>
+          <td>
+            {{ match.right_user_score }}
+          </td>
+          <td>
+            {{ match.rightUser.username }}
+          </td>
+          <td>
+            <div class="image_history">
+              <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
-
 export default {
   data() {
     return {

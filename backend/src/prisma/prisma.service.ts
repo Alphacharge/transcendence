@@ -144,6 +144,9 @@ export class PrismaService extends PrismaClient {
     gameId: number,
     leftScore: number,
     rightScore: number,
+    longestBreak: number,
+    leftContacts: number,
+    rightContacts: number,
     winnerId: number,
   ) {
     try {
@@ -152,6 +155,9 @@ export class PrismaService extends PrismaClient {
         data: {
           left_user_score: leftScore,
           right_user_score: rightScore,
+          left_user_contacts: leftContacts,
+          right_user_contacts: rightContacts,
+          longest_break: longestBreak,
           winner_id: winnerId,
         },
       });
@@ -317,8 +323,249 @@ export class PrismaService extends PrismaClient {
     return userStatistics;
   }
 
+  async getLongestGame(): Promise<any | null> {
+    try {
+      const longestSpanGame = await this.$queryRaw`
+        SELECT 
+      "Games".id, 
+      "Games"."createdAt",
+      "Games"."updatedAt",
+      "Games"."left_user_id",
+      "Games"."right_user_id",
+      "Games".left_user_score,
+      "Games".right_user_score,
+      TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
+      l_user.username as l_username,
+      l_user.avatar_id as l_avatar_id,
+      l_avatar.mime_type as l_avatar_mime_type,
+      r_user.username as r_username,
+      r_user.avatar_id as r_avatar_id,
+      r_avatar.mime_type as r_avatar_mime_type
+    FROM 
+      "Games"
+    LEFT JOIN 
+      "Users" AS l_user ON "Games".left_user_id = l_user.id
+    LEFT JOIN 
+      "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
+    LEFT JOIN 
+      "Users" AS r_user ON "Games".right_user_id = r_user.id
+    LEFT JOIN 
+      "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
+    ORDER BY 
+      duration DESC 
+    LIMIT 1
+      `;
+      return longestSpanGame[0] || null;
+    } catch (error) {
+      console.error('Error finding longest Game:', error);
+      return null;
+    }
+  }
+
+  async getShortestGame(): Promise<any | null> {
+    try {
+      const shortestGame = await this.$queryRaw`
+      SELECT 
+    "Games".id, 
+    "Games"."createdAt",
+    "Games"."updatedAt",
+    "Games"."left_user_id",
+    "Games"."right_user_id",
+    "Games".left_user_score,
+    "Games".right_user_score,
+    TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
+    l_user.username as l_username,
+    l_user.avatar_id as l_avatar_id,
+    l_avatar.mime_type as l_avatar_mime_type,
+    r_user.username as r_username,
+    r_user.avatar_id as r_avatar_id,
+    r_avatar.mime_type as r_avatar_mime_type
+  FROM 
+    "Games"
+  LEFT JOIN 
+    "Users" AS l_user ON "Games".left_user_id = l_user.id
+  LEFT JOIN 
+    "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
+  LEFT JOIN 
+    "Users" AS r_user ON "Games".right_user_id = r_user.id
+  LEFT JOIN 
+    "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
+  ORDER BY 
+    duration ASC 
+  LIMIT 1
+    `;
+      return shortestGame[0] || null;
+    } catch (error) {
+      console.error('Error finding shortest Game:', error);
+      return null;
+    }
+  }
+
+  async getMostContacts(): Promise<any | null> {
+    try {
+      const mostContacts = await this.$queryRaw`
+      WITH UserContacts AS (
+    SELECT
+      left_user_id AS user_id,
+      left_user_contacts AS contacts
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_contacts AS contacts
+    FROM "Games"
+  )
+  SELECT
+    uc.user_id,
+    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM UserContacts uc
+  INNER JOIN "Users" AS u ON uc.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY uc.user_id, u.username, a.id, a.mime_type
+  ORDER BY total_contacts DESC
+  LIMIT 1;
+`;
+      return mostContacts[0] || null;
+    } catch (error) {
+      console.error('Error finding most Contacts:', error);
+      return null;
+    }
+  }
+
+  async getLeastContacts(): Promise<any | null> {
+    try {
+      const leastContacts = await this.$queryRaw`
+      WITH UserContacts AS (
+    SELECT
+      left_user_id AS user_id,
+      left_user_contacts AS contacts
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_contacts AS contacts
+    FROM "Games"
+  )
+  SELECT
+    uc.user_id,
+    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM UserContacts uc
+  INNER JOIN "Users" AS u ON uc.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY uc.user_id, u.username, a.id, a.mime_type
+  ORDER BY total_contacts ASC
+  LIMIT 1;
+`;
+      return leastContacts[0] || null;
+    } catch (error) {
+      console.error('Error finding Least Contacts:', error);
+      return null;
+    }
+  }
+
+  async getLongestBreak(): Promise<any | null> {
+    try {
+      const longestBreak = await this.games.findFirst({
+        orderBy: {
+          longest_break: 'desc',
+        },
+        select: {
+          id: true,
+          left_user_score: true,
+          right_user_score: true,
+          longest_break: true,
+          l_user: {
+            select: {
+              username: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
+            },
+          },
+          r_user: {
+            select: {
+              username: true,
+              avatar: {
+                select: {
+                  id: true,
+                  mime_type: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return longestBreak || null;
+    } catch (error) {
+      console.error('Error finding longest Break:', error);
+      return null;
+    }
+  }
+
+  async getHighestWin(): Promise<any | null> {
+    try {
+      const highestWin = await this.$queryRaw`
+    SELECT
+    user_id,
+    MAX(win_diff) AS max_win_diff,
+    u.username AS username,
+    a.id AS avatar_id,
+    a.mime_type AS avatar_mime_type
+  FROM (
+    SELECT
+      left_user_id AS user_id,
+      left_user_score - right_user_score AS win_diff
+    FROM "Games"
+    UNION ALL
+    SELECT
+      right_user_id AS user_id,
+      right_user_score - left_user_score AS win_diff
+    FROM "Games"
+  ) AS UserWins
+  INNER JOIN "Users" AS u ON UserWins.user_id = u.id
+  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+  GROUP BY user_id, u.username, a.id, a.mime_type
+  ORDER BY max_win_diff DESC
+  LIMIT 1;
+`;
+      return highestWin[0] || null;
+    } catch (error) {
+      console.error('Error finding Least Contacts:', error);
+      return null;
+    }
+  }
+
+  async getMilestones() {
+    const longestGame = await this.getLongestGame();
+    const shortestGame = await this.getShortestGame();
+    const mostContacts = await this.getMostContacts();
+    const leastContacts = await this.getLeastContacts();
+    const longestBreak = await this.getLongestBreak();
+    const highestWin = await this.getHighestWin();
+    const obj = {
+      longestGame,
+      shortestGame,
+      mostContacts,
+      leastContacts,
+      longestBreak,
+      highestWin,
+    };
+    // console.log(obj);
+    return obj;
+  }
+
   async getHistoryMatchesById(userId: number): Promise<any[] | null> {
     try {
+      await this.getMilestones();
       const allGames = await this.games.findMany({
         where: {
           OR: [
@@ -388,6 +635,7 @@ export class PrismaService extends PrismaClient {
     }
   }
 
+  //Friends
   async addFriendByIds(userId: number, friendId: number): Promise<boolean> {
     try {
       const newFriend = await this.friends.create({
@@ -499,6 +747,7 @@ export class PrismaService extends PrismaClient {
     }
   }
 
+  //Avatar
   async createNewAvatarById(
     userId: number,
     mimeType: string,

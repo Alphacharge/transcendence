@@ -231,6 +231,9 @@ export class GameService {
         game.gameData.id,
         game.scorePlayer1,
         game.scorePlayer2,
+        game.longestBreak,
+        game.contactsPlayer1,
+        game.contactsPlayer2,
         game.winningPlayer.userData.id,
       );
     }
