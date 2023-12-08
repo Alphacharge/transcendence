@@ -224,9 +224,9 @@ export class GameService {
     return game;
   }
 
-  endGame(game: GameState) {
+  async endGame(game: GameState) {
     if (!game.isLocalGame) {
-      this.prismaService.updateGameScore(
+      await this.prismaService.updateGameScore(
         game.gameData.id,
         game.scorePlayer1,
         game.scorePlayer2,
