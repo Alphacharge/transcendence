@@ -14,10 +14,9 @@
 
 <script>
 import FriendList from "@/components/FriendList.vue";
-import LanguageToggle from "@/components/LanguageToggle.vue";
 
 export default {
-  components: { FriendList, LanguageToggle },
+  components: { FriendList },
   methods: {
     handleButtonClick(message) {
       alert(message);
