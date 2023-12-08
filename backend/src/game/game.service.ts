@@ -16,8 +16,8 @@ export class GameService {
 
   async startLocalGame(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
+    console.error(`GAME.SERVICE, STARTLOCALGAME, debug ${this.websocketUsers}`);
     if (user.activeTournament || user.activeGame) return;
-
     const game = new GameState();
     game.isLocalGame = true;
     game.user1 = user;
@@ -200,6 +200,7 @@ export class GameService {
 
   paddleUp(player: User, leftOrRight: string) {
     const game = player.activeGame;
+    console.error(`GAME.SERVICE, PADDLEUP, debug`);
 
     if (game && game.isRunning()) {
       if (game.isLocalGame && leftOrRight == 'right') {
@@ -225,6 +226,7 @@ export class GameService {
   }
 
   async endGame(game: GameState) {
+    game.playerVictory();
     if (!game.isLocalGame) {
       await this.prismaService.updateGameScore(
         game.gameData.id,
@@ -236,7 +238,6 @@ export class GameService {
         game.winningPlayer.userData.id,
         );
       }
-    game.playerVictory();
 
     game.user1.activeGame = null;
     if (game.user2) game.user2.activeGame = null;
