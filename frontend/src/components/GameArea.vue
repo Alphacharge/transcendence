@@ -43,15 +43,17 @@ export default {
     });
     // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
+      console.error(`GAMEAREA.EVENTLISTENER ON LEFTPADDLE, debug ${this.isLocalGame}`);
       this.leftPaddleY = pY;
     });
     socket.on("rightPaddle", (pY) => {
+      console.error(`GAMEAREA.EVENTLISTENER ON RIGHTPADDLE, debug ${this.isLocalGame}`);
       this.rightPaddleY = pY;
     });
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (this.isLocalGame) {
+      // if (this.isLocalGame) {
         switch (event.key) {
           case "w":
             if (!this.messageIntervalPlayer1) {
@@ -84,11 +86,11 @@ export default {
           default:
             break;
         }
-      }
+      // }
     });
 
     window.addEventListener("keyup", (event) => {
-      if (this.isLocalGame) {
+      // if (this.isLocalGame) {
         switch (event.key) {
           case "w":
           case "s":
@@ -103,7 +105,7 @@ export default {
           default:
             break;
         }
-      }
+      // }
     });
   },
 
