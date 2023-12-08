@@ -33,4 +33,10 @@ export default {
   Losses: "Losses",
   TournamentMatches: "Tournament - Matches",
   TournamentWins: "Tournament - Wins",
+  LongestGame: "Longest Game",
+  LongestBreak: "Longest Break",
+  MostContacts: "Most Contacts",
+  ShortestGame: "Shortest Game",
+  HighestWin: "Highest Win",
+  LeastContacts: "Least Contacts",
 };

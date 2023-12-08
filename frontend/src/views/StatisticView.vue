@@ -4,7 +4,7 @@
     <div class="container">
       <div class="patch-wrapper">
         <div class="patch-left">
-          <div class="sub-patch">{{ $t("Longest Game") }}
+          <div class="sub-patch">{{ $t("LongestGame") }}
             <div class="image_history">
                 <img v-if="milestones" :src="`avatars/${milestones.longestGame.l_avatar_id}${milestones.longestGame.l_avatar_mime_type}`" alt="Avatar" />
               </div>
@@ -24,11 +24,11 @@
                 {{ milestones.longestGame.duration }}
               </div>
           </div>
-          <div class="sub-patch">{{ $t("Longest Break") }}</div>
-          <div class="sub-patch">{{ $t("Most Contacts") }}</div>
+          <div class="sub-patch">{{ $t("LongestBreak") }}</div>
+          <div class="sub-patch">{{ $t("MostContacts") }}</div>
         </div>
         <div class="patch-right">
-          <div class="sub-patch">{{ $t("Shortest Game") }}
+          <div class="sub-patch">{{ $t("ShortestGame") }}
             <div class="image_history">
                 <img v-if="milestones" :src="`avatars/${milestones.shortestGame.l_avatar_id}${milestones.shortestGame.l_avatar_mime_type}`" alt="Avatar" />
               </div>
@@ -48,7 +48,7 @@
                 {{ milestones.shortestGame.duration }}
               </div>
             </div>
-          <div class="sub-patch">{{ $t("Highest Win") }}
+          <div class="sub-patch">{{ $t("HighestWin") }}
             <!-- <div class="image_history">
                 <img v-if="milestones" :src="`avatars/${milestones.highestWin.l_avatar_id}${milestones.highestWin.l_avatar_mime_type}`" alt="Avatar" />
               </div>
@@ -59,7 +59,7 @@
                 {{ milestones.highestWin.max_win_diff }}
               </div> -->
           </div>
-          <div class="sub-patch">{{ $t("Least Contacts") }}</div>
+          <div class="sub-patch">{{ $t("LeastContacts") }}</div>
         </div>
       </div>
       <h2 class="centered">Statistics</h2>
