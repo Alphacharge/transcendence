@@ -4,7 +4,7 @@
       Player {{ winningPlayer }} Wins!
     </h2>
     <div class="player-score">
-      <h5>{{ player1Score }} : {{ player2Score }}</h5>
+      {{ player1Score }} : {{ player2Score }}
     </div>
   </div>
 </template>
@@ -44,3 +44,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.player-score {
+  text-align: center;
+  font-size: 5em;
+  color: white;
+}
+</style>
