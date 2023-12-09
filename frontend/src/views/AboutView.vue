@@ -2,11 +2,12 @@
   <div class="about">
     <h3>{{ $t("aboutTitle") }}</h3>
     <p>{{ $t("aboutText1") }}</p>
-    <p>
-    <li>Franziska Kernbach (fkernbac)</li>
-    <li>Luca Sordo (lsordo)</li>
-    <li>Marius Kölle (nkolle)</li>
-    <li>Rouven Betz (rbetz)</li></p>
+    <div class="list">
+      <li>Franziska Kernbach (fkernbac)</li>
+      <li>Luca Sordo (lsordo)</li>
+      <li>Marius Kölle (nkolle)</li>
+      <li>Rouven Betz (rbetz)</li>
+    </div>
     <p>{{ $t("aboutText2") }}</p>
     <p>{{ $t("aboutText3") }}</p>
     <p>{{ $t("aboutText4") }}</p>
@@ -31,5 +32,9 @@
 
 .about li {
   list-style: none;
+}
+.list {
+  color: #f6f6f4;
+  margin-bottom: 1.5em;
 }
 </style>

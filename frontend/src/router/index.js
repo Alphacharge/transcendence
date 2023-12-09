@@ -6,6 +6,7 @@ import AboutView from "@/views/AboutView.vue";
 import PongView from "@/views/PongView.vue";
 import IpPanelView from "@/views/IpPanelView.vue";
 import LoginView from "@/views/LoginView.vue";
+import LogoutView from "@/views/LogoutView.vue";
 import SignupView from "@/views/SignupView.vue";
 import TournamentView from "@/views/TournamentView.vue";
 import StatisticView from "@/views/StatisticView.vue";
@@ -49,6 +50,11 @@ const routes = [
     path: "/login",
     name: "login",
     component: LoginView,
+  },
+  {
+    path: "/logout",
+    name: "logout",
+    component: LogoutView,
   },
   {
     path: "/statistic",
