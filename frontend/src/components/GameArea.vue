@@ -2,10 +2,10 @@
   <div class="container">
     <div class="background" ref="container"></div>
     <div class="mid-line"></div>
-        <div
-          class="bouncing-ball"
-          :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
-        ></div>
+    <div
+      class="bouncing-ball"
+      :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
+    ></div>
     <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
     <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
   </div>
@@ -53,23 +53,23 @@ export default {
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
       switch (event.key) {
-          case "w":
+        case "w":
           console.error(`GAMEAREA,KEYDOWN, w ${this.isLocalGame}`);
-            if (!this.messageIntervalPlayer1) {
-              this.messageIntervalPlayer1 = setInterval(() => {
-                socket.sendPaddleUp("left");
-              }, 30);
-            }
-            break;
-          case "s":
+          if (!this.messageIntervalPlayer1) {
+            this.messageIntervalPlayer1 = setInterval(() => {
+              socket.sendPaddleUp("left");
+            }, 30);
+          }
+          break;
+        case "s":
           console.error(`GAMEAREA,KEYDOWN, s ${this.isLocalGame}`);
-            if (!this.messageIntervalPlayer1) {
-              this.messageIntervalPlayer1 = setInterval(() => {
-                socket.sendPaddleDown("left");
-              }, 30);
-            }
-            break;
-          case "ArrowUp":
+          if (!this.messageIntervalPlayer1) {
+            this.messageIntervalPlayer1 = setInterval(() => {
+              socket.sendPaddleDown("left");
+            }, 30);
+          }
+          break;
+        case "ArrowUp":
           console.error(`GAMEAREA,KEYDOWN, up ${this.isLocalGame}`);
           if (!this.messageIntervalPlayer2) {
             this.messageIntervalPlayer2 = setInterval(() => {
@@ -77,35 +77,35 @@ export default {
             }, 30);
           }
           break;
-          case "ArrowDown":
+        case "ArrowDown":
           console.error(`GAMEAREA,KEYDOWN, down ${this.isLocalGame}`);
-            if (!this.meswswswssageIntervalPlayer2) {
-              this.messageIntervalPlayer2 = setInterval(() => {
-                socket.sendPaddleDown("right");
-              }, 30);
-            }
-            break;
-          default:
-            break;
-        }
+          if (!this.meswswswssageIntervalPlayer2) {
+            this.messageIntervalPlayer2 = setInterval(() => {
+              socket.sendPaddleDown("right");
+            }, 30);
+          }
+          break;
+        default:
+          break;
+      }
     });
 
     window.addEventListener("keyup", (event) => {
       // if (this.isLocalGame) {
-        switch (event.key) {
-          case "w":
-          case "s":
-            clearInterval(this.messageIntervalPlayer1);
-            this.messageIntervalPlayer1 = null;
-            break;
-          case "ArrowUp":
-          case "ArrowDown":
-            clearInterval(this.messageIntervalPlayer2);
-            this.messageIntervalPlayer2 = null;
-            break;
-          default:
-            break;
-        }
+      switch (event.key) {
+        case "w":
+        case "s":
+          clearInterval(this.messageIntervalPlayer1);
+          this.messageIntervalPlayer1 = null;
+          break;
+        case "ArrowUp":
+        case "ArrowDown":
+          clearInterval(this.messageIntervalPlayer2);
+          this.messageIntervalPlayer2 = null;
+          break;
+        default:
+          break;
+      }
       // }
     });
   },
@@ -151,8 +151,8 @@ export default {
 .mid-line {
   position: absolute;
   height: 400px;
-  border-left: 10px dashed white;
-  margin-left: 388px;
+  border-left: 4px dashed white;
+  margin-left: 391px;
 }
 
 .bouncing-ball {
@@ -160,6 +160,7 @@ export default {
   width: 10px;
   height: 10px;
   background-color: white;
+  border-radius: 50%;
 }
 
 .left-paddle {
