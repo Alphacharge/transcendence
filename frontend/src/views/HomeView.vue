@@ -1,10 +1,16 @@
 <template>
- <h1>Please choose your game mode</h1>
+  <h1>Please choose your game mode</h1>
   <div class="Wrapper">
     <div class="ButtonsWrapper">
-      <router-link class="ButtonBox nav-link navbar-nav" to="/pong" >{{ $t("Game")}}</router-link>
-      <router-link class="ButtonBox nav-link" to="/localgame" >{{ $t("LocalGame")}}</router-link>
-      <router-link class="ButtonBox nav-link" to="/tournament" >{{ $t("Tournament")}}</router-link>
+      <router-link class="ButtonBox nav-link navbar-nav" to="/pong">{{
+        $t("Game")
+      }}</router-link>
+      <router-link class="ButtonBox nav-link" to="/localgame">{{
+        $t("LocalGame")
+      }}</router-link>
+      <router-link class="ButtonBox nav-link" to="/tournament">{{
+        $t("Tournament")
+      }}</router-link>
     </div>
     <div class="FriendListBox">
       <FriendList />
@@ -14,15 +20,14 @@
 
 <script>
 import FriendList from "@/components/FriendList.vue";
-import LanguageToggle from "@/components/LanguageToggle.vue";
 
 export default {
-  components: { FriendList, LanguageToggle },
+  components: { FriendList },
   methods: {
     handleButtonClick(message) {
       alert(message);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -57,7 +62,7 @@ export default {
 }
 
 .ButtonBox:hover {
-  background-color:rgb(237, 211, 12);
+  background-color: rgb(237, 211, 12);
 }
 
 .FriendListBox {

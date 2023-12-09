@@ -211,6 +211,7 @@ export class GameGateway {
     @MessageBody() payload: { localPlayer: string },
   ) {
     const user = this.gameService.websocketUsers.get(socket.id);
+    console.error(`GAME.GATEWAY, PADDLEUP, debug`);
     if (user) {
       const game = this.gameService.paddleUp(user, payload.localPlayer);
       if (game) this.sendPaddleUpdate(game);

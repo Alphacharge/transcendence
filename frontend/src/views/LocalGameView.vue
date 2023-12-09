@@ -18,9 +18,9 @@ export default {
   components: { CountDown, ScoreBoard, GameArea },
 
   methods: {
-    startLocalGame() {
+    async startLocalGame() {
       connectWebSocket();
-      socket.startLocalGame();
+      await socket.startLocalGame();
     },
   },
 };

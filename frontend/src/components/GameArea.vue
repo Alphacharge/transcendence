@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="background" ref="container"></div>
+    <div class="mid-line"></div>
     <div
       class="bouncing-ball"
       :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
@@ -51,59 +52,61 @@ export default {
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (this.isLocalGame) {
-        switch (event.key) {
-          case "w":
-            if (!this.messageIntervalPlayer1) {
-              this.messageIntervalPlayer1 = setInterval(() => {
-                socket.sendPaddleUp("left");
-              }, 30);
-            }
-            break;
-          case "s":
-            if (!this.messageIntervalPlayer1) {
-              this.messageIntervalPlayer1 = setInterval(() => {
-                socket.sendPaddleDown("left");
-              }, 30);
-            }
-            break;
-          case "ArrowUp":
-            if (!this.messageIntervalPlayer2) {
-              this.messageIntervalPlayer2 = setInterval(() => {
-                socket.sendPaddleUp("right");
-              }, 30);
-            }
-            break;
-          case "ArrowDown":
-            if (!this.messageIntervalPlayer2) {
-              this.messageIntervalPlayer2 = setInterval(() => {
-                socket.sendPaddleDown("right");
-              }, 30);
-            }
-            break;
-          default:
-            break;
-        }
+      switch (event.key) {
+        case "w":
+          console.error(`GAMEAREA,KEYDOWN, w ${this.isLocalGame}`);
+          if (!this.messageIntervalPlayer1) {
+            this.messageIntervalPlayer1 = setInterval(() => {
+              socket.sendPaddleUp("left");
+            }, 30);
+          }
+          break;
+        case "s":
+          console.error(`GAMEAREA,KEYDOWN, s ${this.isLocalGame}`);
+          if (!this.messageIntervalPlayer1) {
+            this.messageIntervalPlayer1 = setInterval(() => {
+              socket.sendPaddleDown("left");
+            }, 30);
+          }
+          break;
+        case "ArrowUp":
+          console.error(`GAMEAREA,KEYDOWN, up ${this.isLocalGame}`);
+          if (!this.messageIntervalPlayer2) {
+            this.messageIntervalPlayer2 = setInterval(() => {
+              socket.sendPaddleUp("right");
+            }, 30);
+          }
+          break;
+        case "ArrowDown":
+          console.error(`GAMEAREA,KEYDOWN, down ${this.isLocalGame}`);
+          if (!this.meswswswssageIntervalPlayer2) {
+            this.messageIntervalPlayer2 = setInterval(() => {
+              socket.sendPaddleDown("right");
+            }, 30);
+          }
+          break;
+        default:
+          break;
       }
     });
 
     window.addEventListener("keyup", (event) => {
-      if (this.isLocalGame) {
-        switch (event.key) {
-          case "w":
-          case "s":
-            clearInterval(this.messageIntervalPlayer1);
-            this.messageIntervalPlayer1 = null;
-            break;
-          case "ArrowUp":
-          case "ArrowDown":
-            clearInterval(this.messageIntervalPlayer2);
-            this.messageIntervalPlayer2 = null;
-            break;
-          default:
-            break;
-        }
+      // if (this.isLocalGame) {
+      switch (event.key) {
+        case "w":
+        case "s":
+          clearInterval(this.messageIntervalPlayer1);
+          this.messageIntervalPlayer1 = null;
+          break;
+        case "ArrowUp":
+        case "ArrowDown":
+          clearInterval(this.messageIntervalPlayer2);
+          this.messageIntervalPlayer2 = null;
+          break;
+        default:
+          break;
       }
+      // }
     });
   },
 
@@ -132,6 +135,8 @@ export default {
   width: 800px;
   height: 400px;
   overflow: hidden;
+  display: flex;
+  align-items: center;
 }
 
 .background {
@@ -139,14 +144,22 @@ export default {
   height: 100%;
   background-color: rgba(128, 128, 128, 0);
   box-sizing: border-box;
-  border: 10px solid magenta;
+  border-top: 10px solid white;
+  border-bottom: 10px solid white;
+}
+
+.mid-line {
+  position: absolute;
+  height: 400px;
+  border-left: 4px dashed white;
+  margin-left: 391px;
 }
 
 .bouncing-ball {
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: greenyellow;
+  background-color: white;
   border-radius: 50%;
 }
 
@@ -154,8 +167,8 @@ export default {
   position: absolute;
   width: 10px;
   height: 100px;
-  background-color: blue;
-  left: 40px;
+  background-color: white;
+  left: 10px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 
@@ -163,8 +176,8 @@ export default {
   position: absolute;
   width: 10px;
   height: 100px;
-  background-color: rebeccapurple;
-  left: 750px;
+  background-color: white;
+  left: 780px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>
