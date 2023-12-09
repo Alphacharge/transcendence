@@ -211,7 +211,6 @@ export class GameGateway {
     @MessageBody() payload: { localPlayer: string },
   ) {
     const user = this.gameService.websocketUsers.get(socket.id);
-    console.error(`GAME.GATEWAY, PADDLEUP, debug`);
     if (user) {
       const game = this.gameService.paddleUp(user, payload.localPlayer);
       if (game) this.sendPaddleUpdate(game);
@@ -229,12 +228,16 @@ export class GameGateway {
   }
 
   announceVictory(game: GameState) {
-    console.log(
-      `GAME.GATEWAY: ANNOUNCEVICTORY, DEBUG winning player's id ${game.winningPlayer.userData.id}`,
-    );
-    game.user1.socket.emit('victory', game.winningPlayer.userData.username);
-    if (game.user2)
+    if (game.isLocalGame) {
+      if (game.winningPlayer) {
+        game.user1.socket.emit('victory', "Player 1");
+      } else {
+        game.user1.socket.emit('victory', "Player 2");
+      }
+    } else {
+      game.user1.socket.emit('victory', game.winningPlayer.userData.username);
       game.user2.socket.emit('victory', game.winningPlayer.userData.username);
+    }
   }
 
   matchStart(game: GameState) {
