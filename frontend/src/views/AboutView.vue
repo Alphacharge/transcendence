@@ -27,6 +27,7 @@
 }
 
 .about p {
+  color: rgb(217, 217, 229);
   margin-bottom: 1.5em;
 }
 
@@ -34,7 +35,7 @@
   list-style: none;
 }
 .list {
-  color: #f6f6f4;
+  color: rgb(217, 217, 229);
   margin-bottom: 1.5em;
 }
 </style>

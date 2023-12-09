@@ -2,7 +2,7 @@
   <div class="friend-list">
     <ul>
       <li>
-        <div @click="addFriend">Add Friends</div>
+        <div class="add-friend" @click="addFriend">Add Friends</div>
         <div class="image_friends_add" @click="openFriendSelectionModal">
           <img
             style="width: 16px; height: auto"
@@ -17,7 +17,7 @@
         <div class="image_friends">
           <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
         </div>
-        <div class=".friend-name">
+        <div class="friend-name">
           {{ friend.username }}
         </div>
         <div class="image_friends_status">
@@ -179,7 +179,6 @@ export default {
 
 <style scoped>
 .friend-list {
-  background-color: white;
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
@@ -193,6 +192,11 @@ export default {
 }
 .friend-name {
   flex-grow: 1;
+  color: rgb(217, 217, 229);
+}
+.add-friend {
+  flex-grow: 1;
+  color: rgb(217, 217, 229);
 }
 .friend-list ul {
   list-style-type: none;

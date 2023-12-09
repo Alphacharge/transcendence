@@ -20,9 +20,9 @@
             </div>
           </th>
           <th colspan="2">
-            <p>{{ userProfil.username }}</p>
-            <p>Registered since</p>
-            <p>{{ userProfil.createdAt.slice(0, 10) }}</p>
+            <p class="text-color">{{ userProfil.username }}</p>
+            <p class="text-color">Registered since</p>
+            <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
           </th>
         </tr>
       </thead>
@@ -49,27 +49,27 @@
           {{ userMilestones.tourwins }}
         </td></tr>
         <tr v-for="match in userHistory" :key="match.id">
-          <td>
+          <td class="image-table">
             <div class="image_history">
               <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
             </div>
           </td>
-          <td>
+          <td class="name-table">
             {{ match.leftUser.username }}
           </td>
-          <td>
+          <td class="score-table-left">
             {{ match.left_user_score }}
           </td>
-          <td>
+          <td class="score-table-center">
             <b>:</b>
           </td>
-          <td>
+          <td class="score-table-right">
             {{ match.right_user_score }}
           </td>
-          <td>
+          <td class="name-table">
             {{ match.rightUser.username }}
           </td>
-          <td>
+          <td class="image-table">
             <div class="image_history">
               <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
             </div>
@@ -194,6 +194,25 @@ td {
   position: relative;
 }
 
+.image-table{
+  width: 48px;
+}
+.name-table {
+  width: 6em;
+  text-align: center;
+}
+.score-table-left {
+  width: 2em;
+  text-align: right;
+}
+.score-table-right {
+  width: 2em;
+  text-align: left;
+}
+.score-table-center {
+  width: 1em;
+  text-align: center;
+}
 .image_history img {
   width: 100%;
   height: 100%;
@@ -243,5 +262,8 @@ td {
   padding: 5px;
   border-radius: 50%;
   cursor: pointer; /* Add a pointer cursor to indicate it's clickable */
+}
+.text-color {
+  color: rgb(217, 217, 229);
 }
 </style>
