@@ -39,7 +39,7 @@ export default {
   margin: 0;
   text-align: center;
   font-size: 20em;
-  color: white;
+  color: rgb(217,217,229);
   z-index: 2;
 }
 </style>

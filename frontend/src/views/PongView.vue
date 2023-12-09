@@ -13,13 +13,22 @@ import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import PongButtons from "@/components/PongButtons.vue";
 import CountDown from "@/components/CountDown.vue";
-import { connectWebSocket, disconnectWebSocket } from "@/assets/utils/socket";
+import { connectWebSocket, disconnectWebSocket, socket } from "@/assets/utils/socket";
 
 export default {
+  data() {
+    return {
+      countDownVisible: false,
+    }
+  },
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
 
   mounted() {
     connectWebSocket();
+    socket.on("prepareGame", ()=>{
+      console.log("PEPAREGAME LISTENED");
+      this.countDownVisible=true;
+    })
   },
 
   beforeUnmount() {
