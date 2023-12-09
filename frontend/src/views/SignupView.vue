@@ -132,7 +132,7 @@ export default {
 
 <style>
 .form-container {
-  width: 50%;
+  width: 55%;
   margin-left: 25%;
   margin-top: 4em;
 }
