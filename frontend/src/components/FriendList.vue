@@ -20,20 +20,20 @@
         <div class=".friend-name">
           {{ friend.username }}
         </div>
-          <div class="image_friends_status">
-            <img
+        <div class="image_friends_status">
+          <img
             style="width: 16px; height: auto"
             :src="getStatusSrc(friend.status)"
             alt="Status"
-            />
-          </div>
-          <div class="image_friends_remove" @click="removeFriend(friend.id)">
-            <img
+          />
+        </div>
+        <div class="image_friends_remove" @click="removeFriend(friend.id)">
+          <img
             style="width: 16px; height: auto"
             :src="getCrossSrc()"
             alt="rmFriend"
-            />
-          </div>
+          />
+        </div>
       </li>
     </ul>
   </div>
@@ -184,15 +184,15 @@ export default {
   display: flex;
   flex-direction: column;
 }
-.friend-list li{
+.friend-list li {
   display: flex;
   justify-content: left;
-  width:100%;
+  width: 100%;
   margin-bottom: 1em;
   /* text-align: left; */
 }
 .friend-name {
- flex-grow: 1;
+  flex-grow: 1;
 }
 .friend-list ul {
   list-style-type: none;
@@ -200,7 +200,7 @@ export default {
 .image_friends {
   width: 48px;
   height: 48px;
-  margin-right:1em;
+  margin-right: 1em;
   overflow: hidden;
   display: inline-block;
   position: relative;
@@ -215,11 +215,11 @@ export default {
   ); /* Scale the image down to fit within the 32x32 container */
 }
 .image_friends_status {
- left: 15em;
- margin-left: auto;
- margin-right: 1em; 
+  left: 15em;
+  margin-left: auto;
+  margin-right: 1em;
 }
-.image_friends_remove{
+.image_friends_remove {
   margin-right: 1em;
 }
 </style>
