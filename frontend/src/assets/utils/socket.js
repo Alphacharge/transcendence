@@ -22,6 +22,10 @@ export function connectWebSocket() {
   socket.connect();
 }
 
+export function disconnectWebSocket() {
+  socket.close();
+}
+
 socket.on("connect", () => {
   state.connected = true;
 });
