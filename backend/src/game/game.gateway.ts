@@ -108,7 +108,7 @@ export class GameGateway {
       // }
     }
     // remove from list of active users
-    // this.gameService.websocketUsers.delete(socket.id);
+    this.gameService.websocketUsers.delete(socket.id);
   }
 
   @SubscribeMessage('startLocalGame')
