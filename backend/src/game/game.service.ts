@@ -16,13 +16,15 @@ export class GameService {
 
   async startLocalGame(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
-    console.error(`GAME.SERVICE, STARTLOCALGAME, debug ${this.websocketUsers}`);
+
     if (user.activeTournament || user.activeGame) return;
+
     const game = new GameState();
+
     game.isLocalGame = true;
-    game.user1 = user;
 
     user.activeGame = game;
+    game.user1 = user;
 
     await game.countDown();
     sharedEventEmitter.emit('prepareGame', game);
@@ -249,11 +251,8 @@ export class GameService {
       ) {
         game.tournamentState.freeUsers();
       }
-
       this.startGame(game.tournamentState.nextGame());
     }
-
-    // this.games.delete(game.gameData.id);
   }
 
   animateBall(game: GameState) {

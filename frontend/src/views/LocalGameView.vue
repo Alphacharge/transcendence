@@ -16,7 +16,11 @@
 </template>
 
 <script>
-import { connectWebSocket, socket } from "@/assets/utils/socket";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+  socket,
+} from "@/assets/utils/socket";
 import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
@@ -28,6 +32,14 @@ export default {
       countDownVisible: false,
     }
   },
+  mounted() {
+    connectWebSocket();
+  },
+
+  beforeUnmount() {
+    disconnectWebSocket();
+  },
+
   methods: {
     async startLocalGame() {
       this.countDownVisible=true;

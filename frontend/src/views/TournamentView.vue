@@ -32,7 +32,11 @@
 </template>
 
 <script>
-import { socket, connectWebSocket } from "@/assets/utils/socket";
+import {
+  socket,
+  connectWebSocket,
+  disconnectWebSocket,
+} from "@/assets/utils/socket";
 import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
@@ -54,6 +58,11 @@ export default {
       countDownVisible: false,
     };
   },
+
+  beforeUnmount() {
+    disconnectWebSocket();
+  },
+
   mounted() {
     connectWebSocket();
 
