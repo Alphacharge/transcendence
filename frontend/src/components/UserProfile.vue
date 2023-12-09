@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <table class="centered">
+  <div class="centered">
+    <table>
       <thead>
         <tr v-if="userProfil">
           <th colspan="2">
@@ -27,6 +27,27 @@
         </tr>
       </thead>
       <tbody v-if="userHistory">
+        <tr><td>
+          Wins:
+          {{ userMilestones.wins }}
+        </td><td>
+          Losses:
+          {{ userMilestones.losses }}
+        </td></tr>
+        <tr><td>
+          Matches:
+          {{ userMilestones.matches }}
+        </td><td>
+          Tournament Matches:
+          {{ userMilestones.tourmatches }}
+        </td></tr>
+        <tr><td>
+          Ball contacts:
+          {{ userMilestones.contacts[0].total_contacts }}
+        </td><td>
+          Tournament wins:
+          {{ userMilestones.tourwins }}
+        </td></tr>
         <tr v-for="match in userHistory" :key="match.id">
           <td>
             <div class="image_history">
@@ -65,10 +86,10 @@ export default {
     return {
       userProfil: null,
       userHistory: null,
+      userMilestones: null,
     };
   },
   mounted() {
-    // Make a call to your NestJS backend when the component is mounted
     this.fetchUserHistory();
   },
   methods: {
@@ -91,8 +112,7 @@ export default {
           const responseData = await response.json();
           this.userProfil = responseData.userProfil;
           this.userHistory = responseData.userHistory;
-
-          // Handle the user history data as needed
+          this.userMilestones = responseData.userMilestones;
         } else {
           console.error("Failed to fetch user history");
         }
@@ -100,15 +120,14 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
+  
     getAvatarSrc(avatar) {
-      // Adjust the path as needed based on your avatar structure
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
     },
     getUploadSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;
     },
     openFileUpload() {
-      // Trigger the click event of the file input when the image or upload icon is clicked
       this.$refs.fileInput.click();
     },
     async uploadFile() {
@@ -161,6 +180,12 @@ export default {
 </script>
 
 <style>
+.centered {
+  align-items: center;
+}
+td {
+  color: rgb(217, 217, 229);
+}
 .image_history {
   width: 48px;
   height: 48px;

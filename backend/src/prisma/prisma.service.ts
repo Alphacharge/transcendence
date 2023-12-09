@@ -309,16 +309,8 @@ export class PrismaService extends PrismaClient {
           WHERE right_user_id = ${Number(userId)}
         )
         SELECT
-          uc.user_id,
-          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
-          u.username AS username,
-          a.id AS avatar_id,
-          a.mime_type AS avatar_mime_type
+          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts
         FROM UserContacts uc
-        INNER JOIN "Users" AS u ON uc.user_id = u.id
-        LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-        GROUP BY uc.user_id, u.username, a.id, a.mime_type
-        ORDER BY total_contacts DESC;
       `;
       return userContacts || 0;
     } catch (error) {
