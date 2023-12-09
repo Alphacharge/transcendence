@@ -1,40 +1,50 @@
 <template>
-  <div>
-    <h1>This is the Log-In frontend</h1>
+  <div class="form-container">
+    <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
+      <div class="mb-3">
+        <label for="Username" class="form-label"
+          ><h5>{{ $t("Username") }}</h5></label
+        >
+        <input
+          v-model="username"
+          type="text"
+          class="form-control"
+          id="Username"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="InputPassword" class="form-label"
+          ><h5>{{ $t("Password") }}</h5></label
+        >
+        <input
+          v-model="password"
+          type="password"
+          class="form-control"
+          id="InputPassword"
+        />
+      </div>
+      <div>
+        {{ $t("or") }}
+        <router-link to="/signup">{{ $t("SignUp") }}</router-link>
+      </div>
+      <div class="row justify-content-between">
+        <div class="col">
+          <button type="submit" class="btn btn-primary" :disabled="isDisabled">
+            {{ $t("Submit") }}
+          </button>
+        </div>
+        <div class="col-auto">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            @click.prevent="authorize"
+          >
+            {{ $t("signupWithIntra") }}
+          </button>
+        </div>
+      </div>
+    </form>
   </div>
-  <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
-    <div class="mb-3">
-      <label for="Username" class="form-label"
-        ><h5>{{ $t("Username") }}</h5></label
-      >
-      <input
-        v-model="username"
-        type="text"
-        class="form-control"
-        id="Username"
-      />
-    </div>
-    <div class="mb-3">
-      <label for="InputPassword" class="form-label"
-        ><h5>{{ $t("Password") }}</h5></label
-      >
-      <input
-        v-model="password"
-        type="password"
-        class="form-control"
-        id="InputPassword"
-      />
-    </div>
-    <div>
-      {{ $t("or") }} <router-link to="/signup">{{ $t("SignUp") }}</router-link>
-    </div>
-    <button type="submit" class="btn btn-primary">
-      {{ $t("Submit") }}
-    </button>
-    <button type="submit" class="btn btn-primary" @click.prevent="authorize">
-      {{ $t("loginWithIntra") }}
-    </button>
-  </form>
 </template>
 
 <script>
@@ -104,3 +114,26 @@ export default {
   },
 };
 </script>
+<style>
+.form-container {
+  width: 55%;
+  margin-left: 25%;
+  margin-top: 4em;
+  color: rgb(217, 217, 229);
+}
+.form-container h3 {
+  margin-bottom: 2em;
+  text-align: center;
+}
+
+.form-container p {
+  margin-bottom: 1.5em;
+}
+
+.form-container li {
+  list-style: none;
+}
+.filler {
+  flex-grow: calc();
+}
+</style>
