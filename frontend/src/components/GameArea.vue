@@ -79,7 +79,7 @@ export default {
           break;
         case "ArrowDown":
           console.error(`GAMEAREA,KEYDOWN, down ${this.isLocalGame}`);
-          if (!this.meswswswssageIntervalPlayer2) {
+          if (!this.messageIntervalPlayer2) {
             this.messageIntervalPlayer2 = setInterval(() => {
               socket.sendPaddleDown("right");
             }, 30);

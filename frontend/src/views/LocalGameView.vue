@@ -9,7 +9,11 @@
 </template>
 
 <script>
-import { connectWebSocket, socket } from "@/assets/utils/socket";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+  socket,
+} from "@/assets/utils/socket";
 import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
@@ -17,9 +21,16 @@ import ScoreBoard from "@/components/ScoreBoard.vue";
 export default {
   components: { CountDown, ScoreBoard, GameArea },
 
+  mounted() {
+    connectWebSocket();
+  },
+
+  beforeUnmount() {
+    disconnectWebSocket();
+  },
+
   methods: {
     async startLocalGame() {
-      connectWebSocket();
       await socket.startLocalGame();
     },
   },
