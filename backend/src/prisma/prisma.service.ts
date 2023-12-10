@@ -66,8 +66,6 @@ export class PrismaService extends PrismaClient {
   }
 
   async getUserByName(userName: string): Promise<Users | null> {
-    console.log('Search User with username: ', userName);
-
     try {
       const userData = await this.users.findUnique({
         where: { username: userName },
@@ -121,7 +119,6 @@ export class PrismaService extends PrismaClient {
   }
 
   async createNewGame(leftId: number, rightId: number): Promise<Games | null> {
-    // Assuming you're using Prisma to interact with a database
     try {
       const GameData: Games = await this.games.create({
         data: {
@@ -151,14 +148,14 @@ export class PrismaService extends PrismaClient {
   ) {
     try {
       const updatedGame = await this.games.update({
-        where: { id: gameId }, // Specify the condition for the row to be updated (in this case, based on the game's ID)
+        where: { id: Number(gameId) },
         data: {
-          left_user_score: leftScore,
-          right_user_score: rightScore,
-          left_user_contacts: leftContacts,
-          right_user_contacts: rightContacts,
-          longest_break: longestBreak,
-          winner_id: winnerId,
+          left_user_score: Number(leftScore),
+          right_user_score: Number(rightScore),
+          left_user_contacts: Number(leftContacts),
+          right_user_contacts: Number(rightContacts),
+          longest_break: Number(longestBreak),
+          winner_id: Number(winnerId),
         },
       });
       console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
@@ -174,14 +171,13 @@ export class PrismaService extends PrismaClient {
     thirdGameId: number,
     tourWinnerId: number,
   ): Promise<Tournaments | null> {
-    // Assuming you're using Prisma to interact with a database
     try {
       const TournamentData: Tournaments = await this.tournaments.create({
         data: {
-          first_game_id: firstGameId,
-          second_game_id: secondGameId,
-          third_game_id: thirdGameId,
-          tourwinner_id: tourWinnerId,
+          first_game_id: Number(firstGameId),
+          second_game_id: Number(secondGameId),
+          third_game_id: Number(thirdGameId),
+          tourwinner_id: Number(tourWinnerId),
           createdAt: new Date(),
         },
       });
@@ -197,7 +193,7 @@ export class PrismaService extends PrismaClient {
     try {
       const wins: number = await this.games.count({
         where: {
-          winner_id: userId,
+          winner_id: Number(userId),
         },
       });
       return wins;
@@ -213,14 +209,14 @@ export class PrismaService extends PrismaClient {
         where: {
           OR: [
             {
-              left_user_id: userId,
+              left_user_id: Number(userId),
             },
             {
-              right_user_id: userId,
+              right_user_id: Number(userId),
             },
           ],
           NOT: {
-            winner_id: userId,
+            winner_id: Number(userId),
           },
         },
       });
@@ -237,17 +233,17 @@ export class PrismaService extends PrismaClient {
         where: {
           OR: [
             {
-              left_user_id: userId,
+              left_user_id: Number(userId),
             },
             {
-              right_user_id: userId,
+              right_user_id: Number(userId),
             },
           ],
         },
       });
       return matches;
     } catch (error) {
-      console.error('Error counting losses:', error);
+      console.error('Error counting matches:', error);
       return 0;
     }
   }
@@ -259,17 +255,17 @@ export class PrismaService extends PrismaClient {
           OR: [
             {
               f_game: {
-                OR: [{ left_user_id: userId }, { right_user_id: userId }],
+                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
               },
             },
             {
               s_game: {
-                OR: [{ left_user_id: userId }, { right_user_id: userId }],
+                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
               },
             },
             {
               t_game: {
-                OR: [{ left_user_id: userId }, { right_user_id: userId }],
+                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
               },
             },
           ],
@@ -277,7 +273,7 @@ export class PrismaService extends PrismaClient {
       });
       return tournamentCount;
     } catch (error) {
-      console.error('Error counting losses:', error);
+      console.error('Error counting Tournamentmatches:', error);
       return 0;
     }
   }
@@ -286,14 +282,67 @@ export class PrismaService extends PrismaClient {
     try {
       const wins: number = await this.tournaments.count({
         where: {
-          tourwinner_id: userId,
+          tourwinner_id: Number(userId),
         },
       });
       return wins;
     } catch (error) {
-      console.error('Error counting wins:', error);
+      console.error('Error counting tournament wins:', error);
       return 0;
     }
+  }
+
+  async getContactsById(userId: number): Promise<number> {
+    try {
+      const userContacts: number = await this.$queryRaw`
+        WITH UserContacts AS (
+          SELECT
+            left_user_id AS user_id,
+            left_user_contacts AS contacts
+          FROM "Games"
+          WHERE left_user_id = ${Number(userId)}
+        UNION ALL
+          SELECT
+            right_user_id AS user_id,
+            right_user_contacts AS contacts
+          FROM "Games"
+          WHERE right_user_id = ${Number(userId)}
+        )
+        SELECT
+          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts
+        FROM UserContacts uc
+      `;
+      return userContacts || 0;
+    } catch (error) {
+      console.error('Error finding user contacts:', error);
+      return 0;
+    }
+}
+
+async getUserMilestonesById(userId: number) {
+    const matches: number = await this.getAmountOfMatchesById(userId);
+    const wins: number = await this.getGameWinsById(userId);
+    const losses: number = await this.getGameLossesById(userId);
+    const tourmatches: number = await this.getAmountOfTournamentMatchesById(userId);
+    const tourwins: number = await this.getTournamentWinsById(userId);
+    const contacts: number = await this.getContactsById(userId);
+    const userStatistics: {
+      matches: number;
+      wins: number;
+      losses: number;
+      tourmatches: number;
+      tourwins: number;
+      contacts: number;
+    } = {
+      matches: matches,
+      wins: wins,
+      losses: losses,
+      tourmatches: tourmatches,
+      tourwins: tourwins,
+      contacts: contacts,
+    };
+
+    return userStatistics;
   }
 
   async getUserStatistics() {
@@ -327,33 +376,33 @@ export class PrismaService extends PrismaClient {
     try {
       const longestSpanGame = await this.$queryRaw`
         SELECT 
-      "Games".id, 
-      "Games"."createdAt",
-      "Games"."updatedAt",
-      "Games"."left_user_id",
-      "Games"."right_user_id",
-      "Games".left_user_score,
-      "Games".right_user_score,
-      TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
-      l_user.username as l_username,
-      l_user.avatar_id as l_avatar_id,
-      l_avatar.mime_type as l_avatar_mime_type,
-      r_user.username as r_username,
-      r_user.avatar_id as r_avatar_id,
-      r_avatar.mime_type as r_avatar_mime_type
-    FROM 
-      "Games"
-    LEFT JOIN 
-      "Users" AS l_user ON "Games".left_user_id = l_user.id
-    LEFT JOIN 
-      "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
-    LEFT JOIN 
-      "Users" AS r_user ON "Games".right_user_id = r_user.id
-    LEFT JOIN 
-      "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
-    ORDER BY 
-      duration DESC 
-    LIMIT 1
+          "Games".id, 
+          "Games"."createdAt",
+          "Games"."updatedAt",
+          "Games"."left_user_id",
+          "Games"."right_user_id",
+          "Games".left_user_score,
+          "Games".right_user_score,
+          TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
+          l_user.username as l_username,
+          l_user.avatar_id as l_avatar_id,
+          l_avatar.mime_type as l_avatar_mime_type,
+          r_user.username as r_username,
+          r_user.avatar_id as r_avatar_id,
+          r_avatar.mime_type as r_avatar_mime_type
+        FROM 
+          "Games"
+        LEFT JOIN 
+          "Users" AS l_user ON "Games".left_user_id = l_user.id
+        LEFT JOIN 
+          "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
+        LEFT JOIN 
+          "Users" AS r_user ON "Games".right_user_id = r_user.id
+        LEFT JOIN 
+          "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
+        ORDER BY 
+          duration DESC 
+        LIMIT 1
       `;
       return longestSpanGame[0] || null;
     } catch (error) {
@@ -365,35 +414,35 @@ export class PrismaService extends PrismaClient {
   async getShortestGame(): Promise<any | null> {
     try {
       const shortestGame = await this.$queryRaw`
-      SELECT 
-    "Games".id, 
-    "Games"."createdAt",
-    "Games"."updatedAt",
-    "Games"."left_user_id",
-    "Games"."right_user_id",
-    "Games".left_user_score,
-    "Games".right_user_score,
-    TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
-    l_user.username as l_username,
-    l_user.avatar_id as l_avatar_id,
-    l_avatar.mime_type as l_avatar_mime_type,
-    r_user.username as r_username,
-    r_user.avatar_id as r_avatar_id,
-    r_avatar.mime_type as r_avatar_mime_type
-  FROM 
-    "Games"
-  LEFT JOIN 
-    "Users" AS l_user ON "Games".left_user_id = l_user.id
-  LEFT JOIN 
-    "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
-  LEFT JOIN 
-    "Users" AS r_user ON "Games".right_user_id = r_user.id
-  LEFT JOIN 
-    "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
-  ORDER BY 
-    duration ASC 
-  LIMIT 1
-    `;
+        SELECT 
+          "Games".id, 
+          "Games"."createdAt",
+          "Games"."updatedAt",
+          "Games"."left_user_id",
+          "Games"."right_user_id",
+          "Games".left_user_score,
+          "Games".right_user_score,
+          TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
+          l_user.username as l_username,
+          l_user.avatar_id as l_avatar_id,
+          l_avatar.mime_type as l_avatar_mime_type,
+          r_user.username as r_username,
+          r_user.avatar_id as r_avatar_id,
+          r_avatar.mime_type as r_avatar_mime_type
+        FROM 
+          "Games"
+        LEFT JOIN 
+          "Users" AS l_user ON "Games".left_user_id = l_user.id
+        LEFT JOIN 
+          "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
+        LEFT JOIN 
+          "Users" AS r_user ON "Games".right_user_id = r_user.id
+        LEFT JOIN 
+          "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
+        ORDER BY 
+          duration ASC 
+        LIMIT 1
+      `;
       return shortestGame[0] || null;
     } catch (error) {
       console.error('Error finding shortest Game:', error);
@@ -404,30 +453,30 @@ export class PrismaService extends PrismaClient {
   async getMostContacts(): Promise<any | null> {
     try {
       const mostContacts = await this.$queryRaw`
-      WITH UserContacts AS (
-    SELECT
-      left_user_id AS user_id,
-      left_user_contacts AS contacts
-    FROM "Games"
-    UNION ALL
-    SELECT
-      right_user_id AS user_id,
-      right_user_contacts AS contacts
-    FROM "Games"
-  )
-  SELECT
-    uc.user_id,
-    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
-    u.username AS username,
-    a.id AS avatar_id,
-    a.mime_type AS avatar_mime_type
-  FROM UserContacts uc
-  INNER JOIN "Users" AS u ON uc.user_id = u.id
-  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-  GROUP BY uc.user_id, u.username, a.id, a.mime_type
-  ORDER BY total_contacts DESC
-  LIMIT 1;
-`;
+        WITH UserContacts AS (
+          SELECT
+            left_user_id AS user_id,
+            left_user_contacts AS contacts
+          FROM "Games"
+          UNION ALL
+          SELECT
+            right_user_id AS user_id,
+            right_user_contacts AS contacts
+          FROM "Games"
+        )
+        SELECT
+          uc.user_id,
+          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+          u.username AS username,
+          a.id AS avatar_id,
+          a.mime_type AS avatar_mime_type
+        FROM UserContacts uc
+        INNER JOIN "Users" AS u ON uc.user_id = u.id
+        LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+        GROUP BY uc.user_id, u.username, a.id, a.mime_type
+        ORDER BY total_contacts DESC
+        LIMIT 1;
+      `;
       return mostContacts[0] || null;
     } catch (error) {
       console.error('Error finding most Contacts:', error);
@@ -438,30 +487,30 @@ export class PrismaService extends PrismaClient {
   async getLeastContacts(): Promise<any | null> {
     try {
       const leastContacts = await this.$queryRaw`
-      WITH UserContacts AS (
-    SELECT
-      left_user_id AS user_id,
-      left_user_contacts AS contacts
-    FROM "Games"
-    UNION ALL
-    SELECT
-      right_user_id AS user_id,
-      right_user_contacts AS contacts
-    FROM "Games"
-  )
-  SELECT
-    uc.user_id,
-    CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
-    u.username AS username,
-    a.id AS avatar_id,
-    a.mime_type AS avatar_mime_type
-  FROM UserContacts uc
-  INNER JOIN "Users" AS u ON uc.user_id = u.id
-  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-  GROUP BY uc.user_id, u.username, a.id, a.mime_type
-  ORDER BY total_contacts ASC
-  LIMIT 1;
-`;
+        WITH UserContacts AS (
+          SELECT
+            left_user_id AS user_id,
+            left_user_contacts AS contacts
+          FROM "Games"
+          UNION ALL
+          SELECT
+            right_user_id AS user_id,
+            right_user_contacts AS contacts
+          FROM "Games"
+        )
+        SELECT
+          uc.user_id,
+          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+          u.username AS username,
+          a.id AS avatar_id,
+          a.mime_type AS avatar_mime_type
+        FROM UserContacts uc
+        INNER JOIN "Users" AS u ON uc.user_id = u.id
+        LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+        GROUP BY uc.user_id, u.username, a.id, a.mime_type
+        ORDER BY total_contacts ASC
+        LIMIT 1;
+      `;
       return leastContacts[0] || null;
     } catch (error) {
       console.error('Error finding Least Contacts:', error);
@@ -514,32 +563,32 @@ export class PrismaService extends PrismaClient {
   async getHighestWin(): Promise<any | null> {
     try {
       const highestWin = await this.$queryRaw`
-    SELECT
-    user_id,
-    MAX(win_diff) AS max_win_diff,
-    u.username AS username,
-    a.id AS avatar_id,
-    a.mime_type AS avatar_mime_type
-  FROM (
-    SELECT
-      left_user_id AS user_id,
-      left_user_score - right_user_score AS win_diff
-    FROM "Games"
-    UNION ALL
-    SELECT
-      right_user_id AS user_id,
-      right_user_score - left_user_score AS win_diff
-    FROM "Games"
-  ) AS UserWins
-  INNER JOIN "Users" AS u ON UserWins.user_id = u.id
-  LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-  GROUP BY user_id, u.username, a.id, a.mime_type
-  ORDER BY max_win_diff DESC
-  LIMIT 1;
-`;
+        SELECT
+          user_id,
+          MAX(win_diff) AS max_win_diff,
+          u.username AS username,
+          a.id AS avatar_id,
+          a.mime_type AS avatar_mime_type
+        FROM (
+          SELECT
+            left_user_id AS user_id,
+            left_user_score - right_user_score AS win_diff
+          FROM "Games"
+          UNION ALL
+          SELECT
+            right_user_id AS user_id,
+            right_user_score - left_user_score AS win_diff
+          FROM "Games"
+        ) AS UserWins
+        INNER JOIN "Users" AS u ON UserWins.user_id = u.id
+        LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
+        GROUP BY user_id, u.username, a.id, a.mime_type
+        ORDER BY max_win_diff DESC
+        LIMIT 1;
+      `;
       return highestWin[0] || null;
     } catch (error) {
-      console.error('Error finding Least Contacts:', error);
+      console.error('Error finding highest win:', error);
       return null;
     }
   }
@@ -559,7 +608,6 @@ export class PrismaService extends PrismaClient {
       longestBreak,
       highestWin,
     };
-    // console.log(obj);
     return obj;
   }
 
@@ -761,11 +809,9 @@ export class PrismaService extends PrismaClient {
           avatar_id: newAvatar.id,
         },
       });
-
       if (updatedUser) {
         return newAvatar;
       }
-
       return null;
     } catch (error) {
       console.error('Error creating new avatar:', error);
@@ -780,7 +826,6 @@ export class PrismaService extends PrismaClient {
           mime_type: mimeType,
         },
       });
-
       return newAvatar;
     } catch (error) {
       console.error('Error creating new default avatar:', error);

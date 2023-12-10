@@ -44,16 +44,17 @@ export class PrismaController {
   @Post('userstats')
   async getHistoryMatches(
     @Body() body: { userId: number },
-  ): Promise<{ userHistory: any[] | null; userProfil: any | null }> {
+  ): Promise<{ userHistory: any[] | null; userProfil: any | null; userMilestones: any | null }> {
     const { userId } = body;
     try {
       const userHistory =
         await this.prismaService.getHistoryMatchesById(userId);
       const userProfil = await this.prismaService.getUserById(userId);
-      return { userHistory, userProfil };
+      const userMilestones = await this.prismaService.getUserMilestonesById(userId);
+      return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);
-      return { userHistory: null, userProfil: null };
+      return { userHistory: null, userProfil: null, userMilestones: null };
     }
   }
 

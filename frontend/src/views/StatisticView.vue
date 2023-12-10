@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="centered">Records</h2>
-    <div class="container">
+    <div class="container-ms">
       <div class="patch-wrapper">
         <div class="patch-left">
           <div class="sub-patch">
@@ -287,7 +287,7 @@ export default {
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
-.container {
+.container-ms {
   width: 100%;
   height: 80%;
 }
