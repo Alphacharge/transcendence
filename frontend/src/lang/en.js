@@ -48,6 +48,7 @@ export default {
   profileContacts: "Ball contacts",
   profileTourWins: "Tournament Win's",
   profileRegister: "Registered since",
+  usernameTaken: "Username is taken",
 
   //About
   aboutTitle: "Transcendence",

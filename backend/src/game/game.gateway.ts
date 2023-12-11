@@ -230,9 +230,9 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket.emit('victory', "Player 1");
+        game.user1.socket.emit('victory', 'Player 1');
       } else {
-        game.user1.socket.emit('victory', "Player 2");
+        game.user1.socket.emit('victory', 'Player 2');
       }
     } else {
       game.user1.socket.emit('victory', game.winningPlayer.userData.username);

@@ -1,7 +1,7 @@
 export default {
   // NAVBAR
   Game: "Spiel",
-  Tournament: "Tournier",
+  Tournament: "Turnier",
   Statistics: "Statistik",
   Profil: "Profil",
   LogIn: "Einloggen",
@@ -31,8 +31,8 @@ export default {
   Matches: "Spiele",
   Wins: "Gewonnen",
   Losses: "Verloren",
-  TournamentMatches: "Tournier - Spiele",
-  TournamentWins: "Tournier - Siege",
+  TournamentMatches: "Turnier - Spiele",
+  TournamentWins: "Turnier - Siege",
   LongestGame: "Längstes Spiel",
   LongestBreak: "Längster Ballwechsel",
   MostContacts: "Meiste Ballkontakte",
@@ -44,10 +44,11 @@ export default {
   profileWins: "Gewonnen",
   profileLos: "Verloren",
   profileMatches: "Spiele",
-  profileTournament: "Tourniere",
+  profileTournament: "Turniere",
   profileContacts: "Ballkontakte",
-  profileTourWins: "Tourniersiege",
+  profileTourWins: "Turniersiege",
   profileRegister: "Registriert seit",
+  usernameTaken: "Name wird schon benutzt",
 
   //About
   aboutTitle: "Transzendenz",

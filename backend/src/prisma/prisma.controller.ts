@@ -43,31 +43,39 @@ export class PrismaController {
 
   @Post('editname')
   async updateUsername(
-    @Body() body: { userId: number, newUsername: string },
-    ): Promise<{userName:string | null}> {
+    @Body() body: { userId: number; newUsername: string },
+  ): Promise<{ userName: string | null }> {
     const { userId, newUsername } = body;
     try {
-      const newUser: string = await this.prismaService.updateUsername(userId, newUsername);
-      if (newUser){
-        return {userName: newUser};
+      const newUser: string = await this.prismaService.updateUsername(
+        userId,
+        newUsername,
+      );
+      if (newUser) {
+        return { userName: newUser };
       }
-      return {userName:null};
+      return { userName: null };
     } catch (error) {
       console.error('Error update Username:', error);
-      return {userName:null};
+      return { userName: null };
     }
   }
 
   @Post('userstats')
   async getHistoryMatches(
     @Body() body: { userId: number },
-  ): Promise<{ userHistory: any[] | null; userProfil: any | null; userMilestones: any | null }> {
+  ): Promise<{
+    userHistory: any[] | null;
+    userProfil: any | null;
+    userMilestones: any | null;
+  }> {
     const { userId } = body;
     try {
       const userHistory =
         await this.prismaService.getHistoryMatchesById(userId);
       const userProfil = await this.prismaService.getUserById(userId);
-      const userMilestones = await this.prismaService.getUserMilestonesById(userId);
+      const userMilestones =
+        await this.prismaService.getUserMilestonesById(userId);
       return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);

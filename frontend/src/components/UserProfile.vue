@@ -1,64 +1,86 @@
 <template>
   <div class="centered">
-      <div>
-        <div class="profile" v-if="userProfil">
-            <div class="image-profile-container">
-              <div class="image-profile">
-                <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
-              </div>
-              <div class="upload-icon" @click="openFileUpload">
-                <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
-                <input
-                  type="file"
-                  ref="fileInput"
-                  style="display: none"
-                  @change="uploadFile"
-                />
-              </div>
-            </div>
-          <div class="profile-data">
-            <div v-if="showMessage" class="message">
-            {{ messageText }}
-            </div>
-            <p v-if="!isEditing" @click="startEditing" class="text-color">{{ userProfil.username }}</p>
-          <input v-if="isEditing" v-model="editedUsername" @keyup.enter="saveUsername" @blur="saveUsername" />
-            <p class="text-color">{{ $t("profileRegister") }}</p>
-            <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
+    <div>
+      <div class="profile" v-if="userProfil">
+        <div class="image-profile-container">
+          <div class="image-profile">
+            <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
+          </div>
+          <div class="upload-icon" @click="openFileUpload">
+            <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
+            <input
+              type="file"
+              ref="fileInput"
+              style="display: none"
+              @change="uploadFile"
+            />
           </div>
         </div>
+        <div class="profile-data">
+          <div v-if="showMessage" class="message">
+            {{ messageText }}
+          </div>
+          <p v-if="!isEditing" @click="startEditing" class="text-color">
+            {{ userProfil.username }}
+          </p>
+          <input
+            v-if="isEditing"
+            v-model="editedUsername"
+            @keyup.enter="saveUsername"
+            @blur="saveUsername"
+          />
+          <p class="text-color">{{ $t("profileRegister") }}</p>
+          <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
+        </div>
       </div>
-      <div v-if="userHistory">
-        <div class="ms-row"><div class="box">
+    </div>
+    <div v-if="userHistory">
+      <div class="ms-row">
+        <div class="box">
           <div class="box-left">{{ $t("profileWins") }}:</div>
           <div class="box-right">{{ userMilestones.wins }}</div>
-        </div><div class="box">
+        </div>
+        <div class="box">
           <div class="box-left">{{ $t("profileLos") }}:</div>
           <div class="box-right">{{ userMilestones.losses }}</div>
-        </div></div>
-        <div class="ms-row"><div class="box">
+        </div>
+      </div>
+      <div class="ms-row">
+        <div class="box">
           <div class="box-left">{{ $t("profileMatches") }}:</div>
           <div class="box-right">{{ userMilestones.matches }}</div>
-        </div><div class="box">
+        </div>
+        <div class="box">
           <div class="box-left">{{ $t("profileTournament") }}:</div>
           <div class="box-right">{{ userMilestones.tourmatches }}</div>
-        </div></div>
-        <div class="ms-row"><div class="box">
+        </div>
+      </div>
+      <div class="ms-row">
+        <div class="box">
           <div class="box-left">{{ $t("profileContacts") }}:</div>
-          <div class="box-right">{{ userMilestones.contacts[0].total_contacts }}</div>
-        </div><div class="box">
+          <div class="box-right">
+            {{ userMilestones.contacts[0].total_contacts }}
+          </div>
+        </div>
+        <div class="box">
           <div class="box-left">{{ $t("profileTourWins") }}:</div>
           <div class="box-right">{{ userMilestones.tourwins }}</div>
-        </div></div>
-        <div class="score-table-line" v-for="match in userHistory" :key="match.id">
-          <div class="image-table">
-            <div class="image_history">
-              <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
-            </div>
+        </div>
+      </div>
+      <div
+        class="score-table-line"
+        v-for="match in userHistory"
+        :key="match.id"
+      >
+        <div class="image-table">
+          <div class="image_history">
+            <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
           </div>
-          <div class="name-table-left">
-            {{ match.leftUser.username }}
-          </div>
-          <div class="score-table">
+        </div>
+        <div class="name-table-left">
+          {{ match.leftUser.username }}
+        </div>
+        <div class="score-table">
           <div class="score-table-left">
             {{ match.left_user_score }}
           </div>
@@ -69,16 +91,16 @@
             {{ match.right_user_score }}
           </div>
         </div>
-          <div class="name-table-right">
-            {{ match.rightUser.username }}
-          </div>
-          <div class="image-table">
-            <div class="image_history">
-              <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
-            </div>
+        <div class="name-table-right">
+          {{ match.rightUser.username }}
+        </div>
+        <div class="image-table">
+          <div class="image_history">
+            <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
           </div>
         </div>
       </div>
+    </div>
   </div>
 </template>
 
@@ -88,8 +110,8 @@ export default {
     return {
       userProfil: null,
       isEditing: false,
-      editedUsername: '',
-      messageText: '',
+      editedUsername: "",
+      messageText: "",
       showMessage: false,
       userHistory: null,
       userMilestones: null,
@@ -133,38 +155,40 @@ export default {
       this.isEditing = true;
     },
     async saveUsername() {
-      try{
-
-      // Send a request to your backend to add friends
-      const response = await fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/data/editname`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId: localStorage.getItem("userId"),
-          newUsername: this.editedUsername,
-        }),
-      });
-          if (response.ok) {
-            const responseData = await response.json();
-            if (responseData.userName){
-              this.userProfil.username=this.editedUsername;
-              this.isEditing = false;
-              this.showMessage = false;
-            } else {
-              this.showMessage = true;
-              this.messageText = "Username is taken";
-              setTimeout(() => {
-                this.showMessage = false;
-              }, 2000);
-            }
+      try {
+        // Send a request to your backend to add friends
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/editname`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userId: localStorage.getItem("userId"),
+              newUsername: this.editedUsername,
+            }),
+          },
+        );
+        if (response.ok) {
+          const responseData = await response.json();
+          if (responseData.userName) {
+            this.userProfil.username = this.editedUsername;
+            this.isEditing = false;
+            this.showMessage = false;
           } else {
-            console.error("Failed to edit username");
+            this.showMessage = true;
+            this.messageText = this.$t("usernameTaken");
+            setTimeout(() => {
+              this.showMessage = false;
+            }, 2000);
           }
-        } catch(error) {
-          console.error("Error edit username:", error);
+        } else {
+          console.error("Failed to edit username");
         }
+      } catch (error) {
+        console.error("Error edit username:", error);
+      }
     },
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
@@ -262,7 +286,7 @@ export default {
 .profile {
   width: auto;
   display: flex;
-  margin-bottom: 1em;;
+  margin-bottom: 1em;
 }
 
 .profile-data {
@@ -292,9 +316,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(
-    1
-  );
+  transform: scale(1);
 }
 
 .image_history {
@@ -312,7 +334,7 @@ export default {
   margin-top: 0.5em;
 }
 
-.image-table{
+.image-table {
   width: 48px;
 }
 
@@ -352,9 +374,7 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(
-    1
-  );
+  transform: scale(1);
 }
 
 .image_history + div {

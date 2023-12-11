@@ -238,8 +238,8 @@ export class GameService {
         game.contactsPlayer1,
         game.contactsPlayer2,
         game.winningPlayer.userData.id,
-        );
-      }
+      );
+    }
 
     game.user1.activeGame = null;
     if (game.user2) game.user2.activeGame = null;
