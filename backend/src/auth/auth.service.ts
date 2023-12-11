@@ -135,6 +135,23 @@ export class AuthService {
     }
   }
 
+  async verifyId(userId: number, token: string): Promise<boolean> {
+    const secret = this.config.get('JWT_SECRET');
+
+    try {
+      const decodedToken: any = await this.jwt.verifyAsync(token, {
+        secret: secret,
+      });
+      if (userId === decodedToken.sub) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('token verification failed');
+      return false;
+    }
+  }
+
   private validatePassword(password: string): void {
     if (password.length < 8) {
       throw new ForbiddenException(

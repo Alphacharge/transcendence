@@ -144,14 +144,14 @@ export default {
   height: 100%;
   background-color: rgba(128, 128, 128, 0);
   box-sizing: border-box;
-  border-top: 10px solid rgb(217,217,229);
-  border-bottom: 10px solid rgb(217,217,229);
+  border-top: 10px solid rgb(217, 217, 229);
+  border-bottom: 10px solid rgb(217, 217, 229);
 }
 
 .mid-line {
   position: absolute;
   height: 400px;
-  border-left: 4px dashed rgb(217,217,229);
+  border-left: 4px dashed rgb(217, 217, 229);
   margin-left: 391px;
 }
 
@@ -167,7 +167,7 @@ export default {
   position: absolute;
   width: 10px;
   height: 100px;
-  background-color: rgb(217,217,229);
+  background-color: rgb(217, 217, 229);
   left: 10px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
@@ -176,7 +176,7 @@ export default {
   position: absolute;
   width: 10px;
   height: 100px;
-  background-color: rgb(217,217,229);
+  background-color: rgb(217, 217, 229);
   left: 780px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }

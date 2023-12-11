@@ -3,8 +3,7 @@
   <ScoreBoard />
   <div class="game-wrapper">
     <GameArea></GameArea>
-    <CountDown
-    v-if="countDownVisible" />
+    <CountDown v-if="countDownVisible" />
   </div>
 </template>
 
@@ -13,22 +12,26 @@ import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
 import PongButtons from "@/components/PongButtons.vue";
 import CountDown from "@/components/CountDown.vue";
-import { connectWebSocket, disconnectWebSocket, socket } from "@/assets/utils/socket";
+import {
+  connectWebSocket,
+  disconnectWebSocket,
+  socket,
+} from "@/assets/utils/socket";
 
 export default {
   data() {
     return {
       countDownVisible: false,
-    }
+    };
   },
   components: { GameArea, ScoreBoard, PongButtons, CountDown },
 
   mounted() {
     connectWebSocket();
-    socket.on("prepareGame", ()=>{
+    socket.on("prepareGame", () => {
       console.log("PEPAREGAME LISTENED");
-      this.countDownVisible=true;
-    })
+      this.countDownVisible = true;
+    });
   },
 
   beforeUnmount() {

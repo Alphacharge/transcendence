@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   Req,
   UploadedFile,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -41,16 +42,42 @@ export class PrismaController {
     readonly authService: AuthService,
   ) {}
 
+  @Post('editname')
+  async updateUsername(
+    @Body() body: { userId: number; accessToken: string; newUsername: string },
+  ): Promise<{ userName: string | null }> {
+    const { userId, accessToken, newUsername } = body;
+    try {
+      if (!(await this.authService.verifyId(userId, accessToken))) {
+        throw new ForbiddenException();
+      }
+      const newUser: string = await this.prismaService.updateUsername(
+        userId,
+        newUsername,
+      );
+      if (newUser) {
+        return { userName: newUser };
+      }
+      return { userName: null };
+    } catch (error) {
+      console.error('Error update Username:', error);
+      return { userName: null };
+    }
+  }
+
   @Post('userstats')
-  async getHistoryMatches(
-    @Body() body: { userId: number },
-  ): Promise<{ userHistory: any[] | null; userProfil: any | null; userMilestones: any | null }> {
+  async getHistoryMatches(@Body() body: { userId: number }): Promise<{
+    userHistory: any[] | null;
+    userProfil: any | null;
+    userMilestones: any | null;
+  }> {
     const { userId } = body;
     try {
       const userHistory =
         await this.prismaService.getHistoryMatchesById(userId);
       const userProfil = await this.prismaService.getUserById(userId);
-      const userMilestones = await this.prismaService.getUserMilestonesById(userId);
+      const userMilestones =
+        await this.prismaService.getUserMilestonesById(userId);
       return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);
@@ -172,7 +199,11 @@ export class PrismaController {
       ) {
         // Get the user ID from the request
         const userId = req.body.userId;
+        const token = req.body.accessToken;
 
+        if (!(await this.authService.verifyId(userId, token))) {
+          throw new ForbiddenException();
+        }
         // Create a new avatar entry in the database
         const avatar: Avatars = await this.prismaService.createNewAvatarById(
           userId,
