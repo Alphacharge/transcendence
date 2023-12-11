@@ -1,10 +1,13 @@
 <template>
   <div class="scoreboard">
-    <h2 v-if="announceVisible" class="announce-winner">
+    <div
+      class="announce-winner"
+      v-if="announceVisible"
+    >
       Player {{ winningPlayer }} Wins!
-    </h2>
-    <div class="player-score">
-      <h5>{{ player1Score }} : {{ player2Score }}</h5>
+    </div>
+    <div class="game-score">
+      {{ player1Score }}:{{ player2Score }}
     </div>
   </div>
 </template>
@@ -31,7 +34,7 @@ export default {
     socket.on("victory", (payload) => {
       this.announceVisible = true;
       this.winningPlayer = payload;
-      console.log("Victory payload:", payload);
+      
     });
 
     // received info if we are left or right
@@ -44,3 +47,19 @@ export default {
   },
 };
 </script>
+
+<style>
+.game-score {
+  margin-left: 0.1em;
+  text-align: center;
+  font-size: 7em;
+  color: rgb(217,217,229);
+}
+
+.announce-winner {
+  color: rgb(217,217,229);
+  text-align: center;
+  font-size: 7em;
+}
+
+</style>
