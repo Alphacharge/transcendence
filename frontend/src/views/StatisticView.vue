@@ -173,9 +173,15 @@
       </table>
     </div>
   </div>
+  <div class="graph-wrapper">
+    <canvas id="userStatsChart" ></canvas>
+  </div>
 </template>
 
 <script>
+
+import Chart from 'chart.js/auto';
+
 export default {
   data() {
     return {
@@ -184,12 +190,14 @@ export default {
       statistics: null,
       sortKey: "wins",
       sortDirection: "desc",
+      userStatistics: []
     };
   },
   mounted() {
     // Make a call to your NestJS backend when the component is mounted
     this.fetchMilestones();
     this.fetchStats();
+    this.renderChart();
   },
   computed: {
     sortedStatistics() {
@@ -246,7 +254,6 @@ export default {
             },
           },
         );
-
         if (response.ok) {
           const data = await response.json();
           this.statistics = data;
@@ -258,11 +265,83 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
-    // getAvatarSrc(avatar) {
-    //   // Adjust the path as needed based on your avatar structure
-    //   return `avatar/${avatar.id}.${avatar.mime_type}`;
-    // },
-  },
+    async renderChart() {
+      try {
+        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/allstats`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          },
+        );
+        if (response.ok) {
+          const data = await response.json();
+          this.userStatistics = data;
+          this.userStatistics.sort((a, b) => b.matches - a.matches);
+          const usernames = this.userStatistics.map(user => user.username);
+          const wins = this.userStatistics.map(user => user.wins);
+          const losses = this.userStatistics.map(user => user.losses);
+          const ctx = document.getElementById('userStatsChart').getContext('2d');
+          Chart.defaults.backgroundColor = '#9BD0F5';
+          Chart.defaults.borderColor = '#36A2EB';
+          Chart.defaults.color='#dbe375';
+          Chart.defaults.font.size='18';
+          Chart.defaults.font.weight='bold';
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: usernames,
+              datasets: [
+                {
+                  label: 'Wins',
+                  data: wins,
+
+                },
+                {
+                  label: 'Losses',
+                  data: losses,
+
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true,
+                  position: 'bottom',
+                },
+              },
+              scales: {
+                x: {
+                  stacked: true,
+                  title: {
+                    display: true,
+                    text: 'Users',
+                  },
+                },
+                y: {
+                  stacked:true,
+                  title: {
+                    display: true,
+                    text: 'Games',
+                  },
+                },
+              },
+            },
+          });
+          // Handle the user history data as needed
+        } else {
+          console.error("Failed to render statistics");
+        }
+      } catch (error) {
+        console.error("Error rendering user history:", error);
+      }
+    },
+  }
 };
 </script>
 
@@ -332,5 +411,10 @@ export default {
   .transparent-table th {
     width: 100% / 6;
   }
+}
+
+.graph-wrapper {
+  height: 40vh;
+  width: 60vw;
 }
 </style>
