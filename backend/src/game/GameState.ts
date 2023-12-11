@@ -217,7 +217,7 @@ export class GameState {
   }
 
   collisionRight() {
-    const collisionAreaX0 = this.rightBorder - 4 *this.ballRadius;
+    const collisionAreaX0 = this.rightBorder - 4 * this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
     const collisionAreaY0 = Math.min(
       this.rightPosition,

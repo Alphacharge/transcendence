@@ -34,6 +34,7 @@ export class GameGateway {
     private readonly prismaService: PrismaService,
   ) {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
+      console.error(`GAME.GATEWAY, PREPAREGAME, debug`);
       if (game) this.sendPrepareGame(game);
     });
     sharedEventEmitter.on('startGame', (game: GameState) => {
@@ -174,8 +175,13 @@ export class GameGateway {
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
     // tell the client the player number
+
     game.user1.socket.emit('player1');
-    if (game.user2) game.user2.socket.emit('player2');
+    game.user1.socket.emit('prepareGame');
+    if (game.user2) {
+      game.user2.socket.emit('player2');
+      game.user2.socket.emit('prepareGame');
+    }
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -230,9 +236,9 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket.emit('victory', "Player 1");
+        game.user1.socket.emit('victory', 'Player 1');
       } else {
-        game.user1.socket.emit('victory', "Player 2");
+        game.user1.socket.emit('victory', 'Player 2');
       }
     } else {
       game.user1.socket.emit('victory', game.winningPlayer.userData.username);

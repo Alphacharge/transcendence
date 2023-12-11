@@ -40,6 +40,16 @@ export default {
   HighestWin: "Profitto massimo",
   LeastContacts: "Meno contatti con la palla",
 
+  //Profile
+  profileWins: "Vittorie",
+  profileLos: "Sconfitte",
+  profileMatches: "Partite",
+  profileTournament: "Tornei",
+  profileContacts: "Contatti con la palla",
+  profileTourWins: "Vittorie nei tornei",
+  profileRegister: "Registrato dal",
+  usernameTaken: "Il nome utente è preso",
+
   //About
   aboutTitle: "Trascendenza",
   aboutText1:

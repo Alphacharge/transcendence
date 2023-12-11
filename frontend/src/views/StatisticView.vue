@@ -185,7 +185,6 @@ import Chart from 'chart.js/auto';
 export default {
   data() {
     return {
-      // Statistikdaten können hier aus deinem Backend abgerufen werden
       milestones: null,
       statistics: null,
       sortKey: "wins",

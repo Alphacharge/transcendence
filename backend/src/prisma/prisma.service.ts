@@ -82,6 +82,25 @@ export class PrismaService extends PrismaClient {
     }
   }
 
+  async updateUsername(
+    userId: number,
+    newUsername: string,
+  ): Promise<string | null> {
+    try {
+      const updatedGame = await this.users.update({
+        where: { id: Number(userId) },
+        data: {
+          username: newUsername,
+        },
+      });
+      console.log('updated userid:', userId, 'to username: ', newUsername);
+      return newUsername;
+    } catch (error) {
+      console.error('Failed to update username', error);
+      return null;
+    }
+  }
+
   async getAllUsersIdNaAv(): Promise<
     | {
         id: number;
@@ -255,17 +274,26 @@ export class PrismaService extends PrismaClient {
           OR: [
             {
               f_game: {
-                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
+                OR: [
+                  { left_user_id: Number(userId) },
+                  { right_user_id: Number(userId) },
+                ],
               },
             },
             {
               s_game: {
-                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
+                OR: [
+                  { left_user_id: Number(userId) },
+                  { right_user_id: Number(userId) },
+                ],
               },
             },
             {
               t_game: {
-                OR: [{ left_user_id: Number(userId) }, { right_user_id: Number(userId) }],
+                OR: [
+                  { left_user_id: Number(userId) },
+                  { right_user_id: Number(userId) },
+                ],
               },
             },
           ],
@@ -317,13 +345,14 @@ export class PrismaService extends PrismaClient {
       console.error('Error finding user contacts:', error);
       return 0;
     }
-}
+  }
 
-async getUserMilestonesById(userId: number) {
+  async getUserMilestonesById(userId: number) {
     const matches: number = await this.getAmountOfMatchesById(userId);
     const wins: number = await this.getGameWinsById(userId);
     const losses: number = await this.getGameLossesById(userId);
-    const tourmatches: number = await this.getAmountOfTournamentMatchesById(userId);
+    const tourmatches: number =
+      await this.getAmountOfTournamentMatchesById(userId);
     const tourwins: number = await this.getTournamentWinsById(userId);
     const contacts: number = await this.getContactsById(userId);
     const userStatistics: {

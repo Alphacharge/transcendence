@@ -40,6 +40,16 @@ export default {
   HighestWin: "Highest Win",
   LeastContacts: "Least Contacts",
 
+  //Profile
+  profileWins: "Win's",
+  profileLos: "Losses",
+  profileMatches: "Matches",
+  profileTournament: "Tournament Matches",
+  profileContacts: "Ball contacts",
+  profileTourWins: "Tournament Win's",
+  profileRegister: "Registered since",
+  usernameTaken: "Username is taken",
+
   //About
   aboutTitle: "Transcendence",
   aboutText1:

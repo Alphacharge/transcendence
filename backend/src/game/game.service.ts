@@ -178,6 +178,8 @@ export class GameService {
       game.user1.userData.id,
       game.user2.userData.id,
     );
+
+    sharedEventEmitter.emit('prepareGame', game);
     await game.countDown();
 
     if (!game.gameData) {
@@ -189,7 +191,6 @@ export class GameService {
     }
 
     // this.games.set(game.gameData.id, game);
-    sharedEventEmitter.emit('prepareGame', game);
 
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
     const updateRate = 5;
@@ -238,8 +239,8 @@ export class GameService {
         game.contactsPlayer1,
         game.contactsPlayer2,
         game.winningPlayer.userData.id,
-        );
-      }
+      );
+    }
 
     game.user1.activeGame = null;
     if (game.user2) game.user2.activeGame = null;
