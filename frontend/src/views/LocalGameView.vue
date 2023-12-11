@@ -5,13 +5,8 @@
   </div>
   <ScoreBoard></ScoreBoard>
   <div class="game-wrapper">
-    <GameArea
-    class="game-area"
-    :isLocalGame="true"
-    ></GameArea>
-    <CountDown
-      v-if="countDownVisible"
-    ></CountDown>
+    <GameArea class="game-area" :isLocalGame="true"></GameArea>
+    <CountDown v-if="countDownVisible"></CountDown>
   </div>
 </template>
 
@@ -30,7 +25,7 @@ export default {
   data() {
     return {
       countDownVisible: false,
-    }
+    };
   },
   mounted() {
     connectWebSocket();
@@ -42,7 +37,7 @@ export default {
 
   methods: {
     async startLocalGame() {
-      this.countDownVisible=true;
+      this.countDownVisible = true;
       connectWebSocket();
       await socket.startLocalGame();
     },

@@ -25,9 +25,7 @@
   <ScoreBoard></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
-    <CountDown
-    v-if="countDownVisible"
-    ></CountDown>
+    <CountDown v-if="countDownVisible"></CountDown>
   </div>
 </template>
 
@@ -70,7 +68,7 @@ export default {
 
     socket.on("tournamentStart", () => {
       // INSERT remove all parts of the interface you don't want to show during a tournament
-      this.countDownVisible=true;
+      this.countDownVisible = true;
       this.playerCheckinVisible = false;
     });
 

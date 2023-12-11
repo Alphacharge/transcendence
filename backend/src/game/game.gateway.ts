@@ -178,7 +178,7 @@ export class GameGateway {
 
     game.user1.socket.emit('player1');
     game.user1.socket.emit('prepareGame');
-    if (game.user2){
+    if (game.user2) {
       game.user2.socket.emit('player2');
       game.user2.socket.emit('prepareGame');
     }

@@ -166,6 +166,7 @@ export default {
             },
             body: JSON.stringify({
               userId: localStorage.getItem("userId"),
+              accessToken: localStorage.getItem("access_token"),
               newUsername: this.editedUsername,
             }),
           },
@@ -214,6 +215,7 @@ export default {
         formData.append("file", file);
         // Append the userId to the FormData
         formData.append("userId", localStorage.getItem("userId"));
+        formData.append("accessToken", localStorage.getItem("access_token"));
 
         // Make a POST request to your backend
         const response = await fetch(

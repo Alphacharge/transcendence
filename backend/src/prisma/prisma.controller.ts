@@ -5,6 +5,7 @@ import {
   UseInterceptors,
   Req,
   UploadedFile,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -43,10 +44,13 @@ export class PrismaController {
 
   @Post('editname')
   async updateUsername(
-    @Body() body: { userId: number; newUsername: string },
+    @Body() body: { userId: number; accessToken: string; newUsername: string },
   ): Promise<{ userName: string | null }> {
-    const { userId, newUsername } = body;
+    const { userId, accessToken, newUsername } = body;
     try {
+      if (!(await this.authService.verifyId(userId, accessToken))) {
+        throw new ForbiddenException();
+      }
       const newUser: string = await this.prismaService.updateUsername(
         userId,
         newUsername,
@@ -62,9 +66,7 @@ export class PrismaController {
   }
 
   @Post('userstats')
-  async getHistoryMatches(
-    @Body() body: { userId: number },
-  ): Promise<{
+  async getHistoryMatches(@Body() body: { userId: number }): Promise<{
     userHistory: any[] | null;
     userProfil: any | null;
     userMilestones: any | null;
@@ -197,7 +199,11 @@ export class PrismaController {
       ) {
         // Get the user ID from the request
         const userId = req.body.userId;
+        const token = req.body.accessToken;
 
+        if (!(await this.authService.verifyId(userId, token))) {
+          throw new ForbiddenException();
+        }
         // Create a new avatar entry in the database
         const avatar: Avatars = await this.prismaService.createNewAvatarById(
           userId,
