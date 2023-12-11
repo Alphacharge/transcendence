@@ -40,6 +40,15 @@ export default {
   HighestWin: "Höchster Gewinn",
   LeastContacts: "Wenigste Ballkontakte",
 
+  //Profile
+  profileWins: "Gewonnen",
+  profileLos: "Verloren",
+  profileMatches: "Spiele",
+  profileTournament: "Tourniere",
+  profileContacts: "Ballkontakte",
+  profileTourWins: "Tourniersiege",
+  profileRegister: "Registriert seit",
+
   //About
   aboutTitle: "Transzendenz",
   aboutText1:

@@ -41,6 +41,23 @@ export class PrismaController {
     readonly authService: AuthService,
   ) {}
 
+  @Post('editname')
+  async updateUsername(
+    @Body() body: { userId: number, newUsername: string },
+    ): Promise<{userName:string | null}> {
+    const { userId, newUsername } = body;
+    try {
+      const newUser: string = await this.prismaService.updateUsername(userId, newUsername);
+      if (newUser){
+        return {userName: newUser};
+      }
+      return {userName:null};
+    } catch (error) {
+      console.error('Error update Username:', error);
+      return {userName:null};
+    }
+  }
+
   @Post('userstats')
   async getHistoryMatches(
     @Body() body: { userId: number },

@@ -82,6 +82,22 @@ export class PrismaService extends PrismaClient {
     }
   }
 
+  async updateUsername(userId: number, newUsername: string): Promise<string | null> {
+    try {
+      const updatedGame = await this.users.update({
+        where: { id: Number(userId) },
+        data: {
+          username: newUsername,
+        },
+      });
+      console.log("updated userid:", userId, "to username: ", newUsername);
+      return newUsername;
+    } catch (error) {
+      console.error('Failed to update username', error);
+      return null;
+    }
+  }
+  
   async getAllUsersIdNaAv(): Promise<
     | {
         id: number;
