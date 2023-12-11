@@ -22,9 +22,13 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <CountDown></CountDown>
   <ScoreBoard></ScoreBoard>
-  <GameArea></GameArea>
+  <div class="game-wrapper">
+    <GameArea></GameArea>
+    <CountDown
+    v-if="countDownVisible"
+    ></CountDown>
+  </div>
 </template>
 
 <script>
@@ -51,6 +55,7 @@ export default {
       tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
       playerCheckinVisible: true,
       testButtonVisible: false,
+      countDownVisible: false,
     };
   },
 
@@ -65,6 +70,7 @@ export default {
 
     socket.on("tournamentStart", () => {
       // INSERT remove all parts of the interface you don't want to show during a tournament
+      this.countDownVisible=true;
       this.playerCheckinVisible = false;
     });
 
@@ -84,3 +90,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.game-wrapper {
+  position: relative;
+}
+</style>
