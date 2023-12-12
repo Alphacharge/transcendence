@@ -103,7 +103,7 @@ export class PrismaController {
     try {
       const friends = await this.prismaService.getFriendsById(userId);
       friends.forEach((element) => {
-        if (this.authService.activeUser.includes(element.id)) {
+        if (this.authService.activeUser.has(element.id)) {
           element.status = 1;
         }
       });
@@ -122,7 +122,7 @@ export class PrismaController {
     try {
       const friends = await this.prismaService.getNonFriendsById(userId);
       friends.forEach((element) => {
-        if (this.authService.activeUser.includes(element.id)) {
+        if (this.authService.activeUser.has(element.id)) {
           element.status = 1;
         }
       });
