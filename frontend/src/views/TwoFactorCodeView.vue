@@ -1,5 +1,7 @@
 <template>
+  <div class="container">
   <Send2faCode></Send2faCode>
+  </div>
 </template>
 
 <script>
@@ -11,3 +13,8 @@ export default {
   },
 };
 </script>
+<style>
+.container {
+  margin-top: 4em;
+}
+</style>

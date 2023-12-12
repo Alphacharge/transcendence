@@ -50,6 +50,14 @@ export default {
   profileRegister: "Registrato dal",
   usernameTaken: "Il nome utente è preso",
 
+    //2fa
+  twoFAenable:"aktivieren",
+  twoFAdisable:"deaktivieren",
+  twoFAenabled:"aktiviert",
+  twoFAdisabled:"deaktiviert",
+  twoFAEnterCode:"Dein OTP code",
+  twoFAVerify:"verifizieren",
+
   //About
   aboutTitle: "Trascendenza",
   aboutText1:

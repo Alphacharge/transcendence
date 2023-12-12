@@ -50,6 +50,14 @@ export default {
   profileRegister: "Registered since",
   usernameTaken: "Username is taken",
 
+  //2fa
+  twoFAenable: "abilitare",
+  twoFAdisable: "disabilitare",
+  twoFAenabled: "abilitato",
+  twoFAdisabled: "disabilitato",
+  twoFAEnterCode: "Inserisci il tuo codice OTP",
+  twoFAVerify: "verifica",
+
   //About
   aboutTitle: "Transcendence",
   aboutText1:
