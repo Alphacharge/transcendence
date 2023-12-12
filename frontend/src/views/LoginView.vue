@@ -106,7 +106,12 @@ export default {
         const responseData = await response.json();
         localStorage.setItem("access_token", responseData["access_token"]);
         localStorage.setItem("userId", responseData["userId"]);
-        router.push("/");
+        if (responseData.requires2FA) {
+          console.log("pushing 2fa");
+          router.push("/2fa-code");
+        } else {
+          router.push("/");
+        }
       } else {
         alert("User or Password wrong!");
       }

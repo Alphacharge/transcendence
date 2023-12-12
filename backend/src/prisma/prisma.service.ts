@@ -39,7 +39,7 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getUserById(userId: number): Promise<any | null> {
+  async getUserById(userId: number): Promise<any> {
     try {
       const userData = await this.users.findUnique({
         where: {
@@ -59,6 +59,27 @@ export class PrismaService extends PrismaClient {
       });
 
       return userData;
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  }
+
+  //needs to be changed
+  async getUser2FAById(userId: number): Promise<any | null> {
+    try {
+      const databaseUser = await this.users.findUnique({
+        where: {
+          id: Number(userId)
+        },
+        select: {
+          id: true,
+          username: true,
+          two_factor_enabled: true,
+        },
+      });
+
+      return databaseUser;
     } catch (error) {
       console.error('Error fetching user data:', error);
       return null;
@@ -135,6 +156,63 @@ export class PrismaService extends PrismaClient {
       console.error('Error fetching user data:', error);
       return null;
     }
+  }
+
+  async is2FAEnabledById(userId: number): Promise<boolean> {
+    const user = await this.users.findUnique({
+      where: {
+        id: Number(userId),
+        two_factor_enabled: true,
+      },
+    });
+    return !!user;
+  }
+
+  async enable2FAById(userId: number): Promise<void> {
+    await this.users.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        two_factor_enabled: true,
+      },
+    });
+  }
+
+  async disable2FAById(userId: number): Promise<void> {
+    await this.users.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        two_factor_enabled: false,
+        two_factor_secret: '',
+      },
+    });
+  }
+
+  async set2FASecretById(userId: number, secret: string): Promise<void> {
+    await this.users.update({
+      where: {
+        id: Number(userId),
+      },
+      data: {
+        two_factor_secret: secret,
+      },
+    });
+  }
+
+  async get2FASecretById(userId: number): Promise<string | null> {
+    const user = await this.users.findUnique({
+      where: {
+        id: Number(userId),
+      },
+      select: {
+        two_factor_secret: true,
+      },
+    });
+
+    return user?.two_factor_secret || null;
   }
 
   async createNewGame(leftId: number, rightId: number): Promise<Games | null> {

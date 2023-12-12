@@ -10,9 +10,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
 import { Users } from '@prisma/client';
-import { type } from 'os';
-import { Request, Response } from 'express';
-import { Subject, Observable } from 'rxjs';
+import { Request } from 'express';
+import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class AuthService {
@@ -21,7 +20,8 @@ export class AuthService {
     private jwt: JwtService,
     private config: ConfigService,
   ) {}
-  activeUser: number[] = [];
+  waitingFor2FA: Set<number> = new Set<number>();
+  activeUser: Set<number> = new Set<number>();
 
   async signup(user: User) {
     try {
@@ -41,9 +41,9 @@ export class AuthService {
       //create sessiontoken
       const bToken = await this.signToken(newUser.id, newUser.username);
       //push userid to the activeuser list
-      if (!this.activeUser.includes(newUser.id))
-        this.activeUser.push(newUser.id);
+        this.activeUser.add(newUser.id);
       console.error('AUTH.SERVICE: SIGNUP, Registered: ', newUser.username);
+
       return {
         access_token: bToken,
         userId: newUser.id,
@@ -76,15 +76,32 @@ export class AuthService {
     if (!pwMatches) {
       throw new ForbiddenException('Credentials incorrect');
     }
+
+    this.activeUser.add(newUser.id);
+
+    // if 2fa code is needed we send no JWT token
+    if (newUser.two_factor_enabled) {
+      console.log('auth service waiting for 2fa');
+      //   this.waitingFor2FA.add(newUser.id);
+
+      return {
+        access_token: '',
+        userId: newUser.id,
+        userName: newUser.username,
+        requires2FA: newUser.two_factor_enabled,
+      };
+    }
+
     //create sessiontoken
     const bToken = await this.signToken(newUser.id, newUser.username);
+
     console.error('AUTH.SERVICE: SIGNIN, Logged in ', newUser.username);
-    //push userid to the activeuser list
-    if (!this.activeUser.includes(newUser.id)) this.activeUser.push(newUser.id);
+
     return {
       access_token: bToken,
       userId: newUser.id,
       userName: newUser.username,
+      requires2FA: newUser.two_factor_enabled,
     };
   }
 
@@ -99,25 +116,54 @@ export class AuthService {
     return token;
   }
 
-  async validateToken(
+  async validateToken(token: string): Promise<boolean> {
+    const secret = this.config.get('JWT_SECRET');
+
+    try {
+      const decodedToken: any = (await this.jwt.verifyAsync(token, {
+        secret: secret,
+      })) as { sub: number; username: string } | null;
+
+      if (decodedToken) {
+        return true;
+      }
+    } catch (error) {
+      console.error('validateToken: JWT invalid or expired.');
+      return false;
+    }
+  }
+
+  async validateUserByToken(token: string): Promise<number> {
+    const secret = this.config.get('JWT_SECRET');
+
+    try {
+      const decodedToken: any = (await this.jwt.verifyAsync(token, {
+        secret: secret,
+      })) as { sub: number; username: string } | null;
+
+      const user = this.prismaService.getUserById(decodedToken.sub);
+
+      if (user) return decodedToken.sub;
+    } catch (error) {
+      console.error('validateToken: JWT invalid or expired.');
+      return 0;
+    }
+  }
+
+  async validateAndRenewToken(
     token: string,
   ): Promise<{ valid: boolean; renewedToken?: string }> {
     const secret = this.config.get('JWT_SECRET');
-
     try {
       const decodedToken: any = await this.jwt.verifyAsync(token, {
         secret: secret,
       });
-
       // Check if the token is expired
       if (decodedToken.exp <= Math.floor(Date.now() / 1000)) {
         // Token is expired
         // Remove the user ID from the activeUser array
         const userId = decodedToken.sub;
-        const index = this.activeUser.indexOf(userId);
-        if (index !== -1) {
-          this.activeUser.splice(index, 1);
-        }
+        this.activeUser.delete(userId);
         return { valid: false };
       }
       // Token is valid and not expired
@@ -133,7 +179,7 @@ export class AuthService {
       console.error('validateToken: JWT invalid or expired.');
       return { valid: false };
     }
-  }
+}
 
   async verifyId(userId: number, token: string): Promise<boolean> {
     const secret = this.config.get('JWT_SECRET');

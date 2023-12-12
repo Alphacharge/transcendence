@@ -12,9 +12,11 @@
 import { connectWebSocket, socket } from "@/assets/utils/socket";
 
 export default {
+  mounted() {
+    connectWebSocket();
+  },
   methods: {
     enterQueue() {
-      connectWebSocket();
       socket.enterQueue();
     },
     leaveQueue() {

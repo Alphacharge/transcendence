@@ -14,6 +14,8 @@ import ProfileView from "@/views/ProfileView.vue";
 import LocalGame from "@/views/LocalGameView.vue";
 import RedirectView from "@/views/RedirectView.vue";
 import { checkLoggedIn } from "@/services/authService";
+import TwoFactorCodeView from "@/views/TwoFactorCodeView";
+import TwoFactorEnableView from "@/views/TwoFactorEnableView";
 
 const routes = [
   {
@@ -72,6 +74,16 @@ const routes = [
     component: TournamentView,
   },
   {
+    path: "/2fa-code",
+    name: "2fa-code",
+    component: TwoFactorCodeView,
+  },
+  {
+    path: "/2fa-enable",
+    name: "2fa-enable",
+    component: TwoFactorEnableView,
+  },
+  {
     path: "/redirect",
     name: "redirect",
     component: RedirectView,
@@ -90,6 +102,7 @@ router.beforeEach(async (to, from, next) => {
     if (
       to.name !== "login" &&
       to.name !== "signup" &&
+      to.name !== "2fa-code" &&
       to.name !== "ip" &&
       to.name !== "redirect" &&
       !isLoggedIn

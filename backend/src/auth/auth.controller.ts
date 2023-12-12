@@ -13,6 +13,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Request, Response } from 'express';
+import { AuthGuard } from './auth.guard';
 
 @UseGuards(AuthDto)
 @Controller('auth')
@@ -43,15 +44,10 @@ export class AuthController {
         return;
       }
 
-      const { valid, renewedToken } =
-        await this.authService.validateToken(token);
+      const validToken = await this.authService.validateToken(token);
 
-      if (valid) {
-        if (renewedToken) {
-          res.status(200).json({ message: 'Authorized', renewedToken });
-        } else {
-          res.status(200).json({ message: 'Authorized' });
-        }
+      if (validToken) {
+        res.status(200).json({ message: 'Authorized' });
       } else {
         res.status(401).json({ message: 'Invalid or expired token' });
       }
@@ -63,6 +59,8 @@ export class AuthController {
   @Get('/42/callback')
   async handleCallback(@Req() request: Request, @Res() response: Response) {
     const authResponse = await this.authService.handleCallback(request);
+    if (!authResponse) return;
+
     const url = new URL(`${request.protocol}:${request.hostname}`);
     url.port = '8080';
     url.pathname = 'redirect';
