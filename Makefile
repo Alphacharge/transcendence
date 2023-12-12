@@ -32,7 +32,7 @@ ifeq ($(OS), Darwin)
 else
 	-@bash -c "sudo chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
 endif
-	docker-compose -f $(SRC) $(ENV) up
+	docker-compose -f $(SRC) $(ENV) up --build
 	@echo "$(GREEN)Build changes and/or new containers.$(WHITE)"
 
 postgre:

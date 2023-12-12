@@ -9,7 +9,9 @@ services:
   nestjs:
     container_name: nestjs
     image: node:lts
-    command: bash -c "cd /backend && npm cache clean -f && npm install && sleep 10 && npx ts-node src/seed.ts && echo y | npx prisma migrate dev -n update && npm run start:dev"
+    build:
+      context: ./backend
+    # command: bash -c "cd /backend && npm cache clean -f && npm install && sleep 10 && npx ts-node src/seed.ts && echo y | npx prisma migrate dev -n update && npm run start:dev"
     ports:
       - "3000:3000"
       - "9229:9229" #debugging port ?
