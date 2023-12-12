@@ -196,7 +196,6 @@ export default {
     // Make a call to your NestJS backend when the component is mounted
     this.fetchMilestones();
     this.fetchStats();
-    this.renderChart();
   },
   computed: {
     sortedStatistics() {
@@ -256,6 +255,7 @@ export default {
         if (response.ok) {
           const data = await response.json();
           this.statistics = data;
+          this.renderChart();
           // Handle the user history data as needed
         } else {
           console.error("Failed to fetch statistics");
@@ -264,21 +264,21 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
-    async renderChart() {
-      try {
-        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
-        const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/allstats`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        if (response.ok) {
-          const data = await response.json();
-          this.userStatistics = data;
+    renderChart() {
+      // try {
+      //   // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
+      //   const response = await fetch(
+      //     `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/allstats`,
+      //     {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //       },
+      //     },
+      //   );
+      //   if (response.ok) {
+      //     const data = await response.json();
+          this.userStatistics = this.statistics;//data;
           this.userStatistics.sort((a, b) => b.matches - a.matches);
           const usernames = this.userStatistics.map(user => user.username);
           const wins = this.userStatistics.map(user => user.wins);
@@ -333,12 +333,12 @@ export default {
             },
           });
           // Handle the user history data as needed
-        } else {
-          console.error("Failed to render statistics");
-        }
-      } catch (error) {
-        console.error("Error rendering user history:", error);
-      }
+      //   } else {
+      //     console.error("Failed to render statistics");
+      //   }
+      // } catch (error) {
+      //   console.error("Error rendering user history:", error);
+      // }
     },
   }
 };
