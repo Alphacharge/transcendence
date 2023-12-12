@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="twofa-container">
   <Send2faCode></Send2faCode>
   </div>
 </template>
@@ -13,8 +13,8 @@ export default {
   },
 };
 </script>
-<style>
-.container {
+<style scoped>
+.twofa-container {
   margin-top: 4em;
 }
 </style>

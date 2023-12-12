@@ -1,5 +1,5 @@
 <template>
-  <div class="input">
+  <div class="twofa-input">
         <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
         <router-link to="/">
           <button @click="verifyCode">
@@ -79,15 +79,15 @@ export default {
   },
 };
 </script>
-<style>
-.input {
+<style scoped>
+.twofa-input {
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.input input {
+.twofa-input input {
   margin: 1em 0;
 }
 </style>

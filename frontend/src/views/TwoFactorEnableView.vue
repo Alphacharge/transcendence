@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
-    <div class="content">
-      <div class="qrcode">
+  <div class="twofa-container">
+    <div class="twofa-content">
+      <div class="twofa-qrcode">
         <qrcode-vue :value="otpauthUrl" :size="qrcodeSize" />
       </div>
       <Send2faCode />
@@ -56,21 +56,21 @@ export default {
   },
 };
 </script>
-<style>
-.container {
+<style scoped>
+.twofa-container {
   margin-top: 4em;
   width: 100%; /* Adjust as needed */
   display: flex;
   justify-content: center;
 }
 
-.content {
+.twofa-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.qrcode {
+.twofa-qrcode {
   background-color: white;
   padding-top: 0.5em;
   padding-left: 0.5em;
