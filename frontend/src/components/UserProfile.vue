@@ -31,6 +31,7 @@
           />
           <p class="text-color">{{ $t("profileRegister") }}</p>
           <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
+          <Enable2FA></Enable2FA>
         </div>
       </div>
     </div>
@@ -105,6 +106,8 @@
 </template>
 
 <script>
+import Enable2FA from "./Enable2FA.vue";
+
 export default {
   data() {
     return {
@@ -117,6 +120,7 @@ export default {
       userMilestones: null,
     };
   },
+  components: { Enable2FA },
   mounted() {
     this.fetchUserHistory();
   },
