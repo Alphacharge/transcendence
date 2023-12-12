@@ -3,7 +3,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
-import PongView from "@/views/PongView.vue";
+import RemoteGameView from "@/views/RemoteGameView.vue";
 import IpPanelView from "@/views/IpPanelView.vue";
 import LoginView from "@/views/LoginView.vue";
 import LogoutView from "@/views/LogoutView.vue";
@@ -29,9 +29,9 @@ const routes = [
     component: AboutView,
   },
   {
-    path: "/pong",
-    name: "pong",
-    component: PongView,
+    path: "/remotegame",
+    name: "remote game",
+    component: RemoteGameView,
   },
   {
     path: "/localgame",

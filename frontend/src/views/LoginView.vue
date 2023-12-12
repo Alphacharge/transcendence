@@ -29,7 +29,7 @@
       </div>
       <div class="row justify-content-between">
         <div class="col">
-          <button type="submit" class="btn btn-primary" :disabled="isDisabled">
+          <button type="submit" class="btn btn-primary">
             {{ $t("Submit") }}
           </button>
         </div>

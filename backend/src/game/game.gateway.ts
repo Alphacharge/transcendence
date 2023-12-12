@@ -63,6 +63,12 @@ export class GameGateway {
       this.removedFromTournamentQueue(user);
       this.sendTournamentQueueLength();
     });
+    sharedEventEmitter.on('addedToQueue', (user: User) => {
+      this.addedToQueue(user);
+    });
+    sharedEventEmitter.on('removedFromQueue', (user: User) => {
+      this.removedFromQueue(user);
+    });
     sharedEventEmitter.on('tournamentStart', (tournament: TournamentState) => {
       this.tournamentStart(tournament);
     });
@@ -79,10 +85,10 @@ export class GameGateway {
       // save new user to users array in GameService
       const user = new User();
 
-      user.socket = socket;
       user.userData = await this.prismaService.getUserById(
         socket.handshake.query.userId,
       );
+      user.socket = socket;
       this.gameService.websocketUsers.set(socket.id, user);
       if (!user.userData) {
         console.log('handleConnection: User not found in database.');
@@ -277,5 +283,13 @@ export class GameGateway {
     tournament.players.forEach((user) => {
       user.socket.emit('tournamentStart');
     });
+  }
+
+  addedToQueue(user: User) {
+    user?.socket?.emit('addedToQueue');
+  }
+
+  removedFromQueue(user: User) {
+    user?.socket?.emit('removedFromQueue');
   }
 }

@@ -54,7 +54,6 @@ export default {
     window.addEventListener("keydown", (event) => {
       switch (event.key) {
         case "w":
-          console.error(`GAMEAREA,KEYDOWN, w ${this.isLocalGame}`);
           if (!this.messageIntervalPlayer1) {
             this.messageIntervalPlayer1 = setInterval(() => {
               socket.sendPaddleUp("left");
@@ -62,7 +61,6 @@ export default {
           }
           break;
         case "s":
-          console.error(`GAMEAREA,KEYDOWN, s ${this.isLocalGame}`);
           if (!this.messageIntervalPlayer1) {
             this.messageIntervalPlayer1 = setInterval(() => {
               socket.sendPaddleDown("left");
@@ -70,7 +68,6 @@ export default {
           }
           break;
         case "ArrowUp":
-          console.error(`GAMEAREA,KEYDOWN, up ${this.isLocalGame}`);
           if (!this.messageIntervalPlayer2) {
             this.messageIntervalPlayer2 = setInterval(() => {
               socket.sendPaddleUp("right");
@@ -78,7 +75,6 @@ export default {
           }
           break;
         case "ArrowDown":
-          console.error(`GAMEAREA,KEYDOWN, down ${this.isLocalGame}`);
           if (!this.messageIntervalPlayer2) {
             this.messageIntervalPlayer2 = setInterval(() => {
               socket.sendPaddleDown("right");

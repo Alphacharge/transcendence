@@ -78,5 +78,4 @@ export default {
   padding-bottom: 0.1em;
   margin-bottom: 1em; /* Add spacing between QR code and input */
 }
-
 </style>

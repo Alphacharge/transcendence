@@ -300,7 +300,7 @@ export default {
 .profile-data {
   margin-left: 1.5em;
   padding-top: 0.5em;
-  flex: 5
+  flex: 5;
 }
 
 .two-fa-auth {

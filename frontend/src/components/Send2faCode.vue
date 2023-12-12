@@ -1,16 +1,16 @@
 <template>
   <div class="twofa-input">
-        <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
-        <router-link to="/">
-          <button @click="verifyCode">
-            {{ $t("twoFAVerify")}}
-          </button>
-        </router-link>
-      </div>
+    <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
+    <router-link to="/">
+      <button @click="verifyCode">
+        {{ $t("twoFAVerify") }}
+      </button>
+    </router-link>
+  </div>
 </template>
 
 <script>
-import router from '@/router';
+import router from "@/router";
 
 export default {
   data() {
@@ -39,11 +39,11 @@ export default {
         );
 
         if (response.ok) {
-          if (localStorage.getItem("access_token") === ""){
+          if (localStorage.getItem("access_token") === "") {
             const responseData = await response.json();
             localStorage.setItem("access_token", responseData["access_token"]);
             localStorage.setItem("userId", responseData["userId"]);
-            
+
             router.push("/");
           } else {
             this.twoFactorStatus = "Code verified.";

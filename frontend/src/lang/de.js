@@ -51,12 +51,12 @@ export default {
   usernameTaken: "Name wird schon benutzt",
 
   //2fa
-  twoFAenable:"aktivieren",
-  twoFAdisable:"deaktivieren",
-  twoFAenabled:"aktiviert",
-  twoFAdisabled:"deaktiviert",
-  twoFAEnterCode:"Dein OTP code",
-  twoFAVerify:"verifizieren",
+  twoFAenable: "aktivieren",
+  twoFAdisable: "deaktivieren",
+  twoFAenabled: "aktiviert",
+  twoFAdisabled: "deaktiviert",
+  twoFAEnterCode: "Dein OTP code",
+  twoFAVerify: "verifizieren",
 
   //About
   aboutTitle: "Transzendenz",

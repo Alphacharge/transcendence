@@ -1,11 +1,6 @@
 <template>
   <div>
     <h2>Tournament Players</h2>
-    <div v-if="testButtonVisible">
-      <button class="test-btn" @click.prevent="startTournament">
-        Test Start
-      </button>
-    </div>
     <div v-if="playerCheckinVisible && players.length < 4">
       <PlayerCheckin />
     </div>
@@ -52,7 +47,6 @@ export default {
       players: [],
       tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
       playerCheckinVisible: true,
-      testButtonVisible: false,
       countDownVisible: false,
     };
   },
@@ -73,7 +67,6 @@ export default {
     });
 
     socket.on("playerJoinedTournament", (username) => {
-      console.log("player joined tournament queue", username);
       if (!this.players.includes(username)) {
         this.players.push(username);
       }
