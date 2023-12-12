@@ -1,5 +1,4 @@
 <template>
-  <h1>Please choose your game mode</h1>
   <div class="Wrapper">
     <div class="ButtonsWrapper">
       <router-link class="ButtonBox nav-link navbar-nav" to="/pong">{{
@@ -11,8 +10,11 @@
       <router-link class="ButtonBox nav-link" to="/tournament">{{
         $t("Tournament")
       }}</router-link>
+        <div class="ToggleFriendListButton" @click="toggleFriendList">
+        {{ isFriendListOpen ? 'Hide' : 'Show' }} Friend List
+      </div>
     </div>
-    <div class="FriendListBox">
+    <div class="FriendListBox" v-show="isFriendListOpen">
       <FriendList />
     </div>
   </div>
@@ -23,7 +25,15 @@ import FriendList from "@/components/FriendList.vue";
 
 export default {
   components: { FriendList },
+  data() {
+    return {
+      isFriendListOpen: true, // Initial state, adjust as needed
+    };
+  },
   methods: {
+    toggleFriendList() {
+      this.isFriendListOpen = !this.isFriendListOpen;
+    },
     handleButtonClick(message) {
       alert(message);
     },
@@ -35,8 +45,10 @@ export default {
 .Wrapper {
   display: flex;
   flex-wrap: wrap;
+  margin-top: 4em;
   height: 90%;
   width: 100%;
+  flex: 2;
 }
 
 .ButtonsWrapper {
@@ -44,7 +56,7 @@ export default {
   flex-direction: column;
   color: rgb(144, 154, 163);
   height: 100%;
-  flex: 1;
+  flex: 2;
 }
 
 .ButtonBox {
@@ -66,12 +78,31 @@ export default {
 }
 
 .FriendListBox {
-  flex: 0.5;
-  background-color: lightgray;
-  border: 1px solid gray;
-  font-size: 24px;
-  margin: 5px;
   display: flex;
-  opacity: 0.6;
+  margin: 5px;
+  height: 100%;
+  flex-direction: column;
+  flex-grow: 0.8;
 }
+.ToggleFriendListButton {
+  cursor: pointer;
+  background-color: transparent;
+  border: 0.5px solid rgb(237, 211, 12);
+  background-color: blueviolet;
+  font-size: 18px;
+  margin: 5px;
+  padding: 5px;
+  display: inline-block;
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 1; /* Ensure the button is above other elements */
+  transition: background-color 0.3s ease;
+}
+
+.ToggleFriendListButton:hover {
+  background-color: rgb(237, 211, 12);
+}
+
 </style>

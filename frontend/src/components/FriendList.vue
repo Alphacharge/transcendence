@@ -179,6 +179,7 @@ export default {
 
 <style scoped>
 .friend-list {
+  color: rgb(144, 154, 163);
   border: 1px solid #ccc;
   display: flex;
   flex-direction: column;
@@ -192,11 +193,11 @@ export default {
 }
 .friend-name {
   flex-grow: 1;
-  color: rgb(217, 217, 229);
+  color: rgb(144, 154, 163);
 }
 .add-friend {
   flex-grow: 1;
-  color: rgb(217, 217, 229);
+  color: rgb(144, 154, 163);
 }
 .friend-list ul {
   list-style-type: none;
@@ -221,6 +222,9 @@ export default {
 .image_friends_status {
   left: 15em;
   margin-left: auto;
+  margin-right: 1em;
+}
+.image_friends_add{
   margin-right: 1em;
 }
 .image_friends_remove {
