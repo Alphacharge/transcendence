@@ -6,11 +6,11 @@
     <div :class="twofaClass">
       {{ twoFAText(twoFactorAuthEnabled) }}
     </div>
-    <button class="button" v-if="twoFactorAuthEnabled" @click="disable2FA">
+    <button class="twofa-button" v-if="twoFactorAuthEnabled" @click="disable2FA">
       {{ $t("twoFAdisable") }}
     </button>
     <router-link v-if="!twoFactorAuthEnabled" to="2fa-enable">
-      <button class="button">
+      <button class="twofa-button">
         {{ $t("twoFAenable")}}
       </button>
     </router-link>
@@ -34,8 +34,8 @@ export default {
   computed: {
     twofaClass() {
       return {
-        'enabled': this.twoFactorAuthEnabled,
-        'disabled': !this.twoFactorAuthEnabled,
+        'twofa-enabled': this.twoFactorAuthEnabled,
+        'twofa-disabled': !this.twoFactorAuthEnabled,
       };
     },
   },
@@ -88,24 +88,24 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .twofactorauth {
   width: 4em;
   text-align: center;
 }
 
-.button {
+.twofa-button {
   width: 100%;
   border: none;
   cursor: pointer;
   text-align: center;
 }
 
-.enabled {
+.twofa-enabled {
   background-color: green;
 }
 
-.disabled {
+.twofa-disabled {
   background-color: red;
 }
 </style>
