@@ -7,11 +7,11 @@
       {{ twoFAText(twoFactorAuthEnabled) }}
     </div>
     <button class="button" v-if="twoFactorAuthEnabled" @click="disable2FA">
-      disable
+      {{ $t("twoFAdisable") }}
     </button>
     <router-link v-if="!twoFactorAuthEnabled" to="2fa-enable">
       <button class="button">
-        enable
+        {{ $t("twoFAenable")}}
       </button>
     </router-link>
   </div>
@@ -41,7 +41,7 @@ export default {
   },
   methods: {
     twoFAText(enabled) {
-      return enabled ? 'enabled' : 'disabled';
+      return enabled ? this.$t('twoFAenabled') : this.$t('twoFAdisabled');
     },
     async checkTwoFactorAuthStatus() {
       try {

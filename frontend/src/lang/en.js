@@ -51,12 +51,12 @@ export default {
   usernameTaken: "Username is taken",
 
   //2fa
-  twoFAenable: "abilitare",
-  twoFAdisable: "disabilitare",
-  twoFAenabled: "abilitato",
-  twoFAdisabled: "disabilitato",
-  twoFAEnterCode: "Inserisci il tuo codice OTP",
-  twoFAVerify: "verifica",
+  twoFAenable:"enable",
+  twoFAdisable:"disable",
+  twoFAenabled:"enabled",
+  twoFAdisabled:"disabled",
+  twoFAEnterCode:"Enter your OTP code",
+  twoFAVerify:"verify",
 
   //About
   aboutTitle: "Transcendence",

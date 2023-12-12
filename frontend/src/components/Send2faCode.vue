@@ -1,8 +1,10 @@
 <template>
   <div class="input">
-        <input type="text" v-model="code" placeholder="Enter your OTP code" />
+        <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
         <router-link to="/">
-          <button @click="verifyCode">Verify</button>
+          <button @click="verifyCode">
+            {{ $t("twoFAVerify")}}
+          </button>
         </router-link>
       </div>
 </template>
