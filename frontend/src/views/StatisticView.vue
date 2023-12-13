@@ -173,7 +173,9 @@
       </table>
     </div>
   </div>
-  <span style="justify-content: center; color: rgb(219,219,227);">{{ $t('Select histogram legend to filter, hover on graphs for detail') }}</span>
+  <span style="justify-content: center; color: rgb(219, 219, 227)">{{
+    $t("Select histogram legend to filter, hover on graphs for detail")
+  }}</span>
   <div class="graph-wrapper">
     <div class="graph-container">
       <canvas id="championsBoard"></canvas>
@@ -185,7 +187,6 @@
 </template>
 
 <script>
-import RemoteGameButtons from "@/components/RemoteGameButtons.vue";
 import Chart from "chart.js/auto";
 
 export default {
@@ -214,7 +215,6 @@ export default {
   },
   methods: {
     sortTable(key) {
-      console.log(`DEBUG SORTABLE ${key}`);
       if (key === this.sortKey) {
         this.sortDirection = this.sortDirection === "desc" ? "asc" : "desc";
       } else {
@@ -272,21 +272,21 @@ export default {
     },
     renderChart() {
       this.userStatistics = this.statistics;
-      this.userStatistics.sort((a, b) => (b.wins - a.wins));
+      this.userStatistics.sort((a, b) => b.wins - a.wins);
       const usernames = this.userStatistics.map((user) => user.username);
       const wins = this.userStatistics.map((user) => user.wins);
       const losses = this.userStatistics.map((user) => user.losses);
-      const histogram = document.getElementById("championsBoard").getContext("2d");
+      const histogram = document
+        .getElementById("championsBoard")
+        .getContext("2d");
       const doughnut = document.getElementById("gameType").getContext("2d");
       let totalTourmatches = 0;
       let totalMatches = 0;
-      this.userStatistics.forEach(obj=>{
+      this.userStatistics.forEach((obj) => {
         totalTourmatches += obj.tourmatches;
         totalMatches += obj.matches;
-      })
-      console.log(`RENDERCHART matches=${totalMatches}, tournaments=${totalTourmatches}`);
+      });
       const totalSimpleMatches = totalMatches - totalTourmatches;
-      // Chart.defaults.borderColor = "#36A2EB";
       Chart.defaults.color = "#dbdbe3";
       new Chart(histogram, {
         type: "bar",
@@ -296,12 +296,12 @@ export default {
             {
               label: "Wins",
               data: wins,
-              backgroundColor: 'rgba(0,115,0,0.5)',
+              backgroundColor: "rgba(0,115,0,0.5)",
             },
             {
               label: "Losses",
               data: losses,
-              backgroundColor: 'rgba(230,0,0,0.5)',
+              backgroundColor: "rgba(230,0,0,0.5)",
             },
           ],
         },
@@ -333,22 +333,15 @@ export default {
       new Chart(doughnut, {
         type: "doughnut",
         data: {
-          labels: [
-            "Tournaments",
-            "Matches"
+          labels: ["Tournaments", "Matches"],
+          datasets: [
+            {
+              data: [totalTourmatches, totalSimpleMatches],
+              backgroundColor: ["rgb(5,155,255)", "rgb(6,8,139)"],
+              hoverOffset: 1,
+              borderWidth: 0,
+            },
           ],
-          datasets: [{
-            data: [
-              totalTourmatches,
-              totalSimpleMatches
-            ],
-            backgroundColor: [
-              'rgb(5,155,255)',
-              'rgb(6,8,139)',
-            ],
-            hoverOffset: 1,
-            borderWidth: 0,
-          }],
         },
         options: {
           responsive: true,
@@ -435,7 +428,7 @@ export default {
 
 .graph-wrapper {
   display: flex;
-  justify-content:space-between;
+  justify-content: space-between;
   width: 80%;
 }
 
