@@ -1,7 +1,9 @@
 <template>
   <p>{{ $t("LocalGameExplanation") }}</p>
-  <div>
-    <button @click="startLocalGame()">{{ $t("StartLocalGame") }}</button>
+  <div class="btn-group">
+    <button @click="startLocalGame()" class="btn btn-danger">
+      {{ $t("StartLocalGame") }}
+    </button>
   </div>
   <ScoreBoard></ScoreBoard>
   <div class="game-wrapper">

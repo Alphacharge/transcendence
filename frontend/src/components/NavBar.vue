@@ -21,7 +21,9 @@
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav flex-grow-1">
       <li class="nav-item flex-grow-1">
-        <router-link to="/pong" class="nav-link">{{ $t("Game") }}</router-link>
+        <router-link to="/remotegame" class="nav-link">{{
+          $t("Game")
+        }}</router-link>
       </li>
       <li class="navbar-nav flex-grow-1">
         <router-link to="/localgame" class="nav-link">{{

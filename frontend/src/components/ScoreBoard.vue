@@ -31,6 +31,20 @@ export default {
       this.winningPlayer = payload;
     });
 
+    // reset values
+    socket.on("addedToQueue", () => {
+      this.announceVisible = false;
+      this.player1Score = 0;
+      this.player2Score = 0;
+      this.winningPlayer = "";
+    });
+    socket.on("countDown", () => {
+      this.announceVisible = false;
+      this.player1Score = 0;
+      this.player2Score = 0;
+      this.winningPlayer = "";
+    });
+
     // received info if we are left or right
     socket.on("player1", () => {
       this.player1Score = 0;

@@ -1,17 +1,19 @@
 <template>
   <div class="twofactorauth">
-    <div>
-      2FA
-    </div>
+    <div>2FA</div>
     <div :class="twofaClass">
       {{ twoFAText(twoFactorAuthEnabled) }}
     </div>
-    <button class="twofa-button" v-if="twoFactorAuthEnabled" @click="disable2FA">
+    <button
+      class="twofa-button"
+      v-if="twoFactorAuthEnabled"
+      @click="disable2FA"
+    >
       {{ $t("twoFAdisable") }}
     </button>
     <router-link v-if="!twoFactorAuthEnabled" to="2fa-enable">
       <button class="twofa-button">
-        {{ $t("twoFAenable")}}
+        {{ $t("twoFAenable") }}
       </button>
     </router-link>
   </div>
@@ -34,14 +36,14 @@ export default {
   computed: {
     twofaClass() {
       return {
-        'twofa-enabled': this.twoFactorAuthEnabled,
-        'twofa-disabled': !this.twoFactorAuthEnabled,
+        "twofa-enabled": this.twoFactorAuthEnabled,
+        "twofa-disabled": !this.twoFactorAuthEnabled,
       };
     },
   },
   methods: {
     twoFAText(enabled) {
-      return enabled ? this.$t('twoFAenabled') : this.$t('twoFAdisabled');
+      return enabled ? this.$t("twoFAenabled") : this.$t("twoFAdisabled");
     },
     async checkTwoFactorAuthStatus() {
       try {

@@ -174,13 +174,12 @@
     </div>
   </div>
   <div class="graph-wrapper">
-    <canvas id="userStatsChart" ></canvas>
+    <canvas id="userStatsChart"></canvas>
   </div>
 </template>
 
 <script>
-
-import Chart from 'chart.js/auto';
+import Chart from "chart.js/auto";
 
 export default {
   data() {
@@ -189,7 +188,7 @@ export default {
       statistics: null,
       sortKey: "wins",
       sortDirection: "desc",
-      userStatistics: []
+      userStatistics: [],
     };
   },
   mounted() {
@@ -278,61 +277,59 @@ export default {
       //   );
       //   if (response.ok) {
       //     const data = await response.json();
-          this.userStatistics = this.statistics;//data;
-          this.userStatistics.sort((a, b) => b.matches - a.matches);
-          const usernames = this.userStatistics.map(user => user.username);
-          const wins = this.userStatistics.map(user => user.wins);
-          const losses = this.userStatistics.map(user => user.losses);
-          const ctx = document.getElementById('userStatsChart').getContext('2d');
-          Chart.defaults.backgroundColor = '#9BD0F5';
-          Chart.defaults.borderColor = '#36A2EB';
-          Chart.defaults.color='#dbe375';
-          Chart.defaults.font.size='18';
-          Chart.defaults.font.weight='bold';
-          new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: usernames,
-              datasets: [
-                {
-                  label: 'Wins',
-                  data: wins,
-
-                },
-                {
-                  label: 'Losses',
-                  data: losses,
-
-                },
-              ],
+      this.userStatistics = this.statistics; //data;
+      this.userStatistics.sort((a, b) => b.matches - a.matches);
+      const usernames = this.userStatistics.map((user) => user.username);
+      const wins = this.userStatistics.map((user) => user.wins);
+      const losses = this.userStatistics.map((user) => user.losses);
+      const ctx = document.getElementById("userStatsChart").getContext("2d");
+      Chart.defaults.backgroundColor = "#9BD0F5";
+      Chart.defaults.borderColor = "#36A2EB";
+      Chart.defaults.color = "#dbe375";
+      Chart.defaults.font.size = "18";
+      Chart.defaults.font.weight = "bold";
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: usernames,
+          datasets: [
+            {
+              label: "Wins",
+              data: wins,
             },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: {
-                  display: true,
-                  position: 'bottom',
-                },
-              },
-              scales: {
-                x: {
-                  stacked: true,
-                  title: {
-                    display: true,
-                    text: 'Users',
-                  },
-                },
-                y: {
-                  stacked:true,
-                  title: {
-                    display: true,
-                    text: 'Games',
-                  },
-                },
+            {
+              label: "Losses",
+              data: losses,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "bottom",
+            },
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+                text: "Users",
               },
             },
-          });
-          // Handle the user history data as needed
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: "Games",
+              },
+            },
+          },
+        },
+      });
+      // Handle the user history data as needed
       //   } else {
       //     console.error("Failed to render statistics");
       //   }
@@ -340,7 +337,7 @@ export default {
       //   console.error("Error rendering user history:", error);
       // }
     },
-  }
+  },
 };
 </script>
 

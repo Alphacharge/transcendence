@@ -90,9 +90,7 @@ export class TwoFactorAuthController {
 
     console.log('2fa code accepted.');
 
-    const databaseUser = await this.prismaService.getUser2FAById(
-      body.userId,
-    );
+    const databaseUser = await this.prismaService.getUser2FAById(body.userId);
     const accessToken = await this.authService.signToken(
       databaseUser.id,
       databaseUser.username,

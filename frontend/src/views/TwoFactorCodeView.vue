@@ -1,6 +1,6 @@
 <template>
   <div class="twofa-container">
-  <Send2faCode></Send2faCode>
+    <Send2faCode></Send2faCode>
   </div>
 </template>
 

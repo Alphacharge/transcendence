@@ -1,5 +1,5 @@
 <template>
-  <PongButtons />
+  <RemoteGameButtons />
   <ScoreBoard />
   <div class="game-wrapper">
     <GameArea></GameArea>
@@ -10,7 +10,7 @@
 <script>
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import PongButtons from "@/components/PongButtons.vue";
+import RemoteGameButtons from "@/components/RemoteGameButtons.vue";
 import CountDown from "@/components/CountDown.vue";
 import {
   connectWebSocket,
@@ -24,7 +24,7 @@ export default {
       countDownVisible: false,
     };
   },
-  components: { GameArea, ScoreBoard, PongButtons, CountDown },
+  components: { GameArea, ScoreBoard, RemoteGameButtons, CountDown },
 
   mounted() {
     connectWebSocket();
