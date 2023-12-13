@@ -156,20 +156,18 @@ export class GameGateway {
   }
 
   sendTournamentQueue(socket: Socket) {
-      this.gameService.queueTournament.forEach((queuedUser) => {
-        this.gameService.queueTournament.forEach((queuedSocket) => {
-          queuedSocket.socket.emit(
-            'playerJoinedTournament', {
-              id: queuedUser.userData.id,
-              username: queuedUser.userData.username,
-              avatar: {
-                id: queuedUser.userData.avatar.id,
-                mime_type: queuedUser.userData.avatar.mime_type,
-              },
-            },
-          );
+    this.gameService.queueTournament.forEach((queuedUser) => {
+      this.gameService.queueTournament.forEach((queuedSocket) => {
+        queuedSocket.socket.emit('playerJoinedTournament', {
+          id: queuedUser.userData.id,
+          username: queuedUser.userData.username,
+          avatar: {
+            id: queuedUser.userData.avatar.id,
+            mime_type: queuedUser.userData.avatar.mime_type,
+          },
         });
       });
+    });
   }
 
   /* Tell the client the game starts now. */
@@ -288,8 +286,7 @@ export class GameGateway {
   removedFromTournamentQueue(user: User) {
     this.gameService.queueTournament.forEach((queuedUser) => {
       this.gameService.queueTournament.forEach((queuedSocket) => {
-        queuedSocket.socket.emit(
-          'playerLeftTournament', user.userData.id);
+        queuedSocket.socket.emit('playerLeftTournament', user.userData.id);
       });
     });
     user.socket.emit('removedFromTournamentQueue');

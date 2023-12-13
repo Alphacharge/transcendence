@@ -16,10 +16,8 @@ export default {
   StartLocalGame: "Start Local Game",
   EnterTournament: "Enter Tournament",
   LeaveTournament: "Leave Tournament",
-  LocalGameExplanationLeft:
-  "W/S",
-  LocalGameExplanationRight:
-  "arrow up/arrow down",
+  LocalGameExplanationLeft: "W/S",
+  LocalGameExplanationRight: "arrow up/arrow down",
 
   // SIGNUP & LOGIN
   Username: "Username",

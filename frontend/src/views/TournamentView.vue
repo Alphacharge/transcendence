@@ -3,7 +3,7 @@
     <div v-if="playerCheckinVisible && players.length < 4">
       <PlayerCheckin />
     </div>
-    <PlayersComponent v-if="!countDownVisible" :players="players"/>
+    <PlayersComponent v-if="!countDownVisible" :players="players" />
   </div>
   <ScoreBoard v-if="tournamentStarted" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
@@ -59,12 +59,12 @@ export default {
     });
 
     socket.on("playerJoinedTournament", (user) => {
-      if (!this.players.some(player => player.id == user.id)) {
+      if (!this.players.some((player) => player.id == user.id)) {
         this.players.push(user);
       }
     });
     socket.on("playerLeftTournament", (userId) => {
-      const index = this.players.findIndex(player => player.id === userId);
+      const index = this.players.findIndex((player) => player.id === userId);
       if (index !== -1) {
         this.players.splice(index, 1);
       }

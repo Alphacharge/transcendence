@@ -80,5 +80,4 @@ export default {
   text-align: right;
   flex: 1;
 }
-
 </style>

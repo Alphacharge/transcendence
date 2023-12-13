@@ -16,10 +16,8 @@ export default {
   StartLocalGame: "Starte lokales Spiel",
   EnterTournament: "Turnier beitreten",
   LeaveTournament: "Turnier verlassen",
-  LocalGameExplanationLeft:
-  "W/S",
-  LocalGameExplanationRight:
-  "Pfeil hoch/Pfeil runter",
+  LocalGameExplanationLeft: "W/S",
+  LocalGameExplanationRight: "Pfeil hoch/Pfeil runter",
 
   // SIGNUP & LOGIN
   Username: "Benutzername",
