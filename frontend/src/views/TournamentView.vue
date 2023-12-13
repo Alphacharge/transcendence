@@ -64,12 +64,10 @@ export default {
       }
     });
     socket.on("playerLeftTournament", (userId) => {
-      console.log(this.players, localStorage.getItem("userId"));
       const index = this.players.findIndex(player => player.id === userId);
       if (index !== -1) {
         this.players.splice(index, 1);
       }
-      console.log(this.players);
     });
   },
 };
