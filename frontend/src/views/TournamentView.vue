@@ -17,7 +17,7 @@
       <p>No players available yet.</p>
     </div>
   </div>
-  <ScoreBoard></ScoreBoard>
+  <ScoreBoard :scoreEnabled="false"></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
     <CountDown v-if="countDownVisible"></CountDown>

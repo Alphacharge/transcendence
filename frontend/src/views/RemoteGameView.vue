@@ -1,6 +1,6 @@
 <template>
   <RemoteGameButtons />
-  <ScoreBoard />
+  <ScoreBoard :scoreEnabled="true" />
   <div class="game-wrapper">
     <GameArea></GameArea>
     <CountDown v-if="countDownVisible" />
