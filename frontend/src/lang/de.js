@@ -14,8 +14,12 @@ export default {
   LeaveQueue: "Warteschlange verlassen",
   LocalGame: "Lokales Spiel",
   StartLocalGame: "Starte lokales Spiel",
-  LocalGameExplanation:
-    "Spiele an der gleichen Tastatur mit W/S und Pfeil nach oben/Pfeil nach unten",
+  EnterTournament: "Turnier beitreten",
+  LeaveTournament: "Turnier verlassen",
+  LocalGameExplanationLeft:
+  "W/S",
+  LocalGameExplanationRight:
+  "Pfeil hoch/Pfeil runter",
 
   // SIGNUP & LOGIN
   Username: "Benutzername",

@@ -1,23 +1,11 @@
 <template>
-  <div>
-    <h2>Tournament Players</h2>
+  <div class="top">
     <div v-if="playerCheckinVisible && players.length < 4">
       <PlayerCheckin />
     </div>
-    <div v-else>
-      <h3>Get Ready to Play...</h3>
-    </div>
-    <div v-if="players.length > 0 && players.length < 4">
-      <h3>Players waiting to play</h3>
-      <p v-for="(player, index) in players" :key="index">
-        Player {{ index + 1 }} {{ player }}
-      </p>
-    </div>
-    <div v-else>
-      <p>No players available yet.</p>
-    </div>
+    <PlayersComponent v-if="!countDownVisible" :players="players"/>
   </div>
-  <ScoreBoard :scoreEnabled="false"></ScoreBoard>
+  <ScoreBoard v-if="tournamentStarted" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
     <CountDown v-if="countDownVisible"></CountDown>
@@ -34,6 +22,7 @@ import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
+import PlayersComponent from "@/components/PlayersComponent.vue";
 
 export default {
   components: {
@@ -41,6 +30,7 @@ export default {
     GameArea,
     ScoreBoard,
     CountDown,
+    PlayersComponent,
   },
   data() {
     return {
@@ -48,6 +38,7 @@ export default {
       tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
       playerCheckinVisible: true,
       countDownVisible: false,
+      tournamentStarted: false,
     };
   },
 
@@ -64,19 +55,21 @@ export default {
       // INSERT remove all parts of the interface you don't want to show during a tournament
       this.countDownVisible = true;
       this.playerCheckinVisible = false;
+      this.tournamentStarted = true;
     });
 
-    socket.on("playerJoinedTournament", (username) => {
-      if (!this.players.includes(username)) {
-        this.players.push(username);
+    socket.on("playerJoinedTournament", (user) => {
+      if (!this.players.some(player => player.id == user.id)) {
+        this.players.push(user);
       }
     });
-
-    socket.on("playerLeftTournament", (username) => {
-      const index = this.players.indexOf(username);
+    socket.on("playerLeftTournament", (userId) => {
+      console.log(this.players, localStorage.getItem("userId"));
+      const index = this.players.findIndex(player => player.id === userId);
       if (index !== -1) {
         this.players.splice(index, 1);
       }
+      console.log(this.players);
     });
   },
 };
@@ -85,5 +78,9 @@ export default {
 <style>
 .game-wrapper {
   position: relative;
+}
+
+.top {
+  margin-top: 4em;
 }
 </style>

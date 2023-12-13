@@ -14,8 +14,12 @@ export default {
   LeaveQueue: "Lascia la Coda",
   LocalGame: "gioco locale",
   StartLocalGame: "avviare il gioco locale",
-  LocalGameExplanation:
-    "Gioca sulla stessa tastiera con i pulsanti W/S e freccia su/freccia giù",
+  "EnterTournament": "Partecipa al Torneo",
+  "LeaveTournament": "Abbandona il Torneo",
+  LocalGameExplanationLeft:
+  "W/S",
+  LocalGameExplanationRight:
+  "freccia su/freccia giù",
 
   // SIGNUP & LOGIN
   Username: "Nome utente",
