@@ -188,12 +188,13 @@ export class AuthService {
       const decodedToken: any = await this.jwt.verifyAsync(token, {
         secret: secret,
       });
-      if (userId === decodedToken.sub) {
+      if (Number(userId) === decodedToken.sub) {
         return true;
       }
+      console.error("User ID does not match decoded token sub");
       return false;
     } catch (error) {
-      console.error('token verification failed');
+      console.error('token verification failed', error);
       return false;
     }
   }
