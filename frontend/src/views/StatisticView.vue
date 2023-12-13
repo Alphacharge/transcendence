@@ -173,12 +173,19 @@
       </table>
     </div>
   </div>
+  <span style="justify-content: center; color: rgb(219,219,227);">{{ $t('Select histogram legend to filter, hover on graphs for detail') }}</span>
   <div class="graph-wrapper">
-    <canvas id="userStatsChart"></canvas>
+    <div class="graph-container">
+      <canvas id="championsBoard"></canvas>
+    </div>
+    <div class="graph-container reduced">
+      <canvas id="gameType"></canvas>
+    </div>
   </div>
 </template>
 
 <script>
+import RemoteGameButtons from "@/components/RemoteGameButtons.vue";
 import Chart from "chart.js/auto";
 
 export default {
@@ -207,6 +214,7 @@ export default {
   },
   methods: {
     sortTable(key) {
+      console.log(`DEBUG SORTABLE ${key}`);
       if (key === this.sortKey) {
         this.sortDirection = this.sortDirection === "desc" ? "asc" : "desc";
       } else {
@@ -255,7 +263,6 @@ export default {
           const data = await response.json();
           this.statistics = data;
           this.renderChart();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch statistics");
         }
@@ -264,31 +271,24 @@ export default {
       }
     },
     renderChart() {
-      // try {
-      //   // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
-      //   const response = await fetch(
-      //     `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/allstats`,
-      //     {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //     },
-      //   );
-      //   if (response.ok) {
-      //     const data = await response.json();
-      this.userStatistics = this.statistics; //data;
-      this.userStatistics.sort((a, b) => b.matches - a.matches);
+      this.userStatistics = this.statistics;
+      this.userStatistics.sort((a, b) => (b.wins - a.wins));
       const usernames = this.userStatistics.map((user) => user.username);
       const wins = this.userStatistics.map((user) => user.wins);
       const losses = this.userStatistics.map((user) => user.losses);
-      const ctx = document.getElementById("userStatsChart").getContext("2d");
-      Chart.defaults.backgroundColor = "#9BD0F5";
-      Chart.defaults.borderColor = "#36A2EB";
-      Chart.defaults.color = "#dbe375";
-      Chart.defaults.font.size = "18";
-      Chart.defaults.font.weight = "bold";
-      new Chart(ctx, {
+      const histogram = document.getElementById("championsBoard").getContext("2d");
+      const doughnut = document.getElementById("gameType").getContext("2d");
+      let totalTourmatches = 0;
+      let totalMatches = 0;
+      this.userStatistics.forEach(obj=>{
+        totalTourmatches += obj.tourmatches;
+        totalMatches += obj.matches;
+      })
+      console.log(`RENDERCHART matches=${totalMatches}, tournaments=${totalTourmatches}`);
+      const totalSimpleMatches = totalMatches - totalTourmatches;
+      // Chart.defaults.borderColor = "#36A2EB";
+      Chart.defaults.color = "#dbdbe3";
+      new Chart(histogram, {
         type: "bar",
         data: {
           labels: usernames,
@@ -296,10 +296,12 @@ export default {
             {
               label: "Wins",
               data: wins,
+              backgroundColor: 'rgba(0,115,0,0.5)',
             },
             {
               label: "Losses",
               data: losses,
+              backgroundColor: 'rgba(230,0,0,0.5)',
             },
           ],
         },
@@ -316,26 +318,48 @@ export default {
               stacked: true,
               title: {
                 display: true,
-                text: "Users",
               },
             },
             y: {
+              display: true,
               stacked: true,
               title: {
                 display: true,
-                text: "Games",
               },
             },
           },
         },
       });
-      // Handle the user history data as needed
-      //   } else {
-      //     console.error("Failed to render statistics");
-      //   }
-      // } catch (error) {
-      //   console.error("Error rendering user history:", error);
-      // }
+      new Chart(doughnut, {
+        type: "doughnut",
+        data: {
+          labels: [
+            "Tournaments",
+            "Matches"
+          ],
+          datasets: [{
+            data: [
+              totalTourmatches,
+              totalSimpleMatches
+            ],
+            backgroundColor: [
+              'rgb(5,155,255)',
+              'rgb(6,8,139)',
+            ],
+            hoverOffset: 1,
+            borderWidth: 0,
+          }],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+            },
+          },
+        },
+      });
     },
   },
 };
@@ -410,7 +434,16 @@ export default {
 }
 
 .graph-wrapper {
-  height: 40vh;
-  width: 60vw;
+  display: flex;
+  justify-content:space-between;
+  width: 80%;
+}
+
+.graph-container {
+  width: 48%;
+}
+
+.reduced {
+  height: 30vh;
 }
 </style>
