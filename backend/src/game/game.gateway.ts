@@ -154,17 +154,15 @@ export class GameGateway {
       .emit('tournamentPlayerCount', this.gameService.queueTournament.length);
 
     this.gameService.queueTournament.forEach((queuedUser) => {
-      this.server
-        .to('tournamentWatchers')
-        .emit('playerJoinedTournament', {
-          id: queuedUser.userData.id,
-          username: queuedUser.userData.username,
-          avatar: {
-            id: queuedUser.userData.avatar.id,
-            mime_type: queuedUser.userData.avatar.mime_type,
-          }
-		})
-	});
+      this.server.to('tournamentWatchers').emit('playerJoinedTournament', {
+        id: queuedUser.userData.id,
+        username: queuedUser.userData.username,
+        avatar: {
+          id: queuedUser.userData.avatar.id,
+          mime_type: queuedUser.userData.avatar.mime_type,
+        },
+      });
+    });
   }
 
   /* Tell the client the game starts now. */
@@ -294,7 +292,7 @@ export class GameGateway {
     this.server
       .to('tournamentWatchers')
       .emit('playerLeftTournament', user.userData.id); // informs all clients someone left the queue
-	  this.sendTournamentInfo();
+    this.sendTournamentInfo();
   }
 
   tournamentStart(tournament: TournamentState) {

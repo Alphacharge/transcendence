@@ -1,13 +1,9 @@
 <template>
   <div class="top">
-  <PlayerCheckin v-if="!inActiveTournament" />
-  <TournamentArray></TournamentArray>
-  <div>
-    <h3>{{ $t("RegisteredPlayers") }}:</h3>
-    <!-- REPLACE with player boxes -->
-    <p v-for="(player, index) in players" :key="index">
-      {{ player }}
-    </p>
+    <div v-if="!inActiveTournament">
+      <PlayerCheckin />
+    </div>
+    <PlayersComponent v-if="!inActiveTournament" :players="players" />
   </div>
   <p v-for="(winner, index) in winners" :key="index">
     Game {{ index + 1 }} winner: {{ winner }}
@@ -15,7 +11,6 @@
   <div v-if="tournamentWinner">
     <p>Tournament Winner: {{ tournamentWinner }}</p>
   </div>
-</div>
   <ScoreBoard v-if="inActiveTournament" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
@@ -74,7 +69,7 @@ export default {
       }
     });
 
-    socket.on("playerJoinedTournament", (username) => {
+    socket.on("playerJoinedTournament", (user) => {
       if (this.inActiveTournament) {
         return;
       }
