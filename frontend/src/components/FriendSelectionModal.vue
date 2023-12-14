@@ -7,7 +7,9 @@
             <div class="image_friends">
               <img :src="getAvatarSrc(nonFriend.avatar)" alt="Avatar" />
             </div>
-            <div>{{ nonFriend.username }}</div>
+            <div class="friend-name">
+              <div>{{ nonFriend.username }}</div>
+            </div>
             <div class="image_friends_status">
               <img
                 style="width: 16px; height: auto"
@@ -24,7 +26,7 @@
         </li>
       </ul>
       <button @click="addSelectedFriends">{{ $t("AddFriends") }}</button>
-      <button @click="closeModal">Close</button>
+      <button @click="closeModal">{{ $t("closeList") }}</button>
     </div>
   </div>
 </template>
@@ -114,14 +116,18 @@ export default {
 
 <style scoped>
 .friend-selection-modal {
-  position: fixed;
+  position: sticky;
+  display: flex;
+  flex-direction: column;
+  color: rgb(1, 8, 51);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
+  background-color: rgb(144, 154, 163);
   padding: 20px;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   z-index: 1000;
+  opacity: 0.9;
 }
 
 .modal-content {
@@ -129,11 +135,15 @@ export default {
 }
 
 ul {
-  list-style: none;
+  list-style-type: none;
   padding: 0;
 }
 
 li {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+  margin-bottom: 1em;
   margin-bottom: 10px;
 }
 
@@ -145,6 +155,15 @@ li {
   position: relative;
 }
 
+.image_friends_status {
+  left: 15em;
+  margin-left: auto;
+  margin-right: 1em;
+}
+
+.friend-name {
+  flex-grow: 1;
+}
 .image_friends img {
   width: 100%;
   height: 100%;

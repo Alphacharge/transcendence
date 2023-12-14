@@ -3,9 +3,7 @@
     <div class="patch-left">
       <UserProfile />
     </div>
-    <div class="patch-right">
-      <FriendList />
-    </div>
+    <FriendList />
   </div>
 </template>
 
@@ -27,10 +25,5 @@ export default {
 }
 .patch-left {
   flex-grow: 1;
-}
-.patch-right {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 0.8;
 }
 </style>

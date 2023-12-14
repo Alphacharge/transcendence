@@ -295,7 +295,7 @@ export default {
 .profile-data {
   margin-left: 1.5em;
   padding-top: 0.5em;
-  flex: 5;
+  flex: 6;
 }
 
 .two-fa-auth {
@@ -310,7 +310,8 @@ export default {
 .image-profile-container {
   position: relative;
   display: inline-block;
-  flex: 2;
+  flex: 1;
+  width: fit-content;
 }
 
 .image-profile {
