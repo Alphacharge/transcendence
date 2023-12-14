@@ -16,6 +16,9 @@
         {{ $t("twoFAenable") }}
       </button>
     </router-link>
+    <router-link to="ChangePassword">
+        <img class="pw-icon" :src="getPWSrc()" alt="Change PW"/>
+    </router-link>
   </div>
 </template>
 
@@ -67,7 +70,9 @@ export default {
         console.error("Error checking 2FA status:", error.message);
       }
     },
-
+    getPWSrc() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/pw_change.png`;
+    },
     async disable2FA() {
       try {
         const response = await fetch(
@@ -109,5 +114,14 @@ export default {
 
 .twofa-disabled {
   background-color: red;
+}
+
+.pw-icon {
+  width: 3em;
+  height: 3em;
+  margin-top: 0.5em;
+  position: relative;
+  object-fit: cover;
+  transform: scale(1);
 }
 </style>
