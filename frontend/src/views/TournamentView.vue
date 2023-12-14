@@ -1,26 +1,23 @@
 <template>
+  <PlayerCheckin v-if="!inActiveTournament" />
+  <TournamentArray></TournamentArray>
   <div>
-    <h2>Tournament Players</h2>
-    <div v-if="playerCheckinVisible && players.length < 4">
-      <PlayerCheckin />
-    </div>
-    <div v-else>
-      <h3>Get Ready to Play...</h3>
-    </div>
-    <div v-if="players.length > 0 && players.length < 4">
-      <h3>Players waiting to play</h3>
-      <p v-for="(player, index) in players" :key="index">
-        Player {{ index + 1 }} {{ player }}
-      </p>
-    </div>
-    <div v-else>
-      <p>No players available yet.</p>
-    </div>
+    <h3>{{ $t("RegisteredPlayers") }}:</h3>
+    <!-- REPLACE with player boxes -->
+    <p v-for="(player, index) in players" :key="index">
+      {{ player }}
+    </p>
+  </div>
+  <p v-for="(winner, index) in winners" :key="index">
+    Game {{ index + 1 }} winner: {{ winner }}
+  </p>
+  <div v-if="tournamentWinner">
+    <p>Tournament Winner: {{ tournamentWinner }}</p>
   </div>
   <ScoreBoard></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
-    <CountDown v-if="countDownVisible"></CountDown>
+    <CountDown v-if="inActiveTournament"></CountDown>
   </div>
 </template>
 
@@ -42,12 +39,14 @@ export default {
     ScoreBoard,
     CountDown,
   },
+
   data() {
     return {
       players: [],
-      tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
-      playerCheckinVisible: true,
-      countDownVisible: false,
+      winners: [],
+      inActiveTournament: false,
+      iAmRegistered: false,
+      tournamentWinner: "",
     };
   },
 
@@ -61,22 +60,51 @@ export default {
     socket.requestTournamentInfo();
 
     socket.on("tournamentStart", () => {
-      // INSERT remove all parts of the interface you don't want to show during a tournament
-      this.countDownVisible = true;
-      this.playerCheckinVisible = false;
+      this.inActiveTournament = true;
+    });
+
+    socket.on("tournamentReset", () => {
+      // if i am not part of the running tournament, reset everything
+      if (!this.iAmRegistered) {
+        this.players.length = 0;
+      }
     });
 
     socket.on("playerJoinedTournament", (username) => {
+      if (this.inActiveTournament) {
+        return;
+      }
+
       if (!this.players.includes(username)) {
         this.players.push(username);
       }
     });
 
     socket.on("playerLeftTournament", (username) => {
+      if (this.inActiveTournament) {
+        return;
+      }
+
       const index = this.players.indexOf(username);
       if (index !== -1) {
         this.players.splice(index, 1);
       }
+    });
+
+    socket.on("addedToTournamentQueue", () => {
+      this.iAmRegistered = true;
+    });
+
+    socket.on("removedFromTournamentQueue", () => {
+      this.iAmRegistered = false;
+    });
+
+    socket.on("victoryOf", (username) => {
+      this.winners.push(username);
+    });
+
+    socket.on("tournamentWinner", (username) => {
+      this.tournamentWinner = username;
     });
   },
 };

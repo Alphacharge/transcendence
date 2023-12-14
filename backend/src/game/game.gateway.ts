@@ -34,7 +34,6 @@ export class GameGateway {
     private readonly prismaService: PrismaService,
   ) {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
-      console.error(`GAME.GATEWAY, PREPAREGAME, debug`);
       if (game) this.sendPrepareGame(game);
     });
     sharedEventEmitter.on('startGame', (game: GameState) => {
@@ -52,16 +51,17 @@ export class GameGateway {
     sharedEventEmitter.on('victory', (game: GameState) => {
       this.announceVictory(game);
     });
+    sharedEventEmitter.on('tournamentWinner', (game: GameState) => {
+      this.tournamentWinner(game);
+    });
     sharedEventEmitter.on('countDown', (game: GameState) => {
       this.matchStart(game);
     });
     sharedEventEmitter.on('addedToTournamentQueue', (user: User) => {
       this.addedToTournamentQueue(user);
-      this.sendTournamentQueueLength();
     });
     sharedEventEmitter.on('removedFromTournamentQueue', (user: User) => {
       this.removedFromTournamentQueue(user);
-      this.sendTournamentQueueLength();
     });
     sharedEventEmitter.on('addedToQueue', (user: User) => {
       this.addedToQueue(user);
@@ -143,51 +143,37 @@ export class GameGateway {
   }
 
   @SubscribeMessage('requestTournamentInfo')
-  sendTournamentInfo(@ConnectedSocket() socket: Socket) {
-    this.sendTournamentQueueLength();
-    this.sendTournamentQueue(socket);
+  requestTournamentInfo(@ConnectedSocket() socket: Socket) {
+    socket.join('tournamentWatchers'); // socket room of people on the tournament site
+    this.sendTournamentInfo();
   }
 
-  sendTournamentQueueLength() {
-    this.server.emit(
-      'tournamentPlayerCount',
-      this.gameService.queueTournament.length,
-    );
-  }
+  sendTournamentInfo() {
+    this.server
+      .to('tournamentWatchers')
+      .emit('tournamentPlayerCount', this.gameService.queueTournament.length);
 
-  sendTournamentQueue(socket: Socket) {
-    if (socket) {
-      this.gameService.queueTournament.forEach((queuedUser) => {
-        socket.emit('playerJoinedTournament', queuedUser.userData.username);
-      });
-    } else {
-      this.gameService.queueTournament.forEach((queuedUser) => {
-        this.gameService.queueTournament.forEach((queuedSocket) => {
-          queuedSocket.socket.emit(
-            'playerJoinedTournament',
-            queuedUser.userData.username,
-          );
-        });
-      });
-    }
+    this.gameService.queueTournament.forEach((queuedUser) => {
+      this.server
+        .to('tournamentWatchers')
+        .emit('playerJoinedTournament', queuedUser.userData.username);
+    });
   }
 
   /* Tell the client the game starts now. */
   sendGameStart(game: GameState) {
-    game.user1.socket.emit('start');
-    if (game.user2) game.user2.socket.emit('start');
+    game.user1?.socket.emit('start');
+    game.user2?.socket.emit('start');
   }
 
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
-    // tell the client the player number
-
+    // REDUNDANT player1 and player2 messages are no longer needed
     game.user1.socket.emit('player1');
     game.user1.socket.emit('prepareGame');
-    if (game.user2) {
-      game.user2.socket.emit('player2');
-      game.user2.socket.emit('prepareGame');
-    }
+    game.user2?.socket.emit('player2');
+    game.user2?.socket.emit('prepareGame');
+
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -196,24 +182,21 @@ export class GameGateway {
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
-    game.user1.socket.emit('ballUpdate', game.ballCoordinates());
-    if (game.user2)
-      game.user2.socket.emit('ballUpdate', game.ballCoordinates());
+    game.user1?.socket.emit('ballUpdate', game.ballCoordinates());
+    game.user2?.socket.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
     game.user1.socket.emit('scoreUpdate', game.getScore());
-    if (game.user2) game.user2.socket.emit('scoreUpdate', game.getScore());
+    game.user2?.socket.emit('scoreUpdate', game.getScore());
   }
 
   // update for both paddles
   sendPaddleUpdate(game: GameState) {
-    game.user1.socket.emit('leftPaddle', game.leftPosition);
-    game.user1.socket.emit('rightPaddle', game.rightPosition);
-    if (game.user2) {
-      game.user2.socket.emit('leftPaddle', game.leftPosition);
-      game.user2.socket.emit('rightPaddle', game.rightPosition);
-    }
+    game.user1?.socket.emit('leftPaddle', game.leftPosition);
+    game.user1?.socket.emit('rightPaddle', game.rightPosition);
+    game.user2?.socket.emit('leftPaddle', game.leftPosition);
+    game.user2?.socket.emit('rightPaddle', game.rightPosition);
   }
 
   // listen for paddle updates
@@ -242,44 +225,54 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket.emit('victory', 'Player 1');
+        game.user1.socket.emit('victory', '1');
       } else {
-        game.user1.socket.emit('victory', 'Player 2');
+        game.user1.socket.emit('victory', '2');
       }
     } else {
+      // if this is a tournament, inform each participant about the win
+      if (game.tournamentState) {
+        game.tournamentState.players.forEach((player) => {
+          player.socket.emit('victoryOf', game.winningPlayer.userData.username);
+        });
+      }
+      // tell the participants of the game who won
       game.user1.socket.emit('victory', game.winningPlayer.userData.username);
       game.user2.socket.emit('victory', game.winningPlayer.userData.username);
     }
   }
 
+  tournamentWinner(game: GameState) {
+    game.tournamentState.players.forEach((player) => {
+      player.socket.emit(
+        'tournamentWinner',
+        game.winningPlayer.userData.username,
+      );
+    });
+  }
+
   matchStart(game: GameState) {
-    if (game.user1 && game.user1.socket) {
-      game.user1.socket.emit('countDown', game.currentCount);
-    }
-    if (game.user2 && game.user2.socket) {
-      game.user2.socket.emit('countDown', game.currentCount);
-    }
-    console.log(`Countdown: ${game.currentCount}`);
+    game.user1?.socket?.emit('countDown', game.currentCount);
+    game.user2?.socket?.emit('countDown', game.currentCount);
+    // console.log(`Countdown: ${game.currentCount}`);
   }
 
   addedToTournamentQueue(user: User) {
     user.socket.emit('addedToTournamentQueue');
-    this.sendTournamentInfo(null);
+    this.sendTournamentInfo();
   }
 
   removedFromTournamentQueue(user: User) {
-    this.gameService.queueTournament.forEach((queuedUser) => {
-      this.gameService.queueTournament.forEach((queuedSocket) => {
-        queuedSocket.socket.emit(
-          'playerLeftTournament',
-          queuedUser.userData.username,
-        );
-      });
-    });
-    user.socket.emit('removedFromTournamentQueue');
+    user.socket.emit('removedFromTournamentQueue'); // tells the user they are not queued
+    this.server
+      .to('tournamentWatchers')
+      .emit('playerLeftTournament', user.userData.username); // informs all clients someone left the queue
+    this.sendTournamentInfo();
   }
 
   tournamentStart(tournament: TournamentState) {
+    this.server.to('tournamentWatchers').emit('tournamentReset');
+
     tournament.players.forEach((user) => {
       user.socket.emit('tournamentStart');
     });

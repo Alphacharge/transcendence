@@ -29,7 +29,6 @@ export default {
   mounted() {
     connectWebSocket();
     socket.on("prepareGame", () => {
-      console.log("PEPAREGAME LISTENED");
       this.countDownVisible = true;
     });
   },

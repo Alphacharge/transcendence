@@ -35,21 +35,25 @@ export class AuthController {
   @Header('Content-Type', 'application/json')
   async checkLoggedIn(@Req() req: Request, @Res() res: Response) {
     try {
-      // ? checks if any of the called properties returned null and doesn't execute what follows after
-      // header format: Authorization: Bearer <token>
-      const token = req.headers.authorization?.split(' ')[1]; // Extract the token from the authorization header
+      const token = req.headers.authorization?.split(' ')[1];
 
       if (!token) {
-        res.status(401).json({ message: 'Invalid or expired token' });
+        // If no token exists, send a response indicating user not logged in
+        res
+          .status(200)
+          .json({ isLoggedIn: false, message: 'User not logged in' });
         return;
       }
 
       const validToken = await this.authService.validateToken(token);
 
       if (validToken) {
-        res.status(200).json({ message: 'Authorized' });
+        res.status(200).json({ isLoggedIn: true, message: 'Authorized' });
       } else {
-        res.status(401).json({ message: 'Invalid or expired token' });
+        // If the token is invalid/expired, it's not an authentication error but an indication of not being logged in
+        res
+          .status(200)
+          .json({ isLoggedIn: false, message: 'User not logged in' });
       }
     } catch (error) {
       res.status(500).json({ message: 'Internal server error' });

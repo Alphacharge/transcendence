@@ -1,9 +1,10 @@
 export default {
   // NAVBAR
   Game: "Gioco",
+  LocalGame: "Gioco Locale",
   Tournament: "Torneo",
   Statistics: "Statistiche",
-  Profil: "Profilo",
+  Profile: "Profilo",
   LogIn: "Accedi",
   SignUp: "Registrati",
   About: "Informazioni",
@@ -12,8 +13,7 @@ export default {
   // PONG GAME
   EnterQueue: "Entra in Coda",
   LeaveQueue: "Lascia la Coda",
-  LocalGame: "gioco locale",
-  StartLocalGame: "avviare il gioco locale",
+  StartLocalGame: "Avviare il gioco locale",
   LocalGameExplanation:
     "Gioca sulla stessa tastiera con i pulsanti W/S e freccia su/freccia giù",
 

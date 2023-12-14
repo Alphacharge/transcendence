@@ -1,7 +1,7 @@
 <template>
   <div class="scoreboard">
     <div class="announce-winner" v-if="announceVisible">
-      Player {{ winningPlayer }} Wins!
+      {{ $t("Player") }} {{ winningPlayer }} {{ $t("wins") }}!
     </div>
     <div class="game-score">{{ player1Score }}:{{ player2Score }}</div>
   </div>
