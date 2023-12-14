@@ -55,6 +55,7 @@ export default {
   profileRegister: "Registered since",
   usernameTaken: "Username is taken",
   AddFriends: "Add Friends",
+  closeList: "Close",
 
   //2fa
   twoFAenable: "enable",
