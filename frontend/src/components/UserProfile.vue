@@ -134,11 +134,8 @@ export default {
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
-            body: JSON.stringify({
-              userId: localStorage.getItem("userId"),
-            }),
           },
         );
 
@@ -168,11 +165,9 @@ export default {
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
             body: JSON.stringify({
-              userId: localStorage.getItem("userId"),
-              accessToken: localStorage.getItem("access_token"),
               newUsername: this.editedUsername,
             }),
           },
