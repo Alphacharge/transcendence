@@ -1,47 +1,60 @@
 <template>
-  <div class="friend-list">
-    <ul>
-      <li>
-        <div class="add-friend" @click="addFriend">{{ $t("AddFriends") }}</div>
-        <div class="image_friends_add" @click="openFriendSelectionModal">
-          <img
-            style="width: 16px; height: auto"
-            :src="getPlusSrc()"
-            alt="addFriend"
-          />
-        </div>
-      </li>
-    </ul>
-    <ul>
-      <li v-for="friend in friends" :key="friend.id">
-        <div class="image_friends">
-          <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
-        </div>
-        <div class="friend-name">
-          {{ friend.username }}
-        </div>
-        <div class="image_friends_status">
-          <img
-            style="width: 16px; height: auto"
-            :src="getStatusSrc(friend.status)"
-            alt="Status"
-          />
-        </div>
-        <div class="image_friends_remove" @click="removeFriend(friend.id)">
-          <img
-            style="width: 16px; height: auto"
-            :src="getCrossSrc()"
-            alt="rmFriend"
-          />
-        </div>
-      </li>
-    </ul>
+  <div class="patch-right">
+    <div class="friend-list" :class="{ 'friend-list-visible': listStatus }">
+      <ul>
+        <li>
+          <div class="add-friend" @click="openFriendSelectionModal">
+            {{ $t("AddFriends") }}
+          </div>
+          <div class="image_friends_add">
+            <img
+              style="width: 16px; height: auto"
+              :src="getPlusSrc()"
+              alt="addFriend"
+            />
+          </div>
+        </li>
+      </ul>
+      <ul>
+        <li v-for="friend in friends" :key="friend.id">
+          <div class="image_friends">
+            <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
+          </div>
+          <div class="friend-name">
+            {{ friend.username }}
+          </div>
+          <div class="image_friends_status">
+            <img
+              style="width: 16px; height: auto"
+              :src="getStatusSrc(friend.status)"
+              alt="Status"
+            />
+          </div>
+          <div class="image_friends_remove" @click="removeFriend(friend.id)">
+            <img
+              style="width: 16px; height: auto"
+              :src="getCrossSrc()"
+              alt="rmFriend"
+            />
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div>
+      <friend-selection-modal
+        ref="friendSelectionModal"
+        :nonFriends="nonFriends"
+        @add-friends="handleFriendsAdded"
+      ></friend-selection-modal>
+    </div>
+    <div class="friendlist-icon" @click="toggleFriendListStatus">
+      <img
+        class="friendlist-icon-img"
+        :src="listStatus ? getFriendCloseSrc() : getFriendOpenSrc()"
+        alt="Friendlist"
+      />
+    </div>
   </div>
-  <friend-selection-modal
-    ref="friendSelectionModal"
-    :nonFriends="nonFriends"
-    @add-friends="handleFriendsAdded"
-  ></friend-selection-modal>
 </template>
 
 <script>
@@ -54,6 +67,7 @@ export default {
       isMouseOver: false,
       friends: null,
       nonFriends: [],
+      listStatus: false,
     };
   },
   mounted() {
@@ -152,6 +166,14 @@ export default {
     handleFriendsAdded() {
       this.getUsersFriends();
     },
+    toggleFriendListStatus() {
+      this.listStatus = !this.listStatus;
+      if (this.listStatus) {
+        document.body.classList.add("friend-list-visible");
+      } else {
+        document.body.classList.remove("friend-list-visible");
+      }
+    },
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
     },
@@ -167,6 +189,12 @@ export default {
     getPlusSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/plus.png`;
     },
+    getFriendOpenSrc() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/open.png`;
+    },
+    getFriendCloseSrc() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/close.png`;
+    },
     handleMouseEnter() {
       this.isMouseOver = true;
     },
@@ -178,28 +206,62 @@ export default {
 </script>
 
 <style scoped>
+body.friend-list-visible {
+  overflow-x: hidden;
+}
+.friendlist-icon {
+  position: fixed;
+  top: 50%; /* Center the icon vertically */
+  transform: translateY(-50%);
+  right: 0.5em;
+  /* height: 80%; */
+  /* display: flex; */
+  /* align-items: center; */
+  /* justify-content: flex-end; */
+  z-index: 2;
+  cursor: pointer;
+}
+
+.friendlist-icon-img {
+  transform: scale(0.5);
+}
 .friend-list {
-  border: 1px solid #ccc;
+  color: rgb(144, 154, 163);
+  /* border: 1px solid #ccc; */
   display: flex;
   flex-direction: column;
+  transform: translateX(120%); /* initially move the friend list off-screen */
+  transition: transform 0.3s ease-in-out;
+  overflow-x: hidden;
+  position: fixed;
+  top: 5em;
+  bottom: 0;
+  right: 2.5em;
+  margin-top: 1em;
+  width: 30%;
+  /* z-index: 1; */
 }
 .friend-list li {
   display: flex;
   justify-content: left;
   width: 100%;
   margin-bottom: 1em;
+  align-items: center;
   /* text-align: left; */
 }
 .friend-name {
   flex-grow: 1;
-  color: rgb(217, 217, 229);
+  color: rgb(144, 154, 163);
 }
 .add-friend {
   flex-grow: 1;
-  color: rgb(217, 217, 229);
+  color: rgb(144, 154, 163);
+  align-items: center;
+  padding-top: 1em;
 }
 .friend-list ul {
   list-style-type: none;
+  margin: 0 0;
 }
 .image_friends {
   width: 48px;
@@ -213,17 +275,34 @@ export default {
 .image_friends img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This property ensures the image fills the 32x32 container without distorting its aspect ratio */
-  transform: scale(
-    1
-  ); /* Scale the image down to fit within the 32x32 container */
+  object-fit: cover;
+  transform: scale(1);
 }
 .image_friends_status {
   left: 15em;
   margin-left: auto;
   margin-right: 1em;
 }
+.image_friends_add {
+  margin-right: 1em;
+}
 .image_friends_remove {
   margin-right: 1em;
+}
+
+.friend-list.friend-list-visible {
+  transform: translateX(0);
+  overflow-x: auto;
+}
+.friend-list-visible .patch-right {
+  /* background-color: rgb(15, 15, 30, 0.9); */
+  min-width: 25%;
+  flex-grow: 0.8;
+}
+.patch-right {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  min-width: 25%;
 }
 </style>

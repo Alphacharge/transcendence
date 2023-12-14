@@ -1,5 +1,4 @@
 <template>
-  <h1>Please choose your game mode</h1>
   <div class="Wrapper">
     <div class="ButtonsWrapper">
       <router-link class="ButtonBox nav-link navbar-nav" to="/remotegame">{{
@@ -12,9 +11,7 @@
         $t("Tournament")
       }}</router-link>
     </div>
-    <div class="FriendListBox">
-      <FriendList />
-    </div>
+    <FriendList />
   </div>
 </template>
 
@@ -23,11 +20,6 @@ import FriendList from "@/components/FriendList.vue";
 
 export default {
   components: { FriendList },
-  methods: {
-    handleButtonClick(message) {
-      alert(message);
-    },
-  },
 };
 </script>
 
@@ -35,16 +27,19 @@ export default {
 .Wrapper {
   display: flex;
   flex-wrap: wrap;
-  height: 90%;
+  margin-top: 4em;
+  height: 80%;
   width: 100%;
+  flex: 2;
 }
 
 .ButtonsWrapper {
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   color: rgb(144, 154, 163);
   height: 100%;
-  flex: 1;
+  flex-grow: 1.3;
 }
 
 .ButtonBox {
@@ -63,15 +58,5 @@ export default {
 
 .ButtonBox:hover {
   background-color: rgb(237, 211, 12);
-}
-
-.FriendListBox {
-  flex: 0.5;
-  background-color: lightgray;
-  border: 1px solid gray;
-  font-size: 24px;
-  margin: 5px;
-  display: flex;
-  opacity: 0.6;
 }
 </style>
