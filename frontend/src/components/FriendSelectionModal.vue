@@ -7,9 +7,9 @@
             <div class="image_friends">
               <img :src="getAvatarSrc(nonFriend.avatar)" alt="Avatar" />
             </div>
-             <div class="friend-name">
-               <div>{{ nonFriend.username }}</div>
-             </div>
+            <div class="friend-name">
+              <div>{{ nonFriend.username }}</div>
+            </div>
             <div class="image_friends_status">
               <img
                 style="width: 16px; height: auto"
@@ -121,14 +121,14 @@ export default {
 
 <style scoped>
 .friend-selection-modal {
-  position:sticky;
+  position: sticky;
   display: flex;
   flex-direction: column;
   color: rgb(1, 8, 51);
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color:rgb(144, 154, 163);
+  background-color: rgb(144, 154, 163);
   padding: 20px;
   /* border: 1px solid #ccc; */
   z-index: 1000;
