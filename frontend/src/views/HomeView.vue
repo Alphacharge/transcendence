@@ -46,7 +46,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-top: 4em;
-  height: 90%;
+  height: 80%;
   width: 100%;
   flex: 2;
 }
