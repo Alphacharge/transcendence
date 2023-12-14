@@ -156,20 +156,18 @@ export class GameGateway {
   }
 
   sendTournamentQueue(socket: Socket) {
-    if (socket) {
-      this.gameService.queueTournament.forEach((queuedUser) => {
-        socket.emit('playerJoinedTournament', queuedUser.userData.username);
-      });
-    } else {
-      this.gameService.queueTournament.forEach((queuedUser) => {
-        this.gameService.queueTournament.forEach((queuedSocket) => {
-          queuedSocket.socket.emit(
-            'playerJoinedTournament',
-            queuedUser.userData.username,
-          );
+    this.gameService.queueTournament.forEach((queuedUser) => {
+      this.gameService.queueTournament.forEach((queuedSocket) => {
+        queuedSocket.socket.emit('playerJoinedTournament', {
+          id: queuedUser.userData.id,
+          username: queuedUser.userData.username,
+          avatar: {
+            id: queuedUser.userData.avatar.id,
+            mime_type: queuedUser.userData.avatar.mime_type,
+          },
         });
       });
-    }
+    });
   }
 
   /* Tell the client the game starts now. */
@@ -182,12 +180,30 @@ export class GameGateway {
   sendPrepareGame(game: GameState) {
     // tell the client the player number
 
-    game.user1.socket.emit('player1');
-    game.user1.socket.emit('prepareGame');
+    const playerList = [];
+    playerList.push({
+      id: game.user1.userData.id,
+      username: game.user1.userData.username,
+      avatar: {
+        id: game.user1.userData.avatar.id,
+        mime_type: game.user1.userData.avatar.mime_type,
+      },
+    });
+
     if (game.user2) {
-      game.user2.socket.emit('player2');
+      playerList.push({
+        id: game.user2.userData.id,
+        username: game.user2.userData.username,
+        avatar: {
+          id: game.user2.userData.avatar.id,
+          mime_type: game.user2.userData.avatar.mime_type,
+        },
+      });
+      game.user2.socket.emit('player2', playerList);
       game.user2.socket.emit('prepareGame');
     }
+    game.user1.socket.emit('player1', playerList);
+    game.user1.socket.emit('prepareGame');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -270,10 +286,7 @@ export class GameGateway {
   removedFromTournamentQueue(user: User) {
     this.gameService.queueTournament.forEach((queuedUser) => {
       this.gameService.queueTournament.forEach((queuedSocket) => {
-        queuedSocket.socket.emit(
-          'playerLeftTournament',
-          queuedUser.userData.username,
-        );
+        queuedSocket.socket.emit('playerLeftTournament', user.userData.id);
       });
     });
     user.socket.emit('removedFromTournamentQueue');

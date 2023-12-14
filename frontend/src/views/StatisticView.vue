@@ -1,149 +1,181 @@
 <template>
-  <div>
-    <h2 class="centered">Records</h2>
+  <div class="centered">
     <div class="container-ms">
-      <div class="patch-wrapper">
-        <div class="patch-left">
-          <div class="sub-patch">
-            {{ $t("LongestGame") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.longestGame.l_avatar_id}${milestones.longestGame.l_avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestGame.l_username }}
-            </div>
-            <div>
-              <b>:</b>
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestGame.r_username }}
-            </div>
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.longestGame.r_avatar_id}${milestones.longestGame.r_avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestGame.duration }}
-            </div>
-          </div>
-          <div class="sub-patch">
-            {{ $t("LongestBreak") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.longestBreak.l_user.avatar.id}${milestones.longestBreak.l_user.avatar.mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestBreak.l_user.username }}
-            </div>
-            <div>
-              <b>:</b>
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestBreak.r_user.username }}
-            </div>
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.longestBreak.r_user.avatar.id}${milestones.longestBreak.r_user.avatar.mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.longestBreak.longest_break }} Contacts
+      <div>
+        <h2>Milestones</h2>
+        <div class="ms-row">
+          <div class="box">
+            <div class="headline">{{ $t("LongestGame") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.longestGame.l_avatar_id}${milestones.longestGame.l_avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.longestGame.l_username }}
+              </div>
+              <div class="score-table-center">
+                <b>:</b>
+              </div>
+              <div v-if="milestones" class="name-table-right">
+                {{ milestones.longestGame.r_username }}
+              </div>
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.longestGame.r_avatar_id}${milestones.longestGame.r_avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="value">
+                {{ milestones.longestGame.duration }}
+              </div>
             </div>
           </div>
-          <div class="sub-patch">
-            {{ $t("MostContacts") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.mostContacts.avatar_id}${milestones.mostContacts.avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.mostContacts.username }}
-            </div>
-            <div v-if="milestones">
-              {{ milestones.mostContacts.total_contacts }}
+          <div class="box">
+            <div class="headline">{{ $t("LongestBreak") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.longestBreak.l_user.avatar.id}${milestones.longestBreak.l_user.avatar.mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.longestBreak.l_user.username }}
+              </div>
+              <div class="score-table-center">
+                <b>:</b>
+              </div>
+              <div v-if="milestones" class="name-table-right">
+                {{ milestones.longestBreak.r_user.username }}
+              </div>
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.longestBreak.r_user.avatar.id}${milestones.longestBreak.r_user.avatar.mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="value">
+                {{ milestones.longestBreak.longest_break }} Contacts
+              </div>
             </div>
           </div>
         </div>
-        <div class="patch-right">
-          <div class="sub-patch">
-            {{ $t("ShortestGame") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.shortestGame.l_avatar_id}${milestones.shortestGame.l_avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.shortestGame.l_username }}
-            </div>
-            <div>
-              <b>:</b>
-            </div>
-            <div v-if="milestones">
-              {{ milestones.shortestGame.r_username }}
-            </div>
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.shortestGame.r_avatar_id}${milestones.shortestGame.r_avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.shortestGame.duration }}
+        <div class="ms-row">
+          <div class="box">
+            <div class="headline">{{ $t("MostContacts") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.mostContacts.avatar_id}${milestones.mostContacts.avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.mostContacts.username }}
+              </div>
+              <div v-if="milestones" class="value">
+                {{ milestones.mostContacts.total_contacts }}
+              </div>
             </div>
           </div>
-          <div class="sub-patch">
-            {{ $t("HighestWin") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.highestWin.avatar_id}${milestones.highestWin.avatar_mime_type}`"
-                alt="Avatar"
-              />
-            </div>
-            <div v-if="milestones">
-              {{ milestones.highestWin.username }}
-            </div>
-            <div v-if="milestones">
-              +{{ milestones.highestWin.max_win_diff }}
+          <div class="box">
+            <div class="headline">{{ $t("ShortestGame") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.shortestGame.l_avatar_id}${milestones.shortestGame.l_avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.shortestGame.l_username }}
+              </div>
+              <div class="score-table-center">
+                <b>:</b>
+              </div>
+              <div v-if="milestones" class="name-table-right">
+                {{ milestones.shortestGame.r_username }}
+              </div>
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.shortestGame.r_avatar_id}${milestones.shortestGame.r_avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="value">
+                {{ milestones.shortestGame.duration }}
+              </div>
             </div>
           </div>
-          <div class="sub-patch">
-            {{ $t("LeastContacts") }}<br />
-            <div class="image_history">
-              <img
-                v-if="milestones"
-                :src="`avatars/${milestones.leastContacts.avatar_id}${milestones.leastContacts.avatar_mime_type}`"
-                alt="Avatar"
-              />
+        </div>
+        <div class="ms-row">
+          <div class="box">
+            <div class="headline">{{ $t("HighestWin") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.highestWin.avatar_id}${milestones.highestWin.avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.highestWin.username }}
+              </div>
+              <div v-if="milestones" class="value">
+                +{{ milestones.highestWin.max_win_diff }}
+              </div>
             </div>
-            <div v-if="milestones">
-              {{ milestones.leastContacts.username }}
-            </div>
-            <div v-if="milestones">
-              {{ milestones.leastContacts.total_contacts }}
+          </div>
+          <div class="box">
+            <div class="headline">{{ $t("LeastContacts") }}</div>
+            <div class="content">
+              <div class="image-table">
+                <div class="image_history">
+                  <img
+                    v-if="milestones"
+                    :src="`avatars/${milestones.leastContacts.avatar_id}${milestones.leastContacts.avatar_mime_type}`"
+                    alt="Avatar"
+                  />
+                </div>
+              </div>
+              <div v-if="milestones" class="name-table-left">
+                {{ milestones.leastContacts.username }}
+              </div>
+              <div v-if="milestones" class="value">
+                {{ milestones.leastContacts.total_contacts }}
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <h2 class="centered">Statistics</h2>
+      <h3>Statistics</h3>
       <table class="table table-bordered transparent-table">
         <thead>
           <tr>
@@ -359,25 +391,78 @@ export default {
 </script>
 
 <style scoped>
-.patch-wrapper {
+.ms-row {
   display: flex;
-  justify-content: space-between;
-  background: transparent;
-  flex-wrap: wrap;
-}
-.patch-left {
-  flex-grow: 1;
-}
-.patch-right {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
 }
 
-.sub-patch {
-  margin-bottom: 10px;
-  border-radius: 10px;
+h2 {
+  text-align: center;
+}
+
+h3 {
+  margin-top: 2em;
+  text-align: center;
+}
+.box {
+  flex: 1;
+  height: 6em;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5em;
+  display: flex;
+  padding: 0.5em;
+  /* align-items: center; */
+  margin: 0.5em;
+  flex-direction: column;
+}
+.content {
+  display: flex;
+}
+.headline {
+  width: 100%;
+  margin-bottom: 0.5em;
+}
+.name-table-left {
+  flex: 2;
+  text-align: left;
+  padding: 0 1em;
+  display: flex;
+  align-items: center;
+}
+
+.name-table-right {
+  flex: 2;
+  text-align: right;
+  padding: 0 1em;
+  display: flex;
+  align-items: center;
+}
+.score-table-center {
+  margin: 0 0.5em;
+  display: flex;
+  align-items: center;
+}
+.value {
+  flex: 2;
+  text-align: right;
+  display: flex;
+  align-items: center;
+}
+
+.image-table {
+  width: 48px;
+}
+.image_history {
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  display: inline-block;
+  position: relative;
+}
+.image_history img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
 }
 .container-ms {
   width: 100%;
@@ -385,7 +470,10 @@ export default {
 }
 
 .centered {
-  text-align: center;
+  align-items: center;
+  margin: 0 15%;
+  color: rgb(217, 217, 229);
+  margin-top: 4em;
 }
 .transparent-table {
   background: transparent;
