@@ -92,7 +92,7 @@ export default {
 </script>
 <style scoped>
 .twofactorauth {
-  width: 4em;
+  width: 6em;
   text-align: center;
 }
 

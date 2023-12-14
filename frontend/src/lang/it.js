@@ -14,6 +14,9 @@ export default {
   EnterQueue: "Entra in Coda",
   LeaveQueue: "Lascia la Coda",
   StartLocalGame: "Avviare il gioco locale",
+  Player: "Giocatore",
+  wins: "vince",
+  RegisteredPlayers: "Giocatori registrati",
   EnterTournament: "Partecipa al Torneo",
   LeaveTournament: "Abbandona il Torneo",
   LocalGameExplanationLeft: "W/S",
@@ -51,6 +54,7 @@ export default {
   profileTourWins: "Vittorie nei tornei",
   profileRegister: "Registrato dal",
   usernameTaken: "Il nome utente è preso",
+  AddFriends: "Aggiungi amici",
 
   //2fa
   twoFAenable: "abilitare",

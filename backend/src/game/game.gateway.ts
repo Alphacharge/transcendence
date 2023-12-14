@@ -92,6 +92,7 @@ export class GameGateway {
       this.gameService.websocketUsers.set(socket.id, user);
       if (!user.userData) {
         console.log('handleConnection: User not found in database.');
+        socket.disconnect(true);
       }
     } else {
       console.log('handleConnection: Refusing WebSocket connection.');

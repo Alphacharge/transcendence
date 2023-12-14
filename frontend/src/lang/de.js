@@ -54,6 +54,7 @@ export default {
   profileTourWins: "Turniersiege",
   profileRegister: "Registriert seit",
   usernameTaken: "Name wird schon benutzt",
+  AddFriends: "Freunde hinzufügen",
 
   //2fa
   twoFAenable: "aktivieren",

@@ -175,7 +175,7 @@
           </div>
         </div>
       </div>
-      <h3>Statistics</h3>
+      <h3>{{ $t("Statistics") }}</h3>
       <table class="table table-bordered transparent-table">
         <thead>
           <tr>

@@ -54,6 +54,7 @@ export default {
   profileTourWins: "Tournament Win's",
   profileRegister: "Registered since",
   usernameTaken: "Username is taken",
+  AddFriends: "Add Friends",
 
   //2fa
   twoFAenable: "enable",
