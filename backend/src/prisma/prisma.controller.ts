@@ -6,6 +6,7 @@ import {
   Req,
   UploadedFile,
   ForbiddenException,
+  UseGuards,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -16,6 +17,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Avatars } from '@prisma/client';
 import { Request } from 'express';
 import { promises as fsPromises } from 'fs';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 export class AvatarCreationFailedException extends HttpException {
   constructor() {
@@ -35,6 +37,7 @@ export class ForbiddenFileExtensionException extends HttpException {
   }
 }
 
+// @UseGuards(JwtAuthGuard)
 @Controller('data')
 export class PrismaController {
   constructor(
@@ -78,6 +81,8 @@ export class PrismaController {
       const userProfil = await this.prismaService.getUserById(userId);
       const userMilestones =
         await this.prismaService.getUserMilestonesById(userId);
+		console.log("userstats user id:", userId);
+		console.log("user data:", userProfil);
       return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);

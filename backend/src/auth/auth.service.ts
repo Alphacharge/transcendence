@@ -123,7 +123,7 @@ export class AuthService {
       const decodedToken: any = (await this.jwt.verifyAsync(token, {
         secret: secret,
       })) as { sub: number; username: string } | null;
-
+console.log("user id:", decodedToken.sub);
       if (decodedToken) {
         return true;
       }

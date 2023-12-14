@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { Res, Req } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { AuthGuard } from 'src/auth/auth.guard';
+import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { TwoFactorAuthService } from './twoFactorAuth.service';
 import { HttpCode } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common';
@@ -28,7 +28,7 @@ export class TwoFactorAuthController {
 
   /* Endpoint for generating a new user secret. */
   @Post('generate')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async generateSecret(@Req() req: Request): Promise<{ otpauthUrl }> {
     const { otpauthUrl } = await this.twoFactorAuthService.generate2FASecret(
       req['user'],
@@ -38,7 +38,7 @@ export class TwoFactorAuthController {
   }
 
   @Post('enable')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async enable(@Req() req: Request) {
     this.prismaService.enable2FAById(req['user']);
     return { success: true, message: '2FA enabled.' };
@@ -46,7 +46,7 @@ export class TwoFactorAuthController {
 
   /* Endpoint for disabling 2FA. */
   @Post('disable')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async disable(@Req() req: Request) {
     this.prismaService.disable2FAById(req['user']);
 
@@ -54,7 +54,7 @@ export class TwoFactorAuthController {
   }
 
   /* Endpoint for asking if 2FA is enabled for your account. */
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Get('status')
   async check2FA(@Req() req: Request) {
     try {
