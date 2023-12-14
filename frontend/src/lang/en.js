@@ -14,8 +14,10 @@ export default {
   LeaveQueue: "Leave Queue",
   LocalGame: "Local Game",
   StartLocalGame: "Start Local Game",
-  LocalGameExplanation:
-    "Play on the same keyboard with the buttons W/S and arrow up/arrow down",
+  EnterTournament: "Enter Tournament",
+  LeaveTournament: "Leave Tournament",
+  LocalGameExplanationLeft: "W/S",
+  LocalGameExplanationRight: "arrow up/arrow down",
 
   // SIGNUP & LOGIN
   Username: "Username",

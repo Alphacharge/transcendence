@@ -64,7 +64,7 @@ export class GameState {
     this.deltaContactsPlayer1 = 0;
     this.deltaContactsPlayer2 = 0;
     this.longestBreak = 0;
-    this.winningScore = 1; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
