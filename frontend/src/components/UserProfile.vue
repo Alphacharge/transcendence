@@ -6,8 +6,8 @@
           <div class="image-profile">
             <img :src="getAvatarSrc(userProfil.avatar)" alt="Avatar" />
           </div>
+          <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
           <div class="upload-icon" @click="openFileUpload">
-            <img class="upload-icon" :src="getUploadSrc()" alt="Upload" />
             <input
               type="file"
               ref="fileInput"
@@ -20,7 +20,8 @@
           <div v-if="showMessage" class="message">
             {{ messageText }}
           </div>
-          <p v-if="!isEditing" @click="startEditing" class="text-color">
+          <p v-if="!isEditing" class="text-color">
+            <img class="edit-icon" :src="getEditSrc()" @click="startEditing" alt="Edit"/>
             {{ userProfil.username }}
           </p>
           <input
@@ -202,6 +203,9 @@ export default {
     },
     getUploadSrc() {
       return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/upload.png`;
+    },
+    getEditSrc() {
+      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/edit.png`;
     },
     openFileUpload() {
       this.$refs.fileInput.click();
@@ -411,6 +415,13 @@ export default {
   padding: 5px;
   border-radius: 50%;
   cursor: pointer;
+}
+.edit-icon {
+  width: 1em;
+  height: 1em;
+  position: relative;
+  object-fit: cover;
+  transform: scale(1);
 }
 
 .text-color {
