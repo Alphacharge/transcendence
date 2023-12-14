@@ -44,7 +44,9 @@
         <router-link to="/ip" class="nav-link">IP-Panel</router-link>
       </li>
       <li class="nav-item flex-grow-1">
-        <router-link to="/profile" class="nav-link">Profil</router-link>
+        <router-link to="/profile" class="nav-link">{{
+          $t("Profile")
+        }}</router-link>
       </li>
       <li class="nav-item flex-grow-1">
         <router-link to="/login" class="nav-link">{{

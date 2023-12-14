@@ -1,12 +1,8 @@
 <template>
   <div class="player-checkin">
-    <h5>
-      Waiting for {{ 4 - displayedPlayerCount }} other player(s) to start this
-      tournament...
-    </h5>
     <div class="btn-group">
       <button
-        v-if="!participateStatus"
+        v-if="!iAmRegistered"
         @click="enterTournament()"
         class="btn btn-danger"
       >
@@ -18,6 +14,7 @@
     </div>
   </div>
 </template>
+
 <script>
 import { connectWebSocket, socket } from "@/assets/utils/socket";
 
@@ -30,7 +27,7 @@ export default {
 
   data() {
     return {
-      participateStatus: false,
+      iAmRegistered: false,
       playersInTournament: 0,
     };
   },
@@ -45,11 +42,15 @@ export default {
     });
 
     socket.on("addedToTournamentQueue", () => {
-      this.participateStatus = true;
+      this.iAmRegistered = true;
     });
 
     socket.on("removedFromTournamentQueue", () => {
-      this.participateStatus = false;
+      this.iAmRegistered = false;
+    });
+
+    socket.on("tournamentReset", () => {
+      this.playersInTournament = 0;
     });
   },
 

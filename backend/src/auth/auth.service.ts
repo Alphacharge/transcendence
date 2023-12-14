@@ -191,7 +191,7 @@ export class AuthService {
       if (Number(userId) === decodedToken.sub) {
         return true;
       }
-      console.error("User ID does not match decoded token sub");
+      console.error('User ID does not match decoded token sub');
       return false;
     } catch (error) {
       console.error('token verification failed', error);

@@ -1,9 +1,10 @@
 export default {
   // NAVBAR
   Game: "Gioco",
+  LocalGame: "Gioco Locale",
   Tournament: "Torneo",
   Statistics: "Statistiche",
-  Profil: "Profilo",
+  Profile: "Profilo",
   LogIn: "Accedi",
   SignUp: "Registrati",
   About: "Informazioni",
@@ -12,8 +13,10 @@ export default {
   // PONG GAME
   EnterQueue: "Entra in Coda",
   LeaveQueue: "Lascia la Coda",
-  LocalGame: "gioco locale",
-  StartLocalGame: "avviare il gioco locale",
+  StartLocalGame: "Avviare il gioco locale",
+  Player: "Giocatore",
+  wins: "vince",
+  RegisteredPlayers: "Giocatori registrati",
   EnterTournament: "Partecipa al Torneo",
   LeaveTournament: "Abbandona il Torneo",
   LocalGameExplanationLeft: "W/S",
@@ -51,6 +54,8 @@ export default {
   profileTourWins: "Vittorie nei tornei",
   profileRegister: "Registrato dal",
   usernameTaken: "Il nome utente è preso",
+  AddFriends: "Aggiungi amici",
+  closeList: "Vicino",
 
   //2fa
   twoFAenable: "abilitare",

@@ -1,9 +1,10 @@
 export default {
   // NAVBAR
   Game: "Spiel",
+  LocalGame: "Lokales Spiel",
   Tournament: "Turnier",
   Statistics: "Statistik",
-  Profil: "Profil",
+  Profile: "Profil",
   LogIn: "Einloggen",
   SignUp: "Registrieren",
   About: "Über uns",
@@ -12,8 +13,10 @@ export default {
   // PONG GAME
   EnterQueue: "Warteschlange",
   LeaveQueue: "Warteschlange verlassen",
-  LocalGame: "Lokales Spiel",
   StartLocalGame: "Starte lokales Spiel",
+  Player: "Spieler",
+  wins: "gewinnt",
+  RegisteredPlayers: "Registrierte Spieler",
   EnterTournament: "Turnier beitreten",
   LeaveTournament: "Turnier verlassen",
   LocalGameExplanationLeft: "W/S",
@@ -51,6 +54,8 @@ export default {
   profileTourWins: "Turniersiege",
   profileRegister: "Registriert seit",
   usernameTaken: "Name wird schon benutzt",
+  AddFriends: "Freunde hinzufügen",
+  closeList: "Schließen",
 
   //2fa
   twoFAenable: "aktivieren",
@@ -63,7 +68,7 @@ export default {
   //About
   aboutTitle: "Transzendenz",
   aboutText1:
-    "Dies ist das Transzendenz-Projekt von der Programmierschule 42. Wir haben das Projekt am 8. September gestartet, und es war eine unglaubliche Reise. Mitwirkende sind:",
+    "Dies ist das Transzendenz-Projekt der Programmierschule 42. Wir haben das Projekt am 8. September gestartet, und es war eine unglaubliche Reise. Mitwirkende sind:",
   aboutText2:
     "Der Anfang war anspruchsvoll, und wir mussten viele neue Konzepte lernen. Nach etwa 8 Wochen haben wir endlich einen Weg gefunden, in das neu erworbene Wissen einzutauchen. Der zweite Teil begann.",
   aboutText3:

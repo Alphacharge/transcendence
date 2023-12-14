@@ -3,7 +3,7 @@
     <div class="friend-list" :class="{ 'friend-list-visible': listStatus }">
       <ul>
         <li>
-          <div class="add-friend" @click="openFriendSelectionModal">Add Friends</div>
+          <div class="add-friend" @click="openFriendSelectionModal">{{ $t("AddFriends") }}</div>
           <div class="image_friends_add" >
             <img
               style="width: 16px; height: auto"
