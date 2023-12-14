@@ -211,13 +211,9 @@ body.friend-list-visible {
 }
 .friendlist-icon {
   position: fixed;
-  top: 50%; /* Center the icon vertically */
+  top: 50%;
   transform: translateY(-50%);
   right: 0.5em;
-  /* height: 80%; */
-  /* display: flex; */
-  /* align-items: center; */
-  /* justify-content: flex-end; */
   z-index: 2;
   cursor: pointer;
 }
@@ -227,10 +223,9 @@ body.friend-list-visible {
 }
 .friend-list {
   color: rgb(144, 154, 163);
-  /* border: 1px solid #ccc; */
   display: flex;
   flex-direction: column;
-  transform: translateX(120%); /* initially move the friend list off-screen */
+  transform: translateX(120%);
   transition: transform 0.3s ease-in-out;
   overflow-x: hidden;
   position: fixed;
@@ -238,8 +233,9 @@ body.friend-list-visible {
   bottom: 0;
   right: 2.5em;
   margin-top: 1em;
-  width: 30%;
-  /* z-index: 1; */
+  width: 25em;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 .friend-list li {
   display: flex;
@@ -247,7 +243,6 @@ body.friend-list-visible {
   width: 100%;
   margin-bottom: 1em;
   align-items: center;
-  /* text-align: left; */
 }
 .friend-name {
   flex-grow: 1;
@@ -296,13 +291,12 @@ body.friend-list-visible {
 }
 .friend-list-visible .patch-right {
   /* background-color: rgb(15, 15, 30, 0.9); */
-  min-width: 25%;
+  min-width: 25em;
   flex-grow: 0.8;
 }
 .patch-right {
   display: flex;
   flex-direction: column;
   flex-grow: 0;
-  min-width: 25%;
 }
 </style>

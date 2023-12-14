@@ -70,36 +70,38 @@
           <div class="box-right">{{ userMilestones.tourwins }}</div>
         </div>
       </div>
-      <div
-        class="score-table-line"
-        v-for="match in userHistory"
-        :key="match.id"
-      >
-        <div class="image-table">
-          <div class="image_history">
-            <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
+      <div class="table-wrapper">
+        <div
+          class="score-table-line"
+          v-for="match in userHistory"
+          :key="match.id"
+        >
+          <div class="image-table">
+            <div class="image_history">
+              <img :src="getAvatarSrc(match.leftUser.avatar)" alt="Avatar" />
+            </div>
           </div>
-        </div>
-        <div class="name-table-left">
-          {{ match.leftUser.username }}
-        </div>
-        <div class="score-table">
-          <div class="score-table-left">
-            {{ match.left_user_score }}
+          <div class="name-table-left">
+            {{ match.leftUser.username }}
           </div>
-          <div class="score-table-center">
-            <b>:</b>
+          <div class="score-table">
+            <div class="score-table-left">
+              {{ match.left_user_score }}
+            </div>
+            <div class="score-table-center">
+              <b>:</b>
+            </div>
+            <div class="score-table-right">
+              {{ match.right_user_score }}
+            </div>
           </div>
-          <div class="score-table-right">
-            {{ match.right_user_score }}
+          <div class="name-table-right">
+            {{ match.rightUser.username }}
           </div>
-        </div>
-        <div class="name-table-right">
-          {{ match.rightUser.username }}
-        </div>
-        <div class="image-table">
-          <div class="image_history">
-            <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
+          <div class="image-table">
+            <div class="image_history">
+              <img :src="getAvatarSrc(match.rightUser.avatar)" alt="Avatar" />
+            </div>
           </div>
         </div>
       </div>
@@ -340,6 +342,13 @@ export default {
   overflow: hidden;
   display: inline-block;
   position: relative;
+}
+
+.table-wrapper {
+  max-height: 55vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 
 .score-table-line {
