@@ -16,6 +16,7 @@ import RedirectView from "@/views/RedirectView.vue";
 import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
+import ChangePasswordView from "@/views/ChangePasswordView";
 
 const routes = [
   {
@@ -87,6 +88,11 @@ const routes = [
     path: "/redirect",
     name: "redirect",
     component: RedirectView,
+  },
+  {
+    path: "/changepassword",
+    name: "changepassword",
+    component: ChangePasswordView,
   },
 ];
 
