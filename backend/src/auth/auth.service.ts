@@ -218,7 +218,7 @@ export class AuthService {
         'Username must be at least 4 characters long',
       );
     }
-    if (username.length > 16) {
+    if (username.length > 10) {
       throw new ForbiddenException(
         "Username can't be longer than 16 characters",
       );
