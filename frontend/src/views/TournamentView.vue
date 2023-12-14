@@ -1,4 +1,5 @@
 <template>
+  <div class="top">
   <PlayerCheckin v-if="!inActiveTournament" />
   <TournamentArray></TournamentArray>
   <div>
@@ -14,7 +15,8 @@
   <div v-if="tournamentWinner">
     <p>Tournament Winner: {{ tournamentWinner }}</p>
   </div>
-  <ScoreBoard></ScoreBoard>
+</div>
+  <ScoreBoard v-if="inActiveTournament" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
     <CountDown v-if="inActiveTournament"></CountDown>
@@ -31,6 +33,7 @@ import CountDown from "@/components/CountDown.vue";
 import GameArea from "@/components/GameArea.vue";
 import PlayerCheckin from "@/components/PlayerCheckin.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
+import PlayersComponent from "@/components/PlayersComponent.vue";
 
 export default {
   components: {
@@ -38,6 +41,7 @@ export default {
     GameArea,
     ScoreBoard,
     CountDown,
+    PlayersComponent,
   },
 
   data() {
@@ -75,17 +79,17 @@ export default {
         return;
       }
 
-      if (!this.players.includes(username)) {
-        this.players.push(username);
+      if (!this.players.some((player) => player.id == user.id)) {
+        this.players.push(user);
       }
     });
 
-    socket.on("playerLeftTournament", (username) => {
+    socket.on("playerLeftTournament", (userId) => {
       if (this.inActiveTournament) {
         return;
       }
 
-      const index = this.players.indexOf(username);
+      const index = this.players.findIndex((player) => player.id == userId);
       if (index !== -1) {
         this.players.splice(index, 1);
       }
@@ -113,5 +117,9 @@ export default {
 <style>
 .game-wrapper {
   position: relative;
+}
+
+.top {
+  margin-top: 4em;
 }
 </style>

@@ -1,10 +1,7 @@
 <template>
   <div class="scoreboard">
-    <div class="announce-winner" v-if="announceVisible">
-      {{ $t("Player") }} {{ winningPlayer }} {{ $t("wins") }}!
-    </div>
     <div class="score">
-      <div v-if="scoreEnabled" class="box box-left">
+      <div class="box">
         <div class="content">
           <div class="image-table">
             <div class="image_history">
@@ -20,12 +17,8 @@
           </div>
         </div>
       </div>
-      <div class="game-score">{{ player1Score }}:{{ player2Score }}</div>
-      <div v-if="scoreEnabled" class="box box-right">
+      <div class="box">
         <div class="content">
-          <div v-if="players[1]" class="name-table-right">
-            {{ players[1].username }}
-          </div>
           <div class="image-table">
             <div class="image_history">
               <img
@@ -35,6 +28,41 @@
               />
             </div>
           </div>
+          <div v-if="players[1]" class="name-table-left">
+            {{ players[1].username }}
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="content">
+          <div class="image-table">
+            <div class="image_history">
+              <img
+                v-if="players[2]"
+                :src="`avatars/${players[2].avatar.id}${players[2].avatar.mime_type}`"
+                alt="Avatar"
+              />
+            </div>
+          </div>
+          <div v-if="players[2]" class="name-table-left">
+            {{ players[2].username }}
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <div class="content">
+          <div class="image-table">
+            <div class="image_history">
+              <img
+                v-if="players[3]"
+                :src="`avatars/${players[3].avatar.id}${players[3].avatar.mime_type}`"
+                alt="Avatar"
+              />
+            </div>
+          </div>
+          <div v-if="players[3]" class="name-table-left">
+            {{ players[3].username }}
+          </div>
         </div>
       </div>
     </div>
@@ -42,57 +70,30 @@
 </template>
 
 <script>
-import { socket } from "@/assets/utils/socket";
-
 export default {
   props: {
-    scoreEnabled: Boolean,
+    players: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  watch: {
+    players: {
+      handler(newPlayers) {
+        this.updatePlayers(newPlayers);
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
-      announceVisible: false,
-      player1Score: 0,
-      player2Score: 0,
-      winningPlayer: "",
-      players: [],
+      internalPlayers: [],
     };
   },
-
-  mounted() {
-    socket.on("scoreUpdate", (playerScores) => {
-      this.player1Score = playerScores.player1;
-      this.player2Score = playerScores.player2;
-    });
-
-    socket.on("victory", (payload) => {
-      this.announceVisible = true;
-      this.winningPlayer = payload;
-    });
-
-    // reset values
-    socket.on("addedToQueue", () => {
-      this.announceVisible = false;
-      this.player1Score = 0;
-      this.player2Score = 0;
-      this.winningPlayer = "";
-    });
-    socket.on("countDown", () => {
-      this.announceVisible = false;
-      this.player1Score = 0;
-      this.player2Score = 0;
-      this.winningPlayer = "";
-    });
-
-    // received info if we are left or right
-    socket.on("player1", (players) => {
-      console.log(players);
-      this.players = players;
-      this.player1Score = 0;
-    });
-    socket.on("player2", (players) => {
-      this.players = players;
-      this.player2Score = 0;
-    });
+  methods: {
+    updatePlayers(players) {
+      this.internalPlayers = players;
+    },
   },
 };
 </script>
@@ -117,7 +118,7 @@ export default {
   /* position: relative; */
 }
 .box {
-  flex: 2;
+  flex: 1;
   height: 10em;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 0.5em;
@@ -127,14 +128,7 @@ export default {
   margin: 0.5em;
   /* flex-direction: column; */
 }
-.box-left {
-  margin-left: 20%;
-}
-.box-right {
-  margin-right: 20%;
-  text-align: right;
-  justify-content: right;
-}
+
 .content {
   display: flex;
 }

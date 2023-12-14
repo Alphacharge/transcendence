@@ -156,8 +156,15 @@ export class GameGateway {
     this.gameService.queueTournament.forEach((queuedUser) => {
       this.server
         .to('tournamentWatchers')
-        .emit('playerJoinedTournament', queuedUser.userData.username);
-    });
+        .emit('playerJoinedTournament', {
+          id: queuedUser.userData.id,
+          username: queuedUser.userData.username,
+          avatar: {
+            id: queuedUser.userData.avatar.id,
+            mime_type: queuedUser.userData.avatar.mime_type,
+          }
+		})
+	});
   }
 
   /* Tell the client the game starts now. */
@@ -168,12 +175,32 @@ export class GameGateway {
 
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
-    // REDUNDANT player1 and player2 messages are no longer needed
-    game.user1.socket.emit('player1');
-    game.user1.socket.emit('prepareGame');
-    game.user2?.socket.emit('player2');
-    game.user2?.socket.emit('prepareGame');
+    // tell the client the player number
 
+    const playerList = [];
+    playerList.push({
+      id: game.user1.userData.id,
+      username: game.user1.userData.username,
+      avatar: {
+        id: game.user1.userData.avatar.id,
+        mime_type: game.user1.userData.avatar.mime_type,
+      },
+    });
+
+    if (game.user2) {
+      playerList.push({
+        id: game.user2.userData.id,
+        username: game.user2.userData.username,
+        avatar: {
+          id: game.user2.userData.avatar.id,
+          mime_type: game.user2.userData.avatar.mime_type,
+        },
+      });
+      game.user2.socket.emit('player2', playerList);
+      game.user2.socket.emit('prepareGame');
+    }
+    game.user1.socket.emit('player1', playerList);
+    game.user1.socket.emit('prepareGame');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -266,8 +293,8 @@ export class GameGateway {
     user.socket.emit('removedFromTournamentQueue'); // tells the user they are not queued
     this.server
       .to('tournamentWatchers')
-      .emit('playerLeftTournament', user.userData.username); // informs all clients someone left the queue
-    this.sendTournamentInfo();
+      .emit('playerLeftTournament', user.userData.id); // informs all clients someone left the queue
+	  this.sendTournamentInfo();
   }
 
   tournamentStart(tournament: TournamentState) {

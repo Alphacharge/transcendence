@@ -1,9 +1,11 @@
 <template>
-  <RemoteGameButtons />
-  <ScoreBoard />
-  <div class="game-wrapper">
-    <GameArea></GameArea>
-    <CountDown v-if="countDownVisible" />
+  <div class="top">
+    <RemoteGameButtons />
+    <ScoreBoard :scoreEnabled="true" />
+    <div class="game-wrapper">
+      <GameArea></GameArea>
+      <CountDown v-if="countDownVisible" />
+    </div>
   </div>
 </template>
 
@@ -42,5 +44,9 @@ export default {
 <style>
 .game-wrapper {
   position: relative;
+}
+
+.top {
+  margin-top: 4em;
 }
 </style>
