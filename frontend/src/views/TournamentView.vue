@@ -1,14 +1,20 @@
 <template>
   <div class="top">
-    <div v-if="playerCheckinVisible && players.length < 4">
+    <div v-if="!inActiveTournament">
       <PlayerCheckin />
     </div>
-    <PlayersComponent v-if="!countDownVisible" :players="players" />
+    <PlayersComponent v-if="!inActiveTournament" :players="players" />
   </div>
-  <ScoreBoard v-if="tournamentStarted" :scoreEnabled="true"></ScoreBoard>
+  <p v-for="(winner, index) in winners" :key="index">
+    Game {{ index + 1 }} winner: {{ winner }}
+  </p>
+  <div v-if="tournamentWinner">
+    <p>Tournament Winner: {{ tournamentWinner }}</p>
+  </div>
+  <ScoreBoard v-if="inActiveTournament" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
     <GameArea></GameArea>
-    <CountDown v-if="countDownVisible"></CountDown>
+    <CountDown v-if="inActiveTournament"></CountDown>
   </div>
 </template>
 
@@ -32,13 +38,14 @@ export default {
     CountDown,
     PlayersComponent,
   },
+
   data() {
     return {
       players: [],
-      tournamentStatus: 1, // status: 2: round 1, 4: round 2, 8: finished
-      playerCheckinVisible: true,
-      countDownVisible: false,
-      tournamentStarted: false,
+      winners: [],
+      inActiveTournament: false,
+      iAmRegistered: false,
+      tournamentWinner: "",
     };
   },
 
@@ -52,22 +59,51 @@ export default {
     socket.requestTournamentInfo();
 
     socket.on("tournamentStart", () => {
-      // INSERT remove all parts of the interface you don't want to show during a tournament
-      this.countDownVisible = true;
-      this.playerCheckinVisible = false;
-      this.tournamentStarted = true;
+      this.inActiveTournament = true;
+    });
+
+    socket.on("tournamentReset", () => {
+      // if i am not part of the running tournament, reset everything
+      if (!this.iAmRegistered) {
+        this.players.length = 0;
+      }
     });
 
     socket.on("playerJoinedTournament", (user) => {
+      if (this.inActiveTournament) {
+        return;
+      }
+
       if (!this.players.some((player) => player.id == user.id)) {
         this.players.push(user);
       }
     });
+
     socket.on("playerLeftTournament", (userId) => {
-      const index = this.players.findIndex((player) => player.id === userId);
+      if (this.inActiveTournament) {
+        return;
+      }
+
+      const index = this.players.findIndex((player) => player.id == userId);
       if (index !== -1) {
         this.players.splice(index, 1);
       }
+    });
+
+    socket.on("addedToTournamentQueue", () => {
+      this.iAmRegistered = true;
+    });
+
+    socket.on("removedFromTournamentQueue", () => {
+      this.iAmRegistered = false;
+    });
+
+    socket.on("victoryOf", (username) => {
+      this.winners.push(username);
+    });
+
+    socket.on("tournamentWinner", (username) => {
+      this.tournamentWinner = username;
     });
   },
 };

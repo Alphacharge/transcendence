@@ -2,7 +2,7 @@
   <div class="friend-list">
     <ul>
       <li>
-        <div class="add-friend" @click="addFriend">Add Friends</div>
+        <div class="add-friend" @click="addFriend">{{ $t("AddFriends") }}</div>
         <div class="image_friends_add" @click="openFriendSelectionModal">
           <img
             style="width: 16px; height: auto"

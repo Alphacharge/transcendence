@@ -6,6 +6,7 @@ import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
+import { share } from 'rxjs';
 
 @Injectable()
 export class GameService {
@@ -132,13 +133,14 @@ export class GameService {
         user.userData &&
         queuedUser.userData.id === user.userData.id,
     );
-    if (userToRemove) {
-      sharedEventEmitter.emit('removedFromTournamentQueue', user);
 
+    if (userToRemove) {
       const index = this.queueTournament.indexOf(userToRemove);
       if (index !== -1) {
         this.queueTournament.splice(index, 1);
       }
+
+      sharedEventEmitter.emit('removedFromTournamentQueue', user);
     }
   }
 
@@ -235,6 +237,7 @@ export class GameService {
 
   async endGame(game: GameState) {
     game.playerVictory();
+
     if (!game.isLocalGame) {
       await this.prismaService.updateGameScore(
         game.gameData.id,
@@ -251,12 +254,14 @@ export class GameService {
     if (game.user2) game.user2.activeGame = null;
 
     if (game.tournamentState) {
-      if (
-        game.tournamentState.gamesNeeded == game.tournamentState.gamesPlayed
-      ) {
-        game.tournamentState.freeUsers();
+      const tournament = game.tournamentState;
+      // was this the last game of the tournament?
+      if (tournament.gamesNeeded == tournament.gamesPlayed) {
+        sharedEventEmitter.emit('tournamentWinner', game); // tell everyone who won
+        game.tournamentState.freeUsers(); // allows the users to join other games
+      } else {
+        this.startGame(game.tournamentState.nextGame());
       }
-      this.startGame(game.tournamentState.nextGame());
     }
   }
 

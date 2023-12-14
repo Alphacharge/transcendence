@@ -23,8 +23,8 @@
           </label>
         </li>
       </ul>
-      <button @click="addSelectedFriends">Add Friends</button>
-      <button @click="closeModal">Close</button>
+      <button @click="addSelectedFriends">{{ $t("AddFriends") }}</button>
+      <button @click="closeModal">{{  $t("closeList") }}</button>
     </div>
   </div>
 </template>

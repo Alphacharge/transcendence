@@ -1,5 +1,3 @@
-// authService.js
-
 const checkLoggedIn = async () => {
   try {
     const response = await fetch(
@@ -7,17 +5,16 @@ const checkLoggedIn = async () => {
       {
         method: "GET",
         headers: {
-          // this is the authorization header format
-          // Authorization: Bearer <token>
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`, // Get token from localStorage
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       },
     );
 
-    if (response.ok && response.status === 200) {
-      return true;
+    if (response.ok) {
+      const data = await response.json(); // Parse response JSON data
+      return data.isLoggedIn; // Return the isLoggedIn value from the response
     } else {
-      return false;
+      return false; // Handle other response statuses if needed
     }
   } catch (error) {
     console.error("Error checking login status:", error);
