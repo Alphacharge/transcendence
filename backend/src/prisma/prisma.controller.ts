@@ -7,6 +7,7 @@ import {
   UploadedFile,
   ForbiddenException,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -15,7 +16,6 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Avatars } from '@prisma/client';
-import { Request } from 'express';
 import { promises as fsPromises } from 'fs';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 
@@ -37,7 +37,7 @@ export class ForbiddenFileExtensionException extends HttpException {
   }
 }
 
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('data')
 export class PrismaController {
   constructor(
@@ -47,16 +47,13 @@ export class PrismaController {
 
   @Post('editname')
   async updateUsername(
-    @Body() body: { userId: number; accessToken: string; newUsername: string },
+    @Req() req: Request,
+    @Body() body: { newUsername: string },
   ): Promise<{ userName: string | null }> {
-    const { userId, accessToken, newUsername } = body;
     try {
-      if (!(await this.authService.verifyId(userId, accessToken))) {
-        throw new ForbiddenException();
-      }
       const newUser: string = await this.prismaService.updateUsername(
-        userId,
-        newUsername,
+        req['user'],
+        body.newUsername,
       );
       if (newUser) {
         return { userName: newUser };
@@ -69,20 +66,21 @@ export class PrismaController {
   }
 
   @Post('userstats')
-  async getHistoryMatches(@Body() body: { userId: number }): Promise<{
+  async getHistoryMatches(@Req() req: Request): Promise<{
     userHistory: any[] | null;
     userProfil: any | null;
     userMilestones: any | null;
   }> {
-    const { userId } = body;
     try {
-      const userHistory =
-        await this.prismaService.getHistoryMatchesById(userId);
-      const userProfil = await this.prismaService.getUserById(userId);
-      const userMilestones =
-        await this.prismaService.getUserMilestonesById(userId);
-		console.log("userstats user id:", userId);
-		console.log("user data:", userProfil);
+      const userHistory = await this.prismaService.getHistoryMatchesById(
+        req['user'],
+      );
+      const userProfil = await this.prismaService.getUserById(req['user']);
+      const userMilestones = await this.prismaService.getUserMilestonesById(
+        req['user'],
+      );
+      console.log('userstats user id:', req['user']);
+      console.log('user data:', userProfil);
       return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);
@@ -102,11 +100,10 @@ export class PrismaController {
 
   @Post('friends')
   async getFriendsById(
-    @Body() body: { userId: number },
+    @Req() req: Request,
   ): Promise<{ friends: any[] | null }> {
-    const { userId } = body;
     try {
-      const friends = await this.prismaService.getFriendsById(userId);
+      const friends = await this.prismaService.getFriendsById(req['user']);
       friends.forEach((element) => {
         if (this.authService.activeUser.has(element.id)) {
           element.status = 1;
@@ -121,11 +118,10 @@ export class PrismaController {
 
   @Post('nofriends')
   async getNONFriendsById(
-    @Body() body: { userId: number },
+    @Req() req: Request,
   ): Promise<{ friends: any[] | null }> {
-    const { userId } = body;
     try {
-      const friends = await this.prismaService.getNonFriendsById(userId);
+      const friends = await this.prismaService.getNonFriendsById(req['user']);
       friends.forEach((element) => {
         if (this.authService.activeUser.has(element.id)) {
           element.status = 1;
@@ -140,13 +136,13 @@ export class PrismaController {
 
   @Post('addfriends')
   async addFriendsByIds(
-    @Body() body: { userId: number; friendIds: number[] },
+    @Req() req: Request,
+    @Body() body: { friendIds: number[] },
   ): Promise<void> {
-    const { userId, friendIds } = body;
     try {
       // Add each friend in a loop
-      for (const friendId of friendIds) {
-        await this.prismaService.addFriendByIds(userId, friendId);
+      for (const friendId of body.friendIds) {
+        await this.prismaService.addFriendByIds(req['user'], friendId);
       }
     } catch (error) {
       console.error('Error adding friends:', error);
@@ -156,16 +152,16 @@ export class PrismaController {
 
   @Post('removefriend')
   async deleteFriendByIds(
-    @Body() body: { userId: number; friendId: number },
+    @Req() req: Request,
+    @Body() body: { friendId: number },
   ): Promise<{ friends: any[] | null }> {
-    const { userId, friendId } = body;
     try {
       const response = await this.prismaService.deleteFriendByIds(
-        userId,
-        friendId,
+        req['user'],
+        body.friendId,
       );
       if (response) {
-        const friends = await this.prismaService.getFriendsById(userId);
+        const friends = await this.prismaService.getFriendsById(req['user']);
         if (friends) {
           return { friends };
         }
@@ -202,16 +198,9 @@ export class PrismaController {
         extname(file.originalname) == '.png' ||
         extname(file.originalname) == '.jpg'
       ) {
-        // Get the user ID from the request
-        const userId = req.body.userId;
-        const token = req.body.accessToken;
-
-        if (!(await this.authService.verifyId(userId, token))) {
-          throw new ForbiddenException();
-        }
         // Create a new avatar entry in the database
         const avatar: Avatars = await this.prismaService.createNewAvatarById(
-          userId,
+          req['user'],
           extname(file.originalname),
         );
 

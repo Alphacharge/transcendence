@@ -11,7 +11,6 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
 import { Users } from '@prisma/client';
 import { Request } from 'express';
-import * as speakeasy from 'speakeasy';
 
 @Injectable()
 export class AuthService {
@@ -123,7 +122,6 @@ export class AuthService {
       const decodedToken: any = (await this.jwt.verifyAsync(token, {
         secret: secret,
       })) as { sub: number; username: string } | null;
-console.log("user id:", decodedToken.sub);
       if (decodedToken) {
         return true;
       }

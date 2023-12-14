@@ -53,7 +53,7 @@ export class AuthController {
         res
           .status(200)
           .json({ isLoggedIn: false, message: 'User not logged in' });
-		  console.log("Invalid JWT token");
+        console.log('Invalid JWT token');
       }
     } catch (error) {
       res.status(500).json({ message: 'Internal server error' });
