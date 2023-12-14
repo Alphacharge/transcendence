@@ -7,7 +7,7 @@ export class User {
   socket: Socket | null;
   activeGame: GameState | null;
   activeTournament: TournamentState | null;
-  userData: Users;
+  userData: any;
 
   constructor() {
     this.socket = null;

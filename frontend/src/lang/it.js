@@ -14,8 +14,10 @@ export default {
   LeaveQueue: "Lascia la Coda",
   LocalGame: "gioco locale",
   StartLocalGame: "avviare il gioco locale",
-  LocalGameExplanation:
-    "Gioca sulla stessa tastiera con i pulsanti W/S e freccia su/freccia giù",
+  EnterTournament: "Partecipa al Torneo",
+  LeaveTournament: "Abbandona il Torneo",
+  LocalGameExplanationLeft: "W/S",
+  LocalGameExplanationRight: "freccia su/freccia giù",
 
   // SIGNUP & LOGIN
   Username: "Nome utente",
@@ -49,6 +51,14 @@ export default {
   profileTourWins: "Vittorie nei tornei",
   profileRegister: "Registrato dal",
   usernameTaken: "Il nome utente è preso",
+
+  //2fa
+  twoFAenable: "abilitare",
+  twoFAdisable: "disabilitare",
+  twoFAenabled: "abilitato",
+  twoFAdisabled: "disabilitato",
+  twoFAEnterCode: "Inserisci il tuo codice OTP",
+  twoFAVerify: "verifica",
 
   //About
   aboutTitle: "Trascendenza",

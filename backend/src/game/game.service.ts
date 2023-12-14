@@ -62,6 +62,8 @@ export class GameService {
       `GAME.SERVICE: ADDTOQUEUE, Client ${socket.id} entered game queue`,
     );
     this.queue.push(user);
+    sharedEventEmitter.emit('addedToQueue', user);
+
     // check if a game is ready to be started
     if (this.queue.length >= 2) {
       const game = new GameState();
@@ -117,6 +119,7 @@ export class GameService {
       if (index !== -1) {
         this.queue.splice(index, 1);
       }
+      sharedEventEmitter.emit('removedFromQueue', user);
     }
   }
 
@@ -174,6 +177,9 @@ export class GameService {
     game.user1.activeGame = game;
     game.user2.activeGame = game;
 
+    sharedEventEmitter.emit('removedFromQueue', game.user1);
+    sharedEventEmitter.emit('removedFromQueue', game.user2);
+
     game.gameData = await this.prismaService.createNewGame(
       game.user1.userData.id,
       game.user2.userData.id,
@@ -203,7 +209,6 @@ export class GameService {
 
   paddleUp(player: User, leftOrRight: string) {
     const game = player.activeGame;
-    console.error(`GAME.SERVICE, PADDLEUP, debug`);
 
     if (game && game.isRunning()) {
       if (game.isLocalGame && leftOrRight == 'right') {

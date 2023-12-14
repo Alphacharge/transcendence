@@ -1,7 +1,7 @@
 <template>
   <div class="Wrapper">
     <div class="ButtonsWrapper">
-      <router-link class="ButtonBox nav-link navbar-nav" to="/pong">{{
+      <router-link class="ButtonBox nav-link navbar-nav" to="/remotegame">{{
         $t("Game")
       }}</router-link>
       <router-link class="ButtonBox nav-link" to="/localgame">{{

@@ -1,6 +1,12 @@
 <template>
-  <input type="text" v-model="code" placeholder="Enter your OTP code" />
-  <button @click="verifyCode">Verify</button>
+  <div class="twofa-input">
+    <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
+    <router-link to="/">
+      <button @click="verifyCode">
+        {{ $t("twoFAVerify") }}
+      </button>
+    </router-link>
+  </div>
 </template>
 
 <script>
@@ -11,13 +17,13 @@ export default {
     return {
       code: "",
       twoFactorStatus: "",
+      twoFactorEnabled: false,
     };
   },
 
   methods: {
     async verifyCode() {
       try {
-        console.log("sending 2fa code");
         const response = await fetch(
           `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/authenticate`,
           {
@@ -33,13 +39,17 @@ export default {
         );
 
         if (response.ok) {
-          this.twoFactorStatus = "Code accepted.";
+          if (localStorage.getItem("access_token") === "") {
+            const responseData = await response.json();
+            localStorage.setItem("access_token", responseData["access_token"]);
+            localStorage.setItem("userId", responseData["userId"]);
 
-          const responseData = await response.json();
-          localStorage.setItem("access_token", responseData["access_token"]);
-          localStorage.setItem("userId", responseData["userId"]);
-
-          router.push("/");
+            router.push("/");
+          } else {
+            this.twoFactorStatus = "Code verified.";
+            this.twoFactorAuthEnabled = true;
+            this.enable2fa();
+          }
         } else {
           this.twoFactorStatus =
             "Code could not be verified. Please try again.";
@@ -48,6 +58,36 @@ export default {
         console.error("Error verifying 2FA code:", error.message);
       }
     },
+    async enable2fa() {
+      try {
+        const response = await fetch(
+          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/enable`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
+          },
+        );
+        if (response.ok) {
+          this.twoFactorEnabled = false;
+        }
+      } catch (error) {
+        console.error("Error enabling 2FA:", error.message);
+      }
+    },
   },
 };
 </script>
+<style scoped>
+.twofa-input {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.twofa-input input {
+  margin: 1em 0;
+}
+</style>

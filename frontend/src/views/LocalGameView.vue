@@ -1,12 +1,23 @@
 <template>
-  <p>{{ $t("LocalGameExplanation") }}</p>
-  <div>
-    <button @click="startLocalGame()">{{ $t("StartLocalGame") }}</button>
-  </div>
-  <ScoreBoard></ScoreBoard>
-  <div class="game-wrapper">
-    <GameArea class="game-area" :isLocalGame="true"></GameArea>
-    <CountDown v-if="countDownVisible"></CountDown>
+  <div class="top">
+    <div class="btn-group">
+      <button @click="startLocalGame()" class="btn btn-danger">
+        {{ $t("StartLocalGame") }}
+      </button>
+    </div>
+    <ScoreBoard :scoreEnabled="false"></ScoreBoard>
+    <div class="game-wrapper">
+      <GameArea class="game-area" :isLocalGame="true"></GameArea>
+      <CountDown v-if="countDownVisible"></CountDown>
+    </div>
+    <div class="explanation-wrapper">
+      <div class="explanation-left">
+        {{ $t("LocalGameExplanationLeft") }}
+      </div>
+      <div class="explanation-right">
+        {{ $t("LocalGameExplanationRight") }}
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,5 +59,25 @@ export default {
 <style>
 .game-wrapper {
   position: relative;
+}
+
+.top {
+  margin-top: 4em;
+}
+
+.explanation-wrapper {
+  margin: 0 20%;
+  margin-top: 1em;
+  color: rgb(217, 217, 229);
+  display: flex;
+}
+.explanation-left {
+  text-align: left;
+  flex: 1;
+}
+
+.explanation-right {
+  text-align: right;
+  flex: 1;
 }
 </style>

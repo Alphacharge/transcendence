@@ -1,16 +1,18 @@
 <template>
-  <PongButtons />
-  <ScoreBoard />
-  <div class="game-wrapper">
-    <GameArea></GameArea>
-    <CountDown v-if="countDownVisible" />
+  <div class="top">
+    <RemoteGameButtons />
+    <ScoreBoard :scoreEnabled="true" />
+    <div class="game-wrapper">
+      <GameArea></GameArea>
+      <CountDown v-if="countDownVisible" />
+    </div>
   </div>
 </template>
 
 <script>
 import GameArea from "@/components/GameArea.vue";
 import ScoreBoard from "@/components/ScoreBoard.vue";
-import PongButtons from "@/components/PongButtons.vue";
+import RemoteGameButtons from "@/components/RemoteGameButtons.vue";
 import CountDown from "@/components/CountDown.vue";
 import {
   connectWebSocket,
@@ -24,7 +26,7 @@ export default {
       countDownVisible: false,
     };
   },
-  components: { GameArea, ScoreBoard, PongButtons, CountDown },
+  components: { GameArea, ScoreBoard, RemoteGameButtons, CountDown },
 
   mounted() {
     connectWebSocket();
@@ -43,5 +45,9 @@ export default {
 <style>
 .game-wrapper {
   position: relative;
+}
+
+.top {
+  margin-top: 4em;
 }
 </style>

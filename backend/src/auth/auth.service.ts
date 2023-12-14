@@ -41,7 +41,7 @@ export class AuthService {
       //create sessiontoken
       const bToken = await this.signToken(newUser.id, newUser.username);
       //push userid to the activeuser list
-        this.activeUser.add(newUser.id);
+      this.activeUser.add(newUser.id);
       console.error('AUTH.SERVICE: SIGNUP, Registered: ', newUser.username);
 
       return {
@@ -179,7 +179,7 @@ export class AuthService {
       console.error('validateToken: JWT invalid or expired.');
       return { valid: false };
     }
-}
+  }
 
   async verifyId(userId: number, token: string): Promise<boolean> {
     const secret = this.config.get('JWT_SECRET');
@@ -188,12 +188,13 @@ export class AuthService {
       const decodedToken: any = await this.jwt.verifyAsync(token, {
         secret: secret,
       });
-      if (userId === decodedToken.sub) {
+      if (Number(userId) === decodedToken.sub) {
         return true;
       }
+      console.error("User ID does not match decoded token sub");
       return false;
     } catch (error) {
-      console.error('token verification failed');
+      console.error('token verification failed', error);
       return false;
     }
   }

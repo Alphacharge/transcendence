@@ -31,6 +31,8 @@
           />
           <p class="text-color">{{ $t("profileRegister") }}</p>
           <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
+        </div>
+        <div class="two-fa-auth">
           <Enable2FA></Enable2FA>
         </div>
       </div>
@@ -254,7 +256,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .ms-row {
   display: flex;
 }
@@ -296,8 +298,13 @@ export default {
 }
 
 .profile-data {
-  margin-left: 5em;
+  margin-left: 1.5em;
   padding-top: 0.5em;
+  flex: 5;
+}
+
+.two-fa-auth {
+  flex: 1;
 }
 
 .message {
@@ -308,6 +315,7 @@ export default {
 .image-profile-container {
   position: relative;
   display: inline-block;
+  flex: 2;
 }
 
 .image-profile {

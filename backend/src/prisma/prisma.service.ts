@@ -70,7 +70,7 @@ export class PrismaService extends PrismaClient {
     try {
       const databaseUser = await this.users.findUnique({
         where: {
-          id: Number(userId)
+          id: Number(userId),
         },
         select: {
           id: true,

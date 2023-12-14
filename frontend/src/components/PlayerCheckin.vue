@@ -4,8 +4,18 @@
       Waiting for {{ 4 - displayedPlayerCount }} other player(s) to start this
       tournament...
     </h5>
-    <p v-if="participateStatus">You are checked in for this tournament!</p>
-    <button @click.prevent="checkIn" class="add-player">{{ btnMsg }}</button>
+    <div class="btn-group">
+      <button
+        v-if="!participateStatus"
+        @click="enterTournament()"
+        class="btn btn-danger"
+      >
+        {{ $t("EnterTournament") }}
+      </button>
+      <button v-else @click="leaveTournament()" class="btn btn-warning">
+        {{ $t("LeaveTournament") }}
+      </button>
+    </div>
   </div>
 </template>
 <script>
@@ -20,17 +30,15 @@ export default {
 
   data() {
     return {
-      btnMsg: "Participate",
       participateStatus: false,
       playersInTournament: 0,
     };
   },
 
   async mounted() {
-    socket.requestTournamentInfo();
+    connectWebSocket();
 
-    if (this.participateStatus) this.btnMsg = "Leave Tournament";
-    else this.btnMsg = "Participate";
+    socket.requestTournamentInfo();
 
     socket.on("tournamentPlayerCount", (queueSize) => {
       this.playersInTournament = queueSize;
@@ -38,12 +46,10 @@ export default {
 
     socket.on("addedToTournamentQueue", () => {
       this.participateStatus = true;
-      this.btnMsg = "Leave Tournament";
     });
 
     socket.on("removedFromTournamentQueue", () => {
       this.participateStatus = false;
-      this.btnMsg = "Participate";
     });
   },
 
@@ -54,14 +60,12 @@ export default {
   },
 
   methods: {
-    async checkIn() {
-      connectWebSocket();
+    enterTournament() {
+      socket.enterTournamentQueue();
+    },
 
-      if (!this.participateStatus) {
-        socket.enterTournamentQueue();
-      } else {
-        socket.leaveQueue();
-      }
+    leaveTournament() {
+      socket.leaveQueue();
     },
   },
 };

@@ -14,8 +14,10 @@ export default {
   LeaveQueue: "Warteschlange verlassen",
   LocalGame: "Lokales Spiel",
   StartLocalGame: "Starte lokales Spiel",
-  LocalGameExplanation:
-    "Spiele an der gleichen Tastatur mit W/S und Pfeil nach oben/Pfeil nach unten",
+  EnterTournament: "Turnier beitreten",
+  LeaveTournament: "Turnier verlassen",
+  LocalGameExplanationLeft: "W/S",
+  LocalGameExplanationRight: "Pfeil hoch/Pfeil runter",
 
   // SIGNUP & LOGIN
   Username: "Benutzername",
@@ -49,6 +51,14 @@ export default {
   profileTourWins: "Turniersiege",
   profileRegister: "Registriert seit",
   usernameTaken: "Name wird schon benutzt",
+
+  //2fa
+  twoFAenable: "aktivieren",
+  twoFAdisable: "deaktivieren",
+  twoFAenabled: "aktiviert",
+  twoFAdisabled: "deaktiviert",
+  twoFAEnterCode: "Dein OTP code",
+  twoFAVerify: "verifizieren",
 
   //About
   aboutTitle: "Transzendenz",
