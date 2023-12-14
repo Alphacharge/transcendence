@@ -3,7 +3,7 @@
     <div class="patch-left">
       <UserProfile />
     </div>
-      <FriendList />
+    <FriendList />
   </div>
 </template>
 
@@ -26,5 +26,4 @@ export default {
 .patch-left {
   flex-grow: 1;
 }
-
 </style>

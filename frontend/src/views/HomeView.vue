@@ -11,7 +11,7 @@
         $t("Tournament")
       }}</router-link>
     </div>
-      <FriendList />
+    <FriendList />
   </div>
 </template>
 
@@ -20,7 +20,6 @@ import FriendList from "@/components/FriendList.vue";
 
 export default {
   components: { FriendList },
-
 };
 </script>
 

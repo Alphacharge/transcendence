@@ -3,8 +3,10 @@
     <div class="friend-list" :class="{ 'friend-list-visible': listStatus }">
       <ul>
         <li>
-          <div class="add-friend" @click="openFriendSelectionModal">{{ $t("AddFriends") }}</div>
-          <div class="image_friends_add" >
+          <div class="add-friend" @click="openFriendSelectionModal">
+            {{ $t("AddFriends") }}
+          </div>
+          <div class="image_friends_add">
             <img
               style="width: 16px; height: auto"
               :src="getPlusSrc()"
@@ -39,11 +41,11 @@
       </ul>
     </div>
     <div>
-    <friend-selection-modal
-    ref="friendSelectionModal"
-    :nonFriends="nonFriends"
-    @add-friends="handleFriendsAdded"
-    ></friend-selection-modal>
+      <friend-selection-modal
+        ref="friendSelectionModal"
+        :nonFriends="nonFriends"
+        @add-friends="handleFriendsAdded"
+      ></friend-selection-modal>
     </div>
     <div class="friendlist-icon" @click="toggleFriendListStatus">
       <img
@@ -167,9 +169,9 @@ export default {
     toggleFriendListStatus() {
       this.listStatus = !this.listStatus;
       if (this.listStatus) {
-        document.body.classList.add('friend-list-visible');
+        document.body.classList.add("friend-list-visible");
       } else {
-        document.body.classList.remove('friend-list-visible');
+        document.body.classList.remove("friend-list-visible");
       }
     },
     getAvatarSrc(avatar) {
@@ -274,9 +276,7 @@ body.friend-list-visible {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(
-    1
-  );
+  transform: scale(1);
 }
 .image_friends_status {
   left: 15em;
