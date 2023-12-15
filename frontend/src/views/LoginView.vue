@@ -58,6 +58,7 @@ export default {
     };
   },
   methods: {
+    // standard login
     async sendPostRequest() {
       try {
         const response = await fetch(
@@ -79,6 +80,8 @@ export default {
         router.push("/login");
       }
     },
+
+    // OAuth login
     authorize() {
       const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const redirectUri = `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/42/callback`;
@@ -93,7 +96,6 @@ export default {
       });
       const authorizationUrl = `${authorizationEndpoint}?${queryParams}`;
       if (authorizationUrl) {
-        // window.location.href = authorizationUrl;
         window.location.href = authorizationUrl;
       } else {
         console.error(
@@ -101,6 +103,7 @@ export default {
         );
       }
     },
+
     async setResponse(response) {
       if (response.ok) {
         const responseData = await response.json();
@@ -119,6 +122,7 @@ export default {
   },
 };
 </script>
+
 <style>
 .form-container {
   width: 55%;

@@ -17,9 +17,22 @@
 
 <script>
 import FriendList from "@/components/FriendList.vue";
+import { fetchUserLanguage, selectLanguage } from "@/services/languageService";
 
 export default {
   components: { FriendList },
+
+  async mounted() {
+    try {
+      let language = await fetchUserLanguage();
+
+      selectLanguage(language);
+
+      this.$i18n.locale = selectLanguage(language);
+    } catch (error) {
+      console.error("Error fetching preferred language");
+    }
+  },
 };
 </script>
 
