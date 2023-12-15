@@ -45,6 +45,9 @@ export default {
   HighestWin: "Highest Win",
   LeastContacts: "Least Contacts",
   ballContacts: "Ballcontacts",
+  graphDescription:
+    "Select histogram legend to filter, hover on graphs for detail.",
+  Graphs: "Graphs",
 
   //Profile
   profileWins: "Wins",

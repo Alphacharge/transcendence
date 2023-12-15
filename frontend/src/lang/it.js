@@ -45,6 +45,9 @@ export default {
   HighestWin: "Profitto massimo",
   LeastContacts: "Meno contatti con la palla",
   ballContacts: "Contatti sferici",
+  graphDescription:
+    "Seleziona la legenda dell'istogramma per filtrare, passa il mouse sui grafici per i dettagli.",
+  Graphs: "Grafici",
 
   //Profile
   profileWins: "Vittorie",

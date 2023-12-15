@@ -45,6 +45,9 @@ export default {
   HighestWin: "Höchster Gewinn",
   LeastContacts: "Wenigste Ballkontakte",
   ballContacts: "Ballkontakte",
+  graphDescription:
+    "Wählen Sie die zu filternde Histogrammlegende aus und bewegen Sie den Mauszeiger über die Diagramme, um Einzelheiten anzuzeigen.",
+  Graphs: "Grafiken",
 
   //Profile
   profileWins: "Gewonnen",
