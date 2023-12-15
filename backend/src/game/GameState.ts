@@ -96,9 +96,9 @@ export class GameState {
     this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
+    this.speedFactor = 1;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
-    this.speedFactor = 1;
     const breaklength = this.deltaContactsPlayer1 + this.deltaContactsPlayer2;
     if (breaklength > this.longestBreak) {
       this.longestBreak = breaklength;
