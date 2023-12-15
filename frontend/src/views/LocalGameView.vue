@@ -1,7 +1,7 @@
 <template>
   <div class="top">
     <div class="btn-group">
-      <button @click="startLocalGame()" class="btn btn-danger">
+      <button @click="startLocalGame()" :class="{ 'disabled-btn': buttonDisabled }" class="btn btn-danger">
         {{ $t("StartLocalGame") }}
       </button>
     </div>
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       countDownVisible: false,
+      buttonDisabled: false,
     };
   },
   mounted() {
@@ -48,15 +49,36 @@ export default {
 
   methods: {
     async startLocalGame() {
-      this.countDownVisible = true;
-      connectWebSocket();
-      await socket.startLocalGame();
+      if (!this.buttonDisabled) {
+        this.countDownVisible = true;
+        connectWebSocket();
+        await socket.startLocalGame();
+        this.buttonDisabled = true;
+      } else {
+        this.buttonDisabled = false;
+      }
     },
   },
 };
 </script>
 
 <style scoped>
+.disabled-btn {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn-group{
+  width: 100%;
+}
+.btn-danger {
+  border: 0;
+  background-color: #35b522;
+}
+
+.btn:hover {
+  background-color: rgb(217, 217, 229);
+  opacity: 0.5;
+}
 .game-wrapper {
   position: relative;
 }
