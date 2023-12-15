@@ -398,7 +398,7 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async getContactsById(userId: number): Promise<number> {
+  async getContactsById(userId: number): Promise<any> {
     try {
       const userContacts: number = await this.$queryRaw`
         WITH UserContacts AS (
@@ -464,6 +464,7 @@ export class PrismaService extends PrismaClient {
         user.id,
       );
       const tourwins: number = await this.getTournamentWinsById(user.id);
+      const contacts = await this.getContactsById(user.id);
 
       userStatistics.push({
         userId: user.id,
@@ -474,6 +475,7 @@ export class PrismaService extends PrismaClient {
         losses,
         tourmatches,
         tourwins,
+        contacts,
       });
     }
     return userStatistics;

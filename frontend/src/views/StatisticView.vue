@@ -179,7 +179,7 @@
       <table class="table table-bordered transparent-table">
         <thead>
           <tr>
-            <th>{{ $t("User") }}</th>
+            <th @click="sortTable('username')">{{ $t("User") }}</th>
             <th @click="sortTable('matches')">{{ $t("Matches") }}</th>
             <th @click="sortTable('wins')">{{ $t("Wins") }}</th>
             <th @click="sortTable('losses')">{{ $t("Losses") }}</th>
@@ -188,6 +188,9 @@
               {{ $t("TournamentMatches") }}
             </th>
             <th @click="sortTable('tourwins')">{{ $t("TournamentWins") }}</th>
+            <th @click="sortTable('contacts[0].total_contacts')">
+              {{ $t("ballContacts") }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -197,23 +200,37 @@
             <td>{{ row.matches }}</td>
             <td>{{ row.wins }}</td>
             <td>{{ row.losses }}</td>
-            <td>{{ row.wins - row.losses }}</td>
+            <td>{{ (row.wins / row.losses).toFixed(2) }}</td>
             <td>{{ row.tourmatches }}</td>
             <td>{{ row.tourwins }}</td>
+            <td>{{ row.contacts[0].total_contacts }}</td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-  <span style="justify-content: center; color: rgb(219, 219, 227)">{{
-    $t("Select histogram legend to filter, hover on graphs for detail")
-  }}</span>
-  <div class="graph-wrapper">
-    <div class="graph-container">
-      <canvas id="championsBoard"></canvas>
-    </div>
-    <div class="graph-container reduced">
-      <canvas id="gameType"></canvas>
+    <h3>{{ $t("Graphs") }}</h3>
+    <p style="text-align: center; color: rgb(219, 219, 227)">
+      {{ $t("graphDescription") }}
+    </p>
+    <div class="graph-wrapper">
+      <div class="graph-row">
+        <div class="graph-container">
+          <canvas id="championsBoard" class="chart-canvas"></canvas>
+        </div>
+      </div>
+      <p style="text-align: center; color: rgb(219, 219, 227)">
+        {{ $t("ballContacts") }}
+      </p>
+      <div class="graph-row">
+        <div class="graph-container">
+          <canvas id="gameType" class="chart-canvas"></canvas>
+        </div>
+      </div>
+      <div class="graph-row">
+        <div class="graph-container">
+          <canvas id="kdChart" class="chart-canvas"></canvas>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -239,9 +256,40 @@ export default {
   computed: {
     sortedStatistics() {
       if (!this.statistics) return [];
+
+      const modifier = this.sortDirection === "desc" ? -1 : 1;
+
       return this.statistics.slice().sort((a, b) => {
-        const modifier = this.sortDirection === "desc" ? -1 : 1;
-        return modifier * (a[this.sortKey] - b[this.sortKey]);
+        if (this.sortKey === "username") {
+          const aValue = a[this.sortKey].toLowerCase();
+          const bValue = b[this.sortKey].toLowerCase();
+          return modifier * aValue.localeCompare(bValue);
+        }
+
+        // Handle "kd" separately
+        if (this.sortKey === "kd") {
+          const aValue = a.wins / a.losses;
+          const bValue = b.wins / b.losses;
+          return modifier * (aValue - bValue);
+        }
+
+        // Handle "ballContacts" separately
+        if (this.sortKey === "ballContacts") {
+          const aValue = a.contacts.reduce(
+            (total, contact) => total + contact.total_contacts,
+            0,
+          );
+          const bValue = b.contacts.reduce(
+            (total, contact) => total + contact.total_contacts,
+            0,
+          );
+          return modifier * (aValue - bValue);
+        }
+
+        // Handle other keys
+        const aValue = this.getValue(a, this.sortKey);
+        const bValue = this.getValue(b, this.sortKey);
+        return modifier * (aValue - bValue);
       });
     },
   },
@@ -251,9 +299,33 @@ export default {
         this.sortDirection = this.sortDirection === "desc" ? "asc" : "desc";
       } else {
         this.sortKey = key;
-        this.sortDirection = "desc";
+        this.sortDirection = key === "username" ? "asc" : "desc";
       }
     },
+    getValue(obj, key) {
+      // Handle nested properties
+      const keys = key.split(".");
+      return keys.reduce(
+        (acc, k) => (acc && acc[k] !== undefined ? acc[k] : null),
+        obj,
+      );
+    },
+    convertContacts(data) {
+      return data.map((user) => {
+        // Handle "ballContacts" separately
+        if (user.contacts && user.contacts.length > 0) {
+          user.ballContacts = user.contacts.reduce(
+            (total, contact) => total + contact.total_contacts,
+            0,
+          );
+        } else {
+          user.ballContacts = 0;
+        }
+
+        return user;
+      });
+    },
+
     async fetchMilestones() {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
@@ -270,7 +342,6 @@ export default {
         if (response.ok) {
           const data = await response.json();
           this.milestones = data;
-          console.log(this.milestones);
           // Handle the user history data as needed
         } else {
           console.error("Failed to fetch milestones");
@@ -293,7 +364,7 @@ export default {
         );
         if (response.ok) {
           const data = await response.json();
-          this.statistics = data;
+          this.statistics = this.convertContacts(data);
           this.renderChart();
         } else {
           console.error("Failed to fetch statistics");
@@ -308,17 +379,64 @@ export default {
       const usernames = this.userStatistics.map((user) => user.username);
       const wins = this.userStatistics.map((user) => user.wins);
       const losses = this.userStatistics.map((user) => user.losses);
+      const kd = this.userStatistics.map((user) => user.wins / user.losses);
+      kd.forEach((value, index, array) => {
+        array[index] = value < 1 ? value * -1 : value + 1;
+      });
       const histogram = document
         .getElementById("championsBoard")
         .getContext("2d");
+      //doughnut
+      const usernameDT = this.userStatistics.map((user) => user.username);
+      const contactsDT = this.userStatistics.map(
+        (user) => user.contacts[0].total_contacts,
+      );
+      //kd
+      const kdChart = document.getElementById("kdChart").getContext("2d");
+
+      const doughnutData = {
+        labels: usernameDT,
+        datasets: [
+          {
+            data: contactsDT,
+            backgroundColor: [
+              "rgb(5, 155, 255)",
+              "rgb(6, 8, 139)",
+              "rgb(255, 99, 132)",
+              "rgb(54, 162, 235)",
+              "rgb(255, 206, 86)",
+              "rgb(75, 192, 192)",
+              "rgb(153, 102, 255)",
+              "rgb(255, 159, 64)",
+              "rgb(220, 20, 60)",
+              "rgb(0, 128, 128)",
+              "rgb(0, 0, 139)",
+              "rgb(139, 0, 139)",
+              "rgb(255, 140, 0)",
+              "rgb(218, 165, 32)",
+              "rgb(107, 142, 35)",
+              "rgb(70, 130, 180)",
+              "rgb(255, 165, 0)",
+              "rgb(128, 0, 0)",
+              "rgb(0, 0, 128)",
+              "rgb(0, 128, 0)",
+              "rgb(128, 128, 0)",
+              "rgb(173, 216, 230)",
+              "rgb(255, 192, 203)",
+              "rgb(255, 255, 0)",
+              "rgb(255, 0, 255)",
+              "rgb(0, 255, 255)",
+              "rgb(255, 255, 255)",
+              "rgb(0, 0, 0)",
+              "rgb(128, 128, 128)",
+              "rgb(192, 192, 192)",
+            ],
+            hoverOffset: 1,
+            borderWidth: 0,
+          },
+        ],
+      };
       const doughnut = document.getElementById("gameType").getContext("2d");
-      let totalTourmatches = 0;
-      let totalMatches = 0;
-      this.userStatistics.forEach((obj) => {
-        totalTourmatches += obj.tourmatches;
-        totalMatches += obj.matches;
-      });
-      const totalSimpleMatches = totalMatches - totalTourmatches;
       Chart.defaults.color = "#dbdbe3";
       new Chart(histogram, {
         type: "bar",
@@ -326,12 +444,12 @@ export default {
           labels: usernames,
           datasets: [
             {
-              label: "Wins",
+              label: this.$t("Wins"),
               data: wins,
               backgroundColor: "rgba(0,115,0,0.5)",
             },
             {
-              label: "Losses",
+              label: this.$t("Losses"),
               data: losses,
               backgroundColor: "rgba(230,0,0,0.5)",
             },
@@ -364,14 +482,37 @@ export default {
       });
       new Chart(doughnut, {
         type: "doughnut",
+        data: doughnutData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+            },
+          },
+          title: {
+            display: true,
+            text: this.$t("ballContacts"),
+            font: {
+              size: 16, // Adjust the font size as needed
+              weight: "bold", // Adjust the font weight as needed
+            },
+          },
+        },
+      });
+      // New K/D bar chart
+      new Chart(kdChart, {
+        type: "bar",
         data: {
-          labels: ["Tournaments", "Matches"],
+          labels: usernames,
           datasets: [
             {
-              data: [totalTourmatches, totalSimpleMatches],
-              backgroundColor: ["rgb(5,155,255)", "rgb(6,8,139)"],
-              hoverOffset: 1,
-              borderWidth: 0,
+              label: "K/D",
+              data: kd,
+              backgroundColor: "rgba(75,192,192,0.7)",
+              borderColor: "rgba(75,192,192,1)",
+              borderWidth: 1,
             },
           ],
         },
@@ -380,7 +521,18 @@ export default {
           plugins: {
             legend: {
               display: true,
-              position: "top",
+              position: "bottom",
+            },
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: {
+                display: true,
+              },
+            },
+            y: {
+              beginAtZero: false,
             },
           },
         },
@@ -410,7 +562,6 @@ h3 {
   border-radius: 0.5em;
   display: flex;
   padding: 0.5em;
-  /* align-items: center; */
   margin: 0.5em;
   flex-direction: column;
 }
@@ -495,7 +646,6 @@ h3 {
   color: #ffe600c8;
 }
 
-/* Add this style to capitalize text in the first row of table headers */
 .transparent-table thead tr:first-child th {
   text-transform: uppercase;
 }
@@ -516,15 +666,24 @@ h3 {
 
 .graph-wrapper {
   display: flex;
-  justify-content: space-between;
-  width: 80%;
+  flex-direction: column;
+  align-items: center;
 }
 
+.graph-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1em;
+}
 .graph-container {
-  width: 48%;
+  width: 100%;
+  text-align: center;
 }
-
-.reduced {
-  height: 30vh;
+.chart-canvas {
+  max-width: 100%;
+  height: auto;
+  border: 1px solid #ddd;
+  border-radius: 1em;
 }
 </style>
