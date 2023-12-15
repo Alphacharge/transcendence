@@ -19,6 +19,7 @@ model Users {
   avatar_id           Int       @default(1)
   two_factor_enabled  Boolean   @default(false)
   two_factor_secret   String?   @default("")
+  language            String   @default("en")
 
   //Opposite Relations
   gamesL      Games[]       @relation("LeftUser")

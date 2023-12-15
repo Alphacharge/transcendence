@@ -97,6 +97,7 @@ const router = createRouter({
 
 // Global navigation guard to check for authentication
 router.beforeEach(async (to, from, next) => {
+  // check authorization
   try {
     const isLoggedIn = await checkLoggedIn();
     if (

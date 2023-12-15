@@ -1,4 +1,4 @@
-const checkLoggedIn = async () => {
+export const checkLoggedIn = async () => {
   try {
     const response = await fetch(
       `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/check`,
@@ -21,5 +21,3 @@ const checkLoggedIn = async () => {
     return false;
   }
 };
-
-export { checkLoggedIn };

@@ -13,7 +13,7 @@ import it from "./lang/it.js";
 
 // language plugin
 const i18n = new createI18n({
-  locale: "en", // default language
+  locale: localStorage.getItem("userLanguage") || "en", // default language
   messages: {
     en,
     de,

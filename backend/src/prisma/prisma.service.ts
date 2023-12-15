@@ -941,4 +941,33 @@ export class PrismaService extends PrismaClient {
       return null;
     }
   }
+
+  async setLanguage(userId: number, newLanguage: string): Promise<boolean> {
+    try {
+      await this.users.update({
+        where: { id: Number(userId) },
+        data: {
+          language: newLanguage,
+        },
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to update user language', error);
+      return false;
+    }
+  }
+
+  async getLanguage(userId: number) {
+    const user = await this.users.findUnique({
+      where: {
+        id: Number(userId),
+      },
+    });
+
+    if (user) {
+      return user.language;
+    } else {
+      return "en";
+    }
+  }
 }
