@@ -78,25 +78,26 @@ export class GameState {
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
     const paddlesDistance = 0;
-    const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
+    this.repositionPaddles();
     this.ballRadius = paddlesWidth;
 
     this.leftBorder = paddlesDistance;
-    this.leftPosition = paddlesStartPosition;
     this.leftImpact = 0;
 
     this.rightBorder = this.fieldWidth;
-    this.rightPosition = paddlesStartPosition;
     this.rightImpact = 0;
 
     this.gameInit();
   }
 
-  gameInit() {
-    const startAngle = this.randomAngle();
+  repositionPaddles() {
     const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
     this.leftPosition = paddlesStartPosition;
     this.rightPosition = paddlesStartPosition;
+  }
+
+  gameInit() {
+    const startAngle = this.randomAngle();
     this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
@@ -223,11 +224,11 @@ export class GameState {
   }
 
   collisionRight() {
-    const collisionAreaX0 = this.rightBorder - 4 * this.ballRadius;
+    const collisionAreaX0 = this.rightBorder - 5 * this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
     const collisionAreaY0 = Math.min(
       this.rightPosition,
-      this.rightPosition - 4 * this.ballRadius,
+      this.rightPosition - 2 * this.ballRadius,
     );
     const collisionAreaY1 = Math.min(
       this.rightPosition + this.paddlesHeight,
@@ -252,7 +253,7 @@ export class GameState {
   }
 
   collisionTop() {
-    if (this.ballY <= this.ballRadius) {
+    if (this.ballY <= 1.5 * this.ballRadius) {
       return true;
     }
     return false;
@@ -295,7 +296,6 @@ export class GameState {
     if (this.hasEnded() == false) {
       return;
     }
-
     clearInterval(this.intervalId);
     this.intervalId = null;
     this.gameInit();
@@ -314,7 +314,6 @@ export class GameState {
       this.tournamentState.gamesPlayed++;
       this.tournamentState.winners.push(this.winningPlayer);
     }
-
     sharedEventEmitter.emit('victory', this);
   }
 
