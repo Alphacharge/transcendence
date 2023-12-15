@@ -18,7 +18,7 @@ export class GameService {
   async startLocalGame(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
 
-    if (user.activeTournament || user.activeGame) return;
+    if (!user || user.activeTournament || user.activeGame) return;
 
     const game = new GameState();
 
