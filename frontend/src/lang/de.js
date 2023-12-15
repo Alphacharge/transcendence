@@ -44,6 +44,7 @@ export default {
   ShortestGame: "Kürzestes Spiel",
   HighestWin: "Höchster Gewinn",
   LeastContacts: "Wenigste Ballkontakte",
+  ballContacts: "Ballkontakte",
 
   //Profile
   profileWins: "Gewonnen",

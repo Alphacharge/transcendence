@@ -44,6 +44,7 @@ export default {
   ShortestGame: "Shortest Game",
   HighestWin: "Highest Win",
   LeastContacts: "Least Contacts",
+  ballContacts: "Ballcontacts",
 
   //Profile
   profileWins: "Wins",

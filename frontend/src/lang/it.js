@@ -44,6 +44,7 @@ export default {
   ShortestGame: "Partita più breve",
   HighestWin: "Profitto massimo",
   LeastContacts: "Meno contatti con la palla",
+  ballContacts: "Contatti sferici",
 
   //Profile
   profileWins: "Vittorie",
