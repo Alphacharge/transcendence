@@ -90,6 +90,9 @@ export class GameState {
 
   gameInit() {
     const startAngle = this.randomAngle();
+    const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
+    this.leftPosition = paddlesStartPosition;
+    this.rightPosition = paddlesStartPosition;
     this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
