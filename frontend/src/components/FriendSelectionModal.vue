@@ -3,25 +3,27 @@
     <div class="modal-content">
       <ul>
         <li v-for="nonFriend in nonFriends" :key="nonFriend.id">
-          <label>
-            <div class="image_friends">
-              <img :src="getAvatarSrc(nonFriend.avatar)" alt="Avatar" />
-            </div>
-            <div class="friend-name">
-              <div>{{ nonFriend.username }}</div>
-            </div>
-            <div class="image_friends_status">
-              <img
-                style="width: 16px; height: auto"
-                :src="getStatusSrc(nonFriend.status)"
-                alt="Status"
+          <label class="content-add-friends">
+            <div class="label-content">
+              <div class="image_friends">
+                <img :src="getAvatarSrc(nonFriend.avatar)" alt="Avatar" />
+              </div>
+              <div class="friend-name">
+                <div>{{ nonFriend.username }}</div>
+              </div>
+              <div class="image_friends_status">
+                <img
+                  style="width: 16px; height: auto"
+                  :src="getStatusSrc(nonFriend.status)"
+                  alt="Status"
+                />
+              </div>
+              <input
+                type="checkbox"
+                v-model="selectedFriends"
+                :value="nonFriend"
               />
             </div>
-            <input
-              type="checkbox"
-              v-model="selectedFriends"
-              :value="nonFriend"
-            />
           </label>
         </li>
       </ul>
@@ -116,20 +118,30 @@ export default {
 
 <style scoped>
 .friend-selection-modal {
-  position: sticky;
+  position: fixed;
   display: flex;
   flex-direction: column;
   color: rgb(1, 8, 51);
   top: 50%;
   left: 50%;
+  width: 25em;
+  max-height: 80%;
+  overflow-y: auto;
   transform: translate(-50%, -50%);
-  background-color: rgb(144, 154, 163);
-  padding: 20px;
-  /* border: 1px solid #ccc; */
+  background-color: rgb(144, 154, 163, 0.9);
+  padding: 1em;
   z-index: 1000;
-  opacity: 0.9;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 
+.content-add-friends {
+  flex: 1;
+}
+.label-content {
+  display: flex;
+  align-items: center;
+}
 .modal-content {
   text-align: center;
 }
@@ -144,7 +156,7 @@ li {
   justify-content: left;
   width: 100%;
   margin-bottom: 1em;
-  margin-bottom: 10px;
+  margin-bottom: 1em;
 }
 
 .image_friends {
