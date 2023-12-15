@@ -259,7 +259,7 @@ export class GameState {
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - this.ballRadius) {
+    if (this.ballY >= this.fieldHeight - 3 * this.ballRadius) {
       return true;
     }
     return false;
