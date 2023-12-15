@@ -22,6 +22,7 @@
   margin-top: 4em;
 }
 .about h3 {
+  color: rgb(217, 217, 229);
   margin-bottom: 2em;
   text-align: center;
 }
