@@ -57,7 +57,7 @@ export class PrismaService extends PrismaClient {
           },
         },
       });
-
+      console.log('user found by prisma:', userData);
       return userData;
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -482,8 +482,8 @@ export class PrismaService extends PrismaClient {
   async getLongestGame(): Promise<any | null> {
     try {
       const longestSpanGame = await this.$queryRaw`
-        SELECT 
-          "Games".id, 
+        SELECT
+          "Games".id,
           "Games"."createdAt",
           "Games"."updatedAt",
           "Games"."left_user_id",
@@ -497,18 +497,18 @@ export class PrismaService extends PrismaClient {
           r_user.username as r_username,
           r_user.avatar_id as r_avatar_id,
           r_avatar.mime_type as r_avatar_mime_type
-        FROM 
+        FROM
           "Games"
-        LEFT JOIN 
+        LEFT JOIN
           "Users" AS l_user ON "Games".left_user_id = l_user.id
-        LEFT JOIN 
+        LEFT JOIN
           "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
-        LEFT JOIN 
+        LEFT JOIN
           "Users" AS r_user ON "Games".right_user_id = r_user.id
-        LEFT JOIN 
+        LEFT JOIN
           "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
-        ORDER BY 
-          duration DESC 
+        ORDER BY
+          duration DESC
         LIMIT 1
       `;
       return longestSpanGame[0] || null;
@@ -521,8 +521,8 @@ export class PrismaService extends PrismaClient {
   async getShortestGame(): Promise<any | null> {
     try {
       const shortestGame = await this.$queryRaw`
-        SELECT 
-          "Games".id, 
+        SELECT
+          "Games".id,
           "Games"."createdAt",
           "Games"."updatedAt",
           "Games"."left_user_id",
@@ -536,18 +536,18 @@ export class PrismaService extends PrismaClient {
           r_user.username as r_username,
           r_user.avatar_id as r_avatar_id,
           r_avatar.mime_type as r_avatar_mime_type
-        FROM 
+        FROM
           "Games"
-        LEFT JOIN 
+        LEFT JOIN
           "Users" AS l_user ON "Games".left_user_id = l_user.id
-        LEFT JOIN 
+        LEFT JOIN
           "Avatars" AS l_avatar ON l_user.avatar_id = l_avatar.id
-        LEFT JOIN 
+        LEFT JOIN
           "Users" AS r_user ON "Games".right_user_id = r_user.id
-        LEFT JOIN 
+        LEFT JOIN
           "Avatars" AS r_avatar ON r_user.avatar_id = r_avatar.id
-        ORDER BY 
-          duration ASC 
+        ORDER BY
+          duration ASC
         LIMIT 1
       `;
       return shortestGame[0] || null;

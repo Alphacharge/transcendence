@@ -45,17 +45,15 @@ export default {
   methods: {
     addSelectedFriends() {
       // Add logic to send a request to add selected friends
-      const userId = localStorage.getItem("userId");
       const selectedFriendIds = this.selectedFriends.map((friend) => friend.id);
 
       // Send a request to your backend to add friends
       fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/data/addfriends`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
         body: JSON.stringify({
-          userId: userId,
           friendIds: selectedFriendIds,
         }),
       })
@@ -83,11 +81,8 @@ export default {
           {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
-            body: JSON.stringify({
-              userId: localStorage.getItem("userId"),
-            }),
           },
         );
 
