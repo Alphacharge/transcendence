@@ -27,8 +27,8 @@ export class GameService {
     user.activeGame = game;
     game.user1 = user;
 
-    await game.countDown();
     sharedEventEmitter.emit('prepareGame', game);
+    await game.countDown();
 
     const updateRate = 5;
 
