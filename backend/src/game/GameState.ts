@@ -45,6 +45,8 @@ export class GameState {
   rightImpact: number;
 
   speedFactor: number;
+  speedFactorMax: number;
+  speedFactorStart: number;
 
   currentCount: number;
 
@@ -68,7 +70,9 @@ export class GameState {
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
-    this.speedFactor = 1;
+    this.speedFactorStart = 2;
+    this.speedFactor = this.speedFactorStart;
+    this.speedFactorMax = 5;
     this.paddlesSpeed = 20;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
@@ -96,7 +100,7 @@ export class GameState {
     this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
-    this.speedFactor = 1;
+    this.speedFactor = this.speedFactorStart;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
     const breaklength = this.deltaContactsPlayer1 + this.deltaContactsPlayer2;
@@ -210,7 +214,7 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < 6) {
+      if (this.speedFactor < this.speedFactorMax) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer1++;
@@ -239,7 +243,7 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = -this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < 6) {
+      if (this.speedFactor < this.speedFactorMax) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer2++;
