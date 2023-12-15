@@ -464,6 +464,7 @@ export class PrismaService extends PrismaClient {
         user.id,
       );
       const tourwins: number = await this.getTournamentWinsById(user.id);
+      const contacts: number = await this.getContactsById(user.id);
 
       userStatistics.push({
         userId: user.id,
@@ -474,6 +475,7 @@ export class PrismaService extends PrismaClient {
         losses,
         tourmatches,
         tourwins,
+        contacts,
       });
     }
     return userStatistics;
