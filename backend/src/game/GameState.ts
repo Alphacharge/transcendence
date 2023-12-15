@@ -252,14 +252,14 @@ export class GameState {
   }
 
   collisionTop() {
-    if (this.ballY <= this.ballRadius / 2) {
+    if (this.ballY <= this.ballRadius) {
       return true;
     }
     return false;
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - 2 * this.ballRadius) {
+    if (this.ballY >= this.fieldHeight - this.ballRadius) {
       return true;
     }
     return false;
