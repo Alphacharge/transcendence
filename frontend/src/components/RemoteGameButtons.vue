@@ -41,3 +41,25 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+.btn-group{
+  width: 100%;
+}
+.btn-danger {
+  width: 90%;
+  border: 0;
+  background-color: #35b522;
+}
+
+.btn-warning {
+  width: 90%;
+  border: 0;
+  background-color: rgb(195, 30, 30);
+}
+.btn:hover {
+  background-color: rgb(217, 217, 229);
+  opacity: 0.5;
+}
+</style>
