@@ -45,6 +45,8 @@ export class GameState {
   rightImpact: number;
 
   speedFactor: number;
+  speedFactorMax: number;
+  speedFactorStart: number;
 
   currentCount: number;
 
@@ -68,24 +70,30 @@ export class GameState {
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
-    this.speedFactor = 1;
+    this.speedFactorStart = 2;
+    this.speedFactor = this.speedFactorStart;
+    this.speedFactorMax = 5;
     this.paddlesSpeed = 20;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
     const paddlesDistance = 0;
-    const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
+    this.repositionPaddles();
     this.ballRadius = paddlesWidth;
 
     this.leftBorder = paddlesDistance;
-    this.leftPosition = paddlesStartPosition;
     this.leftImpact = 0;
 
     this.rightBorder = this.fieldWidth;
-    this.rightPosition = paddlesStartPosition;
     this.rightImpact = 0;
 
     this.gameInit();
+  }
+
+  repositionPaddles() {
+    const paddlesStartPosition = (this.fieldHeight - this.paddlesHeight) / 2;
+    this.leftPosition = paddlesStartPosition;
+    this.rightPosition = paddlesStartPosition;
   }
 
   gameInit() {
@@ -93,9 +101,9 @@ export class GameState {
     this.ballAcceleration = 0.5;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
+    this.speedFactor = this.speedFactorStart;
     this.ballSpeedX = this.speedFactor * Math.cos(startAngle);
     this.ballSpeedY = this.speedFactor * Math.sin(startAngle);
-    this.speedFactor = 1;
     const breaklength = this.deltaContactsPlayer1 + this.deltaContactsPlayer2;
     if (breaklength > this.longestBreak) {
       this.longestBreak = breaklength;
@@ -207,7 +215,7 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < 6) {
+      if (this.speedFactor < this.speedFactorMax) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer1++;
@@ -216,11 +224,11 @@ export class GameState {
   }
 
   collisionRight() {
-    const collisionAreaX0 = this.rightBorder - 4 * this.ballRadius;
+    const collisionAreaX0 = this.rightBorder - 5 * this.ballRadius;
     const collisionAreaX1 = this.rightBorder;
     const collisionAreaY0 = Math.min(
       this.rightPosition,
-      this.rightPosition - 4 * this.ballRadius,
+      this.rightPosition - 2 * this.ballRadius,
     );
     const collisionAreaY1 = Math.min(
       this.rightPosition + this.paddlesHeight,
@@ -236,7 +244,7 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = -this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < 6) {
+      if (this.speedFactor < this.speedFactorMax) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer2++;
@@ -245,14 +253,14 @@ export class GameState {
   }
 
   collisionTop() {
-    if (this.ballY <= this.ballRadius / 2) {
+    if (this.ballY <= 1.5 * this.ballRadius) {
       return true;
     }
     return false;
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - 2 * this.ballRadius) {
+    if (this.ballY >= this.fieldHeight - 3 * this.ballRadius) {
       return true;
     }
     return false;
@@ -288,7 +296,6 @@ export class GameState {
     if (this.hasEnded() == false) {
       return;
     }
-
     clearInterval(this.intervalId);
     this.intervalId = null;
     this.gameInit();
@@ -307,7 +314,6 @@ export class GameState {
       this.tournamentState.gamesPlayed++;
       this.tournamentState.winners.push(this.winningPlayer);
     }
-
     sharedEventEmitter.emit('victory', this);
   }
 

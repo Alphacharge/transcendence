@@ -25,7 +25,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .clock {
   position: absolute;
   top: 50%; /* Adjust as needed */

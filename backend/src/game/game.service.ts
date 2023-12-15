@@ -18,7 +18,7 @@ export class GameService {
   async startLocalGame(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
 
-    if (user.activeTournament || user.activeGame) return;
+    if (!user || user.activeTournament || user.activeGame) return;
 
     const game = new GameState();
 
@@ -26,9 +26,8 @@ export class GameService {
 
     user.activeGame = game;
     game.user1 = user;
-
-    await game.countDown();
     sharedEventEmitter.emit('prepareGame', game);
+    await game.countDown();
 
     const updateRate = 5;
 
@@ -186,7 +185,6 @@ export class GameService {
       game.user1.userData.id,
       game.user2.userData.id,
     );
-
     sharedEventEmitter.emit('prepareGame', game);
     await game.countDown();
 

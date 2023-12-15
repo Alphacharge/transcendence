@@ -109,7 +109,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .game-wrapper {
   position: relative;
 }
