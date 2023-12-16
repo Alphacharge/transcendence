@@ -63,13 +63,19 @@ export class AuthController {
   @Get('/42/callback')
   async handleCallback(@Req() request: Request, @Res() response: Response) {
     const authResponse = await this.authService.handleCallback(request);
-    if (!authResponse) return;
-    const url = new URL(`${request.protocol}:${request.hostname}`);
-    url.port = '8080';
-    url.pathname = 'redirect';
-    url.searchParams.set('access_token', authResponse.access_token);
-    url.searchParams.set('userId', authResponse.userId.toString());
-    url.searchParams.set('userName', authResponse.userName);
-    response.status(302).redirect(url.href);
+    if (authResponse) {
+      const url = new URL(`${request.protocol}:${request.hostname}`);
+      url.port = '8080';
+      url.pathname = 'redirect';
+      url.searchParams.set('access_token', authResponse.access_token);
+      url.searchParams.set('userId', authResponse.userId.toString());
+      url.searchParams.set('userName', authResponse.userName);
+      response.status(302).redirect(url.href);
+    } else {
+      const url = new URL(`${request.protocol}:${request.hostname}`);
+      url.port = '8080';
+      url.pathname = 'oauthnotpossible';
+      response.status(404).redirect(url.href);
+    }
   }
 }
