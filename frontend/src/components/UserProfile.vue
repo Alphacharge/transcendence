@@ -235,6 +235,9 @@ export default {
           `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/upload`,
           {
             method: "POST",
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            },
             body: formData,
           },
         );
