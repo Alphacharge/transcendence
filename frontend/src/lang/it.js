@@ -9,6 +9,7 @@ export default {
   SignUp: "Registrati",
   About: "Informazioni",
   Logout: "Disconnettersi",
+  currentLanguage: "IT",
 
   // PONG GAME
   EnterQueue: "Entra in Coda",

@@ -7,9 +7,8 @@ import {
   Body,
   Get,
   Request,
-  Response,
+  Req
 } from '@nestjs/common';
-import { Res, Req } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 import { TwoFactorAuthService } from './twoFactorAuth.service';

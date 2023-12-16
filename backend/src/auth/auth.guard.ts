@@ -28,6 +28,7 @@ export class JwtAuthGuard implements CanActivate {
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
       request['user'] = payload.sub;
+      request['username'] = payload.username;
     } catch {
       throw new UnauthorizedException();
     }

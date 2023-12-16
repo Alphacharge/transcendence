@@ -1,11 +1,11 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   UseInterceptors,
   Req,
   UploadedFile,
-  ForbiddenException,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -233,5 +233,27 @@ export class PrismaController {
       console.error('Error uploading file:', error);
       throw new AvatarCreationFailedException();
     }
+  }
+
+  @Post('setlanguage')
+  async setLanguage(
+    @Req() req: Request,
+    @Body() body: { newLanguage: string },
+  ): Promise<{ success: boolean }> {
+    try {
+      return {
+        success: await this.prismaService.setLanguage(
+          req['user'],
+          body.newLanguage,
+        ),
+      };
+    } catch (error) {
+      return { success: false };
+    }
+  }
+
+  @Get('getlanguage')
+  async getLanguage(@Req() req: Request): Promise<{ language: string }> {
+    return { language: await this.prismaService.getLanguage(req['user']) };
   }
 }
