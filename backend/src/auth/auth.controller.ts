@@ -9,11 +9,16 @@ import {
   Header,
   Res,
   UseGuards,
+  Request,
+  RequestMapping,
+  InternalServerErrorException,
 } from '@nestjs/common';
+import { Request as exrpessRequest } from 'express';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
-import { Request, Response } from 'express';
 import { JwtAuthGuard } from './auth.guard';
+import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
@@ -33,43 +38,38 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   @Post('password-change')
-  pwChange(@Body() dto: AuthDto, @Req() req: Request) {
-    const token = req.headers.authorization?.split(' ')[1];
-    return this.authService.pwChange(dto, token);
+  @UseGuards(JwtAuthGuard)
+  pwChange(@Body() body: { oldPassword: string; newPassword: string }, @Req() req: Request) {
+    return this.authService.pwChange(req['user'], body.oldPassword, body.newPassword);
   }
 
+  // not using auth guard here because it would return 401 unauthorized :P
   @Get('check')
   @Header('Content-Type', 'application/json')
-  async checkLoggedIn(@Req() req: Request, @Res() res: Response) {
+  async checkLoggedIn(@Req() req: Request) {
     try {
-      const token = req.headers.authorization?.split(' ')[1];
+      const token = req.headers['authorization']?.split(' ')[1];
 
       if (!token) {
         // If no token exists, send a response indicating user not logged in
-        res
-          .status(200)
-          .json({ isLoggedIn: false, message: 'User not logged in' });
-        return;
+        return { isLoggedIn: false, message: 'User not logged in' };
       }
 
       const validToken = await this.authService.validateToken(token);
 
       if (validToken) {
-        res.status(200).json({ isLoggedIn: true, message: 'Authorized' });
+        return { isLoggedIn: true, message: 'Authorized' };
       } else {
         // If the token is invalid/expired, it's not an authentication error but an indication of not being logged in
-        res
-          .status(200)
-          .json({ isLoggedIn: false, message: 'User not logged in' });
-        console.log('Invalid JWT token');
+        return { isLoggedIn: false, message: 'User not logged in' };
       }
     } catch (error) {
-      res.status(500).json({ message: 'Internal server error' });
+      throw new InternalServerErrorException('Could not check login status');
     }
   }
 
   @Get('/42/callback')
-  async handleCallback(@Req() request: Request, @Res() response: Response) {
+  async handleCallback(@Req() request: exrpessRequest, @Res() response: Response) {
     const authResponse = await this.authService.handleCallback(request);
     if (!authResponse) return;
 

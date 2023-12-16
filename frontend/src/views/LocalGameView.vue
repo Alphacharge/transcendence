@@ -1,7 +1,11 @@
 <template>
   <div class="top">
     <div class="btn-group">
-      <button @click="startLocalGame()" :class="{ 'disabled-btn': buttonDisabled }" class="btn btn-danger">
+      <button
+        @click="startLocalGame()"
+        :class="{ 'disabled-btn': buttonDisabled }"
+        class="btn btn-danger"
+      >
         {{ $t("StartLocalGame") }}
       </button>
     </div>
@@ -67,7 +71,7 @@ export default {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.btn-group{
+.btn-group {
   width: 100%;
 }
 .btn-danger {

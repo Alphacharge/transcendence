@@ -58,10 +58,8 @@ export class TwoFactorAuthController {
   async check2FA(@Req() req: Request) {
     try {
       if (await this.prismaService.is2FAEnabledById(req['user'])) {
-        console.log('2fa status: active');
         return { twoFactorEnabled: true, message: '2FA active' };
       } else {
-        console.log('2fa status: inactive');
         return { twoFactorEnabled: false, message: '2FA not active' };
       }
     } catch (error) {

@@ -58,38 +58,33 @@ export class AuthService {
     }
   }
 
-  async pwChange(user: User, token: string) {
-    const secret = this.config.get('JWT_SECRET');
-
+  async pwChange(userId: number, oldPassword: string, newPassword: string) {
     try {
-      const decodedToken: any = (await this.jwt.verifyAsync(token, {
-        secret: secret,
-      })) as { sub: number; username: string } | null;
-      if (!decodedToken) {
-        throw new ForbiddenException('Invalid token');
-      }
       //compare old password
-      const oldPW: string = await this.prismaService.getUserHashById(decodedToken.sub);
-      const pwMatches = await argon.verify(oldPW, user.username);
+      const passwordHashFromDatabase: string = await this.prismaService.getUserHashById(userId);
+      const pwMatches = await argon.verify(passwordHashFromDatabase, oldPassword);
       //if password is wrong throw exception
       if (!pwMatches) {
         throw new ForbiddenException('Credentials incorrect');
       }
+
       //validate syntax new password
-      this.validatePassword(user.password);
+      this.validatePassword(newPassword);
       //generate the pw hash
-      const hash = await argon.hash(user.password);
+      const hash = await argon.hash(newPassword);
       //update user in the database
-      const newPW = await this.prismaService.updateUserPasswordById(
-        decodedToken.sub,
+      const newPasswordHash = await this.prismaService.updateUserPasswordById(
+        userId,
         hash,
       );
-      if (newPW == null)
+
+      if (newPasswordHash == null)
         throw new GatewayTimeoutException('Database unreachable');
-      return true;
+
+      return { success: true, message: "Password changed successfully."};
     } catch (error) {
       console.error('change Password: Failed to change Password.');
-      return false;
+      return { success: false, message: error.message};
     }
   }
 
@@ -116,9 +111,6 @@ export class AuthService {
 
     // if 2fa code is needed we send no JWT token
     if (newUser.two_factor_enabled) {
-      console.log('auth service waiting for 2fa');
-      //   this.waitingFor2FA.add(newUser.id);
-
       return {
         access_token: '',
         userId: newUser.id,
@@ -130,7 +122,7 @@ export class AuthService {
     //create sessiontoken
     const bToken = await this.signToken(newUser.id, newUser.username);
 
-    console.error('AUTH.SERVICE: SIGNIN, Logged in ', newUser.username);
+    console.error('AUTH.SERVICE: SIGNIN, Logged in:', newUser.username);
 
     return {
       access_token: bToken,

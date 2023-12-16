@@ -57,7 +57,6 @@ export class PrismaService extends PrismaClient {
           },
         },
       });
-      console.log('user found by prisma:', userData);
       return userData;
     } catch (error) {
       console.error('Error fetching user data:', error);

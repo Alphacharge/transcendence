@@ -40,8 +40,7 @@
             {{ $t("ChangePassword") }}
           </button>
         </div>
-        <div class="col-auto">
-        </div>
+        <div class="col-auto"></div>
       </div>
     </form>
   </div>
@@ -75,17 +74,23 @@ export default {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
             body: JSON.stringify({
-              username: this.oldPassword,
-              password: this.password,
+              oldPassword: this.oldPassword,
+              newPassword: this.password,
             }),
           },
         );
 
         if (response.ok) {
-          alert("Password changed successfully!");
-          router.push("profile");
+			const data = await response.json();
+
+			if (data.success) {
+				alert("Password changed successfully!");
+				router.push("profile");
+			} else {
+				alert(data.message);
+			}
         } else {
-          alert("Failed to change password. Check your old password and try again.");
+			alert("Failed to change password. Please try again.");
         }
       } catch (error) {
         alert("Password change failed!");

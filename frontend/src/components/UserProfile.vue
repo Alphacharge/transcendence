@@ -21,7 +21,12 @@
             {{ messageText }}
           </div>
           <p v-if="!isEditing" class="text-color">
-            <img class="edit-icon" :src="getEditSrc()" @click="startEditing" alt="Edit"/>
+            <img
+              class="edit-icon"
+              :src="getEditSrc()"
+              @click="startEditing"
+              alt="Edit"
+            />
             {{ userProfil.username }}
           </p>
           <input

@@ -17,7 +17,7 @@
       </button>
     </router-link>
     <router-link to="ChangePassword">
-        <img class="pw-icon" :src="getPWSrc()" alt="Change PW"/>
+      <img class="pw-icon" :src="getPWSrc()" alt="Change PW" />
     </router-link>
   </div>
 </template>
