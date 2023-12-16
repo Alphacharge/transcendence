@@ -3,7 +3,7 @@
     <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
       <div class="mb-3">
         <label for="OldPassword" class="form-label"
-          ><h5>{{ $t("oldPW") }}</h5></label
+          ><h5>{{ $t("OldPassword") }}</h5></label
         ><br />
         <input
           v-model="oldPassword"
@@ -83,7 +83,7 @@ export default {
 
         if (response.ok) {
           alert("Password changed successfully!");
-          router.push("/");
+          router.push("profile");
         } else {
           alert("Failed to change password. Check your old password and try again.");
         }
