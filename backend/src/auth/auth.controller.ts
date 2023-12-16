@@ -21,7 +21,7 @@ export class AuthController {
 
   @Post('signup')
   signup(@Body() dto: AuthDto) {
-    return this.authService.signup(dto);
+    return this.authService.signup(dto, false);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -64,7 +64,6 @@ export class AuthController {
   async handleCallback(@Req() request: Request, @Res() response: Response) {
     const authResponse = await this.authService.handleCallback(request);
     if (!authResponse) return;
-
     const url = new URL(`${request.protocol}:${request.hostname}`);
     url.port = '8080';
     url.pathname = 'redirect';
