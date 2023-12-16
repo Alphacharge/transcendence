@@ -967,7 +967,7 @@ export class PrismaService extends PrismaClient {
     if (user) {
       return user.language;
     } else {
-      return "en";
+      return 'en';
     }
   }
 }

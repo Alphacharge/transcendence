@@ -173,6 +173,7 @@ export class PrismaController {
     }
   }
 
+  @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {

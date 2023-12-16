@@ -73,7 +73,7 @@ export default {
 </script>
 
 <style scoped>
-.btn-group{
+.btn-group {
   width: 100%;
 }
 .btn-danger {
