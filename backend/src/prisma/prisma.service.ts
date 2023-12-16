@@ -65,7 +65,38 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  //needs to be changed
+  async updateUserPasswordById(userId: number, newHash: string): Promise<number | null> {
+    try {
+      const updatedUser = await this.users.update({
+        where: { id: Number(userId) },
+        data: {
+          hash: newHash,
+        },
+      });
+      return userId;
+    } catch (error) {
+      console.error('Failed to update Passwordhash', error);
+      return null;
+    }
+  }
+
+  async getUserHashById(userId: number): Promise<string | null> {
+    try {
+      const userData = await this.users.findUnique({
+        where: { id: Number(userId) },
+      });
+      if (userData) {
+        return userData.hash;
+      } else {
+        console.error(`User with id ${userId} not found.`);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+      return null;
+    }
+  }
+
   async getUser2FAById(userId: number): Promise<any | null> {
     try {
       const databaseUser = await this.users.findUnique({
@@ -114,7 +145,6 @@ export class PrismaService extends PrismaClient {
           username: newUsername,
         },
       });
-      console.log('updated userid:', userId, 'to username: ', newUsername);
       return newUsername;
     } catch (error) {
       console.error('Failed to update username', error);

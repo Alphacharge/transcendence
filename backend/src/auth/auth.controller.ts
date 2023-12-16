@@ -30,6 +30,14 @@ export class AuthController {
     return this.authService.signin(dto);
   }
 
+  @HttpCode(HttpStatus.OK)
+  @Header('Content-Type', 'application/json')
+  @Post('password-change')
+  pwChange(@Body() dto: AuthDto, @Req() req: Request) {
+    const token = req.headers.authorization?.split(' ')[1];
+    return this.authService.pwChange(dto, token);
+  }
+
   @Get('check')
   @Header('Content-Type', 'application/json')
   async checkLoggedIn(@Req() req: Request, @Res() res: Response) {
