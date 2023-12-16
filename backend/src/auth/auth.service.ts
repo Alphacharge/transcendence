@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
 import { Users } from '@prisma/client';
 import { Request } from 'express';
+import { AuthDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -54,6 +55,41 @@ export class AuthService {
           throw new ForbiddenException('Credentials taken');
         }
       }
+    }
+  }
+
+  async pwChange(user: User, token: string) {
+    const secret = this.config.get('JWT_SECRET');
+
+    try {
+      const decodedToken: any = (await this.jwt.verifyAsync(token, {
+        secret: secret,
+      })) as { sub: number; username: string } | null;
+      if (!decodedToken) {
+        throw new ForbiddenException('Invalid token');
+      }
+      //compare old password
+      const oldPW: string = await this.prismaService.getUserHashById(decodedToken.sub);
+      const pwMatches = await argon.verify(oldPW, user.username);
+      //if password is wrong throw exception
+      if (!pwMatches) {
+        throw new ForbiddenException('Credentials incorrect');
+      }
+      //validate syntax new password
+      this.validatePassword(user.password);
+      //generate the pw hash
+      const hash = await argon.hash(user.password);
+      //update user in the database
+      const newPW = await this.prismaService.updateUserPasswordById(
+        decodedToken.sub,
+        hash,
+      );
+      if (newPW == null)
+        throw new GatewayTimeoutException('Database unreachable');
+      return true;
+    } catch (error) {
+      console.error('change Password: Failed to change Password.');
+      return false;
     }
   }
 
