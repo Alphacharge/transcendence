@@ -23,7 +23,7 @@ export default {
   wins: "wins",
   RegisteredPlayers: "Registered Players",
 
-  // SIGNUP & LOGIN
+  // SIGNUP & LOGIN & PASSWORD
   Username: "Username",
   Password: "Password",
   RepeatPassword: "Repeat Password",
@@ -31,6 +31,9 @@ export default {
   or: "or",
   loginWithIntra: "Continue with 42",
   signupWithIntra: "Continue with 42",
+  NewPassword: "New Password",
+  RepeatNewPassword: "Repeat new Password",
+  OldPassword: "Old Password",
 
   // STATISTICS
   User: "User",
