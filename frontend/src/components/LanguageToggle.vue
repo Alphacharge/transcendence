@@ -1,6 +1,6 @@
 <template>
   <button @click="toggleLanguage" class="btn btn-primary">
-    {{ currentLanguage }}
+    {{ $t("currentLanguage") }}
   </button>
 </template>
 
