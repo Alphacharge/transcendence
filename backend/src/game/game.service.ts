@@ -6,7 +6,6 @@ import { User } from 'src/user/User';
 import { Socket } from 'socket.io';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
-import { share } from 'rxjs';
 
 @Injectable()
 export class GameService {
