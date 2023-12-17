@@ -72,10 +72,11 @@ export class AuthController {
       url.searchParams.set('userName', authResponse.userName);
       response.status(302).redirect(url.href);
     } else {
+      const errorCode = '1';
       const url = new URL(`${request.protocol}:${request.hostname}`);
       url.port = '8080';
-      url.pathname = 'oauthnotpossible';
-      response.status(404).redirect(url.href);
+      url.pathname = `error/${errorCode}`;
+      response.status(409).redirect(url.href);
     }
   }
 }
