@@ -13,7 +13,7 @@ import StatisticView from "@/views/StatisticView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import LocalGame from "@/views/LocalGameView.vue";
 import RedirectView from "@/views/RedirectView.vue";
-import OauthNotpossibleView from "@/views/OauthNotpossibleView.vue";
+import ErrorView from "@/views/ErrorView.vue";
 import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
@@ -90,9 +90,10 @@ const routes = [
     component: RedirectView,
   },
   {
-    path: "/oauthnotpossible",
-    name: "oauthnotpossible",
-    component: OauthNotpossibleView,
+    path: "/error/:code",
+    name: "error",
+    component: ErrorView,
+    props: true,
   },
 ];
 
@@ -113,7 +114,7 @@ router.beforeEach(async (to, from, next) => {
       to.name !== "2fa-code" &&
       to.name !== "ip" &&
       to.name !== "redirect" &&
-      to.name !== "oauthnotpossible" &&
+      to.name !== "error" &&
       !isLoggedIn
     ) {
       next("/login");
