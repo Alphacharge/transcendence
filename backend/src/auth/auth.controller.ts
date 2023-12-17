@@ -26,7 +26,7 @@ export class AuthController {
 
   @Post('signup')
   signup(@Body() dto: AuthDto) {
-    return this.authService.signup(dto);
+    return this.authService.signup(dto, false);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -71,14 +71,20 @@ export class AuthController {
   @Get('/42/callback')
   async handleCallback(@Req() request: exrpessRequest, @Res() response: Response) {
     const authResponse = await this.authService.handleCallback(request);
-    if (!authResponse) return;
-
-    const url = new URL(`${request.protocol}:${request.hostname}`);
-    url.port = '8080';
-    url.pathname = 'redirect';
-    url.searchParams.set('access_token', authResponse.access_token);
-    url.searchParams.set('userId', authResponse.userId.toString());
-    url.searchParams.set('userName', authResponse.userName);
-    response.status(302).redirect(url.href);
+    if (authResponse) {
+      const url = new URL(`${request.protocol}:${request.hostname}`);
+      url.port = '8080';
+      url.pathname = 'redirect';
+      url.searchParams.set('access_token', authResponse.access_token);
+      url.searchParams.set('userId', authResponse.userId.toString());
+      url.searchParams.set('userName', authResponse.userName);
+      response.status(302).redirect(url.href);
+    } else {
+      const errorCode = '1';
+      const url = new URL(`${request.protocol}:${request.hostname}`);
+      url.port = '8080';
+      url.pathname = `error/${errorCode}`;
+      response.status(409).redirect(url.href);
+    }
   }
 }

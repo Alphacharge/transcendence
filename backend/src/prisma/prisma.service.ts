@@ -24,12 +24,14 @@ export class PrismaService extends PrismaClient {
   async createUserBySignUp(
     inName: string,
     inHash: string,
+    inOauth: boolean,
   ): Promise<Users | null> {
     try {
       const newUser = await this.users.create({
         data: {
           username: inName,
           hash: inHash,
+          oauth: inOauth,
         },
       });
       return newUser;

@@ -23,7 +23,7 @@ export class AuthService {
   waitingFor2FA: Set<number> = new Set<number>();
   activeUser: Set<number> = new Set<number>();
 
-  async signup(user: User) {
+  async signup(user: User, oauth: boolean) {
     try {
       // Validate password
       this.validatePassword(user.password);
@@ -35,6 +35,7 @@ export class AuthService {
       const newUser = await this.prismaService.createUserBySignUp(
         user.username,
         hash,
+        oauth,
       );
       if (newUser == null)
         throw new GatewayTimeoutException('Database unreachable');
@@ -305,14 +306,16 @@ export class AuthService {
           userName: string;
         };
         if (!newUser) {
-          response = await this.signup(user);
-        } else {
+          response = await this.signup(user, true);
+        } else if (newUser.oauth){
           const bToken = await this.signToken(newUser.id, newUser.username);
           response = {
             access_token: bToken,
             userId: newUser.id,
             userName: newUser.username,
           };
+        } else {
+          console.error("user exists");
         }
         return response;
       } else {
