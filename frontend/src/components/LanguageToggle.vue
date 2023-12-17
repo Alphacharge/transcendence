@@ -40,7 +40,7 @@ export default {
       // save new language in backend
       try {
         const amILoggedIn = await checkLoggedIn();
-        console.log("amILoggedIn:", amILoggedIn);
+
         if (amILoggedIn) {
           await this.saveLanguagePreference(parsedLanguage);
         }
@@ -52,8 +52,6 @@ export default {
     },
 
     async saveLanguagePreference(language) {
-      console.log("saveLanguagePreference:", language);
-      console.log("json output:", JSON.stringify({ newLanguage: language }));
       try {
         await fetch(
           `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/setlanguage`,

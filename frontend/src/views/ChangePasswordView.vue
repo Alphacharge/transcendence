@@ -81,16 +81,16 @@ export default {
         );
 
         if (response.ok) {
-			const data = await response.json();
+          const data = await response.json();
 
-			if (data.success) {
-				alert("Password changed successfully!");
-				router.push("profile");
-			} else {
-				alert(data.message);
-			}
+          if (data.success) {
+            alert("Password changed successfully!");
+            router.push("profile");
+          } else {
+            alert(data.message);
+          }
         } else {
-			alert("Failed to change password. Please try again.");
+          alert("Failed to change password. Please try again.");
         }
       } catch (error) {
         alert("Password change failed!");

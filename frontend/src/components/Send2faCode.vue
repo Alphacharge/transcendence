@@ -1,11 +1,9 @@
 <template>
   <div class="twofa-input">
     <input type="text" v-model="code" :placeholder="$t('twoFAEnterCode')" />
-    <router-link to="/">
-      <button @click="verifyCode">
-        {{ $t("twoFAVerify") }}
-      </button>
-    </router-link>
+    <button @click="verifyCode">
+      {{ $t("twoFAVerify") }}
+    </button>
   </div>
 </template>
 
@@ -16,8 +14,6 @@ export default {
   data() {
     return {
       code: "",
-      twoFactorStatus: "",
-      twoFactorEnabled: false,
     };
   },
 
@@ -43,21 +39,19 @@ export default {
             const responseData = await response.json();
             localStorage.setItem("access_token", responseData["access_token"]);
             localStorage.setItem("userId", responseData["userId"]);
-
             router.push("/");
           } else {
-            this.twoFactorStatus = "Code verified.";
             this.twoFactorAuthEnabled = true;
             this.enable2fa();
           }
         } else {
-          this.twoFactorStatus =
-            "Code could not be verified. Please try again.";
+          alert(this.$t("CodeInvalid"));
         }
       } catch (error) {
-        console.error("Error verifying 2FA code:", error.message);
+        alert(this.$t("ServerError"));
       }
     },
+
     async enable2fa() {
       try {
         const response = await fetch(
@@ -69,16 +63,19 @@ export default {
             },
           },
         );
+
         if (response.ok) {
-          this.twoFactorEnabled = false;
+          alert(this.$t("TwoFactorAuthEnabled"));
+          router.push("/profile");
         }
       } catch (error) {
-        console.error("Error enabling 2FA:", error.message);
+        alert(this.$t("ServerError"));
       }
     },
   },
 };
 </script>
+
 <style scoped>
 .twofa-input {
   width: 100%;

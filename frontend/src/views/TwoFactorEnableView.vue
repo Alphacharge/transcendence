@@ -51,6 +51,7 @@ export default {
       }
     },
   },
+
   mounted() {
     this.generate2faSecret();
   },

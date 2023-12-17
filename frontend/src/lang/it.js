@@ -34,6 +34,7 @@ export default {
   NewPassword: "Nuova Password",
   RepeatNewPassword: "Ripeti la nuova password",
   OldPassword: "Vecchia password",
+  ChangePassword: "Modifica password",
 
   // STATISTICS
   User: "Utente",
@@ -72,6 +73,8 @@ export default {
   twoFAdisabled: "disabilitato",
   twoFAEnterCode: "Inserisci il tuo codice OTP",
   twoFAVerify: "verifica",
+  CodeInvalid: "Codice non valido. Si prega di riprovare.",
+  TwoFactorAuthEnabled: "Autenticazione a due fattori attivata con successo.",
 
   //About
   aboutTitle: "Trascendenza",
@@ -86,6 +89,7 @@ export default {
 
   //Error
   Error: "Errore",
+  ServerError: "Il server ha riscontrato un errore.",
   redirect: "Reindirizzamento alla pagina di accesso in:",
   error: {
     //Auth
