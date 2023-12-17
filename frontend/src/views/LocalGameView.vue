@@ -3,7 +3,7 @@
     <div class="btn-group">
       <button
         @click="startLocalGame()"
-        :class="{ 'disabled-btn': buttonDisabled }"
+        :class="{ 'disabled-btn': isGameRunning }"
         class="btn btn-danger"
       >
         {{ $t("StartLocalGame") }}
@@ -12,7 +12,7 @@
     <ScoreBoard :scoreEnabled="false"></ScoreBoard>
     <div class="game-wrapper">
       <GameArea class="game-area" :isLocalGame="true"></GameArea>
-      <CountDown v-if="countDownVisible"></CountDown>
+      <CountDown v-if="isGameRunning"></CountDown>
     </div>
     <div class="explanation-wrapper">
       <div class="explanation-left">
@@ -37,14 +37,19 @@ import ScoreBoard from "@/components/ScoreBoard.vue";
 
 export default {
   components: { CountDown, ScoreBoard, GameArea },
+
   data() {
     return {
-      countDownVisible: false,
-      buttonDisabled: false,
+      isGameRunning: false,
     };
   },
+
   mounted() {
     connectWebSocket();
+
+    socket.on("victory", () => {
+      this.isGameRunning = false;
+    });
   },
 
   beforeUnmount() {
@@ -53,13 +58,9 @@ export default {
 
   methods: {
     async startLocalGame() {
-      if (!this.buttonDisabled) {
-        this.countDownVisible = true;
-        connectWebSocket();
+      if (!this.isGameRunning) {
+        this.isGameRunning = true;
         await socket.startLocalGame();
-        this.buttonDisabled = true;
-      } else {
-        this.buttonDisabled = false;
       }
     },
   },

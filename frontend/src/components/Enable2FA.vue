@@ -36,6 +36,7 @@ export default {
   mounted() {
     this.checkTwoFactorAuthStatus();
   },
+
   computed: {
     twofaClass() {
       return {
@@ -44,6 +45,7 @@ export default {
       };
     },
   },
+
   methods: {
     twoFAText(enabled) {
       return enabled ? this.$t("twoFAenabled") : this.$t("twoFAdisabled");
@@ -95,6 +97,7 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .twofactorauth {
   width: 6em;

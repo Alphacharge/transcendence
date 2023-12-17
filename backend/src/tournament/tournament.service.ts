@@ -34,7 +34,6 @@ export class TournamentService {
         return -1;
       }
     }
-    // console.log(this.players);
     return this.players.size;
   }
 

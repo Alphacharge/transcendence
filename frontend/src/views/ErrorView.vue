@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { ref, onBeforeUnmount } from 'vue';
+import { ref, onBeforeUnmount } from "vue";
 import router from "@/router";
 
 export default {
@@ -22,10 +22,10 @@ export default {
   },
   computed: {
     errorMessage() {
-        return this.$t(`error.${this.code}`);
+      return this.$t(`error.${this.code}`);
     },
   },
-  setup(props) {
+  setup() {
     const currentCount = ref(5);
 
     const countdownInterval = setInterval(() => {
@@ -33,7 +33,7 @@ export default {
         currentCount.value--;
       } else {
         clearInterval(countdownInterval);
-        router.push('/login');
+        router.push("/login");
       }
     }, 1000);
 

@@ -1,7 +1,7 @@
 <template>
   <div class="scoreboard">
     <div class="score">
-      <div class="box">
+      <div class="box" :style="{ borderColor: getPlayerColor(0) }">
         <div class="content">
           <div class="image-table">
             <div class="image_history">
@@ -17,7 +17,7 @@
           </div>
         </div>
       </div>
-      <div class="box">
+      <div class="box" :style="{ borderColor: getPlayerColor(1) }">
         <div class="content">
           <div class="image-table">
             <div class="image_history">
@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <div class="box">
+      <div class="box" :style="{ borderColor: getPlayerColor(2) }">
         <div class="content">
           <div class="image-table">
             <div class="image_history">
@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-      <div class="box">
+      <div class="box" :style="{ borderColor: getPlayerColor(3) }">
         <div class="content">
           <div class="image-table">
             <div class="image_history">
@@ -70,29 +70,75 @@
 </template>
 
 <script>
+import { socket } from "@/assets/utils/socket";
+
 export default {
   props: {
-    players: {
-      type: Array,
-      default: () => [],
-    },
+    inActiveTournament: Boolean,
   },
-  watch: {
-    players: {
-      handler(newPlayers) {
-        this.updatePlayers(newPlayers);
-      },
-      immediate: true,
-    },
-  },
+
   data() {
     return {
-      internalPlayers: [],
+      players: [],
     };
   },
+
+  mounted() {
+    socket.on("lossOf", (username) => {
+      const playerIndex = this.players.findIndex(
+        (player) => player.username == username,
+      );
+
+      if (playerIndex != -1) {
+        this.players[playerIndex].borderColor = "rgba(255, 0, 0, 0.8)";
+      }
+    });
+
+    socket.on("tournamentWinner", (username) => {
+      const playerIndex = this.players.findIndex(
+        (player) => player.username == username,
+      );
+      if (playerIndex != -1) {
+        this.players[playerIndex].borderColor = "greenyellow";
+      }
+    });
+
+    socket.on("tournamentReset", () => {
+      // if i am not part of the running tournament, reset everything
+      // if (!this.iAmRegistered) {
+      if (!this.inActiveTournament) {
+        this.players.length = 0;
+      }
+    });
+
+    socket.on("playerJoinedTournament", (user) => {
+      if (this.inActiveTournament) {
+        return;
+      }
+
+      if (!this.players.some((player) => player.id == user.id)) {
+        this.players.push(user);
+      }
+    });
+
+    socket.on("playerLeftTournament", (userId) => {
+      if (this.inActiveTournament) {
+        return;
+      }
+
+      const index = this.players.findIndex((player) => player.id == userId);
+      if (index !== -1) {
+        this.players.splice(index, 1);
+      }
+    });
+  },
+
   methods: {
-    updatePlayers(players) {
-      this.internalPlayers = players;
+    getPlayerColor(index) {
+      if (this.players[index] && this.players[index].borderColor)
+        return this.players[index].borderColor;
+
+      return "rgba(255, 255, 255, 0.2)";
     },
   },
 };

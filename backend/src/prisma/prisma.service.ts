@@ -66,7 +66,10 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async updateUserPasswordById(userId: number, newHash: string): Promise<number | null> {
+  async updateUserPasswordById(
+    userId: number,
+    newHash: string,
+  ): Promise<number | null> {
     try {
       const updatedUser = await this.users.update({
         where: { id: Number(userId) },
@@ -286,7 +289,6 @@ export class PrismaService extends PrismaClient {
           winner_id: Number(winnerId),
         },
       });
-      console.log('GAME.STATE: UPDATEGAMESCORE, Updated game:', updatedGame);
     } catch (error) {
       console.error('GAME.STATE: UPDATEGAMESCORE, Error updating game:', error);
     }
