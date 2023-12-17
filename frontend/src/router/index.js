@@ -106,7 +106,7 @@ router.beforeEach(async (to, from, next) => {
   // check authorization
   try {
     const isLoggedIn = await checkLoggedIn();
-    console.error(`ROUTER HERE ${to.name}`);
+    // console.error(`ROUTER HERE ${to.name}`);
     if (
       to.name !== "login" &&
       to.name !== "signup" &&
