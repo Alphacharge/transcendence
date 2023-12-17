@@ -80,4 +80,13 @@ export default {
     "In my opinion, it's beneficial for everybody if each person is involved in all aspects of the project. It might take more time, but being in this school, the advantage of learning SQL, backend, frontend, and styling is clearly visible.",
   aboutText4:
     "I want to express my gratitude to the entire team for this rewarding journey, and I wish everyone a pleasant time after completing the school.",
+
+  //Error
+  Error: "Error",
+  redirect: "Redirect to Login Page in:",
+  error: {
+    //Auth
+    1: "Username is already taken.",
+    //Database
+  },
 };

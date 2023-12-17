@@ -80,4 +80,12 @@ export default {
     "Meiner Meinung nach ist es für alle von Vorteil, wenn jeder in allen Aspekten des Projekts involviert ist. Es mag mehr Zeit in Anspruch nehmen, aber wir sind hier in der Schule und der Vorteil des Lernens von SQL, Backend, Frontend und Styling deutlich sichtbar.",
   aboutText4:
     "Ich möchte dem gesamten Team für diese lohnende Reise danken und wünsche allen eine angenehme Zeit nach Abschluss der Schule.",
+
+  //Error
+  Error: "Fehler",
+  redirect: "Umleitung zur Anmeldeseite in:",
+  error: {
+    //Auth
+    1: "Benutzer schon vergeben.",
+    //Database
 };
