@@ -3,19 +3,27 @@
     <p>Your machine's IP address is: {{ ipAddress }}</p>
     <p>
       Your machine's IP address is:
-      <a :href="`https://${ipAddress}:3000`">https://{{ ipAddress }}:3000</a>
+      <a :href="`https://${ipAddress}:${backendPort}`"
+        >https://{{ ipAddress }}:{{ backendPort }}</a
+      >
     </p>
     <p>
       Your machine's IP address is:
-      <a href="https://localhost:3000">https://localhost:3000</a>
+      <a :href="`https://localhost:${backendPort}`"
+        >https://localhost:{{ backendPort }}</a
+      >
     </p>
     <p>
       Your machine's IP address is:
-      <a :href="`https://${ipAddress}:8080`">https://{{ ipAddress }}:8080</a>
+      <a :href="`https://${ipAddress}:${frontendPort}`"
+        >https://{{ ipAddress }}:{{ frontendPort }}</a
+      >
     </p>
     <p>
       Your machine's IP address is:
-      <a href="https://localhost:8080">https://localhost:8080</a>
+      <a href="`https://localhost:${frontendPort}`"
+        >https://localhost:{{ frontendPort }}</a
+      >
     </p>
     <ConnectionState></ConnectionState>
     <ConnectionManager></ConnectionManager>
@@ -33,9 +41,11 @@ export default {
     };
   },
   created() {
-    this.ipAddress = process.env.VUE_APP_BACKEND_IP;
+    this.ipAddress = process.env.SERVER_IP;
+    this.backendPort = process.env.BACKEND_PORT;
+    this.frontendPort = process.env.FRONTEND_PORT;
     if (!this.ipAddress) {
-      this.ipAddress = "VUE_APP_BACKEND_IP needed in .env file";
+      this.ipAddress = "SERVER_IP needed in .env file";
     }
   },
   components: { ConnectionManager, ConnectionState },

@@ -330,7 +330,7 @@ export default {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/milestones`,
+          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/milestones`,
           {
             method: "POST",
             headers: {
@@ -354,7 +354,7 @@ export default {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/allstats`,
+          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/allstats`,
           {
             method: "POST",
             headers: {

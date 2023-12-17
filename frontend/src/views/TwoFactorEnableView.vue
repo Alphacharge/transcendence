@@ -29,7 +29,7 @@ export default {
     async generate2faSecret() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/generate`,
+          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/2fa/generate`,
           {
             method: "POST",
             headers: {

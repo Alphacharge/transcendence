@@ -56,7 +56,7 @@ export default {
       console.log("json output:", JSON.stringify({ newLanguage: language }));
       try {
         await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/setlanguage`,
+          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/setlanguage`,
           {
             method: "POST",
             headers: {
