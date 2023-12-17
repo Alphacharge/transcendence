@@ -9,6 +9,7 @@ CREATE TABLE "Users" (
     "two_factor_enabled" BOOLEAN NOT NULL DEFAULT false,
     "two_factor_secret" TEXT DEFAULT '',
     "language" TEXT NOT NULL DEFAULT 'en',
+    "oauth" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "Users_pkey" PRIMARY KEY ("id")
 );

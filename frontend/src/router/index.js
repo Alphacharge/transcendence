@@ -13,6 +13,7 @@ import StatisticView from "@/views/StatisticView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import LocalGame from "@/views/LocalGameView.vue";
 import RedirectView from "@/views/RedirectView.vue";
+import ErrorView from "@/views/ErrorView.vue";
 import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
@@ -88,6 +89,12 @@ const routes = [
     name: "redirect",
     component: RedirectView,
   },
+  {
+    path: "/error/:code",
+    name: "error",
+    component: ErrorView,
+    props: true,
+  },
 ];
 
 const router = createRouter({
@@ -100,12 +107,14 @@ router.beforeEach(async (to, from, next) => {
   // check authorization
   try {
     const isLoggedIn = await checkLoggedIn();
+    // console.error(`ROUTER HERE ${to.name}`);
     if (
       to.name !== "login" &&
       to.name !== "signup" &&
       to.name !== "2fa-code" &&
       to.name !== "ip" &&
       to.name !== "redirect" &&
+      to.name !== "error" &&
       !isLoggedIn
     ) {
       next("/login");
