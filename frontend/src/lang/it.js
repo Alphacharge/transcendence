@@ -23,7 +23,7 @@ export default {
   LocalGameExplanationLeft: "W/S",
   LocalGameExplanationRight: "freccia su/freccia giù",
 
-  // SIGNUP & LOGIN
+  // SIGNUP & LOGIN & PASSWORD
   Username: "Nome utente",
   Password: "Password",
   RepeatPassword: "Ripeti Password",
@@ -31,6 +31,9 @@ export default {
   or: "o",
   loginWithIntra: "Continua con 42",
   signupWithIntra: "Continua con 42",
+  NewPassword: "Nuova Password",
+  RepeatNewPassword: "Ripeti la nuova password",
+  OldPassword: "Vecchia password",
 
   // STATISTICS
   User: "Utente",

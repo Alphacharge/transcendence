@@ -11,6 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import { User } from './interfaces/user.interface';
 import { Users } from '@prisma/client';
 import { Request } from 'express';
+import { AuthDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -58,6 +59,36 @@ export class AuthService {
     }
   }
 
+  async pwChange(userId: number, oldPassword: string, newPassword: string) {
+    try {
+      //compare old password
+      const passwordHashFromDatabase: string = await this.prismaService.getUserHashById(userId);
+      const pwMatches = await argon.verify(passwordHashFromDatabase, oldPassword);
+      //if password is wrong throw exception
+      if (!pwMatches) {
+        throw new ForbiddenException('Credentials incorrect');
+      }
+
+      //validate syntax new password
+      this.validatePassword(newPassword);
+      //generate the pw hash
+      const hash = await argon.hash(newPassword);
+      //update user in the database
+      const newPasswordHash = await this.prismaService.updateUserPasswordById(
+        userId,
+        hash,
+      );
+
+      if (newPasswordHash == null)
+        throw new GatewayTimeoutException('Database unreachable');
+
+      return { success: true, message: "Password changed successfully."};
+    } catch (error) {
+      console.error('change Password: Failed to change Password.');
+      return { success: false, message: error.message};
+    }
+  }
+
   async checkUserInDB(user: User): Promise<Users> {
     const newUser = await this.prismaService.getUserByName(user.username);
     return newUser;
@@ -81,9 +112,6 @@ export class AuthService {
 
     // if 2fa code is needed we send no JWT token
     if (newUser.two_factor_enabled) {
-      console.log('auth service waiting for 2fa');
-      //   this.waitingFor2FA.add(newUser.id);
-
       return {
         access_token: '',
         userId: newUser.id,
@@ -95,7 +123,7 @@ export class AuthService {
     //create sessiontoken
     const bToken = await this.signToken(newUser.id, newUser.username);
 
-    console.error('AUTH.SERVICE: SIGNIN, Logged in ', newUser.username);
+    console.error('AUTH.SERVICE: SIGNIN, Logged in:', newUser.username);
 
     return {
       access_token: bToken,
