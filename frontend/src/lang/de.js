@@ -88,4 +88,5 @@ export default {
     //Auth
     1: "Benutzer schon vergeben.",
     //Database
+  },
 };

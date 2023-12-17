@@ -88,4 +88,5 @@ export default {
     //Auth
     1: "Il nome utente è già in uso.",
     //Database
+  },
 };
