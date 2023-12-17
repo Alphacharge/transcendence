@@ -8,6 +8,7 @@ import {
   Get,
   Request,
   Req,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
@@ -32,7 +33,7 @@ export class TwoFactorAuthController {
     const { otpauthUrl } = await this.twoFactorAuthService.generate2FASecret(
       req['user'],
     );
-
+    console.log('2fa/generate:', otpauthUrl);
     return { otpauthUrl };
   }
 
@@ -74,18 +75,15 @@ export class TwoFactorAuthController {
     @Req() req: Request,
     @Body() body: { userId: number; code: string },
   ) {
-    console.log('2fa authentication request received for user', body.userId);
     const isCodeValid = await this.twoFactorAuthService.is2FACodeValid(
       body.code,
       body.userId,
     );
 
     if (!isCodeValid) {
-      console.log('2fa code invalid.');
+      console.log('2fa/authenticate: received invalid code.');
       throw new UnauthorizedException('Invalid 2FA code');
     }
-
-    console.log('2fa code accepted.');
 
     const databaseUser = await this.prismaService.getUser2FAById(body.userId);
     const accessToken = await this.authService.signToken(
@@ -93,7 +91,6 @@ export class TwoFactorAuthController {
       databaseUser.username,
     );
 
-    console.log('2fa code valid');
     return {
       access_token: accessToken,
       userId: databaseUser.id,

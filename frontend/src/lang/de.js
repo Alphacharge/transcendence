@@ -34,6 +34,7 @@ export default {
   NewPassword: "Neues Passwort",
   RepeatNewPassword: "Neues Passwort wiederholen",
   OldPassword: "Altes Passwort",
+  ChangePassword: "Passwort ändern",
 
   // STATISTICS
   User: "Nutzer",
@@ -72,6 +73,8 @@ export default {
   twoFAdisabled: "deaktiviert",
   twoFAEnterCode: "Dein OTP code",
   twoFAVerify: "verifizieren",
+  CodeInvalid: "Ungültiger Code. Bitte versuchen Sie es erneut.",
+  TwoFactorAuthEnabled: "Zwei-Faktor-Authentifizierung erfolgreich aktiviert.",
 
   //About
   aboutTitle: "Transzendenz",
@@ -86,6 +89,7 @@ export default {
 
   //Error
   Error: "Fehler",
+  ServerError: "Der Server hat enien Fehler festgestellt.",
   redirect: "Umleitung zur Anmeldeseite in:",
   error: {
     //Auth

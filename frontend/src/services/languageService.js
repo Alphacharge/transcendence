@@ -12,7 +12,6 @@ export const fetchUserLanguage = async () => {
 
     if (response.ok) {
       const data = await response.json();
-      console.log("fetched language from backend:", data.language);
       return data.language;
     } else {
       return "en";
@@ -24,7 +23,6 @@ export const fetchUserLanguage = async () => {
 
 export function selectLanguage(language) {
   // Set the corresponding locale based on the current language
-  console.log("input language:", language);
   switch (language.toLowerCase()) {
     case "en":
       language = "en";
@@ -39,7 +37,7 @@ export function selectLanguage(language) {
       language = "en";
       break;
   }
-  console.log("parsed language:", language);
+
   localStorage.setItem("userLanguage", language);
   return language;
 }

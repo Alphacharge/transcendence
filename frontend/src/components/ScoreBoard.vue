@@ -85,7 +85,6 @@ export default {
 
     // received info if we are left or right
     socket.on("player1", (players) => {
-      console.log(players);
       this.players = players;
       this.player1Score = 0;
     });

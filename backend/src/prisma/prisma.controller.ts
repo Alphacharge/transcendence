@@ -79,8 +79,6 @@ export class PrismaController {
       const userMilestones = await this.prismaService.getUserMilestonesById(
         req['user'],
       );
-      console.log('userstats user id:', req['user']);
-      console.log('user data:', userProfil);
       return { userHistory, userProfil, userMilestones };
     } catch (error) {
       console.error('Error fetching user statistics:', error);
@@ -173,7 +171,6 @@ export class PrismaController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -216,9 +213,6 @@ export class PrismaController {
 
         // Rename the file with the new filename
         await fsPromises.rename(originalFilename, newFilename);
-
-        // Handle the uploaded file here (you can save the filename or avatar ID in the database)
-        console.log('File uploaded successfully:', file);
 
         // Return the appropriate response
         return {

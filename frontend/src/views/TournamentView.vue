@@ -3,13 +3,7 @@
     <div v-if="!inActiveTournament">
       <PlayerCheckin />
     </div>
-    <PlayersComponent v-if="!inActiveTournament" :players="players" />
-  </div>
-  <p v-for="(winner, index) in winners" :key="index">
-    Game {{ index + 1 }} winner: {{ winner }}
-  </p>
-  <div v-if="tournamentWinner">
-    <p>Tournament Winner: {{ tournamentWinner }}</p>
+    <PlayersComponent :inActiveTournament="inActiveTournament" />
   </div>
   <ScoreBoard v-if="inActiveTournament" :scoreEnabled="true"></ScoreBoard>
   <div class="game-wrapper">
@@ -41,8 +35,6 @@ export default {
 
   data() {
     return {
-      players: [],
-      winners: [],
       inActiveTournament: false,
       iAmRegistered: false,
       tournamentWinner: "",
@@ -62,48 +54,12 @@ export default {
       this.inActiveTournament = true;
     });
 
-    socket.on("tournamentReset", () => {
-      // if i am not part of the running tournament, reset everything
-      if (!this.iAmRegistered) {
-        this.players.length = 0;
-      }
-    });
-
-    socket.on("playerJoinedTournament", (user) => {
-      if (this.inActiveTournament) {
-        return;
-      }
-
-      if (!this.players.some((player) => player.id == user.id)) {
-        this.players.push(user);
-      }
-    });
-
-    socket.on("playerLeftTournament", (userId) => {
-      if (this.inActiveTournament) {
-        return;
-      }
-
-      const index = this.players.findIndex((player) => player.id == userId);
-      if (index !== -1) {
-        this.players.splice(index, 1);
-      }
-    });
-
     socket.on("addedToTournamentQueue", () => {
       this.iAmRegistered = true;
     });
 
     socket.on("removedFromTournamentQueue", () => {
       this.iAmRegistered = false;
-    });
-
-    socket.on("victoryOf", (username) => {
-      this.winners.push(username);
-    });
-
-    socket.on("tournamentWinner", (username) => {
-      this.tournamentWinner = username;
     });
   },
 };

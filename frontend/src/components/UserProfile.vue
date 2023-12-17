@@ -241,7 +241,7 @@ export default {
             body: formData,
           },
         );
-        console.log(response);
+
         if (response.ok) {
           const responseData = await response.json();
           this.userProfil.avatar = responseData;
@@ -253,8 +253,6 @@ export default {
               match.rightUser.avatar = responseData;
             }
           });
-
-          console.log("File uploaded successfully:", responseData);
         } else {
           console.error("Failed to upload file:", response.statusText);
         }

@@ -12,7 +12,6 @@ export const checkLoggedIn = async () => {
 
     if (response.ok) {
       const data = await response.json(); // Parse response JSON data
-      console.log("response:", data);
       return data.isLoggedIn; // Return the isLoggedIn value from the response
     } else {
       return false; // Handle other response statuses if needed

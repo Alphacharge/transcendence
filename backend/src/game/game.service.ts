@@ -148,7 +148,6 @@ export class GameService {
     tournament.players = this.queueTournament.splice(0, 4);
 
     if (tournament.players.length < 4) {
-      console.log('Not enough players for the tournament.');
       return;
     }
     // players are now locked and can't leave any more

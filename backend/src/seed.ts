@@ -40,35 +40,43 @@ async function seed() {
 
     let user1: Users = await prisma.createUserBySignUp(
       authuser1.username,
-      await argon.hash(authuser1.password),false
+      await argon.hash(authuser1.password),
+      false,
     );
     let user2: Users = await prisma.createUserBySignUp(
       authuser2.username,
-      await argon.hash(authuser2.password),false
+      await argon.hash(authuser2.password),
+      false,
     );
     let user3: Users = await prisma.createUserBySignUp(
       authuser3.username,
-      await argon.hash(authuser3.password),false
+      await argon.hash(authuser3.password),
+      false,
     );
     let user4: Users = await prisma.createUserBySignUp(
       authuser4.username,
-      await argon.hash(authuser4.password),false
+      await argon.hash(authuser4.password),
+      false,
     );
     let user5: Users = await prisma.createUserBySignUp(
       authuser5.username,
-      await argon.hash(authuser5.password),false
+      await argon.hash(authuser5.password),
+      false,
     );
     let user6: Users = await prisma.createUserBySignUp(
       authuser6.username,
-      await argon.hash(authuser6.password),false
+      await argon.hash(authuser6.password),
+      false,
     );
     let user7: Users = await prisma.createUserBySignUp(
       authuser7.username,
-      await argon.hash(authuser7.password),false
+      await argon.hash(authuser7.password),
+      false,
     );
     let user8: Users = await prisma.createUserBySignUp(
       authuser8.username,
-      await argon.hash(authuser8.password),false
+      await argon.hash(authuser8.password),
+      false,
     );
 
     //Play 8 Queued Games

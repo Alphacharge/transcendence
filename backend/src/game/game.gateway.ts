@@ -258,8 +258,13 @@ export class GameGateway {
     } else {
       // if this is a tournament, inform each participant about the win
       if (game.tournamentState) {
+        // added loser visualization for tournaents
+        let loser = game.user1;
+        if (game.winningPlayer == game.user1) loser = game.user2;
+
         game.tournamentState.players.forEach((player) => {
           player.socket.emit('victoryOf', game.winningPlayer.userData.username);
+          player.socket.emit('lossOf', loser.userData.username);
         });
       }
       // tell the participants of the game who won
@@ -280,7 +285,6 @@ export class GameGateway {
   matchStart(game: GameState) {
     game.user1?.socket?.emit('countDown', game.currentCount);
     game.user2?.socket?.emit('countDown', game.currentCount);
-    // console.log(`Countdown: ${game.currentCount}`);
   }
 
   addedToTournamentQueue(user: User) {

@@ -62,8 +62,12 @@ export class AuthService {
   async pwChange(userId: number, oldPassword: string, newPassword: string) {
     try {
       //compare old password
-      const passwordHashFromDatabase: string = await this.prismaService.getUserHashById(userId);
-      const pwMatches = await argon.verify(passwordHashFromDatabase, oldPassword);
+      const passwordHashFromDatabase: string =
+        await this.prismaService.getUserHashById(userId);
+      const pwMatches = await argon.verify(
+        passwordHashFromDatabase,
+        oldPassword,
+      );
       //if password is wrong throw exception
       if (!pwMatches) {
         throw new ForbiddenException('Credentials incorrect');
@@ -82,10 +86,10 @@ export class AuthService {
       if (newPasswordHash == null)
         throw new GatewayTimeoutException('Database unreachable');
 
-      return { success: true, message: "Password changed successfully."};
+      return { success: true, message: 'Password changed successfully.' };
     } catch (error) {
       console.error('change Password: Failed to change Password.');
-      return { success: false, message: error.message};
+      return { success: false, message: error.message };
     }
   }
 
@@ -307,7 +311,7 @@ export class AuthService {
         };
         if (!newUser) {
           response = await this.signup(user, true);
-        } else if (newUser.oauth){
+        } else if (newUser.oauth) {
           const bToken = await this.signToken(newUser.id, newUser.username);
           response = {
             access_token: bToken,
@@ -315,7 +319,7 @@ export class AuthService {
             userName: newUser.username,
           };
         } else {
-          console.error("user exists");
+          console.error('user exists');
         }
         return response;
       } else {

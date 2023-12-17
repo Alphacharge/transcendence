@@ -10,15 +10,13 @@ import {
   Res,
   UseGuards,
   Request,
-  RequestMapping,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { Request as exrpessRequest } from 'express';
+import { Request as expressRequest } from 'express';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { JwtAuthGuard } from './auth.guard';
-import { IncomingHttpHeaders } from 'http';
 
 @Controller('auth')
 export class AuthController {
@@ -39,8 +37,15 @@ export class AuthController {
   @Header('Content-Type', 'application/json')
   @Post('password-change')
   @UseGuards(JwtAuthGuard)
-  pwChange(@Body() body: { oldPassword: string; newPassword: string }, @Req() req: Request) {
-    return this.authService.pwChange(req['user'], body.oldPassword, body.newPassword);
+  pwChange(
+    @Body() body: { oldPassword: string; newPassword: string },
+    @Req() req: Request,
+  ) {
+    return this.authService.pwChange(
+      req['user'],
+      body.oldPassword,
+      body.newPassword,
+    );
   }
 
   // not using auth guard here because it would return 401 unauthorized :P
@@ -69,7 +74,10 @@ export class AuthController {
   }
 
   @Get('/42/callback')
-  async handleCallback(@Req() request: exrpessRequest, @Res() response: Response) {
+  async handleCallback(
+    @Req() request: expressRequest,
+    @Res() response: Response,
+  ) {
     const authResponse = await this.authService.handleCallback(request);
     if (authResponse) {
       const url = new URL(`${request.protocol}:${request.hostname}`);
