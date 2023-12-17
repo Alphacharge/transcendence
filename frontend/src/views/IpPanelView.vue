@@ -41,11 +41,11 @@ export default {
     };
   },
   created() {
-    this.ipAddress = process.env.SERVER_IP;
-    this.backendPort = process.env.BACKEND_PORT;
-    this.frontendPort = process.env.FRONTEND_PORT;
+    this.ipAddress = process.env.VUE_APP_SERVER_IP;
+    this.backendPort = process.env.VUE_APP_BACKEND_PORT;
+    this.frontendPort = process.env.VUE_APP_FRONTEND_PORT;
     if (!this.ipAddress) {
-      this.ipAddress = "SERVER_IP needed in .env file";
+      this.ipAddress = "VUE_APP_SERVER_IP needed in .env file";
     }
   },
   components: { ConnectionManager, ConnectionState },

@@ -74,7 +74,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/auth/signup`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/signup`,
           {
             method: "POST",
             headers: {
@@ -106,7 +106,7 @@ export default {
       }
     },
     async authorize() {
-      const redirectUri = `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/auth/42/callback`;
+      const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
       const scope = `${process.env.VUE_APP_SCOPE}`;
       const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
       const state = `${process.env.VUE_APP_STATE}`;

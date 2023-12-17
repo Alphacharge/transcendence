@@ -138,7 +138,7 @@ export default {
     async fetchUserHistory() {
       try {
         const response = await fetch(
-          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/userstats`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/userstats`,
           {
             method: "POST",
             headers: {
@@ -169,7 +169,7 @@ export default {
       try {
         // Send a request to your backend to add friends
         const response = await fetch(
-          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/editname`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/editname`,
           {
             method: "POST",
             headers: {
@@ -202,13 +202,13 @@ export default {
       }
     },
     getAvatarSrc(avatar) {
-      return `https://${process.env.SERVER_IP}:${process.env.FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
     getUploadSrc() {
-      return `https://${process.env.SERVER_IP}:${process.env.FRONTEND_PORT}/status/upload.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/upload.png`;
     },
     getEditSrc() {
-      return `https://${process.env.SERVER_IP}:${process.env.FRONTEND_PORT}/status/edit.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/edit.png`;
     },
     openFileUpload() {
       this.$refs.fileInput.click();
@@ -232,7 +232,7 @@ export default {
 
         // Make a POST request to your backend
         const response = await fetch(
-          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/data/upload`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/upload`,
           {
             method: "POST",
             headers: {

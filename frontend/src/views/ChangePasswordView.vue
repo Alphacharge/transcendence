@@ -66,7 +66,7 @@ export default {
     async sendPostRequest() {
       try {
         const response = await fetch(
-          `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}/auth/password-change`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/password-change`,
           {
             method: "POST",
             headers: {

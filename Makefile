@@ -42,9 +42,9 @@ postgre:
 
 ip:
 ifeq ($(OS), Darwin)
-	-@sed -i '' 's/^SERVER_IP=.*/SERVER_IP=$(IP)/' .env
+	-@sed -i '' 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=$(IP)/' .env
 else
-	-@sed -i -e 's/^SERVER_IP=.*/SERVER_IP=127.0.0.1/' .env
+	-@sed -i -e 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=127.0.0.1/' .env
 endif
 
 # create https certificates

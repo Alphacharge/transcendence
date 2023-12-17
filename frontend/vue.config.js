@@ -6,7 +6,7 @@ const fs = require('fs')
 module.exports = defineConfig({
   transpileDependencies: true,
   devServer: {
-    port: process.env.FRONTEND_PORT,
+    port: process.env.VUE_APP_FRONTEND_PORT,
     https: {
       key: fs.readFileSync('/certificates/certificate.key'),
       cert: fs.readFileSync('/certificates/certificate.cert'),

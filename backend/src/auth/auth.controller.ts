@@ -73,7 +73,7 @@ export class AuthController {
     const authResponse = await this.authService.handleCallback(request);
     if (authResponse) {
       const url = new URL(`${request.protocol}:${request.hostname}`);
-      url.port = process.env.FRONTEND_PORT;
+      url.port = process.env.VUE_APP_FRONTEND_PORT;
       url.pathname = 'redirect';
       url.searchParams.set('access_token', authResponse.access_token);
       url.searchParams.set('userId', authResponse.userId.toString());
@@ -82,7 +82,7 @@ export class AuthController {
     } else {
       const errorCode = '1';
       const url = new URL(`${request.protocol}:${request.hostname}`);
-      url.port = process.env.FRONTEND_PORT;
+      url.port = process.env.VUE_APP_FRONTEND_PORT;
       url.pathname = `error/${errorCode}`;
       response.status(409).redirect(url.href);
     }

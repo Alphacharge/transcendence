@@ -45,10 +45,10 @@ async function bootstrap() {
 
   app.enableCors({
     origin: [
-      `https://${process.env.SERVER_IP}:${process.env.FRONTEND_PORT}`,
-      'https://localhost:${process.env.FRONTEND_PORT}',
-      `https://${process.env.SERVER_IP}:${process.env.BACKEND_PORT}`,
-      'https://localhost:${process.env.BACKEND_PORT}',
+      `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}`,
+      'https://localhost:${process.env.VUE_APP_FRONTEND_PORT}',
+      `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}`,
+      'https://localhost:${process.env.VUE_APP_BACKEND_PORT}',
     ],
   });
 
@@ -56,7 +56,7 @@ async function bootstrap() {
   expressApp.use((req, res, next) => {
     if (req.url === '/' && req.method === 'GET') {
       // Assuming your frontend is running on port 8080
-      return res.redirect(302, `https://${process.env.SERVER_IP}:${process.env.FRONTEND_PORT}`);
+      return res.redirect(302, `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}`);
     }
     next();
   });
@@ -64,7 +64,7 @@ async function bootstrap() {
   // Enable CORS for all routes
   app.use(cors());
 
-  await app.listen(process.env.BACKEND_PORT);
+  await app.listen(process.env.VUE_APP_BACKEND_PORT);
 }
 
 bootstrap();
