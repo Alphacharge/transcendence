@@ -264,10 +264,10 @@ export class AuthService {
 
   async handleCallback(request: Request) {
     const authorizationCode = request.query.code as string;
-    const clientId = `${process.env.FORTYTWO_APP_ID}`;
-    const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
+    const clientId = process.env.VUE_APP_FORTYTWO_APP_ID;
+    const clientSecret = process.env.FORTYTWO_APP_SECRET;
     const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
-    const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
+    const tokenEndpoint = process.env.TOKEN_ENDPOINT;
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
         method: 'POST',
