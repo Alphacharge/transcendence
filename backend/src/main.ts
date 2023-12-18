@@ -50,6 +50,7 @@ async function bootstrap() {
       `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}`,
       'https://localhost:${process.env.VUE_APP_BACKEND_PORT}',
     ],
+    credentials: true,
   });
 
   // Add a custom middleware for handling the redirect
