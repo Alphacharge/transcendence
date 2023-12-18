@@ -157,7 +157,7 @@ export class GameGateway {
     this.gameService.queueTournament.forEach((queuedUser) => {
       this.server.to('tournamentWatchers').emit('playerJoinedTournament', {
         id: queuedUser.userData.id,
-        username: queuedUser.userData.username,
+        nickname: queuedUser.userData.nickname,
         avatar: {
           id: queuedUser.userData.avatar.id,
           mime_type: queuedUser.userData.avatar.mime_type,
@@ -179,7 +179,7 @@ export class GameGateway {
     const playerList = [];
     playerList.push({
       id: game.user1.userData.id,
-      username: game.user1.userData.username,
+      nickname: game.user1.userData.nickname,
       avatar: {
         id: game.user1.userData.avatar.id,
         mime_type: game.user1.userData.avatar.mime_type,
@@ -189,7 +189,7 @@ export class GameGateway {
     if (game.user2) {
       playerList.push({
         id: game.user2.userData.id,
-        username: game.user2.userData.username,
+        nickname: game.user2.userData.nickname,
         avatar: {
           id: game.user2.userData.avatar.id,
           mime_type: game.user2.userData.avatar.mime_type,
@@ -263,13 +263,13 @@ export class GameGateway {
         if (game.winningPlayer == game.user1) loser = game.user2;
 
         game.tournamentState.players.forEach((player) => {
-          player.socket.emit('victoryOf', game.winningPlayer.userData.username);
-          player.socket.emit('lossOf', loser.userData.username);
+          player.socket.emit('victoryOf', game.winningPlayer.userData.nickname);
+          player.socket.emit('lossOf', loser.userData.nickname);
         });
       }
       // tell the participants of the game who won
-      game.user1.socket.emit('victory', game.winningPlayer.userData.username);
-      game.user2.socket.emit('victory', game.winningPlayer.userData.username);
+      game.user1.socket.emit('victory', game.winningPlayer.userData.nickname);
+      game.user2.socket.emit('victory', game.winningPlayer.userData.nickname);
     }
   }
 
@@ -277,7 +277,7 @@ export class GameGateway {
     game.tournamentState.players.forEach((player) => {
       player.socket.emit(
         'tournamentWinner',
-        game.winningPlayer.userData.username,
+        game.winningPlayer.userData.nickname,
       );
     });
   }

@@ -30,6 +30,7 @@ export class PrismaService extends PrismaClient {
       const newUser = await this.users.create({
         data: {
           username: inName,
+          nickname: inName,
           hash: inHash,
           oauth: inOauth,
         },
@@ -50,6 +51,7 @@ export class PrismaService extends PrismaClient {
         select: {
           id: true,
           username: true,
+          nickname: true,
           createdAt: true,
           avatar: {
             select: {
@@ -138,20 +140,20 @@ export class PrismaService extends PrismaClient {
     }
   }
 
-  async updateUsername(
+  async updateNickname(
     userId: number,
-    newUsername: string,
+    newNickname: string,
   ): Promise<string | null> {
     try {
       const updatedGame = await this.users.update({
         where: { id: Number(userId) },
         data: {
-          username: newUsername,
+          nickname: newNickname,
         },
       });
-      return newUsername;
+      return newNickname;
     } catch (error) {
-      console.error('Failed to update username', error);
+      console.error('Failed to update nickname', error);
       return null;
     }
   }
@@ -159,7 +161,7 @@ export class PrismaService extends PrismaClient {
   async getAllUsersIdNaAv(): Promise<
     | {
         id: number;
-        username: string;
+        nickname: string;
         avatar: { id: number; mime_type: string };
       }[]
     | null
@@ -168,7 +170,7 @@ export class PrismaService extends PrismaClient {
       const allUsers = await this.users.findMany({
         select: {
           id: true,
-          username: true,
+          nickname: true,
           avatar: {
             select: {
               id: true,
@@ -180,7 +182,7 @@ export class PrismaService extends PrismaClient {
 
       return allUsers.map((user) => ({
         id: user.id,
-        username: user.username,
+        nickname: user.nickname,
         avatar: {
           id: user.avatar.id,
           mime_type: user.avatar.mime_type,
@@ -501,7 +503,7 @@ export class PrismaService extends PrismaClient {
 
       userStatistics.push({
         userId: user.id,
-        username: user.username,
+        nickname: user.nickname,
         avatar: user.avatar,
         matches,
         wins,
@@ -526,10 +528,10 @@ export class PrismaService extends PrismaClient {
           "Games".left_user_score,
           "Games".right_user_score,
           TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
-          l_user.username as l_username,
+          l_user.nickname as l_nickname,
           l_user.avatar_id as l_avatar_id,
           l_avatar.mime_type as l_avatar_mime_type,
-          r_user.username as r_username,
+          r_user.nickname as r_nickname,
           r_user.avatar_id as r_avatar_id,
           r_avatar.mime_type as r_avatar_mime_type
         FROM
@@ -565,10 +567,10 @@ export class PrismaService extends PrismaClient {
           "Games".left_user_score,
           "Games".right_user_score,
           TO_CHAR(TO_TIMESTAMP(EXTRACT(EPOCH FROM ("Games"."updatedAt" - "Games"."createdAt"))), 'HH24:MI:SS') AS duration,
-          l_user.username as l_username,
+          l_user.nickname as l_nickname,
           l_user.avatar_id as l_avatar_id,
           l_avatar.mime_type as l_avatar_mime_type,
-          r_user.username as r_username,
+          r_user.nickname as r_nickname,
           r_user.avatar_id as r_avatar_id,
           r_avatar.mime_type as r_avatar_mime_type
         FROM
@@ -609,13 +611,13 @@ export class PrismaService extends PrismaClient {
         SELECT
           uc.user_id,
           CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
-          u.username AS username,
+          u.nickname AS nickname,
           a.id AS avatar_id,
           a.mime_type AS avatar_mime_type
         FROM UserContacts uc
         INNER JOIN "Users" AS u ON uc.user_id = u.id
         LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-        GROUP BY uc.user_id, u.username, a.id, a.mime_type
+        GROUP BY uc.user_id, u.nickname, a.id, a.mime_type
         ORDER BY total_contacts DESC
         LIMIT 1;
       `;
@@ -643,13 +645,13 @@ export class PrismaService extends PrismaClient {
         SELECT
           uc.user_id,
           CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
-          u.username AS username,
+          u.nickname AS nickname,
           a.id AS avatar_id,
           a.mime_type AS avatar_mime_type
         FROM UserContacts uc
         INNER JOIN "Users" AS u ON uc.user_id = u.id
         LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-        GROUP BY uc.user_id, u.username, a.id, a.mime_type
+        GROUP BY uc.user_id, u.nickname, a.id, a.mime_type
         ORDER BY total_contacts ASC
         LIMIT 1;
       `;
@@ -673,7 +675,7 @@ export class PrismaService extends PrismaClient {
           longest_break: true,
           l_user: {
             select: {
-              username: true,
+              nickname: true,
               avatar: {
                 select: {
                   id: true,
@@ -684,7 +686,7 @@ export class PrismaService extends PrismaClient {
           },
           r_user: {
             select: {
-              username: true,
+              nickname: true,
               avatar: {
                 select: {
                   id: true,
@@ -708,7 +710,7 @@ export class PrismaService extends PrismaClient {
         SELECT
           user_id,
           MAX(win_diff) AS max_win_diff,
-          u.username AS username,
+          u.nickname AS nickname,
           a.id AS avatar_id,
           a.mime_type AS avatar_mime_type
         FROM (
@@ -724,7 +726,7 @@ export class PrismaService extends PrismaClient {
         ) AS UserWins
         INNER JOIN "Users" AS u ON UserWins.user_id = u.id
         LEFT JOIN "Avatars" AS a ON u.avatar_id = a.id
-        GROUP BY user_id, u.username, a.id, a.mime_type
+        GROUP BY user_id, u.nickname, a.id, a.mime_type
         ORDER BY max_win_diff DESC
         LIMIT 1;
       `;
@@ -773,7 +775,7 @@ export class PrismaService extends PrismaClient {
           l_user: {
             select: {
               id: true,
-              username: true,
+              nickname: true,
               avatar: {
                 select: {
                   id: true,
@@ -785,7 +787,7 @@ export class PrismaService extends PrismaClient {
           r_user: {
             select: {
               id: true,
-              username: true,
+              nickname: true,
               avatar: {
                 select: {
                   id: true,
@@ -803,7 +805,7 @@ export class PrismaService extends PrismaClient {
         right_user_score: game.right_user_score,
         leftUser: {
           id: game.l_user.id,
-          username: game.l_user.username,
+          nickname: game.l_user.nickname,
           avatar: {
             id: game.l_user.avatar.id,
             mime_type: game.l_user.avatar.mime_type,
@@ -811,7 +813,7 @@ export class PrismaService extends PrismaClient {
         },
         rightUser: {
           id: game.r_user.id,
-          username: game.r_user.username,
+          nickname: game.r_user.nickname,
           avatar: {
             id: game.r_user.avatar.id,
             mime_type: game.r_user.avatar.mime_type,
@@ -851,7 +853,7 @@ export class PrismaService extends PrismaClient {
           friend: {
             select: {
               id: true,
-              username: true,
+              nickname: true,
               avatar: {
                 select: {
                   id: true,
@@ -865,7 +867,7 @@ export class PrismaService extends PrismaClient {
 
       const friendsData = allFriends.map((friend) => ({
         id: friend.friend.id,
-        username: friend.friend.username,
+        nickname: friend.friend.nickname,
         avatar: {
           id: friend.friend.avatar.id,
           mime_type: friend.friend.avatar.mime_type,
@@ -896,7 +898,7 @@ export class PrismaService extends PrismaClient {
         },
         select: {
           id: true,
-          username: true,
+          nickname: true,
           avatar: {
             select: {
               id: true,
@@ -908,7 +910,7 @@ export class PrismaService extends PrismaClient {
 
       const usersNotFriendsData = usersNotFriends.map((user) => ({
         id: user.id,
-        username: user.username,
+        nickname: user.nickname,
         avatar: {
           id: user.avatar.id,
           mime_type: user.avatar.mime_type,

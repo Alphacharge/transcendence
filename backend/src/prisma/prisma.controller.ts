@@ -46,22 +46,22 @@ export class PrismaController {
   ) {}
 
   @Post('editname')
-  async updateUsername(
+  async updateNickname(
     @Req() req: Request,
-    @Body() body: { newUsername: string },
-  ): Promise<{ userName: string | null }> {
+    @Body() body: { newNickname: string },
+  ): Promise<{ nickName: string | null }> {
     try {
-      const newUser: string = await this.prismaService.updateUsername(
+      const newUser: string = await this.prismaService.updateNickname(
         req['user'],
-        body.newUsername,
+        body.newNickname,
       );
       if (newUser) {
-        return { userName: newUser };
+        return { nickName: newUser };
       }
-      return { userName: null };
+      return { nickName: null };
     } catch (error) {
-      console.error('Error update Username:', error);
-      return { userName: null };
+      console.error('Error update Nickname:', error);
+      return { nickName: null };
     }
   }
 

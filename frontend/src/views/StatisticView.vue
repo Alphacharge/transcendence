@@ -17,13 +17,13 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.longestGame.l_username }}
+                {{ milestones.longestGame.l_nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
               <div v-if="milestones" class="name-table-right">
-                {{ milestones.longestGame.r_username }}
+                {{ milestones.longestGame.r_nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
@@ -52,13 +52,13 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.longestBreak.l_user.username }}
+                {{ milestones.longestBreak.l_user.nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
               <div v-if="milestones" class="name-table-right">
-                {{ milestones.longestBreak.r_user.username }}
+                {{ milestones.longestBreak.r_user.nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
@@ -89,7 +89,7 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.mostContacts.username }}
+                {{ milestones.mostContacts.nickname }}
               </div>
               <div v-if="milestones" class="value">
                 {{ milestones.mostContacts.total_contacts }}
@@ -109,13 +109,13 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.shortestGame.l_username }}
+                {{ milestones.shortestGame.l_nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
               <div v-if="milestones" class="name-table-right">
-                {{ milestones.shortestGame.r_username }}
+                {{ milestones.shortestGame.r_nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
@@ -146,7 +146,7 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.highestWin.username }}
+                {{ milestones.highestWin.nickname }}
               </div>
               <div v-if="milestones" class="value">
                 +{{ milestones.highestWin.max_win_diff }}
@@ -166,7 +166,7 @@
                 </div>
               </div>
               <div v-if="milestones" class="name-table-left">
-                {{ milestones.leastContacts.username }}
+                {{ milestones.leastContacts.nickname }}
               </div>
               <div v-if="milestones" class="value">
                 {{ milestones.leastContacts.total_contacts }}
@@ -179,7 +179,7 @@
       <table class="table table-bordered transparent-table">
         <thead>
           <tr>
-            <th @click="sortTable('username')">{{ $t("User") }}</th>
+            <th @click="sortTable('nickname')">{{ $t("User") }}</th>
             <th @click="sortTable('matches')">{{ $t("Matches") }}</th>
             <th @click="sortTable('wins')">{{ $t("Wins") }}</th>
             <th @click="sortTable('losses')">{{ $t("Losses") }}</th>
@@ -196,7 +196,7 @@
         <tbody>
           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
           <tr v-for="row in sortedStatistics" :key="row.userId">
-            <td>{{ row.username }}</td>
+            <td>{{ row.nickname }}</td>
             <td>{{ row.matches }}</td>
             <td>{{ row.wins }}</td>
             <td>{{ row.losses }}</td>
@@ -260,7 +260,7 @@ export default {
       const modifier = this.sortDirection === "desc" ? -1 : 1;
 
       return this.statistics.slice().sort((a, b) => {
-        if (this.sortKey === "username") {
+        if (this.sortKey === "nickname") {
           const aValue = a[this.sortKey].toLowerCase();
           const bValue = b[this.sortKey].toLowerCase();
           return modifier * aValue.localeCompare(bValue);
@@ -299,7 +299,7 @@ export default {
         this.sortDirection = this.sortDirection === "desc" ? "asc" : "desc";
       } else {
         this.sortKey = key;
-        this.sortDirection = key === "username" ? "asc" : "desc";
+        this.sortDirection = key === "nickname" ? "asc" : "desc";
       }
     },
     getValue(obj, key) {
@@ -376,7 +376,7 @@ export default {
     renderChart() {
       this.userStatistics = this.statistics;
       this.userStatistics.sort((a, b) => b.wins - a.wins);
-      const usernames = this.userStatistics.map((user) => user.username);
+      const nicknames = this.userStatistics.map((user) => user.nickname);
       const wins = this.userStatistics.map((user) => user.wins);
       const losses = this.userStatistics.map((user) => user.losses);
       const kd = this.userStatistics.map((user) => user.wins / user.losses);
@@ -387,7 +387,7 @@ export default {
         .getElementById("championsBoard")
         .getContext("2d");
       //doughnut
-      const usernameDT = this.userStatistics.map((user) => user.username);
+      const nicknameDT = this.userStatistics.map((user) => user.nickname);
       const contactsDT = this.userStatistics.map(
         (user) => user.contacts[0].total_contacts,
       );
@@ -395,7 +395,7 @@ export default {
       const kdChart = document.getElementById("kdChart").getContext("2d");
 
       const doughnutData = {
-        labels: usernameDT,
+        labels: nicknameDT,
         datasets: [
           {
             data: contactsDT,
@@ -441,7 +441,7 @@ export default {
       new Chart(histogram, {
         type: "bar",
         data: {
-          labels: usernames,
+          labels: nicknames,
           datasets: [
             {
               label: this.$t("Wins"),
@@ -505,7 +505,7 @@ export default {
       new Chart(kdChart, {
         type: "bar",
         data: {
-          labels: usernames,
+          labels: nicknames,
           datasets: [
             {
               label: "K/D",

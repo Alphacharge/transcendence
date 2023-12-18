@@ -16,7 +16,7 @@
             </div>
           </div>
           <div v-if="players[0]" class="name-table-left">
-            {{ players[0].username }}
+            {{ players[0].nickname }}
           </div>
         </div>
       </div>
@@ -24,7 +24,7 @@
       <div v-if="scoreEnabled" class="box box-right">
         <div class="content">
           <div v-if="players[1]" class="name-table-right">
-            {{ players[1].username }}
+            {{ players[1].nickname }}
           </div>
           <div class="image-table">
             <div class="image_history">
