@@ -27,13 +27,13 @@
               @click="startEditing"
               alt="Edit"
             />
-            {{ userProfil.username }}
+            {{ userProfil.nickname }}
           </p>
           <input
             v-if="isEditing"
-            v-model="editedUsername"
-            @keyup.enter="saveUsername"
-            @blur="saveUsername"
+            v-model="editedNickname"
+            @keyup.enter="saveNickname"
+            @blur="saveNickname"
           />
           <p class="text-color">{{ $t("profileRegister") }}</p>
           <p class="text-color">{{ userProfil.createdAt.slice(0, 10) }}</p>
@@ -88,7 +88,7 @@
             </div>
           </div>
           <div class="name-table-left">
-            {{ match.leftUser.username }}
+            {{ match.leftUser.nickname }}
           </div>
           <div class="score-table">
             <div class="score-table-left">
@@ -102,7 +102,7 @@
             </div>
           </div>
           <div class="name-table-right">
-            {{ match.rightUser.username }}
+            {{ match.rightUser.nickname }}
           </div>
           <div class="image-table">
             <div class="image_history">
@@ -123,7 +123,7 @@ export default {
     return {
       userProfil: null,
       isEditing: false,
-      editedUsername: "",
+      editedNickname: "",
       messageText: "",
       showMessage: false,
       userHistory: null,
@@ -160,12 +160,12 @@ export default {
       }
     },
     startEditing() {
-      // Initialize the editedUsername with the current username
-      this.editedUsername = this.userProfil.username;
+      // Initialize the editedNickname with the current nickname
+      this.editedNickname = this.userProfil.nickname;
       // Set the isEditing flag to true
       this.isEditing = true;
     },
-    async saveUsername() {
+    async saveNickname() {
       try {
         // Send a request to your backend to add friends
         const response = await fetch(
@@ -177,28 +177,28 @@ export default {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              newUsername: this.editedUsername,
+              newNickname: this.editedNickname,
             }),
           },
         );
         if (response.ok) {
           const responseData = await response.json();
-          if (responseData.userName) {
-            this.userProfil.username = this.editedUsername;
+          if (responseData.nickName) {
+            this.userProfil.nickname = this.editedNickname;
             this.isEditing = false;
             this.showMessage = false;
           } else {
             this.showMessage = true;
-            this.messageText = this.$t("usernameTaken");
+            this.messageText = this.$t("nicknameTaken");
             setTimeout(() => {
               this.showMessage = false;
             }, 2000);
           }
         } else {
-          console.error("Failed to edit username");
+          console.error("Failed to edit nickname");
         }
       } catch (error) {
-        console.error("Error edit username:", error);
+        console.error("Error edit nickname:", error);
       }
     },
     getAvatarSrc(avatar) {

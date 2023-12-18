@@ -6,14 +6,15 @@
           <div class="image-table">
             <div class="image_history">
               <img
-                v-if="players[0]"
-                :src="`avatars/${players[0].avatar.id}${players[0].avatar.mime_type}`"
-                alt="Avatar"
+              v-if="players[0]"
+              :src="`avatars/${players[0].avatar.id}${players[0].avatar.mime_type}`"
+              alt="Avatar"
               />
             </div>
           </div>
           <div v-if="players[0]" class="name-table-left">
-            {{ players[0].username }}
+            {{ players[0].nickname }}
+            {{ console.log(players[0].nickname) }}
           </div>
         </div>
       </div>
@@ -29,7 +30,7 @@
             </div>
           </div>
           <div v-if="players[1]" class="name-table-left">
-            {{ players[1].username }}
+            {{ players[1].nickname }}
           </div>
         </div>
       </div>
@@ -45,7 +46,7 @@
             </div>
           </div>
           <div v-if="players[2]" class="name-table-left">
-            {{ players[2].username }}
+            {{ players[2].nickname }}
           </div>
         </div>
       </div>
@@ -61,7 +62,7 @@
             </div>
           </div>
           <div v-if="players[3]" class="name-table-left">
-            {{ players[3].username }}
+            {{ players[3].nickname }}
           </div>
         </div>
       </div>
@@ -84,9 +85,9 @@ export default {
   },
 
   mounted() {
-    socket.on("lossOf", (username) => {
+    socket.on("lossOf", (nickname) => {
       const playerIndex = this.players.findIndex(
-        (player) => player.username == username,
+        (player) => player.nickname == nickname,
       );
 
       if (playerIndex != -1) {
@@ -94,9 +95,9 @@ export default {
       }
     });
 
-    socket.on("tournamentWinner", (username) => {
+    socket.on("tournamentWinner", (nickname) => {
       const playerIndex = this.players.findIndex(
-        (player) => player.username == username,
+        (player) => player.nickname == nickname,
       );
       if (playerIndex != -1) {
         this.players[playerIndex].borderColor = "greenyellow";

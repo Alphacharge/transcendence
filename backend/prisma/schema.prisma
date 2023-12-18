@@ -15,6 +15,7 @@ model Users {
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   username            String    @unique @default("")
+  nickname            String    @unique
   hash                String
   avatar_id           Int       @default(1)
   two_factor_enabled  Boolean   @default(false)

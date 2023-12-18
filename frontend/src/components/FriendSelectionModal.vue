@@ -9,7 +9,7 @@
                 <img :src="getAvatarSrc(nonFriend.avatar)" alt="Avatar" />
               </div>
               <div class="friend-name">
-                <div>{{ nonFriend.username }}</div>
+                <div>{{ nonFriend.nickname }}</div>
               </div>
               <div class="image_friends_status">
                 <img

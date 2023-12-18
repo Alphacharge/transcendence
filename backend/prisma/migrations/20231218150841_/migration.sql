@@ -4,6 +4,7 @@ CREATE TABLE "Users" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "username" TEXT NOT NULL DEFAULT '',
+    "nickname" TEXT NOT NULL,
     "hash" TEXT NOT NULL,
     "avatar_id" INTEGER NOT NULL DEFAULT 1,
     "two_factor_enabled" BOOLEAN NOT NULL DEFAULT false,
@@ -62,6 +63,9 @@ CREATE TABLE "Avatars" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_username_key" ON "Users"("username");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Users_nickname_key" ON "Users"("nickname");
 
 -- AddForeignKey
 ALTER TABLE "Users" ADD CONSTRAINT "Users_avatar_id_fkey" FOREIGN KEY ("avatar_id") REFERENCES "Avatars"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

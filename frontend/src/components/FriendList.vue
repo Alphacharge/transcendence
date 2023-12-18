@@ -21,7 +21,7 @@
             <img :src="getAvatarSrc(friend.avatar)" alt="Avatar" />
           </div>
           <div class="friend-name">
-            {{ friend.username }}
+            {{ friend.nickname }}
           </div>
           <div class="image_friends_status">
             <img
