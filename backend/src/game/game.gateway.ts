@@ -301,11 +301,12 @@ export class GameGateway {
   }
 
   tournamentStart(tournament: TournamentState) {
-    this.server.to('tournamentWatchers').emit('tournamentReset');
-
     tournament.players.forEach((user) => {
       user.socket.emit('tournamentStart');
     });
+
+    // tell the watchers to empty the tournament queue
+    this.server.to('tournamentWatchers').emit('tournamentReset');
   }
 
   addedToQueue(user: User) {
