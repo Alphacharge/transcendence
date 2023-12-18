@@ -77,7 +77,7 @@ export default {
     async getUsersFriends() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/friends`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/friends`,
           {
             method: "POST",
             headers: {
@@ -99,7 +99,7 @@ export default {
     async getUsersNonFriends() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/nofriends`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/nofriends`,
           {
             method: "POST",
             headers: {
@@ -121,7 +121,7 @@ export default {
     async removeFriend(friendId) {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/removefriend`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/removefriend`,
           {
             method: "POST",
             headers: {
@@ -169,25 +169,25 @@ export default {
       }
     },
     getAvatarSrc(avatar) {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
     getStatusSrc(status) {
       if (status) {
-        return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/on.png`;
+        return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/on.png`;
       }
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/off.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/off.png`;
     },
     getCrossSrc() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/cross.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/cross.png`;
     },
     getPlusSrc() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/plus.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/plus.png`;
     },
     getFriendOpenSrc() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/open.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/open.png`;
     },
     getFriendCloseSrc() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/close.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/close.png`;
     },
     handleMouseEnter() {
       this.isMouseOver = true;

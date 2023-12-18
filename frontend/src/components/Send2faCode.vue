@@ -21,7 +21,7 @@ export default {
     async verifyCode() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/authenticate`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/2fa/authenticate`,
           {
             method: "POST",
             headers: {
@@ -55,7 +55,7 @@ export default {
     async enable2fa() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/enable`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/2fa/enable`,
           {
             method: "POST",
             headers: {

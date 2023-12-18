@@ -50,16 +50,19 @@ export default {
       const selectedFriendIds = this.selectedFriends.map((friend) => friend.id);
 
       // Send a request to your backend to add friends
-      fetch(`https://${process.env.VUE_APP_BACKEND_IP}:3000/data/addfriends`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          "Content-Type": "application/json",
+      fetch(
+        `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/addfriends`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            friendIds: selectedFriendIds,
+          }),
         },
-        body: JSON.stringify({
-          friendIds: selectedFriendIds,
-        }),
-      })
+      )
         .then((response) => {
           if (response.ok) {
             // Handle success, e.g., refresh the friend list
@@ -80,7 +83,7 @@ export default {
       try {
         // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/friends`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/friends`,
           {
             method: "POST",
             headers: {
@@ -105,13 +108,13 @@ export default {
       this.selectedFriends = [];
     },
     getAvatarSrc(avatar) {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/avatars/${avatar.id}${avatar.mime_type}`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
     getStatusSrc(status) {
       if (status) {
-        return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/on.png`;
+        return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/on.png`;
       }
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/off.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/off.png`;
     },
   },
 };

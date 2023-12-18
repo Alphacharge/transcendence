@@ -54,7 +54,7 @@ export default {
     async saveLanguagePreference(language) {
       try {
         await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/data/setlanguage`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/setlanguage`,
           {
             method: "POST",
             headers: {

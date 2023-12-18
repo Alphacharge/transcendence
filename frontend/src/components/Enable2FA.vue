@@ -53,7 +53,7 @@ export default {
     async checkTwoFactorAuthStatus() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/status`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/2fa/status`,
           {
             method: "GET",
             headers: {
@@ -73,12 +73,12 @@ export default {
       }
     },
     getPWSrc() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/status/pw_change.png`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/pw_change.png`;
     },
     async disable2FA() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_BACKEND_IP}:3000/2fa/disable`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/2fa/disable`,
           {
             method: "POST",
             headers: {

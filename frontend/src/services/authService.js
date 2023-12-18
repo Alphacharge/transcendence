@@ -1,7 +1,7 @@
 export const checkLoggedIn = async () => {
   try {
     const response = await fetch(
-      `https://${process.env.VUE_APP_BACKEND_IP}:3000/auth/check`,
+      `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/check`,
       {
         method: "GET",
         headers: {

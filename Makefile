@@ -32,19 +32,19 @@ ifeq ($(OS), Darwin)
 else
 	-@bash -c "sudo chmod 600 data/pgadmin/pgadmin4.db || sudo chown -R 5050:5050 data/pgadmin"
 endif
-	docker-compose -f $(SRC) $(ENV) up --build
-	@echo "$(GREEN)Build changes and/or new containers.$(WHITE)"
+	@echo "$(RED)##########################################\n$(WHITE)"
+	@echo "$(BLUE)Server IP is: $(YELL)$(IP)$(WHITE)\n"
+	@echo "$(RED)##########################################\n$(WHITE)"
+	-@docker-compose -f $(SRC) $(ENV) up --build
 
 postgre:
-	@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
+	-@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
 
 ip:
 ifeq ($(OS), Darwin)
-	sed -i '' 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=$(IP)/' ./frontend/.env
-	sed -i '' 's/^BACKEND_IP=.*/BACKEND_IP=$(IP)/' ./backend/.env
+	-@sed -i '' 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=$(IP)/' .env
 else
-	sed -i -e 's/^VUE_APP_BACKEND_IP=.*/VUE_APP_BACKEND_IP=127.0.0.1/' ./frontend/.env
-	sed -i -e 's/^BACKEND_IP=.*/BACKEND_IP=127.0.0.1/' ./backend/.env
+	-@sed -i -e 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=127.0.0.1/' .env
 endif
 
 # create https certificates
@@ -74,15 +74,15 @@ status:
 	docker ps
 
 clean: stop
-	-docker stop $$(docker ps -qa)
-	-docker rm $$(docker ps -qa)
-	-docker rmi -f $$(docker images -qa)
-	-docker volume rm $$(docker volume ls -q)
-	-docker network rm $$(docker network ls -q)
+	-@docker stop $$(docker ps -qa)
+	-@docker rm $$(docker ps -qa)
+	-@docker rmi -f $$(docker images -qa)
+	-@docker volume rm $$(docker volume ls -q)
+	-@docker network rm $$(docker network ls -q)
 
 fclean: clean
-	rm -rf ./frontend/node_modules
-	rm -rf ./backend/node_modules
+	-@rm -rf ./frontend/node_modules
+	-@rm -rf ./backend/node_modules
 	-@docker system prune -a --volumes --force
 	@echo "$(BLUE)Hardcleaned docker.$(WHITE)"
 

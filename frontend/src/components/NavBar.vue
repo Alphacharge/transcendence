@@ -80,7 +80,7 @@ export default {
   components: { LanguageToggle },
   methods: {
     getTeam() {
-      return `https://${process.env.VUE_APP_BACKEND_IP}:8080/team.gif`;
+      return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/team.gif`;
     },
   },
 };

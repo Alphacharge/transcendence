@@ -266,7 +266,7 @@ export class AuthService {
     const authorizationCode = request.query.code as string;
     const clientId = `${process.env.FORTYTWO_APP_ID}`;
     const clientSecret = `${process.env.FORTYTWO_APP_SECRET}`;
-    const redirectUri = `https://${process.env.BACKEND_IP}:3000/auth/42/callback`;
+    const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     const tokenEndpoint = `${process.env.TOKEN_ENDPOINT}`;
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
