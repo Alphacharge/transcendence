@@ -9,7 +9,10 @@ export const state = reactive({
 
 // why does transports websocket prevent cors issues?
 export const socket = io(
-  "wss://" + process.env.VUE_APP_SERVER_IP + ":" + process.env.VUE_APP_BACKEND_PORT,
+  "wss://" +
+    process.env.VUE_APP_SERVER_IP +
+    ":" +
+    process.env.VUE_APP_BACKEND_PORT,
   {
     transports: ["websocket"],
     autoConnect: false,

@@ -6,9 +6,9 @@
           <div class="image-table">
             <div class="image_history">
               <img
-              v-if="players[0]"
-              :src="`avatars/${players[0].avatar.id}${players[0].avatar.mime_type}`"
-              alt="Avatar"
+                v-if="players[0]"
+                :src="`avatars/${players[0].avatar.id}${players[0].avatar.mime_type}`"
+                alt="Avatar"
               />
             </div>
           </div>

@@ -258,7 +258,9 @@ export class AuthService {
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
 
     if (!allowedCharsRegex.test(username)) {
-      throw new ForbiddenException('User / Nickname contains forbidden characters');
+      throw new ForbiddenException(
+        'User / Nickname contains forbidden characters',
+      );
     }
   }
 
