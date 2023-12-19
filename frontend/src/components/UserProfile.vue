@@ -18,7 +18,7 @@
         </div>
         <div class="profile-data">
           <div v-if="showMessage" class="message">
-            {{ messageText }}
+            {{ $t(`error.${this.messageText}`) }}
           </div>
           <p v-if="!isEditing" class="text-color">
             <img
@@ -189,7 +189,7 @@ export default {
             this.showMessage = false;
           } else {
             this.showMessage = true;
-            this.messageText = this.$t("nicknameTaken");
+            this.messageText = responseData.errorCode;
             setTimeout(() => {
               this.showMessage = false;
             }, 2000);
