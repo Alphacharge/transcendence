@@ -6,6 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "start:eva": "npm run build && node dist/main",
     "format": "eslint --fix 'src/**/*.+(js|vue)' && prettier --write 'src/**/*.+(js|vue)'"
   },
   "dependencies": {

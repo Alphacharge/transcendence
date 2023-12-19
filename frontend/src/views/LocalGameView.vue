@@ -93,7 +93,8 @@ export default {
 }
 
 .explanation-wrapper {
-  margin: 0 20%;
+  width: 800px;
+  margin: 0 auto;
   margin-top: 1em;
   color: rgb(217, 217, 229);
   display: flex;

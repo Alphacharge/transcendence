@@ -52,6 +52,7 @@ export class PrismaController {
     @Body() body: { newNickname: string },
   ): Promise<{ nickName: string | null }> {
     try {
+      this.authService.validateUsername(body.newNickname);
       const newUser: string = await this.prismaService.updateNickname(
         req['user'],
         body.newNickname,

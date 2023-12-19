@@ -244,7 +244,7 @@ export class AuthService {
     }
   }
 
-  private validateUsername(username: string): void {
+  validateUsername(username: string): void {
     if (username.length < 4) {
       throw new ForbiddenException(
         'Username must be at least 4 characters long',
@@ -268,7 +268,7 @@ export class AuthService {
   async handleCallback(request: Request) {
     const authorizationCode = request.query.code as string;
     const clientId = process.env.VUE_APP_FORTYTWO_APP_ID;
-    const clientSecret = process.env.FORTYTWO_APP_SECRET;
+    const clientSecret = process.env.VUE_APP_FORTYTWO_APP_SECRET;
     const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     const tokenEndpoint = process.env.TOKEN_ENDPOINT;
 
