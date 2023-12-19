@@ -510,7 +510,6 @@ export class PrismaService extends PrismaClient {
       );
       const tourwins: number = await this.getTournamentWinsById(user.id);
       const contacts = await this.getContactsById(user.id);
-
       userStatistics.push({
         userId: user.id,
         nickname: user.nickname,
@@ -620,7 +619,7 @@ export class PrismaService extends PrismaClient {
         )
         SELECT
           uc.user_id,
-          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+          CAST(SUM(uc.contacts) AS INT) AS total_contacts,
           u.nickname AS nickname,
           a.id AS avatar_id,
           a.mime_type AS avatar_mime_type
@@ -654,7 +653,7 @@ export class PrismaService extends PrismaClient {
         )
         SELECT
           uc.user_id,
-          CAST(SUM(uc.contacts) AS VARCHAR) AS total_contacts,
+          CAST(SUM(uc.contacts) AS INT) AS total_contacts,
           u.nickname AS nickname,
           a.id AS avatar_id,
           a.mime_type AS avatar_mime_type
