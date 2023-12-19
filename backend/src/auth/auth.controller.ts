@@ -57,16 +57,16 @@ export class AuthController {
 
       if (!token) {
         // If no token exists, send a response indicating user not logged in
-        return { isLoggedIn: false, message: 'User not logged in' };
+        return { isLoggedIn: false };
       }
 
       const validToken = await this.authService.validateToken(token);
 
       if (validToken) {
-        return { isLoggedIn: true, message: 'Authorized' };
+        return { isLoggedIn: true };
       } else {
         // If the token is invalid/expired, it's not an authentication error but an indication of not being logged in
-        return { isLoggedIn: false, message: 'User not logged in' };
+        return { isLoggedIn: false };
       }
     } catch (error) {
       throw new InternalServerErrorException('Could not check login status');

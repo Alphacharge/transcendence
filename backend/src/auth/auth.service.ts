@@ -24,11 +24,21 @@ export class AuthService {
   activeUser: Set<number> = new Set<number>();
 
   async signup(user: User, oauth: boolean) {
+    let obj = { access_token: "",
+    userId: 0, userName: "", errorCode: ""};
     try {
       // Validate password
-      this.validatePassword(user.password);
+      let error = this.validatePassword(user.password);
+      if (error != null) {
+        obj.errorCode = error;
+        return obj;
+      }
       // Validate username
-      this.validateUsername(user.username);
+      error = this.validateUsername(user.username);
+      if (error != null) {
+        obj.errorCode = error;
+        return obj;
+      }
       //generate the pw hash
       const hash = await argon.hash(user.password);
       //create new user in the database
@@ -37,23 +47,26 @@ export class AuthService {
         hash,
         oauth,
       );
-      if (newUser == null)
-        throw new GatewayTimeoutException('Database unreachable');
+      if (newUser == null) {
+        obj.errorCode = "8";
+        return obj;
+      }
       //create sessiontoken
       const bToken = await this.signToken(newUser.id, newUser.username);
       //push userid to the activeuser list
       this.activeUser.add(newUser.id);
-      console.error('AUTH.SERVICE: SIGNUP, Registered: ', newUser.username);
+      console.log('AUTH.SERVICE: SIGNUP, Registered: ', newUser.username);
 
-      return {
-        access_token: bToken,
-        userId: newUser.id,
-        userName: newUser.username,
-      };
+      obj.access_token = bToken;
+      obj.userId = newUser.id;
+      obj.userName = newUser.username;
+      obj.errorCode = null;
+      return obj;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          throw new ForbiddenException('Credentials taken');
+          obj.errorCode = "8";
+          return obj;
         }
       }
     }
@@ -70,11 +83,14 @@ export class AuthService {
       );
       //if password is wrong throw exception
       if (!pwMatches) {
-        throw new ForbiddenException('Credentials incorrect');
+        return { success: false, message: '2' };
       }
 
       //validate syntax new password
-      this.validatePassword(newPassword);
+      const error = this.validatePassword(newPassword);
+      if (error != null) {
+        return { success: false, message: error };
+      }
       //generate the pw hash
       const hash = await argon.hash(newPassword);
       //update user in the database
@@ -83,10 +99,11 @@ export class AuthService {
         hash,
       );
 
-      if (newPasswordHash == null)
-        throw new GatewayTimeoutException('Database unreachable');
+      if (newPasswordHash == null){
+        return { success: false, message: '50' };
+      }
 
-      return { success: true, message: 'Password changed successfully.' };
+      return { success: true, message: '99' };
     } catch (error) {
       console.error('change Password: Failed to change Password.');
       return { success: false, message: error.message };
@@ -99,42 +116,43 @@ export class AuthService {
   }
 
   async signin(user: User) {
+    let obj = { access_token: "",
+    userId: 0, userName: "", requires2FA: false, errorCode: ""};
     //find the user by username in database
     const newUser = await this.checkUserInDB(user);
     //if user does not exist throw exception
     if (!newUser) {
-      throw new ForbiddenException('User not found');
+      obj.errorCode = "7";
+      return obj;
     }
     //compare password
     const pwMatches = await argon.verify(newUser.hash, user.password);
     //if password is wrong throw exception
     if (!pwMatches) {
-      throw new ForbiddenException('Credentials incorrect');
+      obj.errorCode = "2";
+      return obj;
     }
 
     this.activeUser.add(newUser.id);
 
+    obj.userId = newUser.id;
+    obj.userName = newUser.username;
+    obj.requires2FA = newUser.two_factor_enabled;
     // if 2fa code is needed we send no JWT token
     if (newUser.two_factor_enabled) {
-      return {
-        access_token: '',
-        userId: newUser.id,
-        userName: newUser.username,
-        requires2FA: newUser.two_factor_enabled,
-      };
+      obj.access_token = '';
+      obj.errorCode = "0";
+      return obj;
     }
 
     //create sessiontoken
     const bToken = await this.signToken(newUser.id, newUser.username);
 
-    console.error('AUTH.SERVICE: SIGNIN, Logged in:', newUser.username);
+    console.log('AUTH.SERVICE: SIGNIN, Logged in:', newUser.username);
 
-    return {
-      access_token: bToken,
-      userId: newUser.id,
-      userName: newUser.username,
-      requires2FA: newUser.two_factor_enabled,
-    };
+    obj.access_token = bToken;
+    obj.errorCode = "0";
+    return obj;
   }
 
   async signToken(userId: number, username: string): Promise<string> {
@@ -176,7 +194,7 @@ export class AuthService {
 
       if (user) return decodedToken.sub;
     } catch (error) {
-      console.error('validateToken: JWT invalid or expired.');
+      console.log('validateToken: JWT invalid or expired.');
       return 0;
     }
   }
@@ -206,8 +224,7 @@ export class AuthService {
       return { valid: true, renewedToken };
     } catch (error) {
       // Handle token verification errors
-      // console.error('Error validating token:', error);
-      console.error('validateToken: JWT invalid or expired.');
+      console.log('validateToken: JWT invalid or expired.');
       return { valid: false };
     }
   }
@@ -230,38 +247,32 @@ export class AuthService {
     }
   }
 
-  private validatePassword(password: string): void {
+  private validatePassword(password: string): string | null {
     if (password.length < 8) {
-      throw new ForbiddenException(
-        'Password must be at least 8 characters long',
-      );
+      return "3";
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
     if (!allowedCharsRegex.test(password)) {
-      throw new ForbiddenException('Password contains forbidden characters');
+      return "4";
     }
+    return null;
   }
 
-  validateUsername(username: string): void {
+  validateUsername(username: string): string | null {
     if (username.length < 4) {
-      throw new ForbiddenException(
-        'Username must be at least 4 characters long',
-      );
+      return "11";
     }
     if (username.length > 10) {
-      throw new ForbiddenException(
-        "Username can't be longer than 16 characters",
-      );
+      return "12";
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
 
     if (!allowedCharsRegex.test(username)) {
-      throw new ForbiddenException(
-        'User / Nickname contains forbidden characters',
-      );
+      return "13";
     }
+    return null;
   }
 
   async handleCallback(request: Request) {
@@ -270,6 +281,12 @@ export class AuthService {
     const clientSecret = process.env.VUE_APP_FORTYTWO_APP_SECRET;
     const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     const tokenEndpoint = process.env.TOKEN_ENDPOINT;
+    let response: {
+      access_token: string;
+      userId: number;
+      userName: string;
+      errorCode: string,
+    };
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
         method: 'POST',
@@ -289,9 +306,8 @@ export class AuthService {
         const tokenData = await tokenResponse.json();
         accessToken = tokenData.access_token;
       } else {
-        console.error(
-          'AUTH.SERVICE: HANDLECALLBACK, Problems with the tokenresponse',
-        );
+        response.errorCode = "5";
+        return response;
       }
       const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
         headers: {
@@ -306,30 +322,23 @@ export class AuthService {
           id: 0,
         };
         const newUser = await this.checkUserInDB(user);
-        let response: {
-          access_token: string;
-          userId: number;
-          userName: string;
-        };
         if (!newUser) {
           response = await this.signup(user, true);
         } else if (newUser.oauth) {
           const bToken = await this.signToken(newUser.id, newUser.username);
-          response = {
-            access_token: bToken,
-            userId: newUser.id,
-            userName: newUser.username,
-          };
+          response.access_token = bToken;
+          response.userId = newUser.id;
+          response.userName = newUser.username;
+          response.errorCode = "";
+          return response;
         } else {
-          console.error('user exists');
+          response.errorCode = "1";
+          return response;
         }
         return response;
       } else {
-        console.error(
-          'AUTH.SERVICE: HANDLECALLBACK, API Request failed',
-          apiResponse.statusText,
-        );
-        return null;
+        response.errorCode = "5";
+        return response;
       }
     } catch (error) {
       // Handle fetch errors
