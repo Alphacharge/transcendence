@@ -321,6 +321,7 @@ export default {
 }
 
 .image-profile-container {
+  max-width: 128px;
   position: relative;
   display: inline-block;
   flex: 1;
