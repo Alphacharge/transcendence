@@ -69,6 +69,14 @@ socket.sendPaddleDown = function (localPlayer) {
   socket.emit("paddleDown", { localPlayer });
 };
 
+socket.sendPaddleUpStop = function (localPlayer) {
+  socket.emit("paddleUpStop", { localPlayer });
+};
+
+socket.sendPaddleDownStop = function (localPlayer) {
+  socket.emit("paddleDownStop", { localPlayer });
+};
+
 socket.requestTournamentInfo = function () {
   socket.emit("requestTournamentInfo");
 };

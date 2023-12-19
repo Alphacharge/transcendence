@@ -208,11 +208,11 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  paddleUp(player: User, leftOrRight: string) {
+  paddleUp(player: User, localPlayer: boolean) {
     const game = player.activeGame;
 
     if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == 'right') {
+      if (localPlayer) {
         game.movePaddleUp(null);
       } else {
         game.movePaddleUp(player);
@@ -221,11 +221,11 @@ export class GameService {
     return game;
   }
 
-  paddleDown(player: User, leftOrRight: string) {
+  paddleDown(player: User, localPlayer: boolean) {
     const game = player.activeGame;
 
     if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == 'right') {
+      if (localPlayer) {
         game.movePaddleDown(null);
       } else {
         game.movePaddleDown(player);
@@ -283,6 +283,22 @@ export class GameService {
     // Update the ball's position
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
+
+    if (game.leftMovement == 1) {
+      game.movePaddleUp(game.user1);
+      // this.paddleUp(game.user1, false);
+    } else if (game.leftMovement == 2) {
+      // this.paddleDown(game.user1, false);
+      game.movePaddleDown(game.user1);
+    }
+    if (game.rightMovement == 1) {
+      // this.paddleUp(game.user2, false);
+      game.movePaddleUp(game.user2);
+    } else if (game.rightMovement == 2) {
+      // this.paddleDown(game.user2, false);
+      game.movePaddleDown(game.user2);
+    }
+
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
 }

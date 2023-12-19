@@ -30,14 +30,15 @@ export default {
       bouncingBallY: 200,
       leftPaddleY: 150,
       rightPaddleY: 150,
-      animationFrameId: null,
-      messageIntervalPlayer1: null,
-      messageIntervalPlayer2: null,
+      // animationFrameId: null,
+      // player1up: false,
+      // player1down: false,
+      // player2up: false,
+      // player2down: false,
     };
   },
 
   mounted() {
-    // received ball update from server
     socket.on("ballUpdate", (ballCoordinates) => {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
@@ -50,36 +51,27 @@ export default {
       this.rightPaddleY = pY;
     });
 
+    const keyState = {};
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
+      event.preventDefault();
+
       switch (event.key) {
         case "w":
-          if (!this.messageIntervalPlayer1) {
-            this.messageIntervalPlayer1 = setInterval(() => {
-              socket.sendPaddleUp("left");
-            }, 30);
-          }
+          // this.player1up = true;
+          socket.sendPaddleUp(false);
           break;
         case "s":
-          if (!this.messageIntervalPlayer1) {
-            this.messageIntervalPlayer1 = setInterval(() => {
-              socket.sendPaddleDown("left");
-            }, 30);
-          }
+          // this.player1down = true;
+          socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
-          if (!this.messageIntervalPlayer2) {
-            this.messageIntervalPlayer2 = setInterval(() => {
-              socket.sendPaddleUp("right");
-            }, 30);
-          }
+          // if (this.isLocalGame) this.player2up = true;
+          socket.sendPaddleUp(true);
           break;
         case "ArrowDown":
-          if (!this.messageIntervalPlayer2) {
-            this.messageIntervalPlayer2 = setInterval(() => {
-              socket.sendPaddleDown("right");
-            }, 30);
-          }
+          // if (this.isLocalGame) this.player2down = true;/
+          socket.sendPaddleDown(true);
           break;
         default:
           break;
@@ -87,36 +79,59 @@ export default {
     });
 
     window.addEventListener("keyup", (event) => {
-      // if (this.isLocalGame) {
       switch (event.key) {
         case "w":
+          // this.player1up = false;
+          socket.sendPaddleUpStop(false);
+          break;
         case "s":
-          clearInterval(this.messageIntervalPlayer1);
-          this.messageIntervalPlayer1 = null;
+          // this.player1down = false;
+          socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":
+          // if (this.isLocalGame) this.player2up = false;
+          socket.sendPaddleUpStop(true);
+          break;
         case "ArrowDown":
-          clearInterval(this.messageIntervalPlayer2);
-          this.messageIntervalPlayer2 = null;
+          // if (this.isLocalGame) this.player2down = false;
+          socket.sendPaddleDownStop(true);
           break;
         default:
           break;
       }
     });
+
+    // this.animate();
   },
 
   beforeUnmounted() {
-    // Clean up by canceling the animation frame
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-    // Remove the event listener for keydown events
+    // if (this.animationFrameId) {
+    //   cancelAnimationFrame(this.animationFrameId);
+    // }
+
     window.removeEventListener("keydown");
     window.removeEventListener("keyup");
-    clearInterval(this.messageIntervalPlayer1);
-    clearInterval(this.messageIntervalPlayer2);
-    this.messageIntervalPlayer1 = null;
-    this.messageIntervalPlayer2 = null;
+  },
+
+  methods: {
+    // animate() {
+    //   let lastTimestamp = 0;
+    //   const animateFrame = (timestamp) => {
+    //     const delta = timestamp - lastTimestamp; // Calculate time elapsed since the last frame
+    // const interval = 1000 / 30; // Update at 30 frames per second (adjust as needed)
+    // if (delta >= interval) {
+    //   // Perform updates here based on the elapsed time
+    //   lastTimestamp = timestamp;
+    //   // received ball update from server
+    //   if (this.player1up) socket.sendPaddleUp("left");
+    //   if (this.player1down) socket.sendPaddleDown("left");
+    //   if (this.player2up) socket.sendPaddleUp("right");
+    //   if (this.player2down) socket.sendPaddleDown("right");
+    // }
+    //   this.animationFrameId = requestAnimationFrame(animateFrame);
+    //   };
+    //   animateFrame();
+    // },
   },
 };
 </script>

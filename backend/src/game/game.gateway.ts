@@ -16,6 +16,7 @@ import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
+import { use } from 'passport';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -40,14 +41,17 @@ export class GameGateway {
       if (game) this.sendGameStart(game);
     });
     sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
-      if (game) this.sendBallUpdate(game);
+      if (game) {
+        this.sendBallUpdate(game);
+      this.sendPaddleUpdate(game);
+      }
     });
     sharedEventEmitter.on('scoreUpdate', (game: GameState) => {
       if (game) this.sendScoreUpdate(game);
     });
-    sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
-      this.sendPaddleUpdate(game);
-    });
+    // sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
+    //   this.sendPaddleUpdate(game);
+    // });
     sharedEventEmitter.on('victory', (game: GameState) => {
       this.announceVictory(game);
     });
@@ -225,21 +229,65 @@ export class GameGateway {
   @SubscribeMessage('paddleUp')
   PaddleUp(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() payload: { localPlayer: string },
+    @MessageBody() payload: { localPlayer: boolean },
   ) {
     const user = this.gameService.websocketUsers.get(socket?.id);
-    const game = this.gameService.paddleUp(user, payload.localPlayer);
-    if (game) this.sendPaddleUpdate(game);
+    if (user == user.activeGame.user1) {
+      user.activeGame.leftMovement = 1;
+    } else if (user == user.activeGame.user2) {
+      user.activeGame.rightMovement = 1;
+    } else if (payload.localPlayer) {
+      user.activeGame.rightMovement = 1;
+    }
+    // const game = this.gameService.paddleUp(user, payload.localPlayer);
+    // if (game) this.sendPaddleUpdate(game);
   }
 
   @SubscribeMessage('paddleDown')
   PaddleDown(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() payload: { localPlayer: string },
+    @MessageBody() payload: { localPlayer: boolean },
   ) {
     const user = this.gameService.websocketUsers.get(socket?.id);
-    const game = this.gameService.paddleDown(user, payload.localPlayer);
-    if (game) this.sendPaddleUpdate(game);
+    if (user == user.activeGame.user1) {
+      user.activeGame.leftMovement = 2;
+    } else if (user == user.activeGame.user2) {
+      user.activeGame.rightMovement = 2;
+    } else if (payload.localPlayer) {
+      user.activeGame.rightMovement = 1;
+    }
+    // const game = this.gameService.paddleDown(user, payload.localPlayer);
+    // if (game) this.sendPaddleUpdate(game);
+  }
+
+  @SubscribeMessage('paddleUpStop')
+  PaddleUpStop(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { localPlayer: boolean },
+  ) {
+    const user = this.gameService.websocketUsers.get(socket?.id);
+    if (user == user.activeGame.user1) {
+      user.activeGame.leftMovement = 0;
+    } else if (user == user.activeGame.user2) {
+      user.activeGame.rightMovement = 0;
+    } else if (payload.localPlayer) {
+      user.activeGame.rightMovement = 0;
+    }
+  }
+
+  @SubscribeMessage('paddleDownStop')
+  PaddleDownStop(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() payload: { localPlayer: boolean },
+  ) {
+    const user = this.gameService.websocketUsers.get(socket?.id);
+    if (user == user.activeGame.user1) {
+      user.activeGame.leftMovement = 0;
+    } else if (user == user.activeGame.user2) {
+      user.activeGame.rightMovement = 0;
+    } else if (payload.localPlayer) {
+      user.activeGame.rightMovement = 0;
+    }
   }
 
   announceVictory(game: GameState) {

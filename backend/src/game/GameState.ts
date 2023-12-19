@@ -39,10 +39,12 @@ export class GameState {
   leftPosition: number;
   leftBorder: number;
   leftImpact: number;
+  leftMovement: number;
 
   rightPosition: number;
   rightBorder: number;
   rightImpact: number;
+  rightMovement: number;
 
   speedFactor: number;
   speedFactorMax: number;
@@ -73,7 +75,7 @@ export class GameState {
     this.speedFactorStart = 1.5;
     this.speedFactor = this.speedFactorStart;
     this.speedFactorMax = 5;
-    this.paddlesSpeed = 15;
+    this.paddlesSpeed = 1;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
