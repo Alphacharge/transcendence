@@ -683,6 +683,7 @@ h3 {
 
 .graph-row {
   width: 100%;
+  max-width: 60em;
   display: flex;
   justify-content: center;
   margin-bottom: 1em;
