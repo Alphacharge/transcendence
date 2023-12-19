@@ -268,8 +268,8 @@ export default {
 
         // Handle "kd" separately
         if (this.sortKey === "kd") {
-          const aValue = calcKD(a.wins, a.losses).toFixed(2);
-          const bValue = calcKD(b.wins, b.losses).toFixed(2);
+          const aValue = this.calcKD(a.wins, a.losses).toFixed(2);
+          const bValue = this.calcKD(b.wins, b.losses).toFixed(2);
           return modifier * (aValue - bValue);
         }
 
