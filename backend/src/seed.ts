@@ -14,16 +14,16 @@ async function seed() {
 
   try {
     // Delete all tables
-    // await prisma.avatars.deleteMany({
-    //   where: {
-    //     NOT: {
-    //       id: 1,
-    //     },
-    //   },
-    // });
-    // await prisma.friends.deleteMany({});
-    // await prisma.tournaments.deleteMany({});
-    // await prisma.games.deleteMany({});
+    await prisma.avatars.deleteMany({
+      where: {
+        NOT: {
+          id: 1,
+        },
+      },
+    });
+    await prisma.friends.deleteMany({});
+    await prisma.tournaments.deleteMany({});
+    await prisma.games.deleteMany({});
     await prisma.users.deleteMany({});
 
     await prisma.createNewAvatar('.png');
