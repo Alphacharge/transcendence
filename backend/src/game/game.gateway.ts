@@ -231,6 +231,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
+    console.log("paddleUp");
     const user = this.gameService.websocketUsers.get(socket?.id);
     if (user == user.activeGame.user1) {
       user.activeGame.leftMovement = 1;
@@ -248,6 +249,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
+    console.log("paddleDown");
     const user = this.gameService.websocketUsers.get(socket?.id);
     if (user == user.activeGame.user1) {
       user.activeGame.leftMovement = 2;
@@ -265,6 +267,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
+    console.log("paddleUpStop");
     const user = this.gameService.websocketUsers.get(socket?.id);
     if (user == user.activeGame.user1) {
       user.activeGame.leftMovement = 0;
@@ -280,6 +283,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
+    console.log("paddleDownStop");
     const user = this.gameService.websocketUsers.get(socket?.id);
     if (user == user.activeGame.user1) {
       user.activeGame.leftMovement = 0;
