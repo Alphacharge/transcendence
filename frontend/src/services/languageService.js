@@ -20,24 +20,3 @@ export const fetchUserLanguage = async () => {
     throw new Error("Failed to save language preference");
   }
 };
-
-export function selectLanguage(language) {
-  // Set the corresponding locale based on the current language
-  switch (language.toLowerCase()) {
-    case "en":
-      language = "en";
-      break;
-    case "de":
-      language = "de";
-      break;
-    case "it":
-      language = "it";
-      break;
-    default:
-      language = "en";
-      break;
-  }
-
-  localStorage.setItem("userLanguage", language);
-  return language;
-}

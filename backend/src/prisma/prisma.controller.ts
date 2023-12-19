@@ -8,6 +8,7 @@ import {
   UploadedFile,
   UseGuards,
   Request,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -252,4 +253,16 @@ export class PrismaController {
   async getLanguage(@Req() req: Request): Promise<{ language: string }> {
     return { language: await this.prismaService.getLanguage(req['user']) };
   }
+
+    /* Returns information about your authentication methods. */
+    @Get('authstatus')
+    async checkAuth(@Req() req: Request) {
+      try {
+        const userInfo = await this.prismaService.authStatusById(req['user']);
+
+        return ({ twoFactorEnabled: userInfo.twoFactorEnabled, oauthEnabled: userInfo.oauthEnabled });
+      } catch (error) {
+        throw new InternalServerErrorException();
+      }
+    }
 }

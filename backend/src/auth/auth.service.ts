@@ -49,6 +49,7 @@ export class AuthService {
         access_token: bToken,
         userId: newUser.id,
         userName: newUser.username,
+        twoFactorEnabled: newUser.two_factor_enabled,
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -270,6 +271,7 @@ export class AuthService {
     const clientSecret = process.env.VUE_APP_FORTYTWO_APP_SECRET;
     const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     const tokenEndpoint = process.env.TOKEN_ENDPOINT;
+
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
         method: 'POST',
@@ -293,11 +295,13 @@ export class AuthService {
           'AUTH.SERVICE: HANDLECALLBACK, Problems with the tokenresponse',
         );
       }
+
       const apiResponse = await fetch('https://api.intra.42.fr/v2/me', {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
       if (apiResponse.ok) {
         const responseData = await apiResponse.json();
         const user: User = {
@@ -306,20 +310,33 @@ export class AuthService {
           id: 0,
         };
         const newUser = await this.checkUserInDB(user);
+
         let response: {
           access_token: string;
           userId: number;
           userName: string;
+          twoFactorEnabled: boolean;
         };
+
         if (!newUser) {
           response = await this.signup(user, true);
         } else if (newUser.oauth) {
-          const bToken = await this.signToken(newUser.id, newUser.username);
-          response = {
-            access_token: bToken,
-            userId: newUser.id,
-            userName: newUser.username,
-          };
+          if (newUser.two_factor_enabled) {
+            response = {
+              access_token: "",
+              userId: newUser.id,
+              userName: newUser.username,
+              twoFactorEnabled: newUser.two_factor_enabled,
+            };
+          } else {
+            const bToken = await this.signToken(newUser.id, newUser.username);
+            response = {
+              access_token: bToken,
+              userId: newUser.id,
+              userName: newUser.username,
+              twoFactorEnabled: newUser.two_factor_enabled,
+            };
+          }
         } else {
           console.error('user exists');
         }

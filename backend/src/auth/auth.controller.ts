@@ -86,6 +86,7 @@ export class AuthController {
       url.searchParams.set('access_token', authResponse.access_token);
       url.searchParams.set('userId', authResponse.userId.toString());
       url.searchParams.set('userName', authResponse.userName);
+      url.searchParams.set('twoFactorEnabled', authResponse.twoFactorEnabled.toString());
       response.status(302).redirect(url.href);
     } else {
       const errorCode = '1';

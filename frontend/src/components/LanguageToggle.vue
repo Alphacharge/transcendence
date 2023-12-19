@@ -6,13 +6,12 @@
 
 <script>
 import { checkLoggedIn } from "@/services/authService";
-import { selectLanguage } from "@/services/languageService";
 
 export default {
   data() {
     return {
-      currentLanguage: "EN", // Initial language, assuming English is default
-      languages: ["EN", "DE", "IT"], // Array of available languages
+      currentLanguage: "en", // Initial language, assuming English is default
+      languages: ["en", "de", "it"], // Array of available languages
     };
   },
 
@@ -33,22 +32,20 @@ export default {
       const nextIndex = (currentIndex + 1) % this.languages.length;
 
       this.currentLanguage = this.languages[nextIndex];
-
-      // parse the input and set it in local storage
-      const parsedLanguage = selectLanguage(this.currentLanguage);
+      localStorage.setItem("userLanguage", this.currentLanguage);
 
       // save new language in backend
       try {
         const amILoggedIn = await checkLoggedIn();
 
         if (amILoggedIn) {
-          await this.saveLanguagePreference(parsedLanguage);
+          await this.saveLanguagePreference(this.currentLanguage);
         }
       } catch (error) {
         console.error("Error occured while saving language preference:", error);
       }
 
-      this.$i18n.locale = parsedLanguage;
+      this.$i18n.locale = this.currentLanguage;
     },
 
     async saveLanguagePreference(language) {
