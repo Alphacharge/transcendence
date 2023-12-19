@@ -97,7 +97,7 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (responseData.errorCode == ""){
+          if (responseData.errorCode == "") {
             if (localStorage.getItem("access_token"))
               localStorage.removeItem("access_token");
             if (localStorage.getItem("userId"))

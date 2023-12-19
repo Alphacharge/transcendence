@@ -310,12 +310,12 @@ export default {
         obj,
       );
     },
-    calcKD(wins, losses){
+    calcKD(wins, losses) {
       let kd = wins / losses;
-        if (isNaN(kd) || !isFinite(kd)) {
-          kd = 0;
-        }
-        return kd;
+      if (isNaN(kd) || !isFinite(kd)) {
+        kd = 0;
+      }
+      return kd;
     },
     convertContacts(data) {
       return data.map((user) => {
@@ -390,7 +390,7 @@ export default {
       kd.forEach((value, index, array) => {
         array[index] = value < 1 ? value * -1 : value;
         if (isNaN(array[index]) || !isFinite(array[index])) {
-          array[index] = 0.00;
+          array[index] = 0.0;
         }
       });
       const histogram = document

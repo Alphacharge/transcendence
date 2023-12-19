@@ -198,10 +198,13 @@ export class PrismaService extends PrismaClient {
     const user = await this.users.findUnique({
       where: {
         id: Number(userId),
-      }
+      },
     });
 
-    return { twoFactorEnabled: user.two_factor_enabled, oauthEnabled: user. oauth };
+    return {
+      twoFactorEnabled: user.two_factor_enabled,
+      oauthEnabled: user.oauth,
+    };
   }
 
   async is2FAEnabledById(userId: number): Promise<boolean> {

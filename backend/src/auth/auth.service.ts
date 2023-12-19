@@ -24,8 +24,13 @@ export class AuthService {
   activeUser: Set<number> = new Set<number>();
 
   async signup(user: User, oauth: boolean) {
-    let obj = { access_token: "",
-    userId: 0, userName: "", twoFactorEnabled: false, errorCode: ""};
+    let obj = {
+      access_token: '',
+      userId: 0,
+      userName: '',
+      twoFactorEnabled: false,
+      errorCode: '',
+    };
     try {
       // Validate password
       let error = this.validatePassword(user.password);
@@ -48,7 +53,7 @@ export class AuthService {
         oauth,
       );
       if (newUser == null) {
-        obj.errorCode = "8";
+        obj.errorCode = '8';
         return obj;
       }
       //create sessiontoken
@@ -66,7 +71,7 @@ export class AuthService {
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {
-          obj.errorCode = "8";
+          obj.errorCode = '8';
           return obj;
         }
       }
@@ -100,7 +105,7 @@ export class AuthService {
         hash,
       );
 
-      if (newPasswordHash == null){
+      if (newPasswordHash == null) {
         return { success: false, message: '50' };
       }
 
@@ -117,20 +122,25 @@ export class AuthService {
   }
 
   async signin(user: User) {
-    let obj = { access_token: "",
-    userId: 0, userName: "", requires2FA: false, errorCode: ""};
+    let obj = {
+      access_token: '',
+      userId: 0,
+      userName: '',
+      requires2FA: false,
+      errorCode: '',
+    };
     //find the user by username in database
     const newUser = await this.checkUserInDB(user);
     //if user does not exist throw exception
     if (!newUser) {
-      obj.errorCode = "7";
+      obj.errorCode = '7';
       return obj;
     }
     //compare password
     const pwMatches = await argon.verify(newUser.hash, user.password);
     //if password is wrong throw exception
     if (!pwMatches) {
-      obj.errorCode = "2";
+      obj.errorCode = '2';
       return obj;
     }
 
@@ -142,7 +152,7 @@ export class AuthService {
     // if 2fa code is needed we send no JWT token
     if (newUser.two_factor_enabled) {
       obj.access_token = '';
-      obj.errorCode = "0";
+      obj.errorCode = '0';
       return obj;
     }
 
@@ -152,7 +162,7 @@ export class AuthService {
     console.log('AUTH.SERVICE: SIGNIN, Logged in:', newUser.username);
 
     obj.access_token = bToken;
-    obj.errorCode = "0";
+    obj.errorCode = '0';
     return obj;
   }
 
@@ -250,28 +260,28 @@ export class AuthService {
 
   private validatePassword(password: string): string | null {
     if (password.length < 8) {
-      return "3";
+      return '3';
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
     if (!allowedCharsRegex.test(password)) {
-      return "4";
+      return '4';
     }
     return null;
   }
 
   validateUsername(username: string): string | null {
     if (username.length < 4) {
-      return "11";
+      return '11';
     }
     if (username.length > 10) {
-      return "12";
+      return '12';
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
     const allowedCharsRegex = /^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]+$/;
 
     if (!allowedCharsRegex.test(username)) {
-      return "13";
+      return '13';
     }
     return null;
   }
@@ -286,8 +296,8 @@ export class AuthService {
       access_token: string;
       userId: number;
       userName: string;
-      errorCode: string,
-      twoFactorEnabled: boolean,
+      errorCode: string;
+      twoFactorEnabled: boolean;
     };
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
@@ -308,7 +318,7 @@ export class AuthService {
         const tokenData = await tokenResponse.json();
         accessToken = tokenData.access_token;
       } else {
-        response.errorCode = "5";
+        response.errorCode = '5';
         return response;
       }
 
@@ -330,7 +340,7 @@ export class AuthService {
           response = await this.signup(user, true);
         } else if (newUser.oauth) {
           if (newUser.two_factor_enabled) {
-            response.access_token = "";
+            response.access_token = '';
             response.userId = newUser.id;
             response.userName = newUser.username;
             response.twoFactorEnabled = newUser.two_factor_enabled;
@@ -342,12 +352,12 @@ export class AuthService {
             response.twoFactorEnabled = newUser.two_factor_enabled;
           }
         } else {
-          response.errorCode = "1";
+          response.errorCode = '1';
           return response;
         }
         return response;
       } else {
-        response.errorCode = "5";
+        response.errorCode = '5';
         return response;
       }
     } catch (error) {

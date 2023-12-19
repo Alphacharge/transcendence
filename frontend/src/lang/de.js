@@ -112,5 +112,5 @@ export default {
     60: "Serverzeitüberschreitung. Bitte versuchen Sie es erneut.",
     //Positive Codes
     99: "Passwort erfolgreich geändert.",
-},
+  },
 };

@@ -112,5 +112,5 @@ export default {
     60: "Timeout del server. Si prega di riprovare.",
     //Positive Codes
     99: "Password cambiata con successo.",
-},
+  },
 };

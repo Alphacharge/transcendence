@@ -97,8 +97,9 @@ export default {
         this.success = false;
         this.message = "60";
       }
-      if (this.success){
-        setTimeout(() => {router.push('/profile');
+      if (this.success) {
+        setTimeout(() => {
+          router.push("/profile");
         }, 3000);
       }
     },
