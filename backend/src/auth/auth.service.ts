@@ -243,7 +243,7 @@ export class AuthService {
     }
   }
 
-  private validateUsername(username: string): void {
+  validateUsername(username: string): void {
     if (username.length < 4) {
       throw new ForbiddenException(
         'Username must be at least 4 characters long',
