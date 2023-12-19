@@ -65,15 +65,15 @@ export class GameState {
     this.deltaContactsPlayer1 = 0;
     this.deltaContactsPlayer2 = 0;
     this.longestBreak = 0;
-    this.winningScore = 2; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 7; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
-    this.speedFactorStart = 2;
+    this.speedFactorStart = 1.5;
     this.speedFactor = this.speedFactorStart;
     this.speedFactorMax = 5;
-    this.paddlesSpeed = 20;
+    this.paddlesSpeed = 15;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
@@ -215,7 +215,7 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < this.speedFactorMax) {
+      if (Math.sqrt(Math.pow(this.ballSpeedX, 2) + Math.pow(this.ballSpeedY, 2)) < this.speedFactorMax) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer1++;
