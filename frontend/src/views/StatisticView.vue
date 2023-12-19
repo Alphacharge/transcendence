@@ -200,7 +200,7 @@
             <td>{{ row.matches }}</td>
             <td>{{ row.wins }}</td>
             <td>{{ row.losses }}</td>
-            <td>{{ (row.wins / row.losses).toFixed(2) }}</td>
+            <td>{{ calcKD(row.wins, row.losses).toFixed(2) }}</td>
             <td>{{ row.tourmatches }}</td>
             <td>{{ row.tourwins }}</td>
             <td>{{ row.contacts[0].total_contacts }}</td>
@@ -268,8 +268,8 @@ export default {
 
         // Handle "kd" separately
         if (this.sortKey === "kd") {
-          const aValue = a.wins / a.losses;
-          const bValue = b.wins / b.losses;
+          const aValue = calcKD(a.wins, a.losses).toFixed(2);
+          const bValue = calcKD(b.wins, b.losses).toFixed(2);
           return modifier * (aValue - bValue);
         }
 
@@ -309,6 +309,13 @@ export default {
         (acc, k) => (acc && acc[k] !== undefined ? acc[k] : null),
         obj,
       );
+    },
+    calcKD(wins, losses){
+      let kd = wins / losses;
+        if (isNaN(kd) || !isFinite(kd)) {
+          kd = 0;
+        }
+        return kd;
     },
     convertContacts(data) {
       return data.map((user) => {
@@ -381,7 +388,10 @@ export default {
       const losses = this.userStatistics.map((user) => user.losses);
       const kd = this.userStatistics.map((user) => user.wins / user.losses);
       kd.forEach((value, index, array) => {
-        array[index] = value < 1 ? value * -1 : value + 1;
+        array[index] = value < 1 ? value * -1 : value;
+        if (isNaN(array[index]) || !isFinite(array[index])) {
+          array[index] = 0.00;
+        }
       });
       const histogram = document
         .getElementById("championsBoard")
@@ -532,6 +542,7 @@ export default {
               },
             },
             y: {
+              display: false,
               beginAtZero: false,
             },
           },
