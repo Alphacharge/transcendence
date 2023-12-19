@@ -62,7 +62,7 @@ export default {
   profileContacts: "Contatti con la palla",
   profileTourWins: "Vittorie nei tornei",
   profileRegister: "Registrato dal",
-  usernameTaken: "Il nome utente è preso",
+  nicknameError: "Il nome utente è preso",
   AddFriends: "Aggiungi amici",
   closeList: "Vicino",
 

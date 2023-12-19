@@ -102,7 +102,6 @@ export default {
         default:
           break;
       }
-      // }
     });
   },
 
@@ -112,10 +111,8 @@ export default {
       cancelAnimationFrame(this.animationFrameId);
     }
     // Remove the event listener for keydown events
-    window.removeEventListener("keydownPlayer1");
-    window.removeEventListener("keyupPlayer1");
-    window.removeEventListener("keydownPlayer2");
-    window.removeEventListener("keyupPlayer2");
+    window.removeEventListener("keydown");
+    window.removeEventListener("keyup");
     clearInterval(this.messageIntervalPlayer1);
     clearInterval(this.messageIntervalPlayer2);
     this.messageIntervalPlayer1 = null;

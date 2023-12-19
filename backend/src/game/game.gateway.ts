@@ -76,47 +76,43 @@ export class GameGateway {
 
   /* New client connected. */
   async handleConnection(socket: any) {
-    console.log('handleConnection: Client connected sid: ', socket.id);
+    console.log('handleConnection: Client connected sid: ', socket?.id);
 
     const isValid = await this.authService.validateToken(
-      socket.handshake.query.token,
+      socket?.handshake.query.token,
     );
     if (isValid) {
       // save new user to users array in GameService
       const user = new User();
 
       user.userData = await this.prismaService.getUserById(
-        socket.handshake.query.userId,
+        socket?.handshake.query.userId,
       );
       user.socket = socket;
-      this.gameService.websocketUsers.set(socket.id, user);
+      this.gameService.websocketUsers.set(socket?.id, user);
       if (!user.userData) {
         console.log('handleConnection: User not found in database.');
-        socket.disconnect(true);
+        socket?.disconnect(true);
       }
     } else {
       console.log('handleConnection: Refusing WebSocket connection.');
-      socket.disconnect(true);
+      socket?.disconnect(true);
     }
   }
 
   handleDisconnect(socket: any) {
-    console.log('handleDisconnect: Client disconnected sid:', socket.id);
+    console.log('handleDisconnect: Client disconnected sid:', socket?.id);
 
     // get the right user
-    const user = this.gameService.websocketUsers.get(socket.id);
+    const user = this.gameService.websocketUsers.get(socket?.id);
 
     if (user) {
       // remove user from any queues
       this.gameService.removeFromQueue(socket);
       this.gameService.removeFromTournamentQueue(socket);
-
-      // if (user.activeGame) {
-      // this.gameService.stopGame(user.activeGame);
-      // }
     }
     // remove from list of active users
-    this.gameService.websocketUsers.delete(socket.id);
+    this.gameService.websocketUsers.delete(socket?.id);
   }
 
   @SubscribeMessage('startLocalGame')
@@ -145,7 +141,7 @@ export class GameGateway {
 
   @SubscribeMessage('requestTournamentInfo')
   requestTournamentInfo(@ConnectedSocket() socket: Socket) {
-    socket.join('tournamentWatchers'); // socket room of people on the tournament site
+    socket?.join('tournamentWatchers'); // socket room of people on the tournament site
     this.sendTournamentInfo();
   }
 
@@ -168,8 +164,8 @@ export class GameGateway {
 
   /* Tell the client the game starts now. */
   sendGameStart(game: GameState) {
-    game.user1?.socket.emit('start');
-    game.user2?.socket.emit('start');
+    game.user1?.socket?.emit('start');
+    game.user2?.socket?.emit('start');
   }
 
   /* Prepare the client for the game. */
@@ -195,11 +191,11 @@ export class GameGateway {
           mime_type: game.user2.userData.avatar.mime_type,
         },
       });
-      game.user2.socket.emit('player2', playerList);
-      game.user2.socket.emit('prepareGame');
+      game.user2.socket?.emit('player2', playerList);
+      game.user2.socket?.emit('prepareGame');
     }
-    game.user1.socket.emit('player1', playerList);
-    game.user1.socket.emit('prepareGame');
+    game.user1.socket?.emit('player1', playerList);
+    game.user1.socket?.emit('prepareGame');
     // send game info here?
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
@@ -208,21 +204,21 @@ export class GameGateway {
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
-    game.user1?.socket.emit('ballUpdate', game.ballCoordinates());
-    game.user2?.socket.emit('ballUpdate', game.ballCoordinates());
+    game.user1?.socket?.emit('ballUpdate', game.ballCoordinates());
+    game.user2?.socket?.emit('ballUpdate', game.ballCoordinates());
   }
 
   sendScoreUpdate(game: GameState) {
-    game.user1.socket.emit('scoreUpdate', game.getScore());
-    game.user2?.socket.emit('scoreUpdate', game.getScore());
+    game.user1?.socket?.emit('scoreUpdate', game.getScore());
+    game.user2?.socket?.emit('scoreUpdate', game.getScore());
   }
 
   // update for both paddles
   sendPaddleUpdate(game: GameState) {
-    game.user1?.socket.emit('leftPaddle', game.leftPosition);
-    game.user1?.socket.emit('rightPaddle', game.rightPosition);
-    game.user2?.socket.emit('leftPaddle', game.leftPosition);
-    game.user2?.socket.emit('rightPaddle', game.rightPosition);
+    game.user1?.socket?.emit('leftPaddle', game.leftPosition);
+    game.user1?.socket?.emit('rightPaddle', game.rightPosition);
+    game.user2?.socket?.emit('leftPaddle', game.leftPosition);
+    game.user2?.socket?.emit('rightPaddle', game.rightPosition);
   }
 
   // listen for paddle updates
@@ -231,11 +227,9 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: string },
   ) {
-    const user = this.gameService.websocketUsers.get(socket.id);
-    if (user) {
-      const game = this.gameService.paddleUp(user, payload.localPlayer);
-      if (game) this.sendPaddleUpdate(game);
-    }
+    const user = this.gameService.websocketUsers.get(socket?.id);
+    const game = this.gameService.paddleUp(user, payload.localPlayer);
+    if (game) this.sendPaddleUpdate(game);
   }
 
   @SubscribeMessage('paddleDown')
@@ -243,7 +237,7 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: string },
   ) {
-    const user = this.gameService.websocketUsers.get(socket.id);
+    const user = this.gameService.websocketUsers.get(socket?.id);
     const game = this.gameService.paddleDown(user, payload.localPlayer);
     if (game) this.sendPaddleUpdate(game);
   }
@@ -251,9 +245,9 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket.emit('victory', '1');
+        game.user1.socket?.emit('victory', '1');
       } else {
-        game.user1.socket.emit('victory', '2');
+        game.user1.socket?.emit('victory', '2');
       }
     } else {
       // if this is a tournament, inform each participant about the win
@@ -263,19 +257,19 @@ export class GameGateway {
         if (game.winningPlayer == game.user1) loser = game.user2;
 
         game.tournamentState.players.forEach((player) => {
-          player.socket.emit('victoryOf', game.winningPlayer.userData.nickname);
-          player.socket.emit('lossOf', loser.userData.nickname);
+          player.socket?.emit('victoryOf', game.winningPlayer.userData.nickname);
+          player.socket?.emit('lossOf', loser.userData.nickname);
         });
       }
       // tell the participants of the game who won
-      game.user1.socket.emit('victory', game.winningPlayer.userData.nickname);
-      game.user2.socket.emit('victory', game.winningPlayer.userData.nickname);
+      game.user1.socket?.emit('victory', game.winningPlayer.userData.nickname);
+      game.user2.socket?.emit('victory', game.winningPlayer.userData.nickname);
     }
   }
 
   tournamentWinner(game: GameState) {
     game.tournamentState.players.forEach((player) => {
-      player.socket.emit(
+      player.socket?.emit(
         'tournamentWinner',
         game.winningPlayer.userData.nickname,
       );
@@ -288,12 +282,12 @@ export class GameGateway {
   }
 
   addedToTournamentQueue(user: User) {
-    user.socket.emit('addedToTournamentQueue');
+    user.socket?.emit('addedToTournamentQueue');
     this.sendTournamentInfo();
   }
 
   removedFromTournamentQueue(user: User) {
-    user.socket.emit('removedFromTournamentQueue'); // tells the user they are not queued
+    user.socket?.emit('removedFromTournamentQueue'); // tells the user they are not queued
     this.server
       .to('tournamentWatchers')
       .emit('playerLeftTournament', user.userData.id); // informs all clients someone left the queue
@@ -302,7 +296,7 @@ export class GameGateway {
 
   tournamentStart(tournament: TournamentState) {
     tournament.players.forEach((user) => {
-      user.socket.emit('tournamentStart');
+      user.socket?.emit('tournamentStart');
     });
 
     // tell the watchers to empty the tournament queue

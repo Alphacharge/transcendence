@@ -8,6 +8,7 @@ import {
   UploadedFile,
   UseGuards,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -59,10 +60,10 @@ export class PrismaController {
       if (newUser) {
         return { nickName: newUser };
       }
-      return { nickName: null };
+      throw new BadRequestException("User not in database.");
     } catch (error) {
       console.error('Error update Nickname:', error);
-      return { nickName: null };
+      throw new BadRequestException("Nickname could not be updated.");
     }
   }
 

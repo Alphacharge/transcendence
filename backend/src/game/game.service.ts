@@ -105,6 +105,8 @@ export class GameService {
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
+    if (!user) return;
+
     // Find the user in the queue
     const userToRemove = this.queue.find(
       (queuedUser) =>
@@ -124,6 +126,7 @@ export class GameService {
 
   removeFromTournamentQueue(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
+    if (!user) return;
 
     const userToRemove = this.queueTournament.find(
       (queuedUser) =>

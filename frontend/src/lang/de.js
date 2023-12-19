@@ -62,7 +62,7 @@ export default {
   profileContacts: "Ballkontakte",
   profileTourWins: "Turniersiege",
   profileRegister: "Registriert seit",
-  usernameTaken: "Name wird schon benutzt",
+  nicknameError: "Name konnte nicht geändert werden",
   AddFriends: "Freunde hinzufügen",
   closeList: "Schließen",
 
