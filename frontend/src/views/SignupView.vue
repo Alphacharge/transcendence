@@ -97,7 +97,8 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          if (responseData.errorCode == "") {
+          console.log(`${responseData.errorCode}`);
+          if (responseData.errorCode === null) {
             if (localStorage.getItem("access_token"))
               localStorage.removeItem("access_token");
             if (localStorage.getItem("userId"))
@@ -114,6 +115,7 @@ export default {
         this.message = "60";
       }
     },
+
     async authorize() {
       const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
       const scope = process.env.VUE_APP_SCOPE;
