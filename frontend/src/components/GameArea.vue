@@ -35,7 +35,6 @@ export default {
   },
 
   mounted() {
-
     socket.on("prepareGame", () => {
       this.isGameRunning = true;
     });
@@ -56,8 +55,7 @@ export default {
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      if (!this.isGameRunning)
-      return;
+      if (!this.isGameRunning) return;
 
       switch (event.key) {
         case "w":
@@ -78,8 +76,7 @@ export default {
     });
 
     window.addEventListener("keyup", (event) => {
-      if (!this.isGameRunning)
-      return;
+      if (!this.isGameRunning) return;
 
       switch (event.key) {
         case "w":
