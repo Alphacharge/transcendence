@@ -16,7 +16,7 @@
         {{ $t("twoFAenable") }}
       </button>
     </router-link>
-    <router-link to="ChangePassword">
+    <router-link v-if="!oauthEnabled" to="ChangePassword">
       <img class="pw-icon" :src="getPWSrc()" alt="Change PW" />
     </router-link>
   </div>
@@ -29,12 +29,13 @@ export default {
       userProfil: null,
       userHistory: null,
       twoFactorAuthEnabled: false,
+      oauthEnabled: true,
       code: "",
     };
   },
 
   mounted() {
-    this.checkTwoFactorAuthStatus();
+    this.getAuthStatus();
   },
 
   computed: {
@@ -50,10 +51,11 @@ export default {
     twoFAText(enabled) {
       return enabled ? this.$t("twoFAenabled") : this.$t("twoFAdisabled");
     },
-    async checkTwoFactorAuthStatus() {
+
+    async getAuthStatus() {
       try {
         const response = await fetch(
-          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/2fa/status`,
+          `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/authstatus`,
           {
             method: "GET",
             headers: {
@@ -65,6 +67,7 @@ export default {
         if (response.ok) {
           const data = await response.json();
           this.twoFactorAuthEnabled = data.twoFactorEnabled;
+          this.oauthEnabled = data.oauthEnabled;
         } else {
           console.error("Failed to fetch 2FA status:", response.status);
         }
@@ -72,9 +75,11 @@ export default {
         console.error("Error checking 2FA status:", error.message);
       }
     },
+
     getPWSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/pw_change.png`;
     },
+
     async disable2FA() {
       try {
         const response = await fetch(

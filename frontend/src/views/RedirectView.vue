@@ -7,6 +7,7 @@
 
 <script>
 import router from "@/router";
+
 export default {
   data() {
     return {
@@ -20,7 +21,12 @@ export default {
     const userId = urlParams.get("userId");
     localStorage.setItem("access_token", access_token);
     localStorage.setItem("userId", userId);
-    router.push("/");
+
+    if (urlParams.get("twoFactorEnabled") == "true") {
+      router.push("/2fa-code");
+    } else {
+      router.push("/");
+    }
   },
 };
 </script>

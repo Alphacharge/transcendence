@@ -217,7 +217,10 @@ export class GameState {
       const angle = this.impact(distance);
       this.ballSpeedX = this.speedFactor * Math.cos(angle);
       this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (Math.sqrt(Math.pow(this.ballSpeedX, 2) + Math.pow(this.ballSpeedY, 2)) < this.speedFactorMax) {
+      if (
+        Math.sqrt(Math.pow(this.ballSpeedX, 2) + Math.pow(this.ballSpeedY, 2)) <
+        this.speedFactorMax
+      ) {
         this.speedFactor *= 1.2;
       }
       this.contactsPlayer1++;

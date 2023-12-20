@@ -93,7 +93,24 @@ export default {
   redirect: "Umleitung zur Anmeldeseite in:",
   error: {
     //Auth
-    1: "Benutzer schon vergeben.",
+    0: "",
+    1: "Benutzername ist bereits vergeben.",
+    2: "Anmeldeinformationen sind falsch.",
+    3: "Passwort muss mindestens 8 Zeichen lang sein.",
+    4: "Passwort enthält verbotene Zeichen.",
+    5: "API nicht erreichbar.",
+    6: "Benutzer oder Passwort falsch!",
+    7: "Benutzer nicht gefunden.",
+    8: "Anmeldeinformationen bereits vergeben.",
+    10: "Benutzer nicht angemeldet.",
+    11: "Benutzername muss mindestens 4 Zeichen lang sein.",
+    12: "Benutzername darf nicht länger als 16 Zeichen sein.",
+    13: "Benutzername / Spitzname enthält verbotene Zeichen.",
     //Database
+    50: "Datenbank nicht erreichbar.",
+    //Server
+    60: "Serverzeitüberschreitung. Bitte versuchen Sie es erneut.",
+    //Positive Codes
+    99: "Passwort erfolgreich geändert.",
   },
 };

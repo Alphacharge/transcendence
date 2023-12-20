@@ -93,7 +93,24 @@ export default {
   redirect: "Redirect to Login Page in:",
   error: {
     //Auth
+    0: "",
     1: "Username is already taken.",
+    2: "Credentials incorrect.",
+    3: "Password must be at least 8 characters long.",
+    4: "Password contains forbidden characters.",
+    5: "API unreachable.",
+    6: "User or Password wrong!",
+    7: "User not found.",
+    8: "Credentials taken.",
+    10: "User not logged in.",
+    11: "Username must be at least 4 characters long.",
+    12: "Username can't be longer than 16 characters.",
+    13: "User / Nickname contains forbidden characters.",
     //Database
+    50: "Database unreachable.",
+    //Server
+    60: "Servertimeout. Please try again.",
+    //Positive Codes
+    99: "Password changed successfully.",
   },
 };
