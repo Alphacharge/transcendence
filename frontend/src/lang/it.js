@@ -93,7 +93,24 @@ export default {
   redirect: "Reindirizzamento alla pagina di accesso in:",
   error: {
     //Auth
+    0: "",
     1: "Il nome utente è già in uso.",
+    2: "Credenziali non corrette.",
+    3: "La password deve essere lunga almeno 8 caratteri.",
+    4: "La password contiene caratteri vietati.",
+    5: "API non raggiungibile.",
+    6: "Utente o password errati!",
+    7: "Utente non trovato.",
+    8: "Credenziali già in uso.",
+    10: "Utente non autenticato.",
+    11: "Il nome utente deve essere lungo almeno 4 caratteri.",
+    12: "Il nome utente non può essere più lungo di 16 caratteri.",
+    13: "Utente / Nickname contiene caratteri vietati.",
     //Database
+    50: "Database non raggiungibile.",
+    //Server
+    60: "Timeout del server. Si prega di riprovare.",
+    //Positive Codes
+    99: "Password cambiata con successo.",
   },
 };

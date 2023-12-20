@@ -1,6 +1,12 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
+      <div v-if="success" class="mb-3 message-ok">
+        {{ $t(`error.${this.message}`) }}
+      </div>
+      <div v-if="!success && message" class="mb-3 message-error">
+        {{ $t(`error.${this.message}`) }}
+      </div>
       <div class="mb-3">
         <label for="Username" class="form-label"
           ><h5>{{ $t("Username") }}</h5></label
@@ -63,6 +69,8 @@ export default {
       username: "",
       password: "",
       rePassword: "",
+      success: false,
+      message: "",
     };
   },
   computed: {
@@ -89,20 +97,21 @@ export default {
 
         const responseData = await response.json();
         if (response.ok) {
-          //maybe not needed anymore
-          if (localStorage.getItem("access_token"))
-            localStorage.removeItem("access_token");
-          if (localStorage.getItem("userId")) localStorage.removeItem("userId");
-          localStorage.setItem("access_token", responseData["access_token"]);
-          localStorage.setItem("userId", responseData["userId"]);
-          router.push("/");
-        } else {
-          alert("User exists!");
-          router.push("/signup");
+          if (responseData.errorCode == "") {
+            if (localStorage.getItem("access_token"))
+              localStorage.removeItem("access_token");
+            if (localStorage.getItem("userId"))
+              localStorage.removeItem("userId");
+            localStorage.setItem("access_token", responseData["access_token"]);
+            localStorage.setItem("userId", responseData["userId"]);
+            router.push("/");
+          }
+          this.success = false;
+          this.message = responseData.errorCode;
         }
       } catch (error) {
-        alert("Signup failed!");
-        router.push("/signup");
+        this.success = false;
+        this.message = "60";
       }
     },
     async authorize() {
@@ -150,5 +159,13 @@ export default {
 }
 .filler {
   flex-grow: calc();
+}
+.message-error {
+  color: red;
+  padding-bottom: 1em;
+}
+.message-ok {
+  color: green;
+  padding-bottom: 1em;
 }
 </style>

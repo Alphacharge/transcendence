@@ -1,6 +1,12 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
+      <div v-if="success" class="mb-3 message-ok">
+        {{ $t(`error.${this.message}`) }}
+      </div>
+      <div v-if="!success && message" class="mb-3 message-error">
+        {{ $t(`error.${this.message}`) }}
+      </div>
       <div class="mb-3">
         <label for="Username" class="form-label"
           ><h5>{{ $t("Username") }}</h5></label
@@ -55,6 +61,8 @@ export default {
     return {
       username: "",
       password: "",
+      success: false,
+      message: "",
     };
   },
   methods: {
@@ -76,8 +84,8 @@ export default {
         );
         this.setResponse(response);
       } catch (error) {
-        alert("Login failed!");
-        router.push("/login");
+        this.success = false;
+        this.message = "60";
       }
     },
 
@@ -98,9 +106,8 @@ export default {
       if (authorizationUrl) {
         window.location.href = authorizationUrl;
       } else {
-        console.error(
-          `LOGIN_VIEW, AUTHORIZE, problems with authorizationUrl: authorizationUrl=${authorizationUrl}`,
-        );
+        this.success = false;
+        this.message = "5";
       }
     },
 
@@ -110,13 +117,16 @@ export default {
         localStorage.setItem("access_token", responseData["access_token"]);
         localStorage.setItem("userId", responseData["userId"]);
 
+        this.success = responseData.success;
+        this.message = responseData.errorCode;
         if (responseData.requires2FA) {
           router.push("/2fa-code");
         } else {
           router.push("/");
         }
       } else {
-        alert("User or Password wrong!");
+        this.success = false;
+        this.message = "6";
       }
     },
   },
@@ -144,5 +154,13 @@ export default {
 }
 .filler {
   flex-grow: calc();
+}
+.message-error {
+  color: red;
+  padding-bottom: 1em;
+}
+.message-ok {
+  color: green;
+  padding-bottom: 1em;
 }
 </style>

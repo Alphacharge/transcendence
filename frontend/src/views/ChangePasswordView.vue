@@ -1,6 +1,12 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="sendPostRequest" class="mx-auto w-50">
+      <div v-if="success" class="mb-3 message-ok">
+        {{ $t(`error.${this.message}`) }}
+      </div>
+      <div v-if="!success && message" class="mb-3 message-error">
+        {{ $t(`error.${this.message}`) }}
+      </div>
       <div class="mb-3">
         <label for="OldPassword" class="form-label"
           ><h5>{{ $t("OldPassword") }}</h5></label
@@ -55,6 +61,8 @@ export default {
       oldPassword: "",
       password: "",
       rePassword: "",
+      success: false,
+      message: "",
     };
   },
   computed: {
@@ -82,18 +90,17 @@ export default {
 
         if (response.ok) {
           const data = await response.json();
-
-          if (data.success) {
-            alert("Password changed successfully!");
-            router.push("profile");
-          } else {
-            alert(data.message);
-          }
-        } else {
-          alert("Failed to change password. Please try again.");
+          this.success = data.success;
+          this.message = data.message;
         }
       } catch (error) {
-        alert("Password change failed!");
+        this.success = false;
+        this.message = "60";
+      }
+      if (this.success) {
+        setTimeout(() => {
+          router.push("/profile");
+        }, 3000);
       }
     },
   },
@@ -120,5 +127,13 @@ export default {
 }
 .filler {
   flex-grow: calc();
+}
+.message-error {
+  color: red;
+  padding-bottom: 1em;
+}
+.message-ok {
+  color: green;
+  padding-bottom: 1em;
 }
 </style>

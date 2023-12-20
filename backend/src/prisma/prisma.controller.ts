@@ -50,20 +50,22 @@ export class PrismaController {
   async updateNickname(
     @Req() req: Request,
     @Body() body: { newNickname: string },
-  ): Promise<{ nickName: string | null }> {
+  ): Promise<{ nickName: string | null; errorCode: string }> {
     try {
-      this.authService.validateUsername(body.newNickname);
+      const error = this.authService.validateUsername(body.newNickname);
+      if (error != null) {
+        return { nickName: null, errorCode: error };
+      }
       const newUser: string = await this.prismaService.updateNickname(
         req['user'],
         body.newNickname,
       );
       if (newUser) {
-        return { nickName: newUser };
+        return { nickName: newUser, errorCode: '0' };
       }
-      return { nickName: null };
+      return { nickName: null, errorCode: '1' };
     } catch (error) {
-      console.error('Error update Nickname:', error);
-      return { nickName: null };
+      return { nickName: null, errorCode: '1' };
     }
   }
 
@@ -254,15 +256,18 @@ export class PrismaController {
     return { language: await this.prismaService.getLanguage(req['user']) };
   }
 
-    /* Returns information about your authentication methods. */
-    @Get('authstatus')
-    async checkAuth(@Req() req: Request) {
-      try {
-        const userInfo = await this.prismaService.authStatusById(req['user']);
+  /* Returns information about your authentication methods. */
+  @Get('authstatus')
+  async checkAuth(@Req() req: Request) {
+    try {
+      const userInfo = await this.prismaService.authStatusById(req['user']);
 
-        return ({ twoFactorEnabled: userInfo.twoFactorEnabled, oauthEnabled: userInfo.oauthEnabled });
-      } catch (error) {
-        throw new InternalServerErrorException();
-      }
+      return {
+        twoFactorEnabled: userInfo.twoFactorEnabled,
+        oauthEnabled: userInfo.oauthEnabled,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException();
     }
+  }
 }

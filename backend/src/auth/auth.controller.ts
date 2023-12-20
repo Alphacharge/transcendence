@@ -57,16 +57,16 @@ export class AuthController {
 
       if (!token) {
         // If no token exists, send a response indicating user not logged in
-        return { isLoggedIn: false, message: 'User not logged in' };
+        return { isLoggedIn: false };
       }
 
       const validToken = await this.authService.validateToken(token);
 
       if (validToken) {
-        return { isLoggedIn: true, message: 'Authorized' };
+        return { isLoggedIn: true };
       } else {
         // If the token is invalid/expired, it's not an authentication error but an indication of not being logged in
-        return { isLoggedIn: false, message: 'User not logged in' };
+        return { isLoggedIn: false };
       }
     } catch (error) {
       throw new InternalServerErrorException('Could not check login status');
@@ -86,7 +86,10 @@ export class AuthController {
       url.searchParams.set('access_token', authResponse.access_token);
       url.searchParams.set('userId', authResponse.userId.toString());
       url.searchParams.set('userName', authResponse.userName);
-      url.searchParams.set('twoFactorEnabled', authResponse.twoFactorEnabled.toString());
+      url.searchParams.set(
+        'twoFactorEnabled',
+        authResponse.twoFactorEnabled.toString(),
+      );
       response.status(302).redirect(url.href);
     } else {
       const errorCode = '1';
