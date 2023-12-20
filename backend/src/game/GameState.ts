@@ -239,7 +239,7 @@ export class GameState {
       this.rightPosition + this.paddlesHeight,
       this.fieldHeight,
     );
-    
+
     if (
       this.ballX > collisionAreaX0 &&
       this.ballX < collisionAreaX1 &&
