@@ -1,20 +1,20 @@
 export default {
   // NAVBAR
   Game: "Gioco",
-  LocalGame: "Gioco Locale",
+  LocalGame: "Gioco in Locale",
   Tournament: "Torneo",
   Statistics: "Statistiche",
   Profile: "Profilo",
   LogIn: "Accedi",
   SignUp: "Registrati",
   About: "Informazioni",
-  Logout: "Disconnettersi",
+  Logout: "Disconnetti",
   currentLanguage: "IT",
 
   // PONG GAME
-  EnterQueue: "Entra in Coda",
-  LeaveQueue: "Lascia la Coda",
-  StartLocalGame: "Avviare il gioco locale",
+  EnterQueue: "Mettiti in Coda",
+  LeaveQueue: "Lascia",
+  StartLocalGame: "Avvia il gioco in locale",
   Player: "Giocatore",
   wins: "vince",
   RegisteredPlayers: "Giocatori registrati",
@@ -45,13 +45,13 @@ export default {
   TournamentWins: "Torneo - Vittorie",
   LongestGame: "Partita più lunga",
   LongestBreak: "Raduno più lungo",
-  MostContacts: "La maggior parte dei contatti con la palla",
+  MostContacts: "Maggioranza contatto palla",
   ShortestGame: "Partita più breve",
-  HighestWin: "Profitto massimo",
-  LeastContacts: "Meno contatti con la palla",
-  ballContacts: "Contatti sferici",
+  HighestWin: "Massima vittoria",
+  LeastContacts: "Contatto palla minimo",
+  ballContacts: "Contatto palla",
   graphDescription:
-    "Seleziona la legenda dell'istogramma per filtrare, passa il mouse sui grafici per i dettagli.",
+    "Seleziona la legenda dell'istogramma per filtrare, scorri col mouse sui grafici per più dettagli.",
   Graphs: "Grafici",
 
   //Profile
@@ -59,8 +59,8 @@ export default {
   profileLos: "Sconfitte",
   profileMatches: "Partite",
   profileTournament: "Tornei",
-  profileContacts: "Contatti con la palla",
-  profileTourWins: "Vittorie nei tornei",
+  profileContacts: "Contatti palla",
+  profileTourWins: "Tornei vinti",
   profileRegister: "Registrato dal",
   nicknameError: "Il nome utente è preso",
   AddFriends: "Aggiungi amici",
@@ -77,9 +77,9 @@ export default {
   TwoFactorAuthEnabled: "Autenticazione a due fattori attivata con successo.",
 
   //About
-  aboutTitle: "Trascendenza",
+  aboutTitle: "Transcendence",
   aboutText1:
-    "Questo è il progetto Trascendenza della scuola di programmazione 42. Abbiamo iniziato il progetto l'8 settembre ed è stata un'incredibile avventura. I contributori includono:",
+    "Questo è il progetto Transcendence della scuola di programmazione 42. Abbiamo iniziato il progetto l'8 settembre ed è stata un'incredibile avventura. I contributori includono:",
   aboutText2:
     "L'inizio è stato impegnativo, e abbiamo dovuto imparare molte nuove nozioni. Dopo circa 8 settimane, abbiamo finalmente trovato un percorso per approfondire le conoscenze appena acquisite. È iniziata la seconda parte.",
   aboutText3:

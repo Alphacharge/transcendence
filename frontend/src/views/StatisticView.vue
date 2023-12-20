@@ -46,7 +46,7 @@
                 <div class="image_history">
                   <img
                     v-if="milestones?.longestBreak"
-                    :src="`avatars/${milestones?.longestBreak?.l_user?.avatar?.id}${milestones?.longestBreak?.l_use?.avatar?.mime_type}`"
+                    :src="`avatars/${milestones?.longestBreak?.l_user?.avatar?.id}${milestones?.longestBreak?.l_user?.avatar?.mime_type}`"
                     alt="Avatar"
                   />
                 </div>
