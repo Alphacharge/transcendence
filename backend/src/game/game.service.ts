@@ -105,6 +105,8 @@ export class GameService {
   /* Remove a user from the game queue */
   removeFromQueue(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
+    if (!user) return;
+
     // Find the user in the queue
     const userToRemove = this.queue.find(
       (queuedUser) =>
@@ -124,6 +126,7 @@ export class GameService {
 
   removeFromTournamentQueue(socket: Socket) {
     const user = this.websocketUsers.get(socket.id);
+    if (!user) return;
 
     const userToRemove = this.queueTournament.find(
       (queuedUser) =>
@@ -205,31 +208,31 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  paddleUp(player: User, leftOrRight: string) {
-    const game = player.activeGame;
+  // paddleUp(player: User, localPlayer: boolean) {
+  //   const game = player.activeGame;
 
-    if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == 'right') {
-        game.movePaddleUp(null);
-      } else {
-        game.movePaddleUp(player);
-      }
-    }
-    return game;
-  }
+  //   if (game && game.isRunning()) {
+  //     if (localPlayer) {
+  //       game.movePaddleUp(null);
+  //     } else {
+  //       game.movePaddleUp(player);
+  //     }
+  //   }
+  //   return game;
+  // }
 
-  paddleDown(player: User, leftOrRight: string) {
-    const game = player.activeGame;
+  // paddleDown(player: User, localPlayer: boolean) {
+  //   const game = player.activeGame;
 
-    if (game && game.isRunning()) {
-      if (game.isLocalGame && leftOrRight == 'right') {
-        game.movePaddleDown(null);
-      } else {
-        game.movePaddleDown(player);
-      }
-    }
-    return game;
-  }
+  //   if (game && game.isRunning()) {
+  //     if (localPlayer) {
+  //       game.movePaddleDown(null);
+  //     } else {
+  //       game.movePaddleDown(player);
+  //     }
+  //   }
+  //   return game;
+  // }
 
   async endGame(game: GameState) {
     game.playerVictory();
@@ -280,6 +283,20 @@ export class GameService {
     // Update the ball's position
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
+
+    if (game.leftMovement == 1) {
+      game.movePaddleUp(game.user1);
+      // this.paddleUp(game.user1, false);
+    } else if (game.leftMovement == 2) {
+      // this.paddleDown(game.user1, false);
+      game.movePaddleDown(game.user1);
+    }
+    if (game.rightMovement == 1) {
+      game.movePaddleUp(game.user2);
+    } else if (game.rightMovement == 2) {
+      game.movePaddleDown(game.user2);
+    }
+
     sharedEventEmitter.emit('ballPositionUpdate', game);
   }
 }

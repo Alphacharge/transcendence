@@ -39,10 +39,12 @@ export class GameState {
   leftPosition: number;
   leftBorder: number;
   leftImpact: number;
+  leftMovement: number; // 0 = no movement | 1 = up | 2 = down
 
   rightPosition: number;
   rightBorder: number;
   rightImpact: number;
+  rightMovement: number;
 
   speedFactor: number;
   speedFactorMax: number;
@@ -73,7 +75,7 @@ export class GameState {
     this.speedFactorStart = 1.5;
     this.speedFactor = this.speedFactorStart;
     this.speedFactorMax = 5;
-    this.paddlesSpeed = 15;
+    this.paddlesSpeed = 2;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
@@ -237,6 +239,7 @@ export class GameState {
       this.rightPosition + this.paddlesHeight,
       this.fieldHeight,
     );
+    
     if (
       this.ballX > collisionAreaX0 &&
       this.ballX < collisionAreaX1 &&
@@ -311,9 +314,6 @@ export class GameState {
 
     // update tournament information
     if (this.tournamentState) {
-      if (this.tournamentState.round & 2) {
-        this.tournamentState.round << 1;
-      }
       this.tournamentState.gamesPlayed++;
       this.tournamentState.winners.push(this.winningPlayer);
     }

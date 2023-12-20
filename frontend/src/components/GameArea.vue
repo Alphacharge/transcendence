@@ -30,19 +30,23 @@ export default {
       bouncingBallY: 200,
       leftPaddleY: 150,
       rightPaddleY: 150,
-      animationFrameId: null,
-      messageIntervalPlayer1: null,
-      messageIntervalPlayer2: null,
+      isGameRunning: false,
     };
   },
 
   mounted() {
-    // received ball update from server
+
+    socket.on("prepareGame", () => {
+      this.isGameRunning = true;
+    });
+    socket.on("victory", () => {
+      this.isGameRunning = false;
+    });
+
     socket.on("ballUpdate", (ballCoordinates) => {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
-    // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
     });
@@ -52,34 +56,21 @@ export default {
 
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
+      if (!this.isGameRunning)
+      return;
+
       switch (event.key) {
         case "w":
-          if (!this.messageIntervalPlayer1) {
-            this.messageIntervalPlayer1 = setInterval(() => {
-              socket.sendPaddleUp("left");
-            }, 30);
-          }
+          socket.sendPaddleUp(false);
           break;
         case "s":
-          if (!this.messageIntervalPlayer1) {
-            this.messageIntervalPlayer1 = setInterval(() => {
-              socket.sendPaddleDown("left");
-            }, 30);
-          }
+          socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
-          if (!this.messageIntervalPlayer2) {
-            this.messageIntervalPlayer2 = setInterval(() => {
-              socket.sendPaddleUp("right");
-            }, 30);
-          }
+          socket.sendPaddleUp(true);
           break;
         case "ArrowDown":
-          if (!this.messageIntervalPlayer2) {
-            this.messageIntervalPlayer2 = setInterval(() => {
-              socket.sendPaddleDown("right");
-            }, 30);
-          }
+          socket.sendPaddleDown(true);
           break;
         default:
           break;
@@ -87,39 +78,31 @@ export default {
     });
 
     window.addEventListener("keyup", (event) => {
-      // if (this.isLocalGame) {
+      if (!this.isGameRunning)
+      return;
+
       switch (event.key) {
         case "w":
+          socket.sendPaddleUpStop(false);
+          break;
         case "s":
-          clearInterval(this.messageIntervalPlayer1);
-          this.messageIntervalPlayer1 = null;
+          socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":
+          socket.sendPaddleUpStop(true);
+          break;
         case "ArrowDown":
-          clearInterval(this.messageIntervalPlayer2);
-          this.messageIntervalPlayer2 = null;
+          socket.sendPaddleDownStop(true);
           break;
         default:
           break;
       }
-      // }
     });
   },
 
   beforeUnmounted() {
-    // Clean up by canceling the animation frame
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-    // Remove the event listener for keydown events
-    window.removeEventListener("keydownPlayer1");
-    window.removeEventListener("keyupPlayer1");
-    window.removeEventListener("keydownPlayer2");
-    window.removeEventListener("keyupPlayer2");
-    clearInterval(this.messageIntervalPlayer1);
-    clearInterval(this.messageIntervalPlayer2);
-    this.messageIntervalPlayer1 = null;
-    this.messageIntervalPlayer2 = null;
+    window.removeEventListener("keydown");
+    window.removeEventListener("keyup");
   },
 };
 </script>

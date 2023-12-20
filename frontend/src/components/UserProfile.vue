@@ -195,10 +195,18 @@ export default {
             }, 2000);
           }
         } else {
-          console.error("Failed to edit nickname");
+          this.showMessage = true;
+          this.messageText = this.$t("nicknameError");
+          setTimeout(() => {
+            this.showMessage = false;
+          }, 2000);
         }
       } catch (error) {
-        console.error("Error edit nickname:", error);
+        this.showMessage = true;
+        this.messageText = this.$t("nicknameError");
+        setTimeout(() => {
+          this.showMessage = false;
+        }, 2000);
       }
     },
     getAvatarSrc(avatar) {

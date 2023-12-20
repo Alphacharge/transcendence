@@ -14,7 +14,6 @@
           </div>
           <div v-if="players[0]" class="name-table-left">
             {{ players[0].nickname }}
-            {{ console.log(players[0].nickname) }}
           </div>
         </div>
       </div>
