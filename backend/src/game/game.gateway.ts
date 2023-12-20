@@ -43,7 +43,7 @@ export class GameGateway {
     sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
       if (game) {
         this.sendBallUpdate(game);
-      this.sendPaddleUpdate(game);
+        this.sendPaddleUpdate(game);
       }
     });
     sharedEventEmitter.on('scoreUpdate', (game: GameState) => {
@@ -305,7 +305,10 @@ export class GameGateway {
         if (game.winningPlayer == game.user1) loser = game.user2;
 
         game.tournamentState.players.forEach((player) => {
-          player.socket?.emit('victoryOf', game.winningPlayer.userData.nickname);
+          player.socket?.emit(
+            'victoryOf',
+            game.winningPlayer.userData.nickname,
+          );
           player.socket?.emit('lossOf', loser.userData.nickname);
         });
       }
