@@ -347,7 +347,6 @@ export class AuthService {
             response.errorCode='0';
           } else {
             const bToken = await this.signToken(newUser.id, newUser.username);
-            console.log(`DEBUG AUTHSERVICE CALLBACK response=${response}`);
             response.access_token = bToken;
             response.userId = newUser.id;
             response.userName = newUser.username;
