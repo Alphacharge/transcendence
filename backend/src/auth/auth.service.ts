@@ -274,7 +274,7 @@ export class AuthService {
     if (username.length < 4) {
       return '11';
     }
-    if (username.length > 10) {
+    if (username.length > 16) {
       return '12';
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
