@@ -1,13 +1,15 @@
 <template>
-  <div class="container">
-    <div class="background" ref="container"></div>
-    <div class="mid-line"></div>
-    <div
-      class="bouncing-ball"
-      :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
-    ></div>
+  <div class="field">
     <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
     <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
+    <div class="container">
+      <!-- <div class="background" ref="container"></div> -->
+      <div class="mid-line"></div>
+      <div
+        class="bouncing-ball"
+        :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
+      ></div>
+    </div>
   </div>
 </template>
 
@@ -26,8 +28,8 @@ export default {
   data() {
     return {
       // abll and paddle starting positions
-      bouncingBallX: 400,
-      bouncingBallY: 200,
+      bouncingBallX: 395,
+      bouncingBallY: 195,
       leftPaddleY: 150,
       rightPaddleY: 150,
       isGameRunning: false,
@@ -65,10 +67,10 @@ export default {
           socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
-          socket.sendPaddleUp(true);
+          if (this.isLocalGame) socket.sendPaddleUp(true);
           break;
         case "ArrowDown":
-          socket.sendPaddleDown(true);
+          if (this.isLocalGame) socket.sendPaddleDown(true);
           break;
         default:
           break;
@@ -86,10 +88,10 @@ export default {
           socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":
-          socket.sendPaddleUpStop(true);
+          if (this.isLocalGame) socket.sendPaddleUpStop(true);
           break;
         case "ArrowDown":
-          socket.sendPaddleDownStop(true);
+          if (this.isLocalGame) socket.sendPaddleDownStop(true);
           break;
         default:
           break;
@@ -106,36 +108,39 @@ export default {
 
 <style scoped>
 /* Achtung: the field geometry is calculated in the backed, while we set absolute values in the styling, this will now work and needs to be fixed */
+
+.field {
+  position: relative;
+  width: 820px;
+  height: 420px;
+  margin: 0 auto;
+  border-top: 10px solid rgb(217, 217, 229);
+  border-bottom: 10px solid rgb(217, 217, 229);
+}
+
 .container {
   position: relative;
+  background-color: rgba(128, 128, 128, 0.1);
+  /* display: flex;
+  align-items: center; */
   width: 800px;
   height: 400px;
   overflow: hidden;
-  display: flex;
-  align-items: center;
-}
-
-.background {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(128, 128, 128, 0);
-  box-sizing: border-box;
-  border-top: 10px solid rgb(217, 217, 229);
-  border-bottom: 10px solid rgb(217, 217, 229);
+  /* border: 1px solid red; */
 }
 
 .mid-line {
   position: absolute;
   height: 400px;
   border-left: 4px dashed rgb(217, 217, 229);
-  margin-left: 391px;
+  margin-left: 386px;
 }
 
 .bouncing-ball {
   position: absolute;
   width: 10px;
   height: 10px;
-  background-color: white;
+  background-color: rgb(217, 217, 229);
   border-radius: 50%;
 }
 
@@ -144,7 +149,7 @@ export default {
   width: 10px;
   height: 100px;
   background-color: rgb(217, 217, 229);
-  left: 10px;
+  left: 0px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 
@@ -153,7 +158,7 @@ export default {
   width: 10px;
   height: 100px;
   background-color: rgb(217, 217, 229);
-  left: 780px;
+  left: 810px;
   transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>

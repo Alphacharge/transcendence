@@ -28,7 +28,7 @@ export class GameService {
     sharedEventEmitter.emit('prepareGame', game);
     await game.countDown();
 
-    const updateRate = 5;
+    const updateRate = 1000 / 60;
 
     game.intervalId = setInterval(() => {
       this.animateBall(game);
@@ -197,8 +197,6 @@ export class GameService {
       return;
     }
 
-    // this.games.set(game.gameData.id, game);
-
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
     const updateRate = 5;
 
@@ -207,32 +205,6 @@ export class GameService {
     }, updateRate);
     sharedEventEmitter.emit('startGame', game);
   }
-
-  // paddleUp(player: User, localPlayer: boolean) {
-  //   const game = player.activeGame;
-
-  //   if (game && game.isRunning()) {
-  //     if (localPlayer) {
-  //       game.movePaddleUp(null);
-  //     } else {
-  //       game.movePaddleUp(player);
-  //     }
-  //   }
-  //   return game;
-  // }
-
-  // paddleDown(player: User, localPlayer: boolean) {
-  //   const game = player.activeGame;
-
-  //   if (game && game.isRunning()) {
-  //     if (localPlayer) {
-  //       game.movePaddleDown(null);
-  //     } else {
-  //       game.movePaddleDown(player);
-  //     }
-  //   }
-  //   return game;
-  // }
 
   async endGame(game: GameState) {
     game.playerVictory();
@@ -272,15 +244,17 @@ export class GameService {
     }
 
     //right wins?
-    game.leftBreakthrough();
+    // game.leftBreakthrough();
     // left wins?
-    game.rightBreakthrough();
+    // game.rightBreakthrough();
     // playfield collisions?
     game.collisionField();
     // paddle collisions?
     game.collisionLeft();
     game.collisionRight();
     // Update the ball's position
+    game.ballXPrev = game.ballX;
+    game.ballYPrev = game.ballY;
     game.ballX += game.ballSpeedX;
     game.ballY += game.ballSpeedY;
 

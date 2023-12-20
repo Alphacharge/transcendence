@@ -29,6 +29,8 @@ export class GameState {
   ballRadius: number;
   ballX: number;
   ballY: number;
+  ballXPrev: number;
+  ballYPrev: number;
   ballSpeedX: number;
   ballSpeedY: number;
   ballAcceleration: number;
@@ -130,7 +132,7 @@ export class GameState {
 
   /* Returns object with x and y coordinate.*/
   ballCoordinates() {
-    return { x: this.ballX, y: this.ballY };
+    return { x: this.ballX - this.ballRadius, y: this.ballY - this.ballRadius };
   }
 
   getScore() {
@@ -181,92 +183,87 @@ export class GameState {
   }
 
   leftBreakthrough() {
-    if (this.ballX <= 1) {
-      this.scorePlayer2 += 1;
-      sharedEventEmitter.emit('scoreUpdate', this);
-      this.gameInit();
-    }
+    // if (this.ballX <= 1) {
+    this.scorePlayer2 += 1;
+    sharedEventEmitter.emit('scoreUpdate', this);
+    this.gameInit();
+    // }
   }
 
   rightBreakthrough() {
-    if (this.ballX >= this.fieldWidth - this.ballRadius) {
-      this.scorePlayer1 += 1;
-      sharedEventEmitter.emit('scoreUpdate', this);
-      this.gameInit();
-    }
+    // if (this.ballX >= this.fieldWidth - this.ballRadius) {
+    this.scorePlayer1 += 1;
+    sharedEventEmitter.emit('scoreUpdate', this);
+    this.gameInit();
+    // }
   }
 
   collisionLeft() {
-    const collisionAreaX0 = this.leftBorder;
-    const collisionAreaX1 = this.leftBorder + 2 * this.ballRadius;
-    const collisionAreaY0 = Math.min(
-      this.leftPosition,
-      this.leftPosition - 2 * this.ballRadius,
-    );
-    const collisionAreaY1 = Math.min(
-      this.leftPosition + this.paddlesHeight,
-      this.fieldHeight,
-    );
-    if (
-      this.ballX > collisionAreaX0 &&
-      this.ballX < collisionAreaX1 &&
-      this.ballY > collisionAreaY0 &&
-      this.ballY < collisionAreaY1
-    ) {
-      const distance = Math.max(this.ballY - this.leftPosition, 0);
-      const angle = this.impact(distance);
-      this.ballSpeedX = this.speedFactor * Math.cos(angle);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle);
+    if (this.ballX < 0) {
+      // retroactively check intersection
+      const slope =
+        (this.ballY - this.ballYPrev) / (this.ballX - this.ballXPrev);
+      const intersectionY = this.ballYPrev + slope * -this.ballXPrev;
+
+      // the intersection was inside the paddle height
       if (
-        Math.sqrt(Math.pow(this.ballSpeedX, 2) + Math.pow(this.ballSpeedY, 2)) <
-        this.speedFactorMax
+        intersectionY >= this.leftPosition &&
+        intersectionY <= this.leftPosition + this.paddlesHeight
       ) {
-        this.speedFactor *= 1.2;
+        // calculate new speed
+        const distance = Math.max(this.ballY - intersectionY, 0);
+        const angle = this.impact(distance);
+        this.ballSpeedX = this.speedFactor * Math.cos(angle);
+        this.ballSpeedY = this.speedFactor * Math.sin(angle);
+        if (this.speedFactor < this.speedFactorMax) {
+          this.speedFactor *= 1.2;
+        }
+
+        this.contactsPlayer1++;
+        this.deltaContactsPlayer1++;
+      } else {
+        // update score
+        this.leftBreakthrough();
       }
-      this.contactsPlayer1++;
-      this.deltaContactsPlayer1++;
     }
   }
 
   collisionRight() {
-    const collisionAreaX0 = this.rightBorder - 5 * this.ballRadius;
-    const collisionAreaX1 = this.rightBorder;
-    const collisionAreaY0 = Math.min(
-      this.rightPosition,
-      this.rightPosition - 2 * this.ballRadius,
-    );
-    const collisionAreaY1 = Math.min(
-      this.rightPosition + this.paddlesHeight,
-      this.fieldHeight,
-    );
+    if (this.ballX > this.fieldWidth) {
+      const slope =
+        (this.ballY - this.ballYPrev) / (this.ballX - this.ballXPrev);
+      const intersectionY =
+        this.ballYPrev + slope * (this.fieldWidth - this.ballXPrev);
 
-    if (
-      this.ballX > collisionAreaX0 &&
-      this.ballX < collisionAreaX1 &&
-      this.ballY > collisionAreaY0 &&
-      this.ballY < collisionAreaY1
-    ) {
-      const distance = Math.max(this.ballY - this.rightPosition, 0);
-      const angle = this.impact(distance);
-      this.ballSpeedX = -this.speedFactor * Math.cos(angle);
-      this.ballSpeedY = this.speedFactor * Math.sin(angle);
-      if (this.speedFactor < this.speedFactorMax) {
-        this.speedFactor *= 1.2;
+      if (
+        intersectionY >= this.rightPosition &&
+        intersectionY <= this.rightPosition + this.paddlesHeight
+      ) {
+        const distance = Math.max(this.ballY - intersectionY, 0);
+        const angle = this.impact(distance);
+        this.ballSpeedX = -this.speedFactor * Math.cos(angle);
+        this.ballSpeedY = this.speedFactor * Math.sin(angle);
+        if (this.speedFactor < this.speedFactorMax) {
+          this.speedFactor *= 1.2;
+        }
+
+        this.contactsPlayer2++;
+        this.deltaContactsPlayer2++;
+      } else {
+        this.rightBreakthrough();
       }
-      this.contactsPlayer2++;
-      this.deltaContactsPlayer2++;
     }
   }
 
   collisionTop() {
-    if (this.ballY <= 1.5 * this.ballRadius) {
+    if (this.ballY <= this.ballRadius) {
       return true;
     }
     return false;
   }
 
   collisionBottom() {
-    if (this.ballY >= this.fieldHeight - 3 * this.ballRadius) {
+    if (this.ballY >= this.fieldHeight - this.ballRadius) {
       return true;
     }
     return false;
