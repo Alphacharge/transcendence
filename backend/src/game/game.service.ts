@@ -208,31 +208,31 @@ export class GameService {
     sharedEventEmitter.emit('startGame', game);
   }
 
-  paddleUp(player: User, localPlayer: boolean) {
-    const game = player.activeGame;
+  // paddleUp(player: User, localPlayer: boolean) {
+  //   const game = player.activeGame;
 
-    if (game && game.isRunning()) {
-      if (localPlayer) {
-        game.movePaddleUp(null);
-      } else {
-        game.movePaddleUp(player);
-      }
-    }
-    return game;
-  }
+  //   if (game && game.isRunning()) {
+  //     if (localPlayer) {
+  //       game.movePaddleUp(null);
+  //     } else {
+  //       game.movePaddleUp(player);
+  //     }
+  //   }
+  //   return game;
+  // }
 
-  paddleDown(player: User, localPlayer: boolean) {
-    const game = player.activeGame;
+  // paddleDown(player: User, localPlayer: boolean) {
+  //   const game = player.activeGame;
 
-    if (game && game.isRunning()) {
-      if (localPlayer) {
-        game.movePaddleDown(null);
-      } else {
-        game.movePaddleDown(player);
-      }
-    }
-    return game;
-  }
+  //   if (game && game.isRunning()) {
+  //     if (localPlayer) {
+  //       game.movePaddleDown(null);
+  //     } else {
+  //       game.movePaddleDown(player);
+  //     }
+  //   }
+  //   return game;
+  // }
 
   async endGame(game: GameState) {
     game.playerVictory();
@@ -292,10 +292,8 @@ export class GameService {
       game.movePaddleDown(game.user1);
     }
     if (game.rightMovement == 1) {
-      // this.paddleUp(game.user2, false);
       game.movePaddleUp(game.user2);
     } else if (game.rightMovement == 2) {
-      // this.paddleDown(game.user2, false);
       game.movePaddleDown(game.user2);
     }
 

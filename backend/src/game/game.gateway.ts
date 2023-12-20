@@ -37,9 +37,9 @@ export class GameGateway {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
       if (game) this.sendPrepareGame(game);
     });
-    sharedEventEmitter.on('startGame', (game: GameState) => {
-      if (game) this.sendGameStart(game);
-    });
+    // sharedEventEmitter.on('startGame', (game: GameState) => {
+    //   if (game) this.sendGameStart(game);
+    // });
     sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
       if (game) {
         this.sendBallUpdate(game);
@@ -167,10 +167,10 @@ export class GameGateway {
   }
 
   /* Tell the client the game starts now. */
-  sendGameStart(game: GameState) {
-    game.user1?.socket?.emit('start');
-    game.user2?.socket?.emit('start');
-  }
+  // sendGameStart(game: GameState) {
+  //   game.user1?.socket?.emit('start');
+  //   game.user2?.socket?.emit('start');
+  // }
 
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
@@ -231,17 +231,15 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
-    console.log("paddleUp");
     const user = this.gameService.websocketUsers.get(socket?.id);
-    if (user == user.activeGame.user1) {
+    const game = user?.activeGame;
+    if (!user || !game) return;
+
+    if (user == game.user1 && !payload.localPlayer) {
       user.activeGame.leftMovement = 1;
-    } else if (user == user.activeGame.user2) {
-      user.activeGame.rightMovement = 1;
-    } else if (payload.localPlayer) {
+    } else {
       user.activeGame.rightMovement = 1;
     }
-    // const game = this.gameService.paddleUp(user, payload.localPlayer);
-    // if (game) this.sendPaddleUpdate(game);
   }
 
   @SubscribeMessage('paddleDown')
@@ -249,17 +247,15 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
-    console.log("paddleDown");
     const user = this.gameService.websocketUsers.get(socket?.id);
-    if (user == user.activeGame.user1) {
-      user.activeGame.leftMovement = 2;
-    } else if (user == user.activeGame.user2) {
-      user.activeGame.rightMovement = 2;
-    } else if (payload.localPlayer) {
-      user.activeGame.rightMovement = 1;
+    const game = user?.activeGame;
+    if (!user || !game) return;
+
+    if (user == game.user1 && !payload.localPlayer) {
+      game.leftMovement = 2;
+    } else {
+      game.rightMovement = 2;
     }
-    // const game = this.gameService.paddleDown(user, payload.localPlayer);
-    // if (game) this.sendPaddleUpdate(game);
   }
 
   @SubscribeMessage('paddleUpStop')
@@ -267,14 +263,14 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
-    console.log("paddleUpStop");
     const user = this.gameService.websocketUsers.get(socket?.id);
-    if (user == user.activeGame.user1) {
-      user.activeGame.leftMovement = 0;
-    } else if (user == user.activeGame.user2) {
-      user.activeGame.rightMovement = 0;
-    } else if (payload.localPlayer) {
-      user.activeGame.rightMovement = 0;
+    const game = user?.activeGame;
+    if (!user || !game) return;
+
+    if (user == game.user1 && !payload.localPlayer) {
+      game.leftMovement = 0;
+    } else {
+      game.rightMovement = 0;
     }
   }
 
@@ -283,14 +279,14 @@ export class GameGateway {
     @ConnectedSocket() socket: Socket,
     @MessageBody() payload: { localPlayer: boolean },
   ) {
-    console.log("paddleDownStop");
     const user = this.gameService.websocketUsers.get(socket?.id);
-    if (user == user.activeGame.user1) {
-      user.activeGame.leftMovement = 0;
-    } else if (user == user.activeGame.user2) {
-      user.activeGame.rightMovement = 0;
-    } else if (payload.localPlayer) {
-      user.activeGame.rightMovement = 0;
+    const game = user?.activeGame;
+    if (!user || !game) return;
+
+    if (user == game.user1 && !payload.localPlayer) {
+      game.leftMovement = 0;
+    } else {
+      game.rightMovement = 0;
     }
   }
 

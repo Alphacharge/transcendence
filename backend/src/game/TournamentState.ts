@@ -3,14 +3,12 @@ import { GameState } from './GameState';
 
 export class TournamentState {
   id: number;
-  round: number; // old tournamentStatus from GameState
   gamesNeeded: number;
   gamesPlayed: number;
   players: User[];
   winners: User[];
 
   constructor() {
-    this.round = 1;
     this.gamesNeeded = 3;
     this.gamesPlayed = 0;
     this.players = [];

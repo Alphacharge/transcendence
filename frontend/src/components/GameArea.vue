@@ -30,20 +30,23 @@ export default {
       bouncingBallY: 200,
       leftPaddleY: 150,
       rightPaddleY: 150,
-      // animationFrameId: null,
-      // player1up: false,
-      // player1down: false,
-      // player2up: false,
-      // player2down: false,
+      isGameRunning: false,
     };
   },
 
   mounted() {
+
+    socket.on("prepareGame", () => {
+      this.isGameRunning = true;
+    });
+    socket.on("victory", () => {
+      this.isGameRunning = false;
+    });
+
     socket.on("ballUpdate", (ballCoordinates) => {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
-    // received paddle movement from server
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
     });
@@ -51,26 +54,22 @@ export default {
       this.rightPaddleY = pY;
     });
 
-    const keyState = {};
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
-      event.preventDefault();
+      if (!this.isGameRunning)
+      return;
 
       switch (event.key) {
         case "w":
-          // this.player1up = true;
           socket.sendPaddleUp(false);
           break;
         case "s":
-          // this.player1down = true;
           socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
-          // if (this.isLocalGame) this.player2up = true;
           socket.sendPaddleUp(true);
           break;
         case "ArrowDown":
-          // if (this.isLocalGame) this.player2down = true;/
           socket.sendPaddleDown(true);
           break;
         default:
@@ -79,59 +78,31 @@ export default {
     });
 
     window.addEventListener("keyup", (event) => {
+      if (!this.isGameRunning)
+      return;
+
       switch (event.key) {
         case "w":
-          // this.player1up = false;
           socket.sendPaddleUpStop(false);
           break;
         case "s":
-          // this.player1down = false;
           socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":
-          // if (this.isLocalGame) this.player2up = false;
           socket.sendPaddleUpStop(true);
           break;
         case "ArrowDown":
-          // if (this.isLocalGame) this.player2down = false;
           socket.sendPaddleDownStop(true);
           break;
         default:
           break;
       }
     });
-
-    // this.animate();
   },
 
   beforeUnmounted() {
-    // if (this.animationFrameId) {
-    //   cancelAnimationFrame(this.animationFrameId);
-    // }
-
     window.removeEventListener("keydown");
     window.removeEventListener("keyup");
-  },
-
-  methods: {
-    // animate() {
-    //   let lastTimestamp = 0;
-    //   const animateFrame = (timestamp) => {
-    //     const delta = timestamp - lastTimestamp; // Calculate time elapsed since the last frame
-    // const interval = 1000 / 30; // Update at 30 frames per second (adjust as needed)
-    // if (delta >= interval) {
-    //   // Perform updates here based on the elapsed time
-    //   lastTimestamp = timestamp;
-    //   // received ball update from server
-    //   if (this.player1up) socket.sendPaddleUp("left");
-    //   if (this.player1down) socket.sendPaddleDown("left");
-    //   if (this.player2up) socket.sendPaddleUp("right");
-    //   if (this.player2down) socket.sendPaddleDown("right");
-    // }
-    //   this.animationFrameId = requestAnimationFrame(animateFrame);
-    //   };
-    //   animateFrame();
-    // },
   },
 };
 </script>
