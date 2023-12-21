@@ -10,32 +10,32 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.longestGame.l_avatar_id}${milestones.longestGame.l_avatar_mime_type}`"
+                    v-if="milestones?.longestGame"
+                    :src="`avatars/${milestones?.longestGame?.l_avatar_id}${milestones?.longestGame?.l_avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.longestGame.l_nickname }}
+              <div v-if="milestones?.longestGame" class="name-table-left">
+                {{ milestones?.longestGame?.l_nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
-              <div v-if="milestones" class="name-table-right">
-                {{ milestones.longestGame.r_nickname }}
+              <div v-if="milestones?.longestGame" class="name-table-right">
+                {{ milestones?.longestGame?.r_nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.longestGame.r_avatar_id}${milestones.longestGame.r_avatar_mime_type}`"
+                    v-if="milestones?.longestGame"
+                    :src="`avatars/${milestones?.longestGame?.r_avatar_id}${milestones?.longestGame?.r_avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="value">
-                {{ milestones.longestGame.duration }}
+              <div v-if="milestones?.longestGame" class="value">
+                {{ milestones?.longestGame?.duration }}
               </div>
             </div>
           </div>
@@ -45,32 +45,32 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.longestBreak.l_user.avatar.id}${milestones.longestBreak.l_user.avatar.mime_type}`"
+                    v-if="milestones?.longestBreak"
+                    :src="`avatars/${milestones?.longestBreak?.l_user?.avatar?.id}${milestones?.longestBreak?.l_user?.avatar?.mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.longestBreak.l_user.nickname }}
+              <div v-if="milestones?.longestBreak" class="name-table-left">
+                {{ milestones?.longestBreak?.l_user?.nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
-              <div v-if="milestones" class="name-table-right">
-                {{ milestones.longestBreak.r_user.nickname }}
+              <div v-if="milestones?.longestBreak" class="name-table-right">
+                {{ milestones?.longestBreak?.r_user?.nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.longestBreak.r_user.avatar.id}${milestones.longestBreak.r_user.avatar.mime_type}`"
+                    v-if="milestones?.longestBreak"
+                    :src="`avatars/${milestones?.longestBreak?.r_user?.avatar?.id}${milestones?.longestBreak?.r_user?.avatar?.mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="value">
-                {{ milestones.longestBreak.longest_break }} Contacts
+              <div v-if="milestones?.longestBreak" class="value">
+                {{ milestones?.longestBreak?.longest_break }} Contacts
               </div>
             </div>
           </div>
@@ -82,17 +82,17 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.mostContacts.avatar_id}${milestones.mostContacts.avatar_mime_type}`"
+                    v-if="milestones?.mostContacts"
+                    :src="`avatars/${milestones?.mostContacts?.avatar_id}${milestones?.mostContacts?.avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.mostContacts.nickname }}
+              <div v-if="milestones?.mostContacts" class="name-table-left">
+                {{ milestones?.mostContacts?.nickname }}
               </div>
-              <div v-if="milestones" class="value">
-                {{ milestones.mostContacts.total_contacts }}
+              <div v-if="milestones?.mostContacts" class="value">
+                {{ milestones?.mostContacts?.total_contacts }}
               </div>
             </div>
           </div>
@@ -102,32 +102,32 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.shortestGame.l_avatar_id}${milestones.shortestGame.l_avatar_mime_type}`"
+                    v-if="milestones?.shortestGame"
+                    :src="`avatars/${milestones?.shortestGame?.l_avatar_id}${milestones?.shortestGame?.l_avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.shortestGame.l_nickname }}
+              <div v-if="milestones?.shortestGame" class="name-table-left">
+                {{ milestones?.shortestGame?.l_nickname }}
               </div>
               <div class="score-table-center">
                 <b>:</b>
               </div>
-              <div v-if="milestones" class="name-table-right">
-                {{ milestones.shortestGame.r_nickname }}
+              <div v-if="milestones?.shortestGame" class="name-table-right">
+                {{ milestones?.shortestGame?.r_nickname }}
               </div>
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.shortestGame.r_avatar_id}${milestones.shortestGame.r_avatar_mime_type}`"
+                    v-if="milestones?.shortestGame"
+                    :src="`avatars/${milestones?.shortestGame?.r_avatar_id}${milestones?.shortestGame?.r_avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="value">
-                {{ milestones.shortestGame.duration }}
+              <div v-if="milestones?.shortestGame" class="value">
+                {{ milestones?.shortestGame?.duration }}
               </div>
             </div>
           </div>
@@ -139,17 +139,17 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.highestWin.avatar_id}${milestones.highestWin.avatar_mime_type}`"
+                    v-if="milestones?.highestWin"
+                    :src="`avatars/${milestones?.highestWin?.avatar_id}${milestones?.highestWin?.avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.highestWin.nickname }}
+              <div v-if="milestones?.highestWin" class="name-table-left">
+                {{ milestones?.highestWin?.nickname }}
               </div>
-              <div v-if="milestones" class="value">
-                +{{ milestones.highestWin.max_win_diff }}
+              <div v-if="milestones?.highestWin" class="value">
+                +{{ milestones?.highestWin?.max_win_diff }}
               </div>
             </div>
           </div>
@@ -159,17 +159,17 @@
               <div class="image-table">
                 <div class="image_history">
                   <img
-                    v-if="milestones"
-                    :src="`avatars/${milestones.leastContacts.avatar_id}${milestones.leastContacts.avatar_mime_type}`"
+                    v-if="milestones?.leastContacts"
+                    :src="`avatars/${milestones?.leastContacts?.avatar_id}${milestones?.leastContacts?.avatar_mime_type}`"
                     alt="Avatar"
                   />
                 </div>
               </div>
-              <div v-if="milestones" class="name-table-left">
-                {{ milestones.leastContacts.nickname }}
+              <div v-if="milestones?.leastContacts" class="name-table-left">
+                {{ milestones?.leastContacts?.nickname }}
               </div>
-              <div v-if="milestones" class="value">
-                {{ milestones.leastContacts.total_contacts }}
+              <div v-if="milestones?.leastContacts" class="value">
+                {{ milestones?.leastContacts?.total_contacts }}
               </div>
             </div>
           </div>
@@ -188,22 +188,22 @@
               {{ $t("TournamentMatches") }}
             </th>
             <th @click="sortTable('tourwins')">{{ $t("TournamentWins") }}</th>
-            <th @click="sortTable('contacts[0].total_contacts')">
+            <th @click="sortTable('contacts[0]?.total_contacts')">
               {{ $t("ballContacts") }}
             </th>
           </tr>
         </thead>
         <tbody>
           <!-- Iteriere über die Statistikdaten und zeige sie in der Tabelle an -->
-          <tr v-for="row in sortedStatistics" :key="row.userId">
-            <td>{{ row.nickname }}</td>
-            <td>{{ row.matches }}</td>
-            <td>{{ row.wins }}</td>
-            <td>{{ row.losses }}</td>
-            <td>{{ calcKD(row.wins, row.losses).toFixed(2) }}</td>
-            <td>{{ row.tourmatches }}</td>
-            <td>{{ row.tourwins }}</td>
-            <td>{{ row.contacts[0].total_contacts }}</td>
+          <tr v-for="row in sortedStatistics" :key="row?.userId">
+            <td>{{ row?.nickname }}</td>
+            <td>{{ row?.matches }}</td>
+            <td>{{ row?.wins }}</td>
+            <td>{{ row?.losses }}</td>
+            <td>{{ calcKD(row?.wins, row?.losses)?.toFixed(2) }}</td>
+            <td>{{ row?.tourmatches }}</td>
+            <td>{{ row?.tourwins }}</td>
+            <td>{{ row?.contacts[0]?.total_contacts }}</td>
           </tr>
         </tbody>
       </table>

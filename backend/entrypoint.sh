@@ -16,4 +16,3 @@ echo y | npx prisma migrate dev -n update
 npx ts-node src/seed.ts
 
 npm run start:dev
-w

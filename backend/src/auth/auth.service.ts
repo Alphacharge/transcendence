@@ -274,7 +274,7 @@ export class AuthService {
     if (username.length < 4) {
       return '11';
     }
-    if (username.length > 10) {
+    if (username.length > 16) {
       return '12';
     }
     // Define a whitelist of allowed characters (ASCII and common symbols)
@@ -292,12 +292,12 @@ export class AuthService {
     const clientSecret = process.env.VUE_APP_FORTYTWO_APP_SECRET;
     const redirectUri = `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     const tokenEndpoint = process.env.TOKEN_ENDPOINT;
-    let response: {
-      access_token: string;
-      userId: number;
-      userName: string;
-      errorCode: string;
-      twoFactorEnabled: boolean;
+    let response = {
+      access_token: '',
+      userId: 0,
+      userName: '',
+      errorCode: '0',
+      twoFactorEnabled: false,
     };
     try {
       const tokenResponse = await fetch(tokenEndpoint, {
@@ -344,12 +344,14 @@ export class AuthService {
             response.userId = newUser.id;
             response.userName = newUser.username;
             response.twoFactorEnabled = newUser.two_factor_enabled;
+            response.errorCode = '0';
           } else {
             const bToken = await this.signToken(newUser.id, newUser.username);
             response.access_token = bToken;
             response.userId = newUser.id;
             response.userName = newUser.username;
             response.twoFactorEnabled = newUser.two_factor_enabled;
+            response.errorCode = '0';
           }
         } else {
           response.errorCode = '1';
