@@ -12,16 +12,16 @@ export default {
   currentLanguage: "IT",
 
   // PONG GAME
-  EnterQueue: "Mettiti in Coda",
-  LeaveQueue: "Lascia",
-  StartLocalGame: "Avvia il gioco in locale",
+  EnterQueue: "Mettiti in Coda per giocare online",
+  LeaveQueue: "Abbandona",
+  StartLocalGame: "Giocare a due sulla stessa tastiera",
+  EnterTournament: "Iscriviti al torneo online",
+  LeaveTournament: "Abbandona il torneo",
+  LocalGameExplanationLeft: "Muovi con i tasti W e S",
+  LocalGameExplanationRight: "Muovi con i tasti freccia su e freccia giù",
   Player: "Giocatore",
   wins: "vince",
   RegisteredPlayers: "Giocatori registrati",
-  EnterTournament: "Partecipa al Torneo",
-  LeaveTournament: "Abbandona il Torneo",
-  LocalGameExplanationLeft: "W/S",
-  LocalGameExplanationRight: "freccia su/freccia giù",
 
   // SIGNUP & LOGIN & PASSWORD
   Username: "Nome utente",

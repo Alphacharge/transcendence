@@ -198,7 +198,7 @@ export class GameService {
     }
 
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
-    const updateRate = 5;
+    const updateRate = 1000 / 60;
 
     game.intervalId = setInterval(() => {
       this.animateBall(game);
@@ -228,6 +228,12 @@ export class GameService {
       const tournament = game.tournamentState;
       // was this the last game of the tournament?
       if (tournament.gamesNeeded == tournament.gamesPlayed) {
+        await this.prismaService.createNewTournament(
+          tournament.playedGames[0].gameData.id,
+          tournament.playedGames[1].gameData.id,
+          tournament.playedGames[2].gameData.id,
+          game.winningPlayer.userData.id,
+        );
         sharedEventEmitter.emit('tournamentWinner', game); // tell everyone who won
         game.tournamentState.freeUsers(); // allows the users to join other games
       } else {
@@ -243,10 +249,6 @@ export class GameService {
       return;
     }
 
-    //right wins?
-    // game.leftBreakthrough();
-    // left wins?
-    // game.rightBreakthrough();
     // playfield collisions?
     game.collisionField();
     // paddle collisions?

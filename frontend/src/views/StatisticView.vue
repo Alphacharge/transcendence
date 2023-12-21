@@ -226,11 +226,11 @@
           <canvas id="gameType" class="chart-canvas"></canvas>
         </div>
       </div>
-      <div class="graph-row">
+      <!-- <div class="graph-row">
         <div class="graph-container">
           <canvas id="kdChart" class="chart-canvas"></canvas>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -372,7 +372,7 @@ export default {
         if (response.ok) {
           const data = await response.json();
           this.statistics = this.convertContacts(data);
-          this.renderChart();
+          await this.fetchChartData();
         } else {
           console.error("Failed to fetch statistics");
         }
@@ -380,30 +380,20 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
-    renderChart() {
+    async fetchChartData() {
       this.userStatistics = this.statistics;
       this.userStatistics.sort((a, b) => b.wins - a.wins);
-      const nicknames = this.userStatistics.map((user) => user.nickname);
-      const wins = this.userStatistics.map((user) => user.wins);
-      const losses = this.userStatistics.map((user) => user.losses);
-      const kd = this.userStatistics.map((user) => user.wins / user.losses);
-      kd.forEach((value, index, array) => {
-        array[index] = value < 1 ? value * -1 : value;
-        if (isNaN(array[index]) || !isFinite(array[index])) {
-          array[index] = 0.0;
-        }
-      });
-      const histogram = document
-        .getElementById("championsBoard")
-        .getContext("2d");
-      //doughnut
+      await this.renderBallContacts();
+      // await this.renderKD();
+      await this.renderWinLoss();
+    },
+    async renderBallContacts() {
       const nicknameDT = this.userStatistics.map((user) => user.nickname);
       const contactsDT = this.userStatistics.map(
         (user) => user.contacts[0].total_contacts,
       );
-      //kd
-      const kdChart = document.getElementById("kdChart").getContext("2d");
-
+      const doughnut = document.getElementById("gameType").getContext("2d");
+      Chart.defaults.color = "#dbdbe3";
       const doughnutData = {
         labels: nicknameDT,
         datasets: [
@@ -446,8 +436,84 @@ export default {
           },
         ],
       };
-      const doughnut = document.getElementById("gameType").getContext("2d");
+      new Chart(doughnut, {
+        type: "doughnut",
+        data: doughnutData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: true,
+              position: "top",
+            },
+          },
+          title: {
+            display: true,
+            text: this.$t("ballContacts"),
+            font: {
+              size: 16, // Adjust the font size as needed
+              weight: "bold", // Adjust the font weight as needed
+            },
+          },
+        },
+      });
+    },
+    // async renderKD() {
+    //   const nicknames = this.userStatistics.map((user) => user.nickname);
+    //   const kd = this.userStatistics.map((user) => user.wins / user.losses);
+    //   kd.forEach((value, index, array) => {
+    //     array[index] = value < 1 ? value * -1 : value;
+    //     if (isNaN(array[index]) || !isFinite(array[index])) {
+    //       array[index] = 0.0;
+    //     }
+    //   });
+    //   const kdChart = document.getElementById("kdChart").getContext("2d");
+    //   new Chart(kdChart, {
+    //     type: "bar",
+    //     data: {
+    //       labels: nicknames,
+    //       datasets: [
+    //         {
+    //           label: "K/D",
+    //           data: kd,
+    //           backgroundColor: "rgba(75,192,192,0.7)",
+    //           borderColor: "rgba(75,192,192,1)",
+    //           borderWidth: 1,
+    //         },
+    //       ],
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       plugins: {
+    //         legend: {
+    //           display: true,
+    //           position: "bottom",
+    //         },
+    //       },
+    //       scales: {
+    //         x: {
+    //           stacked: true,
+    //           title: {
+    //             display: true,
+    //           },
+    //         },
+    //         y: {
+    //           display: false,
+    //           beginAtZero: false,
+    //         },
+    //       },
+    //     },
+    //   });
+    // },
+    async renderWinLoss() {
+      const nicknames = this.userStatistics.map((user) => user.nickname);
+      const wins = this.userStatistics.map((user) => user.wins);
+      const losses = this.userStatistics.map((user) => user.losses);
+      const histogram = document
+        .getElementById("championsBoard")
+        .getContext("2d");
       Chart.defaults.color = "#dbdbe3";
+
       new Chart(histogram, {
         type: "bar",
         data: {
@@ -486,64 +552,6 @@ export default {
               title: {
                 display: true,
               },
-            },
-          },
-        },
-      });
-      new Chart(doughnut, {
-        type: "doughnut",
-        data: doughnutData,
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: true,
-              position: "top",
-            },
-          },
-          title: {
-            display: true,
-            text: this.$t("ballContacts"),
-            font: {
-              size: 16, // Adjust the font size as needed
-              weight: "bold", // Adjust the font weight as needed
-            },
-          },
-        },
-      });
-      // New K/D bar chart
-      new Chart(kdChart, {
-        type: "bar",
-        data: {
-          labels: nicknames,
-          datasets: [
-            {
-              label: "K/D",
-              data: kd,
-              backgroundColor: "rgba(75,192,192,0.7)",
-              borderColor: "rgba(75,192,192,1)",
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: true,
-              position: "bottom",
-            },
-          },
-          scales: {
-            x: {
-              stacked: true,
-              title: {
-                display: true,
-              },
-            },
-            y: {
-              display: false,
-              beginAtZero: false,
             },
           },
         },
