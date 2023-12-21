@@ -12,6 +12,7 @@
               type="file"
               ref="fileInput"
               style="display: none"
+              accept=".jpg, .png"
               @change="uploadFile"
             />
           </div>
