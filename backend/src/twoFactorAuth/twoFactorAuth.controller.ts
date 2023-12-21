@@ -90,7 +90,7 @@ export class TwoFactorAuthController {
       databaseUser.id,
       databaseUser.username,
     );
-    if (!this.authService.activeUser.has(databaseUser.id)){
+    if (!this.authService.activeUser.has(databaseUser.id)) {
       this.authService.activeUser.add(databaseUser.id);
     }
 

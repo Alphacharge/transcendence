@@ -191,10 +191,15 @@ export class GameGateway {
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
     this.sendScoreUpdate(game);
+
+    if (game.isLocalGame) {
+      game.user1?.socket?.emit('localGame');
+    }
   }
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
+    // console.log("ball coordinates:", game.ballCoordinates());
     game.user1?.socket?.emit('ballUpdate', game.ballCoordinates());
     game.user2?.socket?.emit('ballUpdate', game.ballCoordinates());
   }
@@ -222,6 +227,9 @@ export class GameGateway {
     const game = user?.activeGame;
     if (!user || !game) return;
 
+    // guard that remote players cannot move the paddles of others
+    if (payload.localPlayer && !game.isLocalGame) return;
+
     if (user == game.user1 && !payload.localPlayer) {
       user.activeGame.leftMovement = 1;
     } else {
@@ -237,6 +245,8 @@ export class GameGateway {
     const user = this.gameService.websocketUsers.get(socket?.id);
     const game = user?.activeGame;
     if (!user || !game) return;
+
+    if (payload.localPlayer && !game.isLocalGame) return;
 
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 2;
@@ -254,6 +264,8 @@ export class GameGateway {
     const game = user?.activeGame;
     if (!user || !game) return;
 
+    if (payload.localPlayer && !game.isLocalGame) return;
+
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 0;
     } else {
@@ -269,6 +281,8 @@ export class GameGateway {
     const user = this.gameService.websocketUsers.get(socket?.id);
     const game = user?.activeGame;
     if (!user || !game) return;
+
+    if (payload.localPlayer && !game.isLocalGame) return;
 
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 0;

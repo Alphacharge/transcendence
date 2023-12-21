@@ -25,6 +25,7 @@ export class GameService {
 
     user.activeGame = game;
     game.user1 = user;
+    console.log('startLocalGame balx', game.ballX);
     sharedEventEmitter.emit('prepareGame', game);
     await game.countDown();
 
@@ -33,6 +34,7 @@ export class GameService {
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
+
     sharedEventEmitter.emit('startGame');
   }
 
@@ -203,6 +205,7 @@ export class GameService {
     game.intervalId = setInterval(() => {
       this.animateBall(game);
     }, updateRate);
+
     sharedEventEmitter.emit('startGame', game);
   }
 
@@ -243,17 +246,18 @@ export class GameService {
   }
 
   animateBall(game: GameState) {
+    // top bottom collisions
+    game.collisionField();
+    // left right collisions
+    game.collisionLeft();
+    game.collisionRight();
+
     //check if ending condition is met
     if (game.hasEnded()) {
       this.endGame(game);
       return;
     }
 
-    // playfield collisions?
-    game.collisionField();
-    // paddle collisions?
-    game.collisionLeft();
-    game.collisionRight();
     // Update the ball's position
     game.ballXPrev = game.ballX;
     game.ballYPrev = game.ballY;

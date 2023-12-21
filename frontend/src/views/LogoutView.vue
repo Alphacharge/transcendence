@@ -18,13 +18,13 @@ export default {
               Authorization: `Bearer ${localStorage.getItem("access_token")}`,
             },
           },
-          );
-          if (response.ok) {
-            localStorage.removeItem("access_token");
-            localStorage.removeItem("userId");
-            this.$router.push({ name: "login" });
-          }
-        } catch (error) {
+        );
+        if (response.ok) {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("userId");
+          this.$router.push({ name: "login" });
+        }
+      } catch (error) {
         this.success = false;
         this.message = "60";
       }
