@@ -16,7 +16,7 @@ export default {
   LeaveQueue: "Abbandona",
   StartLocalGame: "Giocare a due sulla stessa tastiera",
   EnterTournament: "Iscriviti al torneo online",
-  LeaveTournament: "Abbandona il Torneo",
+  LeaveTournament: "Abbandona il torneo",
   LocalGameExplanationLeft: "Muovi con i tasti W e S",
   LocalGameExplanationRight: "Muovi con i tasti freccia su e freccia giù",
   Player: "Giocatore",
