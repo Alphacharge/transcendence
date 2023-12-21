@@ -1,9 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Req, UseInterceptors } from "@nestjs/common";
+import { Body, Controller} from "@nestjs/common";
 import { GameState } from "./GameState";
-import { Get } from "@nestjs/common";
+import { Get, Post } from "@nestjs/common";
 import { GameDto } from "./dto/game.dto";
 import { User } from "src/user/User";
 import { GameService } from "./game.service";
+import { Param } from "@nestjs/common";
 
 @Controller('game')
 export class GameController {
@@ -38,22 +39,22 @@ export class GameController {
 
   /* ==== ENDPOINTS ==== */
 
-  // curl -X GET -k https://localhost:3000/game/update
+  // curl -X GET -k https://localhost:3000/game/initialize
   @Get('initialize')
   initializeApiGame() {
     const newGame = new GameState();
     return newGame.toDto("");
   }
 
-  @Get('paddle')
-  movePaddle(@Body() body: GameDto, @Req() req: Request) {
-    const action = req.url.split('/').pop();
+  // curl -X POST -H "Content-Type: application/json" -d '{"fieldWidth":800,"fieldHeight":400,"ballX":400,"ballY":200,"ballSpeedX":-3.9912732712804284,"ballSpeedY":-0.26407891616414086,"paddlesHeight":100,"leftPaddle":150,"rightPaddle":150,"scorePlayer1":0,"contactsPlayer2":0,"winner":""}' -k "https://localhost:3000/game/paddle/leftPaddleUp"
+  @Post('paddle/:action')
+  movePaddle(@Body() body: GameDto, @Param('action') action: string) {
     const game = this.applyActionToGame(action, body);
 
     return game.toDto(body.winner);
   }
 
-  // curl -X GET -k -H "Content-Type: application/json" -d '{"fieldWidth":800,"fieldHeight":400,"ballX":400,"ballY":200,"paddlesHeight":100,"leftPaddle":150,"rightPaddle":150,"scorePlayer1":0,"contactsPlayer2":0}' https://localhost:3000/game/update
+  // curl -X GET -k -H "Content-Type: application/json" -d '{"fieldWidth":800,"fieldHeight":400,"ballX":400,"ballY":200,"ballSpeedX":-3.9912732712804284,"ballSpeedY":-0.26407891616414086,"paddlesHeight":100,"leftPaddle":150,"rightPaddle":150,"scorePlayer1":0,"contactsPlayer2":0,"winner":""}' https://localhost:3000/game/update
   @Get('update')
   requestUpdate(@Body() body: GameDto) {
     let game = new GameState();

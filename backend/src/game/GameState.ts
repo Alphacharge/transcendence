@@ -364,6 +364,7 @@ export class GameState {
       leftPaddle: this.leftPosition,
       rightPaddle: this.rightPosition,
       scorePlayer1: this.scorePlayer1,
+      scorePlayer2: this.scorePlayer2,
       contactsPlayer2: this.scorePlayer2,
       winner: winner,
     };
