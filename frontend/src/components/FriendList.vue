@@ -165,6 +165,7 @@ export default {
       if (this.listStatus) {
         document.body.classList.add("friend-list-visible");
       } else {
+        this.$refs.friendSelectionModal.showModal = false;
         document.body.classList.remove("friend-list-visible");
       }
     },
