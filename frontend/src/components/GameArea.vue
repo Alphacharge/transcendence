@@ -150,7 +150,6 @@ export default {
   height: 100px;
   background-color: rgb(217, 217, 229);
   left: 0px;
-  transition: top 0.1s; /* Add a transition for smoother movement */
 }
 
 .right-paddle {
@@ -159,6 +158,5 @@ export default {
   height: 100px;
   background-color: rgb(217, 217, 229);
   left: 810px;
-  transition: top 0.1s; /* Add a transition for smoother movement */
 }
 </style>

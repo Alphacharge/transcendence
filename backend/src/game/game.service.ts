@@ -198,7 +198,7 @@ export class GameService {
     }
 
     console.log('GAME.SERVICE: STARTGAME, Starting game', game.gameData.id);
-    const updateRate = 5;
+    const updateRate = 1000 / 60;
 
     game.intervalId = setInterval(() => {
       this.animateBall(game);
@@ -244,10 +244,6 @@ export class GameService {
       return;
     }
 
-    //right wins?
-    // game.leftBreakthrough();
-    // left wins?
-    // game.rightBreakthrough();
     // playfield collisions?
     game.collisionField();
     // paddle collisions?

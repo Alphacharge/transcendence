@@ -69,15 +69,15 @@ export class GameState {
     this.deltaContactsPlayer1 = 0;
     this.deltaContactsPlayer2 = 0;
     this.longestBreak = 0;
-    this.winningScore = 7; // normal is 11, set to 1 for frequent testing purpose
+    this.winningScore = 11; // normal is 11, set to 1 for frequent testing purpose
 
     this.fieldWidth = 800;
     this.fieldHeight = 400;
 
-    this.speedFactorStart = 1.5;
+    this.speedFactorStart = 4;
     this.speedFactor = this.speedFactorStart;
-    this.speedFactorMax = 5;
-    this.paddlesSpeed = 2;
+    this.speedFactorMax = 15;
+    this.paddlesSpeed = 4;
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
@@ -270,8 +270,12 @@ export class GameState {
   }
 
   collisionField() {
-    if (this.collisionTop() || this.collisionBottom()) {
+    if (this.collisionTop()) {
       this.ballSpeedY = -this.ballSpeedY;
+      this.ballY = this.ballRadius + 1; // setting ball down to avoid it clipping through the edge
+    } else if (this.collisionBottom()) {
+      this.ballSpeedY = -this.ballSpeedY;
+      this.ballY = this.fieldHeight - this.ballRadius - 1;
     }
   }
 
