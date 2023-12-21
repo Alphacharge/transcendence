@@ -121,6 +121,7 @@ router.beforeEach(async (to, from, next) => {
       to.name !== "ip" &&
       to.name !== "redirect" &&
       to.name !== "error" &&
+      to.name !== "about" &&
       !isLoggedIn
     ) {
       next("/login");
