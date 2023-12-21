@@ -1,10 +1,10 @@
-import { Body, Controller} from "@nestjs/common";
-import { GameState } from "./GameState";
-import { Get, Post } from "@nestjs/common";
-import { GameDto } from "./dto/game.dto";
-import { User } from "src/user/User";
-import { GameService } from "./game.service";
-import { Param } from "@nestjs/common";
+import { Body, Controller } from '@nestjs/common';
+import { GameState } from './GameState';
+import { Get, Post } from '@nestjs/common';
+import { GameDto } from './dto/game.dto';
+import { User } from 'src/user/User';
+import { GameService } from './game.service';
+import { Param } from '@nestjs/common';
 
 @Controller('game')
 export class GameController {
@@ -43,7 +43,7 @@ export class GameController {
   @Get('initialize')
   initializeApiGame() {
     const newGame = new GameState();
-    return newGame.toDto("");
+    return newGame.toDto('');
   }
 
   // curl -X POST -H "Content-Type: application/json" -d '{"fieldWidth":800,"fieldHeight":400,"ballX":400,"ballY":200,"ballSpeedX":-3.9912732712804284,"ballSpeedY":-0.26407891616414086,"paddlesHeight":100,"leftPaddle":150,"rightPaddle":150,"scorePlayer1":0,"contactsPlayer2":0,"winner":""}' -k "https://localhost:3000/game/paddle/leftPaddleUp"
@@ -58,7 +58,7 @@ export class GameController {
   @Get('update')
   requestUpdate(@Body() body: GameDto) {
     let game = new GameState();
-    let winner = "";
+    let winner = '';
 
     game.applyDto(body);
     game.isLocalGame = true;
@@ -77,9 +77,9 @@ export class GameController {
       game.scorePlayer2 >= game.winningScore
     ) {
       if (game.scorePlayer1 >= game.winningScore) {
-        winner = "left";
+        winner = 'left';
       } else if (game.scorePlayer2 >= game.winningScore) {
-        winner = "right";
+        winner = 'right';
       }
     }
 
