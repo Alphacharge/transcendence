@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
 import AboutView from "@/views/AboutView.vue";
 import RemoteGameView from "@/views/RemoteGameView.vue";
-import IpPanelView from "@/views/IpPanelView.vue";
+// import IpPanelView from "@/views/IpPanelView.vue";
 import LoginView from "@/views/LoginView.vue";
 import LogoutView from "@/views/LogoutView.vue";
 import SignupView from "@/views/SignupView.vue";
@@ -18,6 +18,7 @@ import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
 import ChangePasswordView from "@/views/ChangePasswordView";
+import ApiTestView from "@/views/ApiTestView";
 
 const routes = [
   {
@@ -94,6 +95,11 @@ const routes = [
     path: "/changepassword",
     name: "changepassword",
     component: ChangePasswordView,
+  },
+  {
+    path: "/apitest",
+    name: "apitest",
+    component: ApiTestView,
   },
   {
     path: "/error/:code",
