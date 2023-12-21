@@ -37,9 +37,6 @@ export class GameGateway {
     sharedEventEmitter.on('prepareGame', (game: GameState) => {
       if (game) this.sendPrepareGame(game);
     });
-    // sharedEventEmitter.on('startGame', (game: GameState) => {
-    //   if (game) this.sendGameStart(game);
-    // });
     sharedEventEmitter.on('ballPositionUpdate', (game: GameState) => {
       if (game) {
         this.sendBallUpdate(game);
@@ -49,9 +46,6 @@ export class GameGateway {
     sharedEventEmitter.on('scoreUpdate', (game: GameState) => {
       if (game) this.sendScoreUpdate(game);
     });
-    // sharedEventEmitter.on('paddleUpdate', (game: GameState) => {
-    //   this.sendPaddleUpdate(game);
-    // });
     sharedEventEmitter.on('victory', (game: GameState) => {
       this.announceVictory(game);
     });
@@ -165,12 +159,6 @@ export class GameGateway {
       });
     });
   }
-
-  /* Tell the client the game starts now. */
-  // sendGameStart(game: GameState) {
-  //   game.user1?.socket?.emit('start');
-  //   game.user2?.socket?.emit('start');
-  // }
 
   /* Prepare the client for the game. */
   sendPrepareGame(game: GameState) {
