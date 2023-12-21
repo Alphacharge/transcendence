@@ -1,5 +1,6 @@
 import { User } from 'src/user/User';
 import { GameState } from './GameState';
+import { Tournaments } from '@prisma/client';
 
 export class TournamentState {
   id: number;
@@ -7,12 +8,14 @@ export class TournamentState {
   gamesPlayed: number;
   players: User[];
   winners: User[];
+  playedGames: GameState[];
 
   constructor() {
     this.gamesNeeded = 3;
     this.gamesPlayed = 0;
     this.players = [];
     this.winners = [];
+    this.playedGames = [];
   }
 
   setUsers() {
@@ -33,6 +36,7 @@ export class TournamentState {
     }
 
     const game = new GameState();
+    this.playedGames.push(game);
     game.user1 = this.winners.pop();
     game.user2 = this.winners.pop();
 
