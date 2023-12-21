@@ -59,7 +59,9 @@ export class AuthService {
       //create sessiontoken
       const bToken = await this.signToken(newUser.id, newUser.username);
       //push userid to the activeuser list
-      this.activeUser.add(newUser.id);
+      if (!this.activeUser.has(newUser.id)){
+        this.activeUser.add(newUser.id);
+      }
       console.log('AUTH.SERVICE: SIGNUP, Registered: ', newUser.username);
 
       obj.access_token = bToken;
@@ -143,9 +145,9 @@ export class AuthService {
       obj.errorCode = '2';
       return obj;
     }
-
-    this.activeUser.add(newUser.id);
-
+    if (!this.activeUser.has(newUser.id)){
+      this.activeUser.add(newUser.id);
+    }
     obj.userId = newUser.id;
     obj.userName = newUser.username;
     obj.requires2FA = newUser.two_factor_enabled;
@@ -352,6 +354,9 @@ export class AuthService {
             response.userName = newUser.username;
             response.twoFactorEnabled = newUser.two_factor_enabled;
             response.errorCode = '0';
+            if (!this.activeUser.has(newUser.id)){
+              this.activeUser.add(newUser.id);
+            }
           }
         } else {
           response.errorCode = '1';
