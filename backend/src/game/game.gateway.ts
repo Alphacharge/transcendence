@@ -16,7 +16,6 @@ import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
-import { use } from 'passport';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -192,10 +191,15 @@ export class GameGateway {
     this.sendPaddleUpdate(game);
     this.sendBallUpdate(game);
     this.sendScoreUpdate(game);
+
+    if (game.isLocalGame) {
+      game.user1?.socket?.emit('localGame');
+    }
   }
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
+    // console.log("ball coordinates:", game.ballCoordinates());
     game.user1?.socket?.emit('ballUpdate', game.ballCoordinates());
     game.user2?.socket?.emit('ballUpdate', game.ballCoordinates());
   }
@@ -223,6 +227,9 @@ export class GameGateway {
     const game = user?.activeGame;
     if (!user || !game) return;
 
+    // guard that remote players cannot move the paddles of others
+    if (payload.localPlayer && !game.isLocalGame) return;
+
     if (user == game.user1 && !payload.localPlayer) {
       user.activeGame.leftMovement = 1;
     } else {
@@ -238,6 +245,8 @@ export class GameGateway {
     const user = this.gameService.websocketUsers.get(socket?.id);
     const game = user?.activeGame;
     if (!user || !game) return;
+
+    if (payload.localPlayer && !game.isLocalGame) return;
 
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 2;
@@ -255,6 +264,8 @@ export class GameGateway {
     const game = user?.activeGame;
     if (!user || !game) return;
 
+    if (payload.localPlayer && !game.isLocalGame) return;
+
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 0;
     } else {
@@ -271,6 +282,8 @@ export class GameGateway {
     const game = user?.activeGame;
     if (!user || !game) return;
 
+    if (payload.localPlayer && !game.isLocalGame) return;
+
     if (user == game.user1 && !payload.localPlayer) {
       game.leftMovement = 0;
     } else {
@@ -281,9 +294,9 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket?.emit('victory', '1');
+        game.user1?.socket?.emit('victory', '1');
       } else {
-        game.user1.socket?.emit('victory', '2');
+        game.user1?.socket?.emit('victory', '2');
       }
     } else {
       // if this is a tournament, inform each participant about the win
@@ -301,8 +314,8 @@ export class GameGateway {
         });
       }
       // tell the participants of the game who won
-      game.user1.socket?.emit('victory', game.winningPlayer.userData.nickname);
-      game.user2.socket?.emit('victory', game.winningPlayer.userData.nickname);
+      game.user1?.socket?.emit('victory', game.winningPlayer.userData.nickname);
+      game.user2?.socket?.emit('victory', game.winningPlayer.userData.nickname);
     }
   }
 

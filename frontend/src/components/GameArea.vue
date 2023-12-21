@@ -17,27 +17,23 @@
 import { socket } from "@/assets/utils/socket";
 
 export default {
-  props: {
-    isLocalGame: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
   data() {
     return {
       // abll and paddle starting positions
       bouncingBallX: 395,
       bouncingBallY: 195,
-      // bouncingBallX: 0,
-      // bouncingBallY: 0,
       leftPaddleY: 150,
       rightPaddleY: 150,
       isGameRunning: false,
+      isLocalGame: false,
     };
   },
 
   mounted() {
+    socket.on("localGame", () => {
+      this.isLocalGame = true;
+    });
+
     socket.on("prepareGame", () => {
       this.isGameRunning = true;
     });
@@ -59,12 +55,11 @@ export default {
     // send paddle movement messages
     window.addEventListener("keydown", (event) => {
       if (!this.isGameRunning) return;
-
-      switch (event.key) {
-        case "w":
+      switch (event.code) {
+        case "KeyW":
           socket.sendPaddleUp(false);
           break;
-        case "s":
+        case "KeyS":
           socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
@@ -81,11 +76,11 @@ export default {
     window.addEventListener("keyup", (event) => {
       if (!this.isGameRunning) return;
 
-      switch (event.key) {
-        case "w":
+      switch (event.code) {
+        case "KeyW":
           socket.sendPaddleUpStop(false);
           break;
-        case "s":
+        case "KeyS":
           socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":

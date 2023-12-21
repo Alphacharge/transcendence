@@ -11,7 +11,7 @@
     </div>
     <ScoreBoard :scoreEnabled="false"></ScoreBoard>
     <div class="game-wrapper">
-      <GameArea class="game-area" :isLocalGame="true"></GameArea>
+      <GameArea class="game-area"></GameArea>
       <CountDown v-if="isGameRunning"></CountDown>
     </div>
     <div class="explanation-wrapper">

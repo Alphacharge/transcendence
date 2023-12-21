@@ -165,6 +165,11 @@ export class PrismaController {
       if (response) {
         const friends = await this.prismaService.getFriendsById(req['user']);
         if (friends) {
+          friends.forEach((element) => {
+            if (this.authService.activeUser.has(element.id)) {
+              element.status = 1;
+            }
+          });
           return { friends };
         }
       }

@@ -2,6 +2,7 @@ import { TournamentState } from './TournamentState';
 import { User } from 'src/user/User';
 import { sharedEventEmitter } from './game.events';
 import { Games } from '@prisma/client';
+import { GameDto } from './dto/game.dto';
 
 export class GameState {
   gameData: Games | null;
@@ -39,12 +40,10 @@ export class GameState {
   paddlesSpeed: number;
 
   leftPosition: number;
-  leftBorder: number;
   leftImpact: number;
   leftMovement: number; // 0 = no movement | 1 = up | 2 = down
 
   rightPosition: number;
-  rightBorder: number;
   rightImpact: number;
   rightMovement: number;
 
@@ -81,14 +80,10 @@ export class GameState {
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
-    const paddlesDistance = 0;
     this.repositionPaddles();
     this.ballRadius = paddlesWidth;
 
-    this.leftBorder = paddlesDistance;
     this.leftImpact = 0;
-
-    this.rightBorder = this.fieldWidth;
     this.rightImpact = 0;
 
     this.gameInit();
@@ -102,7 +97,7 @@ export class GameState {
 
   gameInit() {
     const startAngle = this.randomAngle();
-    this.ballAcceleration = 0.5;
+    this.ballAcceleration = 1.3;
     this.ballX = this.fieldWidth / 2;
     this.ballY = this.fieldHeight / 2;
     this.speedFactor = this.speedFactorStart;
@@ -216,7 +211,7 @@ export class GameState {
         this.ballSpeedX = this.speedFactor * Math.cos(angle);
         this.ballSpeedY = this.speedFactor * Math.sin(angle);
         if (this.speedFactor < this.speedFactorMax) {
-          this.speedFactor *= 1.2;
+          this.speedFactor *= this.ballAcceleration;
         }
 
         this.contactsPlayer1++;
@@ -225,7 +220,9 @@ export class GameState {
         // update score
         this.leftBreakthrough();
       }
+      return true;
     }
+    return false;
   }
 
   collisionRight() {
@@ -244,7 +241,7 @@ export class GameState {
         this.ballSpeedX = -this.speedFactor * Math.cos(angle);
         this.ballSpeedY = this.speedFactor * Math.sin(angle);
         if (this.speedFactor < this.speedFactorMax) {
-          this.speedFactor *= 1.2;
+          this.speedFactor *= this.ballAcceleration;
         }
 
         this.contactsPlayer2++;
@@ -252,7 +249,9 @@ export class GameState {
       } else {
         this.rightBreakthrough();
       }
+      return true;
     }
+    return false;
   }
 
   collisionTop() {
@@ -273,10 +272,13 @@ export class GameState {
     if (this.collisionTop()) {
       this.ballSpeedY = -this.ballSpeedY;
       this.ballY = this.ballRadius + 1; // setting ball down to avoid it clipping through the edge
+      return true;
     } else if (this.collisionBottom()) {
       this.ballSpeedY = -this.ballSpeedY;
       this.ballY = this.fieldHeight - this.ballRadius - 1;
+      return true;
     }
+    return false;
   }
 
   impact(distance: number) {
@@ -339,5 +341,37 @@ export class GameState {
         }
       }, 1000);
     });
+  }
+
+  applyDto(dto: GameDto) {
+    this.fieldWidth = dto.fieldWidth;
+    this.fieldHeight = dto.fieldHeight;
+    this.ballX = dto.ballX;
+    this.ballY = dto.ballY;
+    this.ballSpeedX = dto.ballSpeedX;
+    this.ballSpeedY = dto.ballSpeedY;
+    this.paddlesHeight = dto.paddlesHeight;
+    this.leftPosition = dto.leftPaddle;
+    this.rightPosition = dto.rightPaddle;
+    this.scorePlayer1 = dto.scorePlayer1;
+    this.scorePlayer2 = dto.scorePlayer2;
+  }
+
+  toDto(winner: string) {
+    return {
+      fieldWidth: this.fieldWidth,
+      fieldHeight: this.fieldHeight,
+      ballX: this.ballX,
+      ballY: this.ballY,
+      ballSpeedX: this.ballSpeedX,
+      ballSpeedY: this.ballSpeedY,
+      paddlesHeight: this.paddlesHeight,
+      leftPaddle: this.leftPosition,
+      rightPaddle: this.rightPosition,
+      scorePlayer1: this.scorePlayer1,
+      scorePlayer2: this.scorePlayer2,
+      contactsPlayer2: this.scorePlayer2,
+      winner: winner,
+    };
   }
 }
