@@ -71,7 +71,7 @@ export default {
     };
   },
   mounted() {
-    this.getUsersFriends();
+    document.body.classList.remove("friend-list-visible");
   },
   methods: {
     async getUsersFriends() {
@@ -85,7 +85,6 @@ export default {
             },
           },
         );
-
         if (response.ok) {
           const responseData = await response.json();
           this.friends = responseData.friends;
@@ -117,6 +116,9 @@ export default {
       } catch (error) {
         console.error("Error fetching nofriends:", error);
       }
+    },
+    beforeUnmount() {
+      this.listStatus = false;
     },
     async removeFriend(friendId) {
       try {
