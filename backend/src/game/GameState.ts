@@ -80,12 +80,10 @@ export class GameState {
 
     this.paddlesHeight = (1 / 4) * this.fieldHeight;
     const paddlesWidth = (1 / 160) * this.fieldWidth;
-    const paddlesDistance = 0;
     this.repositionPaddles();
     this.ballRadius = paddlesWidth;
 
     this.leftImpact = 0;
-
     this.rightImpact = 0;
 
     this.gameInit();
@@ -222,7 +220,9 @@ export class GameState {
         // update score
         this.leftBreakthrough();
       }
+      return true;
     }
+    return false;
   }
 
   collisionRight() {
@@ -249,7 +249,9 @@ export class GameState {
       } else {
         this.rightBreakthrough();
       }
+      return true;
     }
+    return false;
   }
 
   collisionTop() {
@@ -270,10 +272,13 @@ export class GameState {
     if (this.collisionTop()) {
       this.ballSpeedY = -this.ballSpeedY;
       this.ballY = this.ballRadius + 1; // setting ball down to avoid it clipping through the edge
+      return true;
     } else if (this.collisionBottom()) {
       this.ballSpeedY = -this.ballSpeedY;
       this.ballY = this.fieldHeight - this.ballRadius - 1;
+      return true;
     }
+    return false;
   }
 
   impact(distance: number) {
