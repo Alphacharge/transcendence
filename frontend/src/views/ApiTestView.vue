@@ -33,7 +33,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {
@@ -51,20 +50,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/initialize`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Game Init");
         }
@@ -77,20 +75,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/paddle/leftPaddleUp`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Left Paddle Up");
         }
@@ -103,20 +100,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/paddle/leftPaddleDown`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Left Paddle Down");
         }
@@ -129,20 +125,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/paddle/rightPaddleUp`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Right Paddle Up");
         }
@@ -155,20 +150,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/paddle/rightPaddleDown`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Right Paddle Down");
         }
@@ -181,20 +175,19 @@ export default {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/update`,
           {
-            method: 'POST',
+            method: "POST",
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-              'Content-Type': 'application/json',
+              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(this.gameData),
-          }
+          },
         );
 
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
           this.updateData();
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch Update Game");
         }
@@ -275,7 +268,7 @@ export default {
   width: 100%;
 }
 .btn-danger {
-  align-content: center;
+  /* align-content: center; */
   width: 90%;
   border: 0;
   background-color: #35b522;
