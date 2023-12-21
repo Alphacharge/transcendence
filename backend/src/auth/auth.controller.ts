@@ -27,6 +27,13 @@ export class AuthController {
     return this.authService.signup(dto, false);
   }
 
+  @Post('logout')
+  @Header('Content-Type', 'application/json')
+  @UseGuards(JwtAuthGuard)
+  signout(@Req() req: Request) {
+    this.authService.activeUser.delete(req['user']);
+  }
+
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signin(@Body() dto: AuthDto) {
