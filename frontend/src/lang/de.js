@@ -12,16 +12,16 @@ export default {
   currentLanguage: "DE",
 
   // PONG GAME
-  EnterQueue: "Warteschlange",
+  EnterQueue: "Warteschlange für ein Online-Spiel",
   LeaveQueue: "Warteschlange verlassen",
-  StartLocalGame: "Starte lokales Spiel",
+  StartLocalGame: "Spielt zusammen auf derselben Tastatur",
+  EnterTournament: "Turnier beitreten",
+  LeaveTournament: "Registriere dich für ein Online-Tournier",
+  LocalGameExplanationLeft: "W und S zum Bewegen",
+  LocalGameExplanationRight: "Pfeil hoch und Pfeil runter zum Bewegen",
   Player: "Spieler",
   wins: "gewinnt",
   RegisteredPlayers: "Registrierte Spieler",
-  EnterTournament: "Turnier beitreten",
-  LeaveTournament: "Turnier verlassen",
-  LocalGameExplanationLeft: "W/S",
-  LocalGameExplanationRight: "Pfeil hoch/Pfeil runter",
 
   // SIGNUP & LOGIN & PASSWORD
   Username: "Benutzername",
