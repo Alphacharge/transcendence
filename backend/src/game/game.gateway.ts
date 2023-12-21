@@ -16,7 +16,6 @@ import * as fs from 'fs';
 import { AuthService } from 'src/auth/auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { TournamentState } from './TournamentState';
-import { use } from 'passport';
 
 // can enter a port in the brackets
 @WebSocketGateway({
@@ -281,9 +280,9 @@ export class GameGateway {
   announceVictory(game: GameState) {
     if (game.isLocalGame) {
       if (game.winningPlayer) {
-        game.user1.socket?.emit('victory', '1');
+        game.user1?.socket?.emit('victory', '1');
       } else {
-        game.user1.socket?.emit('victory', '2');
+        game.user1?.socket?.emit('victory', '2');
       }
     } else {
       // if this is a tournament, inform each participant about the win
@@ -301,8 +300,8 @@ export class GameGateway {
         });
       }
       // tell the participants of the game who won
-      game.user1.socket?.emit('victory', game.winningPlayer.userData.nickname);
-      game.user2.socket?.emit('victory', game.winningPlayer.userData.nickname);
+      game.user1?.socket?.emit('victory', game.winningPlayer.userData.nickname);
+      game.user2?.socket?.emit('victory', game.winningPlayer.userData.nickname);
     }
   }
 
