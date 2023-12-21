@@ -131,7 +131,6 @@ export default {
   height: 400px;
   overflow: hidden;
   /* border: 1px solid red; */
-
 }
 
 .mid-line {

@@ -29,7 +29,11 @@ async function seed() {
     await prisma.createNewAvatar('.png');
 
     // Create users
-    let authuser1: User = { id: 1, password: 'transcendence', username: 'transcendence' };
+    let authuser1: User = {
+      id: 1,
+      password: 'transcendence',
+      username: 'transcendence',
+    };
     // let authuser2: User = { id: 2, password: 'b', username: 'b' };
     // let authuser3: User = { id: 3, password: 'c', username: 'c' };
     // let authuser4: User = { id: 4, password: 'd', username: 'd' };

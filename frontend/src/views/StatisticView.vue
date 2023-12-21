@@ -380,7 +380,7 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
-    async fetchChartData(){
+    async fetchChartData() {
       this.userStatistics = this.statistics;
       this.userStatistics.sort((a, b) => b.wins - a.wins);
       await this.renderBallContacts();
@@ -391,129 +391,129 @@ export default {
       const nicknameDT = this.userStatistics.map((user) => user.nickname);
       const contactsDT = this.userStatistics.map(
         (user) => user.contacts[0].total_contacts,
-        );
-        const doughnut = document.getElementById("gameType").getContext("2d");
-        Chart.defaults.color = "#dbdbe3";
-        const doughnutData = {
-          labels: nicknameDT,
-          datasets: [
-            {
-              data: contactsDT,
-              backgroundColor: [
-                "rgb(5, 155, 255)",
-                "rgb(6, 8, 139)",
-                "rgb(255, 99, 132)",
-                "rgb(54, 162, 235)",
-                "rgb(255, 206, 86)",
-                "rgb(75, 192, 192)",
-                "rgb(153, 102, 255)",
-                "rgb(255, 159, 64)",
-                "rgb(220, 20, 60)",
-                "rgb(0, 128, 128)",
-                "rgb(0, 0, 139)",
-                "rgb(139, 0, 139)",
-                "rgb(255, 140, 0)",
-                "rgb(218, 165, 32)",
-                "rgb(107, 142, 35)",
-                "rgb(70, 130, 180)",
-                "rgb(255, 165, 0)",
-                "rgb(128, 0, 0)",
-                "rgb(0, 0, 128)",
-                "rgb(0, 128, 0)",
-                "rgb(128, 128, 0)",
-                "rgb(173, 216, 230)",
-                "rgb(255, 192, 203)",
-                "rgb(255, 255, 0)",
-                "rgb(255, 0, 255)",
-                "rgb(0, 255, 255)",
-                "rgb(255, 255, 255)",
-                "rgb(0, 0, 0)",
-                "rgb(128, 128, 128)",
-                "rgb(192, 192, 192)",
-              ],
-              hoverOffset: 1,
-              borderWidth: 0,
-            },
-          ],
-        };
-        new Chart(doughnut, {
-          type: "doughnut",
-          data: doughnutData,
-          options: {
-            responsive: true,
-            plugins: {
-              legend: {
-                display: true,
-                position: "top",
-              },
-            },
-            title: {
+      );
+      const doughnut = document.getElementById("gameType").getContext("2d");
+      Chart.defaults.color = "#dbdbe3";
+      const doughnutData = {
+        labels: nicknameDT,
+        datasets: [
+          {
+            data: contactsDT,
+            backgroundColor: [
+              "rgb(5, 155, 255)",
+              "rgb(6, 8, 139)",
+              "rgb(255, 99, 132)",
+              "rgb(54, 162, 235)",
+              "rgb(255, 206, 86)",
+              "rgb(75, 192, 192)",
+              "rgb(153, 102, 255)",
+              "rgb(255, 159, 64)",
+              "rgb(220, 20, 60)",
+              "rgb(0, 128, 128)",
+              "rgb(0, 0, 139)",
+              "rgb(139, 0, 139)",
+              "rgb(255, 140, 0)",
+              "rgb(218, 165, 32)",
+              "rgb(107, 142, 35)",
+              "rgb(70, 130, 180)",
+              "rgb(255, 165, 0)",
+              "rgb(128, 0, 0)",
+              "rgb(0, 0, 128)",
+              "rgb(0, 128, 0)",
+              "rgb(128, 128, 0)",
+              "rgb(173, 216, 230)",
+              "rgb(255, 192, 203)",
+              "rgb(255, 255, 0)",
+              "rgb(255, 0, 255)",
+              "rgb(0, 255, 255)",
+              "rgb(255, 255, 255)",
+              "rgb(0, 0, 0)",
+              "rgb(128, 128, 128)",
+              "rgb(192, 192, 192)",
+            ],
+            hoverOffset: 1,
+            borderWidth: 0,
+          },
+        ],
+      };
+      new Chart(doughnut, {
+        type: "doughnut",
+        data: doughnutData,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
               display: true,
-              text: this.$t("ballContacts"),
-              font: {
-                size: 16, // Adjust the font size as needed
-                weight: "bold", // Adjust the font weight as needed
-              },
+              position: "top",
             },
           },
-        });
-      },
-      // async renderKD() {
-      //   const nicknames = this.userStatistics.map((user) => user.nickname);
-      //   const kd = this.userStatistics.map((user) => user.wins / user.losses);
-      //   kd.forEach((value, index, array) => {
-      //     array[index] = value < 1 ? value * -1 : value;
-      //     if (isNaN(array[index]) || !isFinite(array[index])) {
-      //       array[index] = 0.0;
-      //     }
-      //   });
-      //   const kdChart = document.getElementById("kdChart").getContext("2d");
-      //   new Chart(kdChart, {
-      //     type: "bar",
-      //     data: {
-      //       labels: nicknames,
-      //       datasets: [
-      //         {
-      //           label: "K/D",
-      //           data: kd,
-      //           backgroundColor: "rgba(75,192,192,0.7)",
-      //           borderColor: "rgba(75,192,192,1)",
-      //           borderWidth: 1,
-      //         },
-      //       ],
-      //     },
-      //     options: {
-      //       responsive: true,
-      //       plugins: {
-      //         legend: {
-      //           display: true,
-      //           position: "bottom",
-      //         },
-      //       },
-      //       scales: {
-      //         x: {
-      //           stacked: true,
-      //           title: {
-      //             display: true,
-      //           },
-      //         },
-      //         y: {
-      //           display: false,
-      //           beginAtZero: false,
-      //         },
-      //       },
-      //     },
-      //   });
-      // },
-      async renderWinLoss() {
-        const nicknames = this.userStatistics.map((user) => user.nickname);
-        const wins = this.userStatistics.map((user) => user.wins);
-        const losses = this.userStatistics.map((user) => user.losses);
-        const histogram = document
+          title: {
+            display: true,
+            text: this.$t("ballContacts"),
+            font: {
+              size: 16, // Adjust the font size as needed
+              weight: "bold", // Adjust the font weight as needed
+            },
+          },
+        },
+      });
+    },
+    // async renderKD() {
+    //   const nicknames = this.userStatistics.map((user) => user.nickname);
+    //   const kd = this.userStatistics.map((user) => user.wins / user.losses);
+    //   kd.forEach((value, index, array) => {
+    //     array[index] = value < 1 ? value * -1 : value;
+    //     if (isNaN(array[index]) || !isFinite(array[index])) {
+    //       array[index] = 0.0;
+    //     }
+    //   });
+    //   const kdChart = document.getElementById("kdChart").getContext("2d");
+    //   new Chart(kdChart, {
+    //     type: "bar",
+    //     data: {
+    //       labels: nicknames,
+    //       datasets: [
+    //         {
+    //           label: "K/D",
+    //           data: kd,
+    //           backgroundColor: "rgba(75,192,192,0.7)",
+    //           borderColor: "rgba(75,192,192,1)",
+    //           borderWidth: 1,
+    //         },
+    //       ],
+    //     },
+    //     options: {
+    //       responsive: true,
+    //       plugins: {
+    //         legend: {
+    //           display: true,
+    //           position: "bottom",
+    //         },
+    //       },
+    //       scales: {
+    //         x: {
+    //           stacked: true,
+    //           title: {
+    //             display: true,
+    //           },
+    //         },
+    //         y: {
+    //           display: false,
+    //           beginAtZero: false,
+    //         },
+    //       },
+    //     },
+    //   });
+    // },
+    async renderWinLoss() {
+      const nicknames = this.userStatistics.map((user) => user.nickname);
+      const wins = this.userStatistics.map((user) => user.wins);
+      const losses = this.userStatistics.map((user) => user.losses);
+      const histogram = document
         .getElementById("championsBoard")
         .getContext("2d");
-        Chart.defaults.color = "#dbdbe3";
-        
+      Chart.defaults.color = "#dbdbe3";
+
       new Chart(histogram, {
         type: "bar",
         data: {

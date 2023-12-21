@@ -228,7 +228,12 @@ export class GameService {
       const tournament = game.tournamentState;
       // was this the last game of the tournament?
       if (tournament.gamesNeeded == tournament.gamesPlayed) {
-        await this.prismaService.createNewTournament(tournament.playedGames[0].gameData.id, tournament.playedGames[1].gameData.id, tournament.playedGames[2].gameData.id, game.winningPlayer.userData.id);
+        await this.prismaService.createNewTournament(
+          tournament.playedGames[0].gameData.id,
+          tournament.playedGames[1].gameData.id,
+          tournament.playedGames[2].gameData.id,
+          game.winningPlayer.userData.id,
+        );
         sharedEventEmitter.emit('tournamentWinner', game); // tell everyone who won
         game.tournamentState.freeUsers(); // allows the users to join other games
       } else {

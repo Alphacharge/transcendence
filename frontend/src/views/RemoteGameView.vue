@@ -7,7 +7,7 @@
       <CountDown v-if="countDownVisible" />
     </div>
     <div class="explanation">
-        {{ $t("LocalGameExplanationLeft") }}
+      {{ $t("LocalGameExplanationLeft") }}
     </div>
   </div>
 </template>

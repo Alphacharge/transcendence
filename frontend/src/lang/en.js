@@ -60,7 +60,7 @@ export default {
   profileMatches: "Matches",
   profileTournament: "Tournament Matches",
   profileContacts: "Ball contacts",
-  profileTourWins: "Tournament Win's",
+  profileTourWins: "Tournament Wins",
   profileRegister: "Registered since",
   nicknameError: "Impossibile aggiornare il nickname",
   AddFriends: "Add Friends",

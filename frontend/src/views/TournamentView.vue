@@ -11,7 +11,7 @@
     <CountDown v-if="inActiveTournament"></CountDown>
   </div>
   <div class="explanation">
-        {{ $t("LocalGameExplanationLeft") }}
+    {{ $t("LocalGameExplanationLeft") }}
   </div>
 </template>
 
