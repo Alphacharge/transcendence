@@ -40,11 +40,11 @@ const routes = [
     name: "local game",
     component: LocalGame,
   },
-  {
-    path: "/ip",
-    name: "ip",
-    component: IpPanelView,
-  },
+  // {
+  //   path: "/ip",
+  //   name: "ip",
+  //   component: IpPanelView,
+  // },
   {
     path: "/profile",
     name: "profile",

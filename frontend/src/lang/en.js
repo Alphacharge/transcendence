@@ -12,13 +12,13 @@ export default {
   currentLanguage: "EN",
 
   // PONG GAME
-  EnterQueue: "Enter Queue",
+  EnterQueue: "Queue against online opponents",
   LeaveQueue: "Leave Queue",
-  StartLocalGame: "Start Local Game",
-  EnterTournament: "Enter Tournament",
+  StartLocalGame: "Play together on the same keyboard",
+  EnterTournament: "Register for an online tournament",
   LeaveTournament: "Leave Tournament",
-  LocalGameExplanationLeft: "W/S",
-  LocalGameExplanationRight: "arrow up/arrow down",
+  LocalGameExplanationLeft: "Move with W and S",
+  LocalGameExplanationRight: "Move with arrow up and arrow down",
   Player: "Player",
   wins: "wins",
   RegisteredPlayers: "Registered Players",

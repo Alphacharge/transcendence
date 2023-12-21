@@ -10,6 +10,9 @@
     <GameArea></GameArea>
     <CountDown v-if="inActiveTournament"></CountDown>
   </div>
+  <div class="explanation">
+        {{ $t("LocalGameExplanationLeft") }}
+  </div>
 </template>
 
 <script>
@@ -72,5 +75,13 @@ export default {
 
 .top {
   margin-top: 4em;
+}
+
+.explanation {
+  width: 800px;
+  margin: 0 auto;
+  margin-top: 1em;
+  color: rgb(217, 217, 229);
+  text-align: center;
 }
 </style>

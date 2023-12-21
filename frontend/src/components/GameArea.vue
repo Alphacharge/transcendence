@@ -1,9 +1,8 @@
 <template>
-  <div class="field">
+  <div class="field-paddles">
     <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
     <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
-    <div class="container">
-      <!-- <div class="background" ref="container"></div> -->
+    <div class="field-ball">
       <div class="mid-line"></div>
       <div
         class="bouncing-ball"
@@ -30,6 +29,8 @@ export default {
       // abll and paddle starting positions
       bouncingBallX: 395,
       bouncingBallY: 195,
+      // bouncingBallX: 0,
+      // bouncingBallY: 0,
       leftPaddleY: 150,
       rightPaddleY: 150,
       isGameRunning: false,
@@ -109,31 +110,39 @@ export default {
 <style scoped>
 /* Achtung: the field geometry is calculated in the backed, while we set absolute values in the styling, this will now work and needs to be fixed */
 
-.field {
+.field-paddles {
   position: relative;
   width: 820px;
   height: 420px;
   margin: 0 auto;
   border-top: 10px solid rgb(217, 217, 229);
   border-bottom: 10px solid rgb(217, 217, 229);
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-.container {
+.field-ball {
   position: relative;
   background-color: rgba(128, 128, 128, 0.1);
-  /* display: flex;
-  align-items: center; */
+  /* display: flex; */
+  /* align-items: center; */
+  margin: 0 auto;
   width: 800px;
   height: 400px;
   overflow: hidden;
   /* border: 1px solid red; */
+
 }
 
 .mid-line {
-  position: absolute;
-  height: 400px;
-  border-left: 4px dashed rgb(217, 217, 229);
-  margin-left: 386px;
+  /* position: absolute; */
+  position: relative;
+  height: 100%;
+  width: 0px;
+  border-right: 4px dashed rgb(217, 217, 229);
+  /* left: 50%; */
+  /* margin-left: 386px; */
+  margin: 0 auto;
 }
 
 .bouncing-ball {
