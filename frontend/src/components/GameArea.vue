@@ -60,11 +60,11 @@ export default {
     window.addEventListener("keydown", (event) => {
       if (!this.isGameRunning) return;
 
-      switch (event.key) {
-        case "w":
+      switch (event.code) {
+        case "KeyW":
           socket.sendPaddleUp(false);
           break;
-        case "s":
+        case "KeyS":
           socket.sendPaddleDown(false);
           break;
         case "ArrowUp":
@@ -81,11 +81,11 @@ export default {
     window.addEventListener("keyup", (event) => {
       if (!this.isGameRunning) return;
 
-      switch (event.key) {
-        case "w":
+      switch (event.code) {
+        case "KeyW":
           socket.sendPaddleUpStop(false);
           break;
-        case "s":
+        case "KeyS":
           socket.sendPaddleDownStop(false);
           break;
         case "ArrowUp":

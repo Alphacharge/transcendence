@@ -221,7 +221,7 @@ export class GameService {
       );
     }
 
-    game.user1.activeGame = null;
+    if (game.user1) game.user1.activeGame = null;
     if (game.user2) game.user2.activeGame = null;
 
     if (game.tournamentState) {

@@ -44,7 +44,8 @@ export default {
 
 <style scoped>
 .btn-group {
-  width: 100%;
+  position: relative;
+  width: 800px;
 }
 .btn-danger {
   width: 90%;
