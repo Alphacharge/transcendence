@@ -87,6 +87,15 @@ export default {
   aboutText4:
     "Desidero esprimere la mia gratitudine all'intero team per questo viaggio gratificante e auguro a tutti un piacevole periodo dopo il completamento della scuola.",
 
+  //API
+  ApiTest: "Test API",
+  ApiTestCreate: "Crea Gioco",
+  ApiTestLeftUp: "Alza la Racchetta Sinistra",
+  ApiTestLeftDown: "Abbassa la Racchetta Sinistra",
+  ApiTestRightUp: "Alza la Racchetta Destra",
+  ApiTestRightDown: "Abbassa la Racchetta Destra",
+  ApiTestUpdate: "Aggiorna Gioco",
+
   //Error
   Error: "Errore",
   ServerError: "Il server ha riscontrato un errore.",

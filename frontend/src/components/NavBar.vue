@@ -44,13 +44,18 @@
         <router-link to="/ip" class="nav-link">IP-Panel</router-link>
       </li> -->
       <li class="nav-item flex-grow-1">
-        <router-link to="/about" class="nav-link">{{
-          $t("About")
+        <router-link to="/profile" class="nav-link">{{
+          $t("Profile")
         }}</router-link>
       </li>
       <li class="nav-item flex-grow-1">
-        <router-link to="/profile" class="nav-link">{{
-          $t("Profile")
+        <router-link to="/apitest" class="nav-link">{{
+          $t("ApiTest")
+        }}</router-link>
+      </li>
+      <li class="nav-item flex-grow-1">
+        <router-link to="/about" class="nav-link">{{
+          $t("About")
         }}</router-link>
       </li>
       <li class="nav-item flex-grow-1">
