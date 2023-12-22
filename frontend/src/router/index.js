@@ -11,7 +11,7 @@ import ProfileView from "@/views/ProfileView.vue";
 import LocalGame from "@/views/LocalGameView.vue";
 import RedirectView from "@/views/RedirectView.vue";
 import ErrorView from "@/views/ErrorView.vue";
-import checkLoggedIn from "@/services/authService";
+import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
 import ChangePasswordView from "@/views/ChangePasswordView";
