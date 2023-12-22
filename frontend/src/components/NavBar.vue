@@ -40,9 +40,6 @@
           $t("Statistics")
         }}</router-link>
       </li>
-      <!-- <li class="nav-item flex-grow-1">
-        <router-link to="/ip" class="nav-link">IP-Panel</router-link>
-      </li> -->
       <li class="nav-item flex-grow-1">
         <router-link to="/profile" class="nav-link">{{
           $t("Profile")
@@ -82,7 +79,10 @@
 import LanguageToggle from "@/components/LanguageToggle.vue";
 
 export default {
-  components: { LanguageToggle },
+  components: {
+    LanguageToggle,
+  },
+
   methods: {
     getTeam() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/team.gif`;

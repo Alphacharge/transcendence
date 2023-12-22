@@ -18,6 +18,7 @@ export default {
     QrcodeVue,
     Send2faCode,
   },
+
   data() {
     return {
       otpauthUrl: "",
@@ -25,6 +26,7 @@ export default {
       qrcodeSize: 128,
     };
   },
+
   methods: {
     async generate2faSecret() {
       try {
@@ -60,7 +62,7 @@ export default {
 <style scoped>
 .twofa-container {
   margin-top: 4em;
-  width: 100%; /* Adjust as needed */
+  width: 100%;
   display: flex;
   justify-content: center;
 }
@@ -77,6 +79,6 @@ export default {
   padding-left: 0.5em;
   padding-right: 0.5em;
   padding-bottom: 0.1em;
-  margin-bottom: 1em; /* Add spacing between QR code and input */
+  margin-bottom: 1em;
 }
 </style>

@@ -72,9 +72,11 @@ export default {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
 .btn-group {
   width: 100%;
 }
+
 .btn-danger {
   border: 0;
   background-color: #35b522;
@@ -84,6 +86,7 @@ export default {
   background-color: rgb(217, 217, 229);
   opacity: 0.5;
 }
+
 .game-wrapper {
   position: relative;
 }

@@ -4,8 +4,10 @@
   </div>
   <div v-if="currentCount == 0" countDownVisible="false"></div>
 </template>
+
 <script>
 import { socket } from "@/assets/utils/socket";
+
 export default {
   data() {
     return {
@@ -13,6 +15,7 @@ export default {
       countdownVisible: false,
     };
   },
+
   mounted() {
     this.countdownVisible = true;
     socket.on("countDown", (payload) => {
@@ -25,11 +28,12 @@ export default {
   },
 };
 </script>
+
 <style scoped>
 .clock {
   position: absolute;
-  top: 50%; /* Adjust as needed */
-  left: 50%; /* Adjust as needed */
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
   margin: 0;
   text-align: center;

@@ -76,6 +76,7 @@ export default {
 .btn-group {
   width: 100%;
 }
+
 .btn-danger {
   border: 0;
   background-color: #35b522;
@@ -85,6 +86,7 @@ export default {
   border: 0;
   background-color: rgb(195, 30, 30);
 }
+
 .btn:hover {
   background-color: rgb(217, 217, 229);
   opacity: 0.5;

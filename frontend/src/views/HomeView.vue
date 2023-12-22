@@ -57,7 +57,6 @@ export default {
   cursor: pointer;
   background-color: transparent;
   border: 0.5px solid rgb(237, 211, 12);
-  /* height: 30%; */
   font-size: 24px;
   margin: 5px;
   display: flex;

@@ -65,6 +65,7 @@ export default {
       message: "",
     };
   },
+
   methods: {
     // standard login
     async sendPostRequest() {
@@ -140,6 +141,7 @@ export default {
   margin-top: 4em;
   color: rgb(217, 217, 229);
 }
+
 .form-container h3 {
   margin-bottom: 2em;
   text-align: center;
@@ -152,13 +154,16 @@ export default {
 .form-container li {
   list-style: none;
 }
+
 .filler {
   flex-grow: calc();
 }
+
 .message-error {
   color: red;
   padding-bottom: 1em;
 }
+
 .message-ok {
   color: green;
   padding-bottom: 1em;

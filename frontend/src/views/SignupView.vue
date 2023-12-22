@@ -73,11 +73,13 @@ export default {
       message: "",
     };
   },
+
   computed: {
     isDisabled() {
       return !(this.rePassword && this.password === this.rePassword);
     },
   },
+
   methods: {
     async sendPostRequest() {
       try {
@@ -147,6 +149,7 @@ export default {
   margin-left: 25%;
   margin-top: 4em;
 }
+
 .form-container h3 {
   margin-bottom: 2em;
   text-align: center;
@@ -159,13 +162,16 @@ export default {
 .form-container li {
   list-style: none;
 }
+
 .filler {
   flex-grow: calc();
 }
+
 .message-error {
   color: red;
   padding-bottom: 1em;
 }
+
 .message-ok {
   color: green;
   padding-bottom: 1em;

@@ -36,20 +36,19 @@
 <script>
 export default {
   props: {
-    nonFriends: Array, // Array of non-friend users
+    nonFriends: Array,
   },
+
   data() {
     return {
       showModal: false,
       selectedFriends: [],
     };
   },
+
   methods: {
     addSelectedFriends() {
-      // Add logic to send a request to add selected friends
       const selectedFriendIds = this.selectedFriends.map((friend) => friend.id);
-
-      // Send a request to your backend to add friends
       fetch(
         `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/addfriends`,
         {
@@ -65,9 +64,7 @@ export default {
       )
         .then((response) => {
           if (response.ok) {
-            // Handle success, e.g., refresh the friend list
             this.getUsersFriends();
-            // Optionally, you can emit an event to notify the parent component
             this.$emit("add-friends", this.selectedFriends);
           } else {
             console.error("Failed to add friends");
@@ -79,9 +76,9 @@ export default {
 
       this.closeModal();
     },
+
     async getUsersFriends() {
       try {
-        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/friends`,
           {
@@ -95,7 +92,6 @@ export default {
         if (response.ok) {
           const responseData = await response.json();
           this.friends = responseData.friends;
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch friends");
         }
@@ -103,13 +99,16 @@ export default {
         console.error("Error fetching friends:", error);
       }
     },
+
     closeModal() {
       this.showModal = false;
       this.selectedFriends = [];
     },
+
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
+
     getStatusSrc(status) {
       if (status) {
         return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/on.png`;
@@ -142,10 +141,12 @@ export default {
 .content-add-friends {
   flex: 1;
 }
+
 .label-content {
   display: flex;
   align-items: center;
 }
+
 .modal-content {
   text-align: center;
 }
@@ -180,12 +181,11 @@ li {
 .friend-name {
   flex-grow: 1;
 }
+
 .image_friends img {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* This property ensures the image fills the 32x32 container without distorting its aspect ratio */
-  transform: scale(
-    1
-  ); /* Scale the image down to fit within the 32x32 container */
+  object-fit: cover;
+  transform: scale(1);
 }
 </style>

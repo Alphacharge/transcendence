@@ -7,6 +7,7 @@ export default {
   mounted() {
     this.sendLogOutRequest();
   },
+
   methods: {
     async sendLogOutRequest() {
       try {
