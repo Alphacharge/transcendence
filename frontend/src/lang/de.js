@@ -87,6 +87,15 @@ export default {
   aboutText4:
     "Ich möchte dem gesamten Team für diese lohnende Reise danken und wünsche allen eine angenehme Zeit nach Abschluss der Schule.",
 
+  //API
+  ApiTest: "API Test",
+  ApiTestCreate: "Kreiere Spiel",
+  ApiTestLeftUp: "Linkes Paddel hoch",
+  ApiTestLeftDown: "Linkes Paddel runter",
+  ApiTestRightUp: "Rechtes Paddel hoch",
+  ApiTestRightDown: "Rechtes Paddel runter",
+  ApiTestUpdate: "Update Spiel",
+
   //Error
   Error: "Fehler",
   ServerError: "Der Server hat enien Fehler festgestellt.",

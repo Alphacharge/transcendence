@@ -17,6 +17,7 @@ import { checkLoggedIn } from "@/services/authService";
 import TwoFactorCodeView from "@/views/TwoFactorCodeView";
 import TwoFactorEnableView from "@/views/TwoFactorEnableView";
 import ChangePasswordView from "@/views/ChangePasswordView";
+import ApiTestView from "@/views/ApiTestView";
 
 const routes = [
   {
@@ -88,6 +89,11 @@ const routes = [
     path: "/changepassword",
     name: "changepassword",
     component: ChangePasswordView,
+  },
+  {
+    path: "/apitest",
+    name: "apitest",
+    component: ApiTestView,
   },
   {
     path: "/error/:code",
