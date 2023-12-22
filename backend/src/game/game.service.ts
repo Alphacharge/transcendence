@@ -1,4 +1,3 @@
-// game.service.ts
 import { sharedEventEmitter } from './game.events';
 import { GameState } from './GameState';
 import { Injectable } from '@nestjs/common';
@@ -266,9 +265,7 @@ export class GameService {
 
     if (game.leftMovement == 1) {
       game.movePaddleUp(game.user1);
-      // this.paddleUp(game.user1, false);
     } else if (game.leftMovement == 2) {
-      // this.paddleDown(game.user1, false);
       game.movePaddleDown(game.user1);
     }
     if (game.rightMovement == 1) {

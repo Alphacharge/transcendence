@@ -13,13 +13,11 @@
 </template>
 
 <script>
-// import the socket object
 import { socket } from "@/assets/utils/socket";
 
 export default {
   data() {
     return {
-      // abll and paddle starting positions
       bouncingBallX: 395,
       bouncingBallY: 195,
       leftPaddleY: 150,
@@ -37,6 +35,7 @@ export default {
     socket.on("prepareGame", () => {
       this.isGameRunning = true;
     });
+
     socket.on("victory", () => {
       this.isGameRunning = false;
     });
@@ -45,9 +44,11 @@ export default {
       this.bouncingBallX = ballCoordinates.x;
       this.bouncingBallY = ballCoordinates.y;
     });
+
     socket.on("leftPaddle", (pY) => {
       this.leftPaddleY = pY;
     });
+
     socket.on("rightPaddle", (pY) => {
       this.rightPaddleY = pY;
     });
@@ -103,8 +104,6 @@ export default {
 </script>
 
 <style scoped>
-/* Achtung: the field geometry is calculated in the backed, while we set absolute values in the styling, this will now work and needs to be fixed */
-
 .field-paddles {
   position: relative;
   width: 820px;
@@ -119,23 +118,17 @@ export default {
 .field-ball {
   position: relative;
   background-color: rgba(128, 128, 128, 0.1);
-  /* display: flex; */
-  /* align-items: center; */
   margin: 0 auto;
   width: 800px;
   height: 400px;
   overflow: hidden;
-  /* border: 1px solid red; */
 }
 
 .mid-line {
-  /* position: absolute; */
   position: relative;
   height: 100%;
   width: 0px;
   border-right: 4px dashed rgb(217, 217, 229);
-  /* left: 50%; */
-  /* margin-left: 386px; */
   margin: 0 auto;
 }
 

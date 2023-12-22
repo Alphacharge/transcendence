@@ -70,9 +70,15 @@ export default {
       listStatus: false,
     };
   },
+
   mounted() {
     document.body.classList.remove("friend-list-visible");
   },
+
+  beforeUnmount() {
+    this.listStatus = false;
+  },
+
   methods: {
     async getUsersFriends() {
       try {
@@ -95,6 +101,7 @@ export default {
         console.error("Error fetching friends:", error);
       }
     },
+
     async getUsersNonFriends() {
       try {
         const response = await fetch(
@@ -117,9 +124,7 @@ export default {
         console.error("Error fetching nofriends:", error);
       }
     },
-    beforeUnmount() {
-      this.listStatus = false;
-    },
+
     async removeFriend(friendId) {
       try {
         const response = await fetch(
@@ -146,6 +151,7 @@ export default {
         console.error("Error removing friend:", error);
       }
     },
+
     async openFriendSelectionModal() {
       try {
         await this.getUsersNonFriends();
@@ -159,9 +165,11 @@ export default {
         console.error("Error fetching non-friends:", error);
       }
     },
+
     handleFriendsAdded() {
       this.getUsersFriends();
     },
+
     toggleFriendListStatus() {
       this.listStatus = !this.listStatus;
       if (this.listStatus) {
@@ -171,30 +179,38 @@ export default {
         document.body.classList.remove("friend-list-visible");
       }
     },
+
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
+
     getStatusSrc(status) {
       if (status) {
         return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/on.png`;
       }
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/off.png`;
     },
+
     getCrossSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/cross.png`;
     },
+
     getPlusSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/plus.png`;
     },
+
     getFriendOpenSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/open.png`;
     },
+
     getFriendCloseSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/close.png`;
     },
+
     handleMouseEnter() {
       this.isMouseOver = true;
     },
+
     handleMouseLeave() {
       this.isMouseOver = false;
     },
@@ -206,6 +222,7 @@ export default {
 body.friend-list-visible {
   overflow-x: hidden;
 }
+
 .friendlist-icon {
   position: fixed;
   top: 50%;
@@ -218,6 +235,7 @@ body.friend-list-visible {
 .friendlist-icon-img {
   transform: scale(0.5);
 }
+
 .friend-list {
   color: rgb(144, 154, 163);
   display: flex;
@@ -234,6 +252,7 @@ body.friend-list-visible {
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
 }
+
 .friend-list li {
   display: flex;
   justify-content: left;
@@ -241,20 +260,24 @@ body.friend-list-visible {
   margin-bottom: 1em;
   align-items: center;
 }
+
 .friend-name {
   flex-grow: 1;
   color: rgb(144, 154, 163);
 }
+
 .add-friend {
   flex-grow: 1;
   color: rgb(144, 154, 163);
   align-items: center;
   padding-top: 1em;
 }
+
 .friend-list ul {
   list-style-type: none;
   margin: 0 0;
 }
+
 .image_friends {
   width: 48px;
   height: 48px;
@@ -270,14 +293,17 @@ body.friend-list-visible {
   object-fit: cover;
   transform: scale(1);
 }
+
 .image_friends_status {
   left: 15em;
   margin-left: auto;
   margin-right: 1em;
 }
+
 .image_friends_add {
   margin-right: 1em;
 }
+
 .image_friends_remove {
   margin-right: 1em;
 }
@@ -286,11 +312,13 @@ body.friend-list-visible {
   transform: translateX(0);
   overflow-x: auto;
 }
+
 .friend-list-visible .patch-right {
   /* background-color: rgb(15, 15, 30, 0.9); */
   min-width: 25em;
   flex-grow: 0.8;
 }
+
 .patch-right {
   display: flex;
   flex-direction: column;

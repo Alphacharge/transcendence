@@ -53,6 +53,7 @@ export default {
   graphDescription:
     "Seleziona la legenda dell'istogramma per filtrare, scorri col mouse sui grafici per più dettagli.",
   Graphs: "Grafici",
+  Milestones: "Pietre miliari",
 
   //Profile
   profileWins: "Vittorie",

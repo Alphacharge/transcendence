@@ -104,8 +104,6 @@ export default {
     });
 
     socket.on("tournamentReset", () => {
-      // if i am not part of the running tournament, reset everything
-      // if (!this.iAmRegistered) {
       if (!this.inActiveTournament) {
         this.players.length = 0;
       }
@@ -137,7 +135,6 @@ export default {
     getPlayerColor(index) {
       if (this.players[index] && this.players[index].borderColor)
         return this.players[index].borderColor;
-
       return "rgba(255, 255, 255, 0.2)";
     },
   },
@@ -161,8 +158,8 @@ export default {
 
 .score {
   display: flex;
-  /* position: relative; */
 }
+
 .box {
   flex: 1;
   height: 10em;
@@ -172,7 +169,6 @@ export default {
   padding: 0.5em;
   align-items: center;
   margin: 0.5em;
-  /* flex-direction: column; */
 }
 
 .content {
@@ -199,6 +195,7 @@ export default {
   font-size: large;
   color: rgb(217, 217, 229);
 }
+
 .image_history {
   width: 92px;
   height: 92px;
@@ -206,6 +203,7 @@ export default {
   display: inline-block;
   position: relative;
 }
+
 .image_history img {
   width: 100%;
   height: 100%;

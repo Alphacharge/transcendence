@@ -20,11 +20,13 @@ export default {
       required: true,
     },
   },
+
   computed: {
     errorMessage() {
       return this.$t(`error.${this.code}`);
     },
   },
+
   setup() {
     const currentCount = ref(5);
 
@@ -54,10 +56,12 @@ export default {
   text-align: center;
   color: rgb(219, 219, 227);
 }
+
 .errormessage {
   margin: 2em 0;
   color: red;
 }
+
 .clock {
   position: absolute;
   top: 50%;

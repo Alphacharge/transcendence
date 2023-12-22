@@ -55,6 +55,7 @@ model Games {
   s_game      Tournaments[] @relation("SecondGame")
   t_game      Tournaments[] @relation("ThirdGame")
 }
+
 model Tournaments {
   id              Int       @id @default(autoincrement())
   createdAt       DateTime  @default(now())

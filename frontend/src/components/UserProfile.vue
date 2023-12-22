@@ -131,10 +131,13 @@ export default {
       userMilestones: null,
     };
   },
+
   components: { Enable2FA },
+
   mounted() {
     this.fetchUserHistory();
   },
+
   methods: {
     async fetchUserHistory() {
       try {
@@ -160,15 +163,14 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
+
     startEditing() {
-      // Initialize the editedNickname with the current nickname
       this.editedNickname = this.userProfil.nickname;
-      // Set the isEditing flag to true
       this.isEditing = true;
     },
+
     async saveNickname() {
       try {
-        // Send a request to your backend to add friends
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/editname`,
           {
@@ -210,18 +212,23 @@ export default {
         }, 2000);
       }
     },
+
     getAvatarSrc(avatar) {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/avatars/${avatar.id}${avatar.mime_type}`;
     },
+
     getUploadSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/upload.png`;
     },
+
     getEditSrc() {
       return `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_FRONTEND_PORT}/status/edit.png`;
     },
+
     openFileUpload() {
       this.$refs.fileInput.click();
     },
+
     async uploadFile() {
       try {
         const fileInput = this.$refs.fileInput;
@@ -238,8 +245,6 @@ export default {
         // Append the userId to the FormData
         formData.append("userId", localStorage.getItem("userId"));
         formData.append("accessToken", localStorage.getItem("access_token"));
-
-        // Make a POST request to your backend
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/upload`,
           {

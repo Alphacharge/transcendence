@@ -23,6 +23,7 @@ export default {
   background: transparent;
   flex-wrap: wrap;
 }
+
 .patch-left {
   flex-grow: 1;
 }

@@ -53,6 +53,7 @@ export default {
   graphDescription:
     "Wählen Sie die zu filternde Histogrammlegende aus und bewegen Sie den Mauszeiger über die Diagramme, um Einzelheiten anzuzeigen.",
   Graphs: "Grafiken",
+  Milestones: "Meilensteine",
 
   //Profile
   profileWins: "Gewonnen",

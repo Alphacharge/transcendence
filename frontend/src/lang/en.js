@@ -53,6 +53,7 @@ export default {
   graphDescription:
     "Select histogram legend to filter, hover on graphs for detail.",
   Graphs: "Graphs",
+  Milestones: "Milestones",
 
   //Profile
   profileWins: "Wins",

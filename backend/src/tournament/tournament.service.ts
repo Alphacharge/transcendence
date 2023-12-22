@@ -47,7 +47,6 @@ export class TournamentService {
       playerToken: player.playerToken,
       userId: player.userId,
       userData: player.userData,
-      // Add other properties from your PlayerDto if needed
     }));
   }
 

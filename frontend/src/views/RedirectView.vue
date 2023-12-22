@@ -1,6 +1,5 @@
 <template>
   <div class="redirect">
-    <h1>Redirect gif would be great here</h1>
     <p>{{ access_token }}, {{ userId }}</p>
   </div>
 </template>
@@ -15,6 +14,7 @@ export default {
       userId: "",
     };
   },
+
   mounted() {
     const urlParams = new URLSearchParams(window.location.search);
     const access_token = urlParams.get("access_token");

@@ -2,7 +2,7 @@
   <div class="centered">
     <div class="container-ms">
       <div>
-        <h2>Milestones</h2>
+        <h2>{{ $t("Milestones") }}</h2>
         <div class="ms-row">
           <div class="box">
             <div class="headline">{{ $t("LongestGame") }}</div>
@@ -248,11 +248,12 @@ export default {
       userStatistics: [],
     };
   },
+
   mounted() {
-    // Make a call to your NestJS backend when the component is mounted
     this.fetchMilestones();
     this.fetchStats();
   },
+
   computed: {
     sortedStatistics() {
       if (!this.statistics) return [];
@@ -265,14 +266,12 @@ export default {
           const bValue = b[this.sortKey].toLowerCase();
           return modifier * aValue.localeCompare(bValue);
         }
-
         // Handle "kd" separately
         if (this.sortKey === "kd") {
           const aValue = this.calcKD(a.wins, a.losses).toFixed(2);
           const bValue = this.calcKD(b.wins, b.losses).toFixed(2);
           return modifier * (aValue - bValue);
         }
-
         // Handle "ballContacts" separately
         if (this.sortKey === "ballContacts") {
           const aValue = a.contacts.reduce(
@@ -285,7 +284,6 @@ export default {
           );
           return modifier * (aValue - bValue);
         }
-
         // Handle other keys
         const aValue = this.getValue(a, this.sortKey);
         const bValue = this.getValue(b, this.sortKey);
@@ -293,6 +291,7 @@ export default {
       });
     },
   },
+
   methods: {
     sortTable(key) {
       if (key === this.sortKey) {
@@ -302,14 +301,15 @@ export default {
         this.sortDirection = key === "nickname" ? "asc" : "desc";
       }
     },
+
     getValue(obj, key) {
-      // Handle nested properties
       const keys = key.split(".");
       return keys.reduce(
         (acc, k) => (acc && acc[k] !== undefined ? acc[k] : null),
         obj,
       );
     },
+
     calcKD(wins, losses) {
       let kd = wins / losses;
       if (isNaN(kd) || !isFinite(kd)) {
@@ -317,6 +317,7 @@ export default {
       }
       return kd;
     },
+
     convertContacts(data) {
       return data.map((user) => {
         // Handle "ballContacts" separately
@@ -328,14 +329,12 @@ export default {
         } else {
           user.ballContacts = 0;
         }
-
         return user;
       });
     },
 
     async fetchMilestones() {
       try {
-        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/milestones`,
           {
@@ -345,11 +344,9 @@ export default {
             },
           },
         );
-
         if (response.ok) {
           const data = await response.json();
           this.milestones = data;
-          // Handle the user history data as needed
         } else {
           console.error("Failed to fetch milestones");
         }
@@ -357,9 +354,9 @@ export default {
         console.error("Error fetching milestones:", error);
       }
     },
+
     async fetchStats() {
       try {
-        // Replace 'YOUR_BACKEND_URL' with the actual URL of your NestJS backend
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/data/allstats`,
           {
@@ -380,6 +377,7 @@ export default {
         console.error("Error fetching user history:", error);
       }
     },
+
     async fetchChartData() {
       this.userStatistics = this.statistics;
       this.userStatistics.sort((a, b) => b.wins - a.wins);
@@ -387,6 +385,7 @@ export default {
       // await this.renderKD();
       await this.renderWinLoss();
     },
+
     async renderBallContacts() {
       const nicknameDT = this.userStatistics.map((user) => user.nickname);
       const contactsDT = this.userStatistics.map(
@@ -451,13 +450,14 @@ export default {
             display: true,
             text: this.$t("ballContacts"),
             font: {
-              size: 16, // Adjust the font size as needed
-              weight: "bold", // Adjust the font weight as needed
+              size: 16,
+              weight: "bold",
             },
           },
         },
       });
     },
+
     // async renderKD() {
     //   const nicknames = this.userStatistics.map((user) => user.nickname);
     //   const kd = this.userStatistics.map((user) => user.wins / user.losses);
@@ -505,6 +505,7 @@ export default {
     //     },
     //   });
     // },
+
     async renderWinLoss() {
       const nicknames = this.userStatistics.map((user) => user.nickname);
       const wins = this.userStatistics.map((user) => user.wins);
@@ -574,6 +575,7 @@ h3 {
   margin-top: 2em;
   text-align: center;
 }
+
 .box {
   flex: 1;
   height: 6em;
@@ -584,13 +586,16 @@ h3 {
   margin: 0.5em;
   flex-direction: column;
 }
+
 .content {
   display: flex;
 }
+
 .headline {
   width: 100%;
   margin-bottom: 0.5em;
 }
+
 .name-table-left {
   flex: 2;
   text-align: left;
@@ -606,11 +611,13 @@ h3 {
   display: flex;
   align-items: center;
 }
+
 .score-table-center {
   margin: 0 0.5em;
   display: flex;
   align-items: center;
 }
+
 .value {
   flex: 2;
   text-align: right;
@@ -621,6 +628,7 @@ h3 {
 .image-table {
   width: 48px;
 }
+
 .image_history {
   width: 48px;
   height: 48px;
@@ -628,12 +636,14 @@ h3 {
   display: inline-block;
   position: relative;
 }
+
 .image_history img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transform: scale(1);
 }
+
 .container-ms {
   width: 100%;
   height: 80%;
@@ -645,6 +655,7 @@ h3 {
   color: rgb(217, 217, 229);
   margin-top: 4em;
 }
+
 .transparent-table {
   background: transparent;
   border-collapse: collapse;
@@ -696,10 +707,12 @@ h3 {
   justify-content: center;
   margin-bottom: 1em;
 }
+
 .graph-container {
   width: 100%;
   text-align: center;
 }
+
 .chart-canvas {
   max-width: 100%;
   height: auto;

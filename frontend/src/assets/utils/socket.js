@@ -1,5 +1,3 @@
-// socket.js
-
 import { reactive } from "vue";
 import { io } from "socket.io-client";
 
@@ -7,7 +5,6 @@ export const state = reactive({
   connected: false,
 });
 
-// why does transports websocket prevent cors issues?
 export const socket = io(
   "wss://" +
     process.env.VUE_APP_SERVER_IP +

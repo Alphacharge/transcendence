@@ -29,6 +29,7 @@ export default {
       countDownVisible: false,
     };
   },
+
   components: { GameArea, ScoreBoard, RemoteGameButtons, CountDown },
 
   mounted() {

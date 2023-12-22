@@ -1,37 +1,37 @@
 <template>
   <div>
-  <div class="btn-group">
-    <button @click="createGame()" class="btn btn-danger">
-      {{ $t("ApiTestCreate") }}
-    </button>
-    <button @click="leftUp()" class="btn btn-danger">
-      {{ $t("ApiTestLeftUp") }}
-    </button>
-    <button @click="leftDown()" class="btn btn-danger">
-      {{ $t("ApiTestLeftDown") }}
-    </button>
-    <button @click="rightUp()" class="btn btn-danger">
-      {{ $t("ApiTestRightUp") }}
-    </button>
-    <button @click="rightDown()" class="btn btn-danger">
-      {{ $t("ApiTestRightDown") }}
-    </button>
-    <button @click="updateGame()" class="btn btn-danger">
-      {{ $t("ApiTestUpdate") }}
-    </button>
-  </div>
-  <div class="field-paddles">
-    <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
-    <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
-    <div class="field-ball">
-      <div class="mid-line"></div>
-      <div
-        class="bouncing-ball"
-        :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
-      ></div>
+    <div class="btn-group">
+      <button @click="createGame()" class="btn btn-danger">
+        {{ $t("ApiTestCreate") }}
+      </button>
+      <button @click="leftUp()" class="btn btn-danger">
+        {{ $t("ApiTestLeftUp") }}
+      </button>
+      <button @click="leftDown()" class="btn btn-danger">
+        {{ $t("ApiTestLeftDown") }}
+      </button>
+      <button @click="rightUp()" class="btn btn-danger">
+        {{ $t("ApiTestRightUp") }}
+      </button>
+      <button @click="rightDown()" class="btn btn-danger">
+        {{ $t("ApiTestRightDown") }}
+      </button>
+      <button @click="updateGame()" class="btn btn-danger">
+        {{ $t("ApiTestUpdate") }}
+      </button>
+    </div>
+    <div class="field-paddles">
+      <div class="left-paddle" :style="{ top: `${leftPaddleY}px` }"></div>
+      <div class="right-paddle" :style="{ top: `${rightPaddleY}px` }"></div>
+      <div class="field-ball">
+        <div class="mid-line"></div>
+        <div
+          class="bouncing-ball"
+          :style="{ top: `${bouncingBallY}px`, left: `${bouncingBallX}px` }"
+        ></div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -58,7 +58,7 @@ export default {
             },
           },
         );
-          console.log(response);
+        console.log(response);
         if (response.ok) {
           const data = await response.json();
           this.gameData = data;
@@ -69,7 +69,8 @@ export default {
         console.error("Error fetching Game Init:", error);
       }
     },
-    async movePaddle(direction){
+
+    async movePaddle(direction) {
       try {
         const response = await fetch(
           `https://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_BACKEND_PORT}/game/paddle/${direction}`,
@@ -94,18 +95,23 @@ export default {
         console.error(`Error fetching ${direction}:`, error);
       }
     },
+
     async leftUp() {
-      await this.movePaddle('leftPaddleUp');
+      await this.movePaddle("leftPaddleUp");
     },
+
     async leftDown() {
-      await this.movePaddle('leftPaddleDown');
+      await this.movePaddle("leftPaddleDown");
     },
+
     async rightUp() {
-      await this.movePaddle('rightPaddleUp');
+      await this.movePaddle("rightPaddleUp");
     },
+
     async rightDown() {
-      await this.movePaddle('rightPaddleDown');
+      await this.movePaddle("rightPaddleDown");
     },
+
     async updateGame() {
       try {
         const response = await fetch(
@@ -131,6 +137,7 @@ export default {
         console.error("Error fetching Update Game:", error);
       }
     },
+
     updateData() {
       this.bouncingBallX = this.gameData.ballX;
       this.bouncingBallY = this.gameData.ballY;
@@ -193,10 +200,12 @@ export default {
   background-color: rgb(217, 217, 229);
   left: 810px;
 }
+
 .btn-group {
   margin-top: 4em;
   width: 100%;
 }
+
 .btn-danger {
   width: 90%;
   border: 0;

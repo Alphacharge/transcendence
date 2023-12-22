@@ -9,7 +9,7 @@ import * as argon from 'argon2';
 async function seed() {
   const config = new ConfigService();
   const prisma = new PrismaService(config);
-  const jwt = new JwtService();
+  // const jwt = new JwtService();
   // const auth = new AuthService(prisma, jwt, config);
 
   try {

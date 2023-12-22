@@ -21,6 +21,7 @@
   margin-left: 25%;
   margin-top: 4em;
 }
+
 .about h3 {
   color: rgb(217, 217, 229);
   margin-bottom: 2em;
@@ -35,6 +36,7 @@
 .about li {
   list-style: none;
 }
+
 .list {
   color: rgb(217, 217, 229);
   margin-bottom: 1.5em;

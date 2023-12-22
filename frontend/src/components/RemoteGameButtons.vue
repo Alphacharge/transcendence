@@ -15,17 +15,17 @@ import { connectWebSocket, socket } from "@/assets/utils/socket";
 export default {
   data() {
     return {
-      isInQueue: false, // is the user queued right now? user gets removed from queue on websocket connection loss, so don't worry about checking
+      isInQueue: false,
     };
   },
 
   mounted() {
     connectWebSocket();
 
-    // show buttons based on backend events
     socket.on("addedToQueue", () => {
       this.isInQueue = true;
     });
+
     socket.on("removedFromQueue", () => {
       this.isInQueue = false;
     });
@@ -35,6 +35,7 @@ export default {
     enterQueue() {
       socket.enterQueue();
     },
+
     leaveQueue() {
       socket.leaveQueue();
     },
@@ -58,6 +59,7 @@ export default {
   border: 0;
   background-color: rgb(195, 30, 30);
 }
+
 .btn:hover {
   background-color: rgb(217, 217, 229);
   opacity: 0.5;

@@ -12,7 +12,7 @@ done
 
 echo "PostreSQL available."
 
-echo y | npx prisma migrate dev -n update
+echo y | npx prisma generate
 npx ts-node src/seed.ts
 
-npm run start:dev
+npm run start:eva

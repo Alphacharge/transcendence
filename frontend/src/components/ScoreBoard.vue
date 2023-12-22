@@ -48,6 +48,7 @@ export default {
   props: {
     scoreEnabled: Boolean,
   },
+
   data() {
     return {
       announceVisible: false,
@@ -76,6 +77,7 @@ export default {
       this.player2Score = 0;
       this.winningPlayer = "";
     });
+
     socket.on("countDown", () => {
       this.announceVisible = false;
       this.player1Score = 0;
@@ -88,6 +90,7 @@ export default {
       this.players = players;
       this.player1Score = 0;
     });
+
     socket.on("player2", (players) => {
       this.players = players;
       this.player2Score = 0;
@@ -113,7 +116,6 @@ export default {
 
 .score {
   display: flex;
-  /* position: relative; */
 }
 .box {
   flex: 2;
@@ -124,16 +126,18 @@ export default {
   padding: 0.5em;
   align-items: center;
   margin: 0.5em;
-  /* flex-direction: column; */
 }
+
 .box-left {
   margin-left: 20%;
 }
+
 .box-right {
   margin-right: 20%;
   text-align: right;
   justify-content: right;
 }
+
 .content {
   display: flex;
 }
@@ -158,6 +162,7 @@ export default {
   font-size: large;
   color: rgb(217, 217, 229);
 }
+
 .image_history {
   width: 92px;
   height: 92px;
@@ -165,6 +170,7 @@ export default {
   display: inline-block;
   position: relative;
 }
+
 .image_history img {
   width: 100%;
   height: 100%;
