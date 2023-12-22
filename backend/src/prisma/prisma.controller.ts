@@ -142,13 +142,11 @@ export class PrismaController {
     @Body() body: { friendIds: number[] },
   ): Promise<void> {
     try {
-      // Add each friend in a loop
       for (const friendId of body.friendIds) {
         await this.prismaService.addFriendByIds(req['user'], friendId);
       }
     } catch (error) {
       console.error('Error adding friends:', error);
-      // You can choose to handle the error as needed
     }
   }
 
@@ -186,10 +184,7 @@ export class PrismaController {
       storage: diskStorage({
         destination: './avatars',
         filename: (req, file, callback) => {
-          // Use a simple filename for now (you can customize this as needed)
           const filename = `${Date.now()}${extname(file.originalname)}`;
-
-          // Callback with the generated filename
           callback(null, filename);
         },
       }),

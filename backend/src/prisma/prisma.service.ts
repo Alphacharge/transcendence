@@ -496,7 +496,6 @@ export class PrismaService extends PrismaClient {
       tourwins: tourwins,
       contacts: contacts,
     };
-
     return userStatistics;
   }
 

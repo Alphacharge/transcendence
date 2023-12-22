@@ -155,6 +155,7 @@ export class GameState {
       }
     }
   }
+
   movePaddleDown(player: User) {
     if (player == this.user1) {
       if (
@@ -178,19 +179,15 @@ export class GameState {
   }
 
   leftBreakthrough() {
-    // if (this.ballX <= 1) {
     this.scorePlayer2 += 1;
     sharedEventEmitter.emit('scoreUpdate', this);
     this.gameInit();
-    // }
   }
 
   rightBreakthrough() {
-    // if (this.ballX >= this.fieldWidth - this.ballRadius) {
     this.scorePlayer1 += 1;
     sharedEventEmitter.emit('scoreUpdate', this);
     this.gameInit();
-    // }
   }
 
   collisionLeft() {

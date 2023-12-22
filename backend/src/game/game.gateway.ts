@@ -1,4 +1,3 @@
-// game.gateway.ts
 import { sharedEventEmitter } from './game.events';
 import {
   ConnectedSocket,
@@ -24,6 +23,7 @@ import { TournamentState } from './TournamentState';
     cert: fs.readFileSync('/certificates/certificate.cert'),
   }),
 })
+
 export class GameGateway {
   @WebSocketServer()
   server: Server;
@@ -199,7 +199,6 @@ export class GameGateway {
 
   // ball coordinate transmission
   sendBallUpdate(game: GameState) {
-    // console.log("ball coordinates:", game.ballCoordinates());
     game.user1?.socket?.emit('ballUpdate', game.ballCoordinates());
     game.user2?.socket?.emit('ballUpdate', game.ballCoordinates());
   }

@@ -1,6 +1,5 @@
 import { User } from 'src/user/User';
 import { GameState } from './GameState';
-import { Tournaments } from '@prisma/client';
 
 export class TournamentState {
   id: number;

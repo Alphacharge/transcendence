@@ -8,7 +8,6 @@ import {
   Get,
   Request,
   Req,
-  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
