@@ -79,8 +79,8 @@ help:
 	@echo "\t\t$(YELL)[status]$(WHITE)\tShows the status of the containers.\n"
 	@echo "\t\t$(YELL)[clean]$(WHITE)\t\tStops and removes all containers, images, volumes and networks.\n"
 	@echo "\t\t$(YELL)[fclean]$(WHITE)\tLike [clean] plus removes the node modules.\n"
-	@echo "\t\t$(YELL)[sclean]$(WHITE)\tLike [flean] plus removes the database.\n"
-	@echo "\t\t$(YELL)[re]$(WHITE)\t\t[flean] plus [all].\n"
+	@echo "\t\t$(YELL)[sclean]$(WHITE)\tLike [fclean] plus removes the database.\n"
+	@echo "\t\t$(YELL)[re]$(WHITE)\t\t[fclean] plus [all].\n"
 
 status:
 	docker ps
