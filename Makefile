@@ -6,11 +6,14 @@ SRC		:=	$(SRC_D)$(SRC_F)
 ENV		:=	--env-file $(SRC_D).env
 DB_D	:=	./data/sql
 OS		:=	$(shell uname)
+
+# Rule for MacOs @home or everybody else
 ifeq ($(USER), marius)
 	IP:=$(shell ifconfig | grep 'inet' | head -n5 | tail -n1 | cut -d' ' -f2)
 else
 	IP:=$(shell ifconfig | grep 'inet 10' | cut -d' ' -f2)
 endif
+
 ###			###			COLORS			###			###
 RED		=	\033[1;31m
 GREEN	=	\033[1;32m
@@ -40,6 +43,7 @@ endif
 postgre:
 	-@mkdir -p $(DB_D)/pg_notify $(DB_D)/pg_tblspc $(DB_D)/pg_replslot $(DB_D)/pg_twophase $(DB_D)/pg_snapshots $(DB_D)/pg_logical/snapshots $(DB_D)/pg_logical/mappings $(DB_D)/pg_commit_ts
 
+#replace IP in the .env file with the determined one
 ip:
 ifeq ($(OS), Darwin)
 	-@sed -i '' 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=$(IP)/' .env
@@ -47,7 +51,7 @@ else
 	-@sed -i -e 's/^VUE_APP_SERVER_IP=.*/VUE_APP_SERVER_IP=127.0.0.1/' .env
 endif
 
-# create https certificates
+#create https certificates
 certs:
 	@if [ ! -e ./certificate.cert ] || [ ! -e ./certificate.key ] ; then \
 		openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -out ./certificate.cert -keyout ./certificate.key -subj "/C=DE/ST=Baden-Wuerttemberg/L=Heilbronn/O=42Heilbronn/"; \
@@ -65,10 +69,18 @@ check:
 stop:
 	-docker-compose -f $(SRC) down
 
-#force rebuilding
-build:
-	docker-compose -f $(SRC) $(ENV) build
-	$(MAKE) all
+help:
+	@echo "$(BLUE)Manpage for this transcendence project.$(WHITE)\n"
+	@echo "\tmake\t$(GREEN)[OPTION]$(WHITE)\n"
+	@echo "\t\t$(YELL)[help]$(WHITE)\t\tPrints this help.\n"
+	@echo "\t\t$(YELL)[],[all],[up]$(WHITE)\tCompiles the project.\n"
+	@echo "\t\t$(YELL)[down],[stop]$(WHITE)\tShutdown the servers.\n"
+	@echo "\t\t$(YELL)[check]$(WHITE)\t\tChecks the compose.yml for errors.\n"
+	@echo "\t\t$(YELL)[status]$(WHITE)\tShows the status of the containers.\n"
+	@echo "\t\t$(YELL)[clean]$(WHITE)\t\tStops and removes all containers, images, volumes and networks.\n"
+	@echo "\t\t$(YELL)[fclean]$(WHITE)\tLike [clean] plus removes the node modules.\n"
+	@echo "\t\t$(YELL)[sclean]$(WHITE)\tLike [flean] plus removes the database.\n"
+	@echo "\t\t$(YELL)[re]$(WHITE)\t\t[flean] plus [all].\n"
 
 status:
 	docker ps
@@ -95,11 +107,7 @@ else
 	@echo $(CONFIRM_MESSAGE)
 endif
 
-dbclean: stop
-	rm -rf $(DB_D)
-	mkdir -p $(DB_D)
-
 #stop all containers, force rebuild and start it
-re: stop fclean all
+re: fclean all
 
-.phony: sclean clean status build check down up ip postgre dbclean
+.phony: sclean fclean clean status help stop certs build check down up ip postgre
