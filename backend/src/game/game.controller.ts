@@ -55,7 +55,7 @@ export class GameController {
   }
 
   // curl -X GET -k -H "Content-Type: application/json" -d '{"fieldWidth":800,"fieldHeight":400,"ballX":400,"ballY":200,"ballSpeedX":-3.9912732712804284,"ballSpeedY":-0.26407891616414086,"paddlesHeight":100,"leftPaddle":150,"rightPaddle":150,"scorePlayer1":0,"contactsPlayer2":0,"winner":""}' https://localhost:3000/game/update
-  @Get('update')
+  @Post('update')
   requestUpdate(@Body() body: GameDto) {
     let game = new GameState();
     let winner = '';
