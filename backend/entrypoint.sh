@@ -3,8 +3,9 @@
 cd /backend/
 
 npm cache clean -f
-npm install -g @nestjs/cli
-npm install
+npm config set loglevel error -g
+npm install --no-fund --no-update-notifier -g @nestjs/cli
+npm install --no-fund --no-update-notifier
 
 while ! echo > /dev/tcp/postgresql/5432; do
     sleep 1

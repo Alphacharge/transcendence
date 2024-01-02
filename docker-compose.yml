@@ -28,7 +28,7 @@ services:
     container_name: vue
     image: node:21-alpine3.17
     env_file: .env
-    command: sh -c "cd /frontend && npm install -g @vue/cli && npm install && npm run serve"
+    command: sh -c "cd /frontend && npm config set loglevel error -g && npm install --no-fund --no-update-notifier -g @vue/cli && npm install && npm run serve"
     ports:
       - "8080:8080"
     networks:
