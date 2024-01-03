@@ -14,6 +14,12 @@ export class GameDto {
   readonly ballY: number;
 
   @IsNumber()
+  readonly ballXPrev: number;
+
+  @IsNumber()
+  readonly ballYPrev: number;
+
+  @IsNumber()
   readonly ballSpeedX: number;
 
   @IsNumber()
