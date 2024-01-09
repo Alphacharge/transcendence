@@ -345,6 +345,8 @@ export class GameState {
     this.fieldHeight = dto.fieldHeight;
     this.ballX = dto.ballX;
     this.ballY = dto.ballY;
+    this.ballXPrev = dto.ballXPrev;
+    this.ballYPrev = dto.ballYPrev;
     this.ballSpeedX = dto.ballSpeedX;
     this.ballSpeedY = dto.ballSpeedY;
     this.paddlesHeight = dto.paddlesHeight;
@@ -360,6 +362,8 @@ export class GameState {
       fieldHeight: this.fieldHeight,
       ballX: this.ballX,
       ballY: this.ballY,
+      ballXPrev: this.ballXPrev,
+      ballYPrev: this.ballYPrev,
       ballSpeedX: this.ballSpeedX,
       ballSpeedY: this.ballSpeedY,
       paddlesHeight: this.paddlesHeight,
