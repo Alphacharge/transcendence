@@ -73,6 +73,7 @@ export default {
 
   mounted() {
     document.body.classList.remove("friend-list-visible");
+    this.friends = this.getUsersFriends();
   },
 
   beforeUnmount() {
